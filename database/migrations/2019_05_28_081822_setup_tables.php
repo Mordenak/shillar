@@ -16,6 +16,11 @@ class SetupTables extends Migration
 		Schema::create('players', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->integer('users_id');
+			$table->foreign('users_id')->references('id')->on('users');
+			// $table->string('email');
+			// $table->string('hashpass');
+			// $table->string('remember_token');
 			$table->timestamps();
 		});
 
@@ -71,7 +76,28 @@ class SetupTables extends Migration
 			Accuracy?
 
 		*/
+		Schema::create('zones', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->timestamps();
+		});
 
+		Schema::create('rooms', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->string('title');
+			$table->string('description');
+			$table->integer('north_rooms_id')->nullable();
+			$table->foreign('north_rooms_id')->references('id')->on('rooms');
+			$table->integer('east_rooms_id')->nullable();
+			$table->foreign('east_rooms_id')->references('id')->on('rooms');
+			$table->integer('south_rooms_id')->nullable();
+			$table->foreign('south_rooms_id')->references('id')->on('rooms');
+			$table->integer('west_rooms_id')->nullable();
+			$table->foreign('west_rooms_id')->references('id')->on('rooms');
+			$table->timestamps();
+		});
 
 		Schema::create('max_values', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -79,13 +105,13 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('races', function (Blueprint $table) {
+		Schema::create('player_races', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->timestamps();
 		});
 
-		Schema::create('classes', function (Blueprint $table) {
+		Schema::create('player_classes', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->timestamps();
@@ -143,13 +169,15 @@ class SetupTables extends Migration
 
 		Schema::create('characters', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('players_id');
-			$table->foreign('players_id')->references('id')->on('players');
+			$table->integer('users_id');
+			$table->foreign('users_id')->references('id')->on('users');
 			$table->string('name');
-			$table->integer('classes_id');
-			$table->foreign('classes_id')->references('id')->on('classes');
-			$table->integer('races_id');
-			$table->foreign('races_id')->references('id')->on('races');
+			$table->integer('player_classes_id');
+			$table->foreign('player_classes_id')->references('id')->on('player_classes');
+			$table->integer('player_races_id');
+			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->integer('last_rooms_id');
+			$table->foreign('last_rooms_id')->references('id')->on('rooms');
 			$table->timestamps();
 		});
 
@@ -200,14 +228,16 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_stats');
 		Schema::dropIfExists('wallets');
 		Schema::dropIfExists('characters');
+		Schema::dropIfExists('rooms');
+		Schema::dropIfExists('zones');
 		Schema::dropIfExists('players');
 		Schema::dropIfExists('items_to_inventories');
 		Schema::dropIfExists('inventories');
-		Schema::dropIfExists('item_types');
 		Schema::dropIfExists('items');
+		Schema::dropIfExists('item_types');
 		Schema::dropIfExists('equipment_slots');
-		Schema::dropIfExists('races');
-		Schema::dropIfExists('classes');
+		Schema::dropIfExists('player_races');
+		Schema::dropIfExists('player_classes');
 		Schema::dropIfExists('max_values');
 		Schema::dropIfExists('damage_types');
 	}

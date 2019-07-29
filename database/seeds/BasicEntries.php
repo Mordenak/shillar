@@ -12,13 +12,13 @@ class BasicEntries extends Seeder
 	 */
 	public function run()
 	{
-		DB::table('classes')->insert([
+		DB::table('player_classes')->insert([
 			['name' => 'Warrior', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Rogue', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Wizard', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		DB::table('races')->insert([
+		DB::table('player_races')->insert([
 			['name' => 'Human', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Dwarf', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Elf', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -48,6 +48,16 @@ class BasicEntries extends Seeder
 
 		DB::table('max_values')->insert([
 			['max_level' => 100, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]
+		]);
+
+		DB::table('zones')->insert([
+			['name' => 'Starter']
+		]);
+
+		DB::table('rooms')->insert([
+			['zones_id' => 1, 'title' => 'Welcome', 'description' => 'Supposedly a long description here', 'north_rooms_id' => 2, 'south_rooms_id' => null],
+			['zones_id' => 1, 'title' => 'Tutorial', 'description' => 'Proper tutorial stuff', 'south_rooms_id' => 1, 'north_rooms_id' => 3],
+			['zones_id' => 1, 'title' => 'First Quest', 'description' => 'This will be the first quest thing', 'north_rooms_id' => null, 'south_rooms_id' => 2]
 		]);
 	}
 }
