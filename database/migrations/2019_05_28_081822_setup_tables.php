@@ -216,6 +216,61 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+
+		Schema::create('npcs', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->boolean('is_hostile');
+			$table->timestamps();
+		});
+
+		Schema::create('npc_stats', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->integer('level');
+			$table->integer('health');
+			$table->timestamps();
+		});
+
+		Schema::create('spawn_rules', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id')->nullable();
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->integer('rooms_id')->nullable();
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->float('chance');
+			$table->timestamps();
+		});
+
+		Schema::create('reward_tables', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->integer('award_xp');
+			$table->float('xp_variation');
+			$table->integer('award_copper');
+			$table->float('copper_variation');
+			$table->integer('award_silver');
+			$table->float('silver_variation');
+			$table->integer('award_gold');
+			$table->float('gold_variation');
+			$table->timestamps();
+		});		
+
+		Schema::create('loot_tables', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id')->nullable();
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->integer('npcs_id')->nullable();
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->timestamps();
+		});
+
 	}
 
 	/**
@@ -228,6 +283,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_stats');
 		Schema::dropIfExists('wallets');
 		Schema::dropIfExists('characters');
+		Schema::dropIfExists('spawn_rules');
+		Schema::dropIfExists('loot_tables');
 		Schema::dropIfExists('rooms');
 		Schema::dropIfExists('zones');
 		Schema::dropIfExists('players');
@@ -240,5 +297,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('player_classes');
 		Schema::dropIfExists('max_values');
 		Schema::dropIfExists('damage_types');
+		Schema::dropIfExists('npc_stats');
+		Schema::dropIfExists('reward_tables');
+		Schema::dropIfExists('npcs');
 	}
 }

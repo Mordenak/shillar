@@ -73,6 +73,17 @@
 		{
 		grid-area: footer;
 		}
+
+	form
+		{
+		margin-block-end: 0px;
+		}
+
+	label
+		{
+		text-decoration: underline;
+		color: blue;
+		}
 	</style>
 
 	<div class="game-container">
@@ -83,6 +94,10 @@
 				<li>Health: {{$character->health}} / {{$character->max_health}}</li>
 				<li>Mana: {{$character->mana}} / {{$character->max_mana}}</li>
 				<li>Ward: {{$character->ward}} / {{$character->max_ward}}</li>
+				<li>XP: {{$character->xp}}</li>
+				<li>Copper: {{$character->copper}}</li>
+				<li>Silver: {{$character->silver}}</li>
+				<li>Gold: {{$character->gold}}</li>
 			</ul>
 			<strong> -- Stats -- </strong>
 			<ul>
@@ -106,6 +121,17 @@
 			<p>
 				{{ $room->description }}
 			</p>
+
+			@if ($npc)
+				<form method="post" action="/combat" class="ajax">
+					{{csrf_field()}}
+					<input type="hidden" name="room_id" value="{{$room->north_rooms_id}}">
+					<input type="hidden" name="npc_id" value="{{$npc->id}}">
+					<input type="hidden" name="character_id" value="{{$character->id}}">
+					<label for="start_combat">[A] There is a {{ $npc->name }} here.</label>
+					<input type="submit" id="start_combat" style="display: none;">
+				</form>
+			@endif
 
 			<p>
 				@if ($room->north_rooms_id)
@@ -162,8 +188,14 @@
 			data: formData,
 			success: function(resp) {
 				// location.reload();
-				// console.log(resp);
-				$('body').html(resp);
+				// console.log(this);
+				// console.log(this['url']);
+				var replace = 'body';
+				if (this['url'] == '/combat')
+					{
+					replace = '.main';
+					}
+				$(replace).html(resp);
 				}
 			});
 	});

@@ -28,3 +28,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/game', 'GameController@index');
 
 Route::post('/move', 'GameController@move');
+
+Route::post('/combat', 'GameController@combat');

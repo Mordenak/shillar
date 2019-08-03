@@ -59,5 +59,21 @@ class BasicEntries extends Seeder
 			['zones_id' => 1, 'title' => 'Tutorial', 'description' => 'Proper tutorial stuff', 'south_rooms_id' => 1, 'north_rooms_id' => 3],
 			['zones_id' => 1, 'title' => 'First Quest', 'description' => 'This will be the first quest thing', 'north_rooms_id' => null, 'south_rooms_id' => 2]
 		]);
+
+		DB::table('npcs')->insert([
+			['name' => 'Basic Slime','is_hostile' => true]
+		]);
+
+		DB::table('npc_stats')->insert([
+			['npcs_id' => 1, 'level' => 1, 'health' => 5]
+		]);
+
+		DB::table('spawn_rules')->insert([
+			['zones_id' => null, 'rooms_id' => 1, 'npcs_id' => 1, 'chance' => 1.0]
+		]);
+
+		DB::table('reward_tables')->insert([
+			['npcs_id' => 1, 'award_xp' => 10, 'xp_variation' => 0.0, 'award_copper' => 2, 'copper_variation' => 0.0, 'award_silver' => 0, 'silver_variation' => 0.0, 'award_gold' => 0, 'gold_variation' => 0.0]
+		]);
 	}
 }
