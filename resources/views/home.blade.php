@@ -26,6 +26,7 @@
 					@foreach ($characters as $character)
 						<input type="submit" id="ch_{{$character->id}}" name="character_id" value="{{$character->id}}" style="display:none;">
 						<label for="ch_{{$character->id}}">{{ $character->name }}</label>
+						<br>
 					@endforeach
 					</form>
 

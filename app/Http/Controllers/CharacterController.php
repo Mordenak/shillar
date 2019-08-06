@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Character;
 use App\PlayerClass;
 use App\PlayerRace;
-use App\CharacterStats;
+use App\CharacterStat;
+use App\Wallet;
 
 class CharacterController extends Controller
 {
@@ -17,7 +18,7 @@ class CharacterController extends Controller
 
 	public function create()
 		{	
-		return view('character.create', ['classes' => PlayerClass::all(), 'races' => PlayerRace::all()]);
+		return view('character.create', ['races' => PlayerRace::all()]);
 		}
 
 	public function save(Request $request)
@@ -32,7 +33,7 @@ class CharacterController extends Controller
 		$Character->users_id = auth()->user()->id;
 		$Character->name = $request->character_name;
 		$Character->player_races_id = $request->selected_race;
-		$Character->player_classes_id = $request->selected_class;
+		// $Character->player_classes_id = $request->selected_class;
 		$Character->last_rooms_id = 1;
 		$Character->save();
 
@@ -40,28 +41,84 @@ class CharacterController extends Controller
 
 		$values = [
 			'characters_id' => $Character->id,
-			'level' => 1,
 			'xp' => 0,
-			'health' => 10,
-			'max_health' => 10,
-			'mana' => 5,
-			'max_mana' => 5,
-			'ward' => 0,
-			'max_ward' => 0,
-			'strength' => 1,
-			'dexterity' => 1,
-			'intelligence' => 1,
-			'vitality' => 1,
-			'guard' => 1,
-			'wisdom' => 1,
-			'brute' => 1,
-			'finesse' => 1,
-			'insight' => 1
+			'gold' => 0,
+			'health' => 0,
+			'max_health' => 0,
+			'mana' => 0,
+			'max_mana' => 0,
+			'fatigue' => 0,
+			'max_fatigue' => 0,
+			'strength' => 10,
+			'dexterity' => 10,
+			'constitution' => 10,
+			'wisdom' => 10,
+			'intelligence' => 10,
+			'charisma' => 10,
+			// 'brute' => 10,
+			// 'finesse' => 10,
+			// 'insight' => 10
 			];
 
-		$CharacterStats = new CharacterStats;
-		$CharacterStats->fill($values);
-		$CharacterStats->save();
+		// set stats based on starting race:
+		if ($Character->player_races_id == 1)
+			{
+			// human
+			$values['strength'] = 20;
+			$values['constitution'] = 30;
+			$values['dexterity'] = 20;
+			$values['charisma'] = 30;
+			$values['wisdom'] = 25;
+			$values['intelligence'] = 25;
+			}
+
+		if ($Character->player_races_id == 2)
+			{
+			// dwarf
+			$values['constitution'] = 50;
+			$values['strength'] = 35;
+			$values['wisdom'] = 25;
+			$values['dexterity'] = 20;
+			}
+
+		if ($Character->player_races_id == 3)
+			{
+			// elf
+			$values['dexterity'] = 45;
+			$values['wisdom'] = 35;
+			$values['intelligence'] = 20;
+			$values['charisma'] = 20;
+			$values['strength'] = 20;
+			}
+
+		$values['score'] = $values['strength'] + $values['dexterity'] + $values['constitution'] + $values['wisdom'] + $values['intelligence'] + $values['charisma'];
+
+		$health_calc = $values['strength'] + $values['constitution'] + $values['dexterity'];
+		$values['health'] = $health_calc;
+		$values['max_health']= $health_calc;
+		$mana_calc = $values['wisdom'] + $values['intelligence'] + $values['charisma'];
+		$values['mana'] = $mana_calc;
+		$values['max_mana'] = $mana_calc;
+		$fatigue_calc = $values['dexterity'] + $values['constitution'] + $values['wisdom'];
+		$values['fatigue'] = $fatigue_calc;
+		$values['max_fatigue'] = $fatigue_calc;
+
+		$CharacterStat = new CharacterStat;
+		$CharacterStat->fill($values);
+		$CharacterStat->save();
+
+		// And a wallet:
+		/*
+		$wallet_values = [
+			'characters_id' => $Character->id,
+			'gold' => 0,
+			'silver' => 0,
+			'copper' => 0
+			];
+		$Wallet = new Wallet;
+		$Wallet->fill($wallet_values);
+		$Wallet->save();
+		*/
 
 		// $validator = Validator::make($request->all(), [
 		// 		'name' => 'required'

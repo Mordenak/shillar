@@ -41,6 +41,7 @@ class SetupTables extends Migration
 		
 
 		// Stats:
+		// Future ideas:
 		/*
 		Primaries
 		(offensives):
@@ -111,9 +112,19 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('player_classes', function (Blueprint $table) {
+		Schema::create('stat_costs', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->string('name');
+			$table->integer('player_races_id');
+			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->float('strength_cost')->default(1.0);
+			$table->float('dexterity_cost')->default(1.0);
+			$table->float('constitution_cost')->default(1.0);
+			$table->float('wisdom_cost')->default(1.0);
+			$table->float('intelligence_cost')->default(1.0);
+			$table->float('charisma_cost')->default(1.0);
+			// $table->float('brute_cost')->nullable();
+			// $table->float('finesse_cost')->nullable();
+			// $table->float('insight_cost')->nullable();
 			$table->timestamps();
 		});
 
@@ -172,8 +183,8 @@ class SetupTables extends Migration
 			$table->integer('users_id');
 			$table->foreign('users_id')->references('id')->on('users');
 			$table->string('name');
-			$table->integer('player_classes_id');
-			$table->foreign('player_classes_id')->references('id')->on('player_classes');
+			// $table->integer('player_classes_id');
+			// $table->foreign('player_classes_id')->references('id')->on('player_classes');
 			$table->integer('player_races_id');
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
@@ -186,26 +197,29 @@ class SetupTables extends Migration
 			// $table->string('name');
 			$table->integer('characters_id');
 			$table->foreign('characters_id')->references('id')->on('characters');
-			$table->integer('level');
 			$table->integer('xp');
+			$table->integer('gold');
 			$table->integer('health');
 			$table->integer('max_health');
 			$table->integer('mana');
 			$table->integer('max_mana');
-			$table->integer('ward');
-			$table->integer('max_ward');
+			$table->integer('fatigue');
+			$table->integer('max_fatigue');
 			$table->integer('strength');
 			$table->integer('dexterity');
-			$table->integer('intelligence');
-			$table->integer('vitality');
-			$table->integer('guard');
+			$table->integer('constitution');
 			$table->integer('wisdom');
-			$table->integer('brute');
-			$table->integer('finesse');
-			$table->integer('insight');
+			$table->integer('intelligence');
+			$table->integer('charisma');
+			$table->integer('score');
+			// $table->integer('brute');
+			// $table->integer('finesse');
+			// $table->integer('insight');
 			$table->timestamps();
 		});
 
+		// Deprecating this idea, adding gold to character_stats:
+		/*
 		Schema::create('wallets', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('characters_id');
@@ -214,7 +228,7 @@ class SetupTables extends Migration
 			$table->integer('silver');
 			$table->integer('copper');
 			$table->timestamps();
-		});
+		});*/
 
 
 		Schema::create('npcs', function (Blueprint $table) {
@@ -230,6 +244,12 @@ class SetupTables extends Migration
 			$table->foreign('npcs_id')->references('id')->on('npcs');
 			$table->integer('level');
 			$table->integer('health');
+			$table->integer('damage_types_id');
+			$table->foreign('damage_types_id')->references('id')->on('damage_types');
+			$table->integer('damage_low');
+			$table->integer('damage_high');
+			$table->integer('attacks_per_round');
+			// $table->float('critical_chance');
 			$table->timestamps();
 		});
 
@@ -250,13 +270,9 @@ class SetupTables extends Migration
 			$table->integer('npcs_id');
 			$table->foreign('npcs_id')->references('id')->on('npcs');
 			$table->integer('award_xp');
-			$table->float('xp_variation');
-			$table->integer('award_copper');
-			$table->float('copper_variation');
-			$table->integer('award_silver');
-			$table->float('silver_variation');
+			$table->float('xp_variation')->nullable();
 			$table->integer('award_gold');
-			$table->float('gold_variation');
+			$table->float('gold_variation')->nullable();
 			$table->timestamps();
 		});		
 
@@ -281,7 +297,9 @@ class SetupTables extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('character_stats');
-		Schema::dropIfExists('wallets');
+		// Schema::dropIfExists('wallets');
+		Schema::dropIfExists('stat_costs');
+		// Schema::dropIfExists('race_stat_affinities');
 		Schema::dropIfExists('characters');
 		Schema::dropIfExists('spawn_rules');
 		Schema::dropIfExists('loot_tables');
@@ -294,10 +312,10 @@ class SetupTables extends Migration
 		Schema::dropIfExists('item_types');
 		Schema::dropIfExists('equipment_slots');
 		Schema::dropIfExists('player_races');
-		Schema::dropIfExists('player_classes');
+		// Schema::dropIfExists('player_classes');
 		Schema::dropIfExists('max_values');
-		Schema::dropIfExists('damage_types');
 		Schema::dropIfExists('npc_stats');
+		Schema::dropIfExists('damage_types');
 		Schema::dropIfExists('reward_tables');
 		Schema::dropIfExists('npcs');
 	}

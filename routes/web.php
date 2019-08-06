@@ -30,3 +30,9 @@ Route::post('/game', 'GameController@index');
 Route::post('/move', 'GameController@move');
 
 Route::post('/combat', 'GameController@combat');
+
+Route::post('/train', 'GameController@train');
+
+Route::post('/train_stat', 'GameController@train_stat');
+
+Route::post('/rest', 'GameController@rest');

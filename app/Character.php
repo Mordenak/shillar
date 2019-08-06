@@ -9,11 +9,6 @@ class Character extends Model
     //
 	public function playerrace()
 		{
-		return $this->belongsTo('App\PlayerRace');
-		}
-
-	public function playerclass()
-		{
-		return $this->belongsTo('App\PlayerClass');
+		return $this->belongsTo('App\PlayerRace', 'player_races_id');
 		}
 }
