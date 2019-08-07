@@ -8,6 +8,8 @@ use App\PlayerClass;
 use App\PlayerRace;
 use App\CharacterStat;
 use App\Wallet;
+use App\Equipment;
+use App\Inventory;
 
 class CharacterController extends Controller
 {
@@ -36,6 +38,15 @@ class CharacterController extends Controller
 		// $Character->player_classes_id = $request->selected_class;
 		$Character->last_rooms_id = 1;
 		$Character->save();
+
+		$Equipment = new Equipment;
+		$Equipment->fill(['characters_id' => $Character->id]);
+		$Equipment->save();
+
+
+		$Inventory = new Inventory;
+		$Inventory->fill(['characters_id' => $Character->id, 'max_size' => 100, 'max_weight' => 100]);
+		$Inventory->save();
 
 		// Create a stats entry as well:
 

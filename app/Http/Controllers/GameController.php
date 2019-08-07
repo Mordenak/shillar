@@ -13,6 +13,7 @@ use App\LootTable;
 use App\CharacterStat;
 use App\StatCost;
 use App\RaceStatAffinity;
+use App\Equipment;
 
 class GameController extends Controller
 {
@@ -190,6 +191,8 @@ class GameController extends Controller
 			// $Wallet = Wallet::where(['wallets.characters_id' => $request->character_id])->first();
 			// die(print_r($Wallet));
 			$combat_log[] = "You received $actual_gold gold.";
+
+			$LootTable = RewardTable::where(['loot_tables.npcs_id' => $request->npc_id])->first();
 			// $LootTable;
 			}
 		else
@@ -347,5 +350,26 @@ class GameController extends Controller
 			->first();
 
 		return view('game/rest', ['character' => $Character, 'healing' => $healing]);
+		}
+
+	public function equipment(Request $request)
+		{
+		$Character = Character::where(['characters.id' => $request->character_id])
+			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+			->select('character_stats.*', 'characters.*')
+			->first();
+
+		// Find current equipment:
+		$Equipment = Equipment::where(['characters_id' => $request->character_id])->first();
+
+		if ($Equipment->weapon)
+			{
+
+			}
+
+		// Find all available item equipment:
+		// $Inventory = Inventory::where(['characters_id' => $request->character_id])->first();
+
+		return view('character/equipment', ['character' => $Character]);
 		}
 }

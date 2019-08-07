@@ -29,18 +29,27 @@ class BasicEntries extends Seeder
 		// 	['strength_coefficient' => 1.45, 'dexterity_coefficient' => 1.67, 'constitution_coefficient' => 1.51, 'wisdom_coefficient' => 1.38, 'intelligence_coefficient' => 1.65, 'charisma_coefficient' => 1.53]
 		// ]);
 
-		DB::table('equipment_slots')->insert([
-			['name' => 'head', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'chest', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'legs', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// DB::table('equipment_slots')->insert([
+		// 	['name' => 'head', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'chest', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'legs', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// ]);
+
+		// DB::table('item_types')->insert([
+		// 	['name' => 'Consumable', 'table_name' => 'item_consumables', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'Weapon', 'table_name' => 'item_weapons', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'Armor', 'table_name' => 'item_armors', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'Accessories', 'table_name' => 'item_accessories', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'Other', 'table_name' => 'item_others', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// ]);
+
+		DB::table('item_weapons')->insert([
+			['name' => 'Rusty Sword', 'attack_text' => 'You scratches your enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon'],
 		]);
 
-		DB::table('item_types')->insert([
-			['name' => 'Potion', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Armor', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Other', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		DB::table('items')->insert([
+			['name' => 'Rusty Sword', 'item_table' => 'item_weapons', 'item_table_id' => 1],
 		]);
 
 		DB::table('damage_types')->insert([
@@ -93,11 +102,15 @@ class BasicEntries extends Seeder
 		]);
 
 		DB::table('reward_tables')->insert([
-			['npcs_id' => 1, 'award_xp' => 880, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.25],
+			['npcs_id' => 1, 'award_xp' => 88000, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.25],
 			['npcs_id' => 2, 'award_xp' => 2300, 'xp_variation' => 0.3, 'award_gold' => 3, 'gold_variation' => 0.25],
 			['npcs_id' => 3, 'award_xp' => 6700, 'xp_variation' => 0.2, 'award_gold' => 5, 'gold_variation' => 0.25],
 			['npcs_id' => 4, 'award_xp' => 15000, 'xp_variation' => 0.25, 'award_gold' => 8, 'gold_variation' => 0.5],
 			['npcs_id' => 5, 'award_xp' => 38000, 'xp_variation' => 0.4, 'award_gold' => 20, 'gold_variation' => 0.5],
+		]);
+
+		DB::table('loot_tables')->insert([
+			['npcs_id' => 1, 'items_id' => 1, 'chance' => 1.0],
 		]);
 	}
 }

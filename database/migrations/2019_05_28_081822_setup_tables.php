@@ -128,53 +128,71 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('item_types', function (Blueprint $table) {
+		// Schema::create('item_types', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->string('name');
+		// 	$table->string('table_name');
+		// 	$table->integer('table_id');
+		// 	// Add all flags?
+		// 	// $table->bool('consumable');
+		// 	// $table->bool('equippable');
+		// 	$table->timestamps();
+		// });
+
+		Schema::create('item_weapons', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			// Add all flags?
-			// $table->bool('consumable');
-			// $table->bool('equippable');
+			$table->string('attack_text');
+			$table->integer('damage_low');
+			$table->integer('damage_high');
+			$table->string('equipment_slot');
 			$table->timestamps();
 		});
 
-		Schema::create('equipment_slots', function (Blueprint $table) {
+		Schema::create('item_armors', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('equipment_slot');
+			$table->timestamps();
+		});
+
+		Schema::create('item_consumables', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->timestamps();
 		});
+
+		Schema::create('item_accessories', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('equipment_slot');
+			$table->timestamps();
+		});
+
+		Schema::create('item_others', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->timestamps();
+		});
+
+		// Schema::create('equipment_slots', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->string('name');
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('items', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			$table->integer('item_types_id');
-			$table->foreign('item_types_id')->references('id')->on('item_types');
+			$table->string('item_table');
+			$table->integer('item_table_id');
+			// $table->integer('item_types_id');
+			// $table->foreign('item_types_id')->references('id')->on('item_types');
 			// Should items have the individual flags as well?
-			$table->integer('equipment_slots_id');
-			$table->foreign('equipment_slots_id')->references('id')->on('equipment_slots');
-			$table->boolean('consumable');
-			$table->boolean('equippable');
-			$table->timestamps();
-		});		
-
-		// Redo this?
-		Schema::create('inventories', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			// $table->integer('characters_id');
-			// $table->foreign('characters_id')->references('id')->on('characters');
-			// $table->integer('items_id');
-			// $table->foreign('items_id')->refences('id')->on('items');
-			// $table->integer('quantity');
-			$table->integer('max_size');
-			$table->integer('max_weight');
-			$table->timestamps();
-		});
-
-		Schema::create('items_to_inventories',function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('inventories_id');
-			$table->foreign('inventories_id')->references('id')->on('inventories');
-			$table->integer('items_id');
-			$table->foreign('items_id')->references('id')->on('items');
+			// $table->string('equipment_slots');
+			// $table->foreign('equipment_slots_id')->references('id')->on('equipment_slots');
+			// $table->boolean('consumable');
+			// $table->boolean('equippable');
 			$table->timestamps();
 		});
 
@@ -189,6 +207,44 @@ class SetupTables extends Migration
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
 			$table->foreign('last_rooms_id')->references('id')->on('rooms');
+			$table->timestamps();
+		});
+
+		Schema::create('equipment', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('head')->nullable();
+			$table->foreign('head')->references('id')->on('item_armors');
+			$table->integer('chest')->nullable();
+			$table->foreign('chest')->references('id')->on('item_armors');
+			$table->integer('legs')->nullable();
+			$table->foreign('legs')->references('id')->on('item_armors');
+			$table->integer('weapon')->nullable();
+			$table->foreign('weapon')->references('id')->on('item_weapons');
+			$table->timestamps();
+		});
+
+		// Redo this?
+		Schema::create('inventories', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			// $table->integer('items_id');
+			// $table->foreign('items_id')->refences('id')->on('items');
+			// $table->integer('quantity');
+			$table->integer('max_size');
+			$table->integer('max_weight');
+			$table->timestamps();
+		});
+
+		Schema::create('items_to_inventories',function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('inventories_id');
+			$table->foreign('inventories_id')->references('id')->on('inventories');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->integer('quantity');
 			$table->timestamps();
 		});
 
@@ -284,6 +340,7 @@ class SetupTables extends Migration
 			$table->foreign('npcs_id')->references('id')->on('npcs');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
+			$table->float('chance');
 			$table->timestamps();
 		});
 
@@ -300,17 +357,25 @@ class SetupTables extends Migration
 		// Schema::dropIfExists('wallets');
 		Schema::dropIfExists('stat_costs');
 		// Schema::dropIfExists('race_stat_affinities');
+		Schema::dropIfExists('equipment');
+		Schema::dropIfExists('items_to_inventories');
+		Schema::dropIfExists('inventories');
 		Schema::dropIfExists('characters');
 		Schema::dropIfExists('spawn_rules');
 		Schema::dropIfExists('loot_tables');
 		Schema::dropIfExists('rooms');
 		Schema::dropIfExists('zones');
 		Schema::dropIfExists('players');
-		Schema::dropIfExists('items_to_inventories');
-		Schema::dropIfExists('inventories');
+		
+		
+		Schema::dropIfExists('item_weapons');
+		Schema::dropIfExists('item_consumables');
+		Schema::dropIfExists('item_armors');
+		Schema::dropIfExists('item_accessories');
+		Schema::dropIfExists('item_others');
 		Schema::dropIfExists('items');
-		Schema::dropIfExists('item_types');
-		Schema::dropIfExists('equipment_slots');
+		// Schema::dropIfExists('item_types');
+		// Schema::dropIfExists('equipment_slots');
 		Schema::dropIfExists('player_races');
 		// Schema::dropIfExists('player_classes');
 		Schema::dropIfExists('max_values');

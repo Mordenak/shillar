@@ -141,6 +141,12 @@
 				<!-- <li>Finesse: {{$character->finesse}}</li> -->
 				<!-- <li>Insight: {{$character->insight}}</li> -->
 			</ul>
+			<form method="post" action="/equipment" class="ajax">
+				{{csrf_field()}}
+				<input type="hidden" name="character_id" value="{{$character->id}}">
+				<label for="equipment">Equipment</label>
+				<input type="submit" id="equipment" style="display: none;">
+			</form>
 			<form method="post" action="/game" class="ajax">
 				{{csrf_field()}}
 				<input type="hidden" name="character_id" value="{{$character->id}}">
@@ -286,6 +292,9 @@
 					'/train_stat',
 					'/rest'
 					];
+				var menu_inserts = [
+					'/equipment'
+					];
 				// location.reload();
 				// console.log(this);
 				// console.log(this['url']);
@@ -293,6 +302,10 @@
 				if (main_inserts.includes(this['url']))
 					{
 					replace = '.main';
+					}
+				if (menu_inserts.includes(this['url']))
+					{
+					replace = '.stats';
 					}
 				// console.log('replace:' + replace);
 				$(replace).html(resp);

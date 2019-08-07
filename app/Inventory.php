@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Equipment extends Model
+class Inventory extends Model
 {
     //
-    protected $fillable = ['characters_id', 'head', 'chest', 'legs', 'weapon'];
+    protected $fillable = ['characters_id', 'max_size', 'max_weight'];
 
     public function character()
 		{
