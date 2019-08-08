@@ -23,7 +23,13 @@
 	<style>
 	body
 		{
-		background-color: #c5c5c5;
+		background-color: #333;
+		color: white;
+		}
+
+	form label
+		{
+		color: #55ff8b;
 		}
 
 	.game-container

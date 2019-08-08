@@ -4,6 +4,8 @@ training
 
 @if ($character)
 
+	XP: {{ $character->xp }}
+
 	<form method="post" action="/train_stat" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">

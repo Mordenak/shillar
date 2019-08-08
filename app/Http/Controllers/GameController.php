@@ -14,6 +14,8 @@ use App\CharacterStat;
 use App\StatCost;
 use App\RaceStatAffinity;
 use App\Equipment;
+use App\Item;
+use App\ItemWeapon;
 
 class GameController extends Controller
 {
@@ -120,14 +122,31 @@ class GameController extends Controller
 			while ($character_attacks > 0)
 				{
 				$character_attacks--;
-				$pre_damage = $CharacterStat->strength * 0.4 + $CharacterStat->constitution * 0.2;
-				$fists_low = 1;
-				$fists_high = 10;
-				// go go:
-				// $damage = 6;
-				$damage = (int)$pre_damage + rand($fists_low, $fists_high);
+				$Equipment = Equipment::where(['characters_id' => $Character->id])->first();
+				if ($Equipment->weapon)
+					{
+					$ItemWeapon = ItemWeapon::findOrFail($Equipment->weapon);
+					$low_damage = $CharacterStat->constitution + $ItemWeapon->damage_low;
+					$high_damage = $CharacterStat->strength + $ItemWeapon->damage_high;
+					if ($low_damage > $high_damage)
+						{
+						$low_damage = $high_damage;
+						}
+					$damage = rand($low_damage, $high_damage);
+					$attack_text = $ItemWeapon->attack_text;
+					}
+				else
+					{
+					$pre_damage = $CharacterStat->strength * 0.4 + $CharacterStat->constitution * 0.2;
+					$fists_low = 1;
+					$fists_high = 10;
+					// go go:
+					// $damage = 6;
+					$damage = (int)$pre_damage + rand($fists_low, $fists_high);
+					$attack_text = "Your fists graze";
+					}
 				$flat_npc['health'] = $flat_npc['health'] - $damage;
-				$combat_log[] = "You dealt $damage to $Npc->name";
+				$combat_log[] = "$attack_text $Npc->name for $damage damage.";
 
 				if ($flat_npc['health'] <= 0)
 					{
@@ -192,7 +211,16 @@ class GameController extends Controller
 			// die(print_r($Wallet));
 			$combat_log[] = "You received $actual_gold gold.";
 
-			$LootTable = RewardTable::where(['loot_tables.npcs_id' => $request->npc_id])->first();
+			$LootTable = LootTable::where(['npcs_id' => $request->npc_id])->first();
+
+			// This should be an item id?
+			// die(print_r($Character->inventory()->first()));
+			// die('..:'.$LootTable->items_id);
+			if ($LootTable)
+				{
+				$Character->inventory()->first()->addItem($LootTable->items_id);
+				$combat_log[] = "You received $LootTable->items_id item?";
+				}
 			// $LootTable;
 			}
 		else
@@ -362,14 +390,52 @@ class GameController extends Controller
 		// Find current equipment:
 		$Equipment = Equipment::where(['characters_id' => $request->character_id])->first();
 
-		if ($Equipment->weapon)
+		if ($request->action == 'equip')
 			{
+			// die('stuff');
+			if ($request->weapon > 0)
+				{
+				// die(print_r('Got weapon id: '.$request->weapon). ':');
+				$Equipment->weapon = $request->weapon;
+				// $Equipment->weapon = 1;
+				}
+			else
+				{
+				$Equipment->weapon = null;
+				}
 
+			$Equipment->save();
 			}
 
 		// Find all available item equipment:
 		// $Inventory = Inventory::where(['characters_id' => $request->character_id])->first();
+		// $Character->inventory()->first()->addItem($LootTable->items_id);
+		$allitems = $Character->inventory()->first()->items()->get();
 
-		return view('character/equipment', ['character' => $Character]);
+		$weapons = [];
+
+		// die(print_r($allitems));
+
+		foreach ($allitems as $inv_item)
+			{
+			// die($inv_item);s
+			$Item = Item::findOrFail($inv_item->items_id);
+			$dis_val = $Item->toArray();
+			$dis_val['selected'] = false;
+			// die($Item);
+			if ($Item->item_table == 'item_weapons')
+				{
+				$ItemWeapon = ItemWeapon::findOrFail($Item->item_table_id);
+				if ($Equipment->weapon == $ItemWeapon->id)
+					{
+					$dis_val['selected'] = true;
+					}
+				$weapons[] = $dis_val;
+				}
+			}
+
+		// die(print_r($weapons));
+
+		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons]);
 		}
 }

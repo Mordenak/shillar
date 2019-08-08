@@ -45,7 +45,7 @@ class BasicEntries extends Seeder
 		// ]);
 
 		DB::table('item_weapons')->insert([
-			['name' => 'Rusty Sword', 'attack_text' => 'You scratches your enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon'],
+			['name' => 'Rusty Sword', 'attack_text' => 'Your rusty sword scratches the enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon'],
 		]);
 
 		DB::table('items')->insert([

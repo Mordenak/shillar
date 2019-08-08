@@ -38,3 +38,5 @@ Route::post('/train_stat', 'GameController@train_stat');
 Route::post('/rest', 'GameController@rest');
 
 Route::post('/equipment', 'GameController@equipment');
+
+// Route::post('/equip', 'GameController@equip_item');

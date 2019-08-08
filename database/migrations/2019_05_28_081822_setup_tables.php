@@ -238,10 +238,10 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('items_to_inventories',function (Blueprint $table) {
+		Schema::create('inventory_items',function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('inventories_id');
-			$table->foreign('inventories_id')->references('id')->on('inventories');
+			$table->integer('inventory_id');
+			$table->foreign('inventory_id')->references('id')->on('inventories');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->integer('quantity');
@@ -358,7 +358,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('stat_costs');
 		// Schema::dropIfExists('race_stat_affinities');
 		Schema::dropIfExists('equipment');
-		Schema::dropIfExists('items_to_inventories');
+		Schema::dropIfExists('inventory_items');
 		Schema::dropIfExists('inventories');
 		Schema::dropIfExists('characters');
 		Schema::dropIfExists('spawn_rules');

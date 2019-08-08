@@ -1,4 +1,10 @@
-<div style="float:left;">
+<p style="color: red;display: inline;">
+@foreach ($combat_log as $log_entry)
+	{{$log_entry}}<br>
+@endforeach
+</p>
+
+<div style="float:right;">
 	Quick Stats here:<br>
 	Health: {{$character->health}} / {{$character->max_health}}<br>
 	<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
@@ -7,16 +13,6 @@
 	Fatigue: {{$character->fatigue}} / {{$character->max_fatigue}}<br>
 	<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 </div>
-
-begin combat!
-
-<p>
-@foreach ($combat_log as $log_entry)
-	{{$log_entry}}<br>
-@endforeach
-</p>
-
-end combat!
 
 
 @if ($return_room)

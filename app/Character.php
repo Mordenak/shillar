@@ -11,4 +11,9 @@ class Character extends Model
 		{
 		return $this->belongsTo('App\PlayerRace', 'player_races_id');
 		}
+
+	public function inventory()
+		{
+		return $this->hasOne('App\Inventory', 'characters_id');
+		}
 }
