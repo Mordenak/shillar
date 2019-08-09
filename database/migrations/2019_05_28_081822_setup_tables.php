@@ -146,6 +146,7 @@ class SetupTables extends Migration
 			$table->integer('damage_low');
 			$table->integer('damage_high');
 			$table->string('equipment_slot');
+			$table->integer('fatigue_use');
 			$table->timestamps();
 		});
 
@@ -153,6 +154,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('equipment_slot');
+			$table->integer('armor');
 			$table->timestamps();
 		});
 
@@ -344,6 +346,14 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('user_settings',function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('users_id');
+			$table->foreign('users_id')->references('id')->on('users');
+			$table->boolean('short_mode')->default(false);
+			$table->timestamps();
+		});
+
 	}
 
 	/**
@@ -383,5 +393,6 @@ class SetupTables extends Migration
 		Schema::dropIfExists('damage_types');
 		Schema::dropIfExists('reward_tables');
 		Schema::dropIfExists('npcs');
+		Schema::dropIfExists('user_settings');
 	}
 }

@@ -16,6 +16,8 @@ use App\RaceStatAffinity;
 use App\Equipment;
 use App\Item;
 use App\ItemWeapon;
+use App\ItemArmor;
+use App\UserSetting;
 
 class GameController extends Controller
 {
@@ -32,6 +34,13 @@ class GameController extends Controller
 			->first();
 			// ->select('character_stats.id as character_stats_id, *');
 
+		if (!$Character)
+			{
+			return redirect('/home');
+			}
+
+		$no_attack = $Character->fatigue > 0 ? false : true;
+
 		$Room = Room::findOrFail($Character->last_rooms_id);
 
 		// Find spawn rules for room:
@@ -41,16 +50,43 @@ class GameController extends Controller
 		if ($SpawnRule)
 			{
 			$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+			$prob = rand(0, 1.0);
+			if ($prob <= $SpawnRule->chance)
+				{
+				// then we spawn:
+				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+				// break;
+				}
+			}
+		else
+			{
+			// no room specific spawns:
+			$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->get();
+			if (count($SpawnRules) > 0)
+				{
+				foreach ($SpawnRules as $SpawnRule)
+					{
+					// getrandmax()
+					$prob = rand() / getrandmax();
+					if ($prob <= $SpawnRule->chance)
+						{
+						// then we spawn:
+						$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+						break;
+						}
+					}
+				}
 			}
 
 		// die(print_r($Character->playerrace()->name()))s;
+		// die(print_r($Room->zone()->get()));
 
 		// $CharacterStats = CharacterStats::where(['characters_id' => $Character->id])
 		// 	->join('character_stats', 'characters.id', '=', 'character_stats.character_id');
 
 		// $character = array_merge($Character->pluck(), $CharacterStats->pluck());
 
-		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc]);
+		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack]);
 		}
 
 	public function move(Request $request)
@@ -66,8 +102,10 @@ class GameController extends Controller
 		$Character->last_rooms_id = $request->room_id;
 		$Character->save();
 
-		// return true;
+		return $this->index($request);
 
+		// return true;
+		/**
 		$Character = Character::where(['characters.id' => $request->character_id])
 			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
 			->select('character_stats.*', 'characters.*')
@@ -82,9 +120,35 @@ class GameController extends Controller
 		if ($SpawnRule)
 			{
 			$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+			$prob = rand(0, 1.0);
+			if ($prob <= $SpawnRule->chance)
+				{
+				// then we spawn:
+				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+				// break;
+				}
+			}
+		else
+			{
+			// no room specific spawns:
+			$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id]);
+			if (count($SpawnRules) > 0)
+				{
+				foreach ($SpawnRules as $SpawnRule)
+					{
+					$prob = rand(0, 1.0);
+					if ($prob <= $SpawnRule->chance)
+						{
+						// then we spawn:
+						$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+						break;
+						}
+					}
+				}
 			}
 
 		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc]);
+		**/
 		}
 
 	public function combat(Request $request)
@@ -102,7 +166,10 @@ class GameController extends Controller
 		$Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
 
 		$combat_log = [];
+		$loot_log = [];
    		$flat_npc = $Npc->toArray();
+   		$Equipment = Equipment::where(['characters_id' => $Character->id])->first();
+   		// $total_fatigue = 0;
 		while ($flat_npc['health'] > 0)
 			{
 			if ($CharacterStat->health <= 0)
@@ -118,11 +185,28 @@ class GameController extends Controller
 				}
 
 			// $combat_log[] = "number of attacks: $character_attacks";
+			$base_miss = 0.20;
+			$base_dodge = 0.05;
+			$base_crit = 0.05;
+			$crit_multipler_low = 2.0;
+			$crit_multipler_high = 4.0;
 
+			$fatigue_use = 1;
+			// $fatigue_used = 0;
 			while ($character_attacks > 0)
 				{
 				$character_attacks--;
-				$Equipment = Equipment::where(['characters_id' => $Character->id])->first();
+
+				// roll for accuracy:
+				$acc_check = rand() / getrandmax();
+				if ($acc_check <= $base_miss)
+					{
+					// $combat_log[] = "You missed!";
+					$combat_log['pc_miss'] = isset($combat_log['pc_miss']) ? $combat_log['pc_miss']+1 : 1;
+					continue;
+					}
+				
+				// $fatigue_use = 1;
 				if ($Equipment->weapon)
 					{
 					$ItemWeapon = ItemWeapon::findOrFail($Equipment->weapon);
@@ -134,6 +218,7 @@ class GameController extends Controller
 						}
 					$damage = rand($low_damage, $high_damage);
 					$attack_text = $ItemWeapon->attack_text;
+					$fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
 					}
 				else
 					{
@@ -145,8 +230,20 @@ class GameController extends Controller
 					$damage = (int)$pre_damage + rand($fists_low, $fists_high);
 					$attack_text = "Your fists graze";
 					}
+				// $total_fatigue = $total_fatigue + $fatigue_use;
+				if (($CharacterStat->fatigue - $fatigue_use) < 0)
+					{
+					$CharacterStat->fatigue = 0;
+					}
+				else
+					{
+					$CharacterStat->fatigue = $CharacterStat->fatigue - $fatigue_use;
+					}
+				$CharacterStat->save();
 				$flat_npc['health'] = $flat_npc['health'] - $damage;
-				$combat_log[] = "$attack_text $Npc->name for $damage damage.";
+				// $combat_log[] = "$attack_text $Npc->name for $damage damage.";
+				// $combat_log['pc_attacks'][] = "$attack_text $Npc->name for $damage damage.";
+				$combat_log['attacks'][] = $damage;
 
 				if ($flat_npc['health'] <= 0)
 					{
@@ -159,6 +256,8 @@ class GameController extends Controller
 				break;
 				}
 
+			// npc attack
+			$damage_resist = $Equipment->calculate_armor();
 			// $Npc->attacks_per_round
 			// $Npc->damage_types_id
 			$npc_attacks = $Npc->attacks_per_round;
@@ -166,12 +265,23 @@ class GameController extends Controller
 				{
 				$npc_attacks--;
 				$npc_damage = rand($Npc->damage_low, $Npc->damage_high);
-				$CharacterStat->health = $CharacterStat->health - $npc_damage;
-				$combat_log[] = "$Npc->name dealt $npc_damage to you!";
-				$CharacterStat->save();
-				if ($CharacterStat->health <= 0)
+				$npc_damage = $npc_damage - $damage_resist;
+				if ($npc_damage <= 0)
 					{
-					break;
+					// $combat_log[] = "$Npc->name cannot break through your armor!";
+					$combat_log['no_damage'] = isset($combat_log['no_damage']) ? $combat_log['no_damage'] + 1 : 0;
+					}
+				else
+					{
+					$CharacterStat->health = $CharacterStat->health - $npc_damage;
+					// $combat_log[] = "$Npc->name dealt $npc_damage to you!";
+					// $combat_log['npc_attacks'][] = "$Npc->name dealt $npc_damage to you!";
+					$combat_log['damage_taken'][] = $npc_damage;
+					$CharacterStat->save();
+					if ($CharacterStat->health <= 0)
+						{
+						break;
+						}	
 					}
 				}
 			}
@@ -179,7 +289,8 @@ class GameController extends Controller
 		// $combat_log[] = "Made it here with: ". $Character->health. "health";
 		if ($CharacterStat->health > 0)
 			{
-			$combat_log[] = "$Npc->name is dead!!!";
+			// $combat_log[] = "$Npc->name is dead!!!";
+			$combat_log['npc_killed'] = true;
 			$RewardTable = RewardTable::where(['reward_tables.npcs_id' => $request->npc_id])->first();
 
 			// $actual_xp = (float)$RewardTable->award_xp * $RewardTable->xp_variation;
@@ -205,35 +316,88 @@ class GameController extends Controller
 			$CharacterStat->xp += $actual_xp;
 			$CharacterStat->gold += $actual_gold;
 			$CharacterStat->save();
-			$combat_log[] = '';
-			$combat_log[] = "You received $actual_xp xp.";
+			// $loot_log[] = '';
+			$loot_log[] = "You received $actual_xp xp.";
 			// $Wallet = Wallet::where(['wallets.characters_id' => $request->character_id])->first();
 			// die(print_r($Wallet));
-			$combat_log[] = "You received $actual_gold gold.";
+			$loot_log[] = "You received $actual_gold gold.";
 
-			$LootTable = LootTable::where(['npcs_id' => $request->npc_id])->first();
+			$LootTables = LootTable::where(['npcs_id' => $request->npc_id])->get();
 
 			// This should be an item id?
 			// die(print_r($Character->inventory()->first()));
 			// die('..:'.$LootTable->items_id);
-			if ($LootTable)
+			if (count($LootTables) > 0)
 				{
-				$Character->inventory()->first()->addItem($LootTable->items_id);
-				$combat_log[] = "You received $LootTable->items_id item?";
+				foreach ($LootTables as $LootTable)
+					{
+					$Character->inventory()->first()->addItem($LootTable->items_id);
+					$loot_log[] = "You received $LootTable->items_id item?";
+					}
 				}
 			// $LootTable;
 			}
 		else
 			{
-			$combat_log[] = 'You have died!';
+			// $combat_log[] = 'You have died!';
+			$combat_log['pc_killed'] = true;
 			}
+
+		// Combat log will recorded differently if the user setting is on?
+		$UserSetting = UserSetting::where(['users_id' => auth()->user()->id])->first();
+		$formatted_log = [];
+		if ($UserSetting->short_mode)
+			{
+			$total_attacks = 0;
+			if (isset($combat_log['attacks']))
+				{
+				$total_attacks = count($combat_log['attacks']);
+				}
+
+			$total_miss = 0;
+			if (isset($combat_log['pc_miss']))
+				{
+				// die(print_r($combat_log['pc_miss']));
+				$total_miss = $combat_log['pc_miss'];
+				}
+			// shorten:
+			// die(print_r(count($combat_log['attacks'])));
+			// sum up the attacks:
+			$formatted_log[] = "You made $total_attacks attacks and missed $total_miss times.";
+			$formatted_log[] = "You did ".array_sum($combat_log['attacks'])." points of damage.";
+
+			if (isset($combat_log['damage_taken']))
+				{
+				$formatted_log[] = "$Npc->name hit you ".count($combat_log['damage_taken'])." times for ".array_sum($combat_log['damage_taken'])." damage.";
+				}
+
+			if (isset($combat_log['npc_killed']))
+				{
+				$formatted_log[] = "$Npc->name is dead!!!";
+				}
+			
+			
+			}
+		else
+			{
+			// die(print_r($formatted_log));
+			// everything:
+			foreach ($combat_log as $entry)
+				{
+				$formatted_log[] = $entry;
+				}
+			}
+
+
 
 		$Character = Character::where(['characters.id' => $request->character_id])
 			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
 			->select('character_stats.*', 'characters.*')
 			->first();
 
-		return view('game/combat', ['combat_log' => $combat_log, 'character' => $Character, 'npc' => $Npc, 'return_room' => $request->room_id]);
+		// return view('game/combat', ['combat_log' => $combat_log, 'loot_log' => $loot_log, 'character' => $Character, 'npc' => $Npc, 'return_room' => $request->room_id]);
+		$Room = Room::findOrFail($request->room_id);
+		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'loot_log' => $loot_log]);
 		}
 
 	public function train(Request $request)
@@ -404,6 +568,33 @@ class GameController extends Controller
 				$Equipment->weapon = null;
 				}
 
+			if ($request->head > 0)
+				{
+				$Equipment->head = $request->head;
+				}
+			else
+				{
+				$Equipment->head = null;
+				}
+
+			if ($request->chest > 0)
+				{
+				$Equipment->chest = $request->chest;
+				}
+			else
+				{
+				$Equipment->chest = null;
+				}
+
+			if ($request->legs > 0)
+				{
+				$Equipment->legs = $request->legs;
+				}
+			else
+				{
+				$Equipment->legs = null;
+				}
+
 			$Equipment->save();
 			}
 
@@ -413,6 +604,9 @@ class GameController extends Controller
 		$allitems = $Character->inventory()->first()->items()->get();
 
 		$weapons = [];
+		$head_armors = [];
+		$chest_armors = [];
+		$leg_armors = [];
 
 		// die(print_r($allitems));
 
@@ -420,22 +614,57 @@ class GameController extends Controller
 			{
 			// die($inv_item);s
 			$Item = Item::findOrFail($inv_item->items_id);
-			$dis_val = $Item->toArray();
-			$dis_val['selected'] = false;
+			
 			// die($Item);
 			if ($Item->item_table == 'item_weapons')
 				{
 				$ItemWeapon = ItemWeapon::findOrFail($Item->item_table_id);
+				$dis_val = $ItemWeapon->toArray();
+				$dis_val['selected'] = false;
 				if ($Equipment->weapon == $ItemWeapon->id)
 					{
 					$dis_val['selected'] = true;
 					}
 				$weapons[] = $dis_val;
 				}
+
+			if ($Item->item_table == 'item_armors')
+				{
+				$ItemArmor = ItemArmor::findOrFail($Item->item_table_id);
+				$dis_val = $ItemArmor->toArray();
+				$dis_val['selected'] = false;
+
+				if ($ItemArmor->equipment_slot == 'head')
+					{
+					if ($Equipment->head == $ItemArmor->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$head_armors[] = $dis_val;
+					}
+
+				if ($ItemArmor->equipment_slot == 'chest')
+					{
+					if ($Equipment->chest == $ItemArmor->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$chest_armors[] = $dis_val;
+					}
+
+				if ($ItemArmor->equipment_slot == 'legs')
+					{
+					if ($Equipment->legs == $ItemArmor->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$leg_armors[] = $dis_val;
+					}
+				}
 			}
 
 		// die(print_r($weapons));
 
-		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons]);
+		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'heads' => $head_armors, 'chests' => $chest_armors, 'legs' => $leg_armors]);
 		}
 }

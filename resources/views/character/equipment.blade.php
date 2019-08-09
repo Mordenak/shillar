@@ -8,19 +8,28 @@
 		@foreach ($weapons as $weapon)
 		<option value="{{$weapon['id']}}" {{ $weapon['selected'] ? 'selected' : '' }} >{{$weapon['name']}}</option>
 		@endforeach
-	</select>
+	</select><br>
 	Head:
-	<select>
-		<option>-- Nothing --</option>
-	</select>
+	<select name="head">
+		<option value="0">-- Nothing --</option>
+		@foreach ($heads as $head)
+		<option value="{{$head['id']}}" {{ $head['selected'] ? 'selected' : '' }} >{{$head['name']}}</option>
+		@endforeach
+	</select><br>
 	Chest:
-	<select>
-		<option>-- Nothing --</option>
-	</select>
+	<select name="chest">
+		<option value="0">-- Nothing --</option>
+		@foreach ($chests as $chest)
+		<option value="{{$chest['id']}}" {{ $chest['selected'] ? 'selected' : '' }} >{{$chest['name']}}</option>
+		@endforeach
+	</select><br>
 	Legs:
-	<select>
-		<option>-- Nothing --</option>
-	</select>
+	<select name="legs">
+		<option value="0">-- Nothing --</option>
+		@foreach ($legs as $leg)
+		<option value="{{$leg['id']}}" {{ $leg['selected'] ? 'selected' : '' }} >{{$leg['name']}}</option>
+		@endforeach
+	</select><br>
 	<input type="hidden" name="character_id" value="{{$character->id}}">
 	<input type="hidden" name="action" value="equip">
 	{{csrf_field()}}

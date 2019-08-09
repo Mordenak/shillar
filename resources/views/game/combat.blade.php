@@ -4,7 +4,13 @@
 @endforeach
 </p>
 
-<div style="float:right;">
+<p style="display: inline;">
+@foreach ($loot_log as $log_entry)
+	{{$log_entry}}<br>
+@endforeach
+</p>
+
+<div style="float:left;">
 	Quick Stats here:<br>
 	Health: {{$character->health}} / {{$character->max_health}}<br>
 	<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>

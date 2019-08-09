@@ -45,11 +45,22 @@ class BasicEntries extends Seeder
 		// ]);
 
 		DB::table('item_weapons')->insert([
-			['name' => 'Rusty Sword', 'attack_text' => 'Your rusty sword scratches the enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon'],
+			['name' => 'Rusty Sword', 'attack_text' => 'Your rusty sword scratches the enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon', 'fatigue_use' => 1],
+			['name' => 'Steel Sword', 'attack_text' => 'Your steel sword slices the enemy', 'damage_low' => 20, 'damage_high' => 50, 'equipment_slot' => 'weapon', 'fatigue_use' => 2],
 		]);
+
+		DB::table('item_armors')->insert([
+			['name' => 'Rusty Helmet', 'equipment_slot' => 'head', 'armor' => 2],
+			['name' => 'Rusty Armor', 'equipment_slot' => 'chest', 'armor' => 2],
+			['name' => 'Rusty Legplates', 'equipment_slot' => 'legs', 'armor' => 2],
+		]);		
 
 		DB::table('items')->insert([
 			['name' => 'Rusty Sword', 'item_table' => 'item_weapons', 'item_table_id' => 1],
+			['name' => 'Steel Sword', 'item_table' => 'item_weapons', 'item_table_id' => 2],
+			['name' => 'Rusty Helmet', 'item_table' => 'item_armors', 'item_table_id' => 1],
+			['name' => 'Rusty Armor', 'item_table' => 'item_armors', 'item_table_id' => 2],
+			['name' => 'Rusty Legplates', 'item_table' => 'item_armors', 'item_table_id' => 3],
 		]);
 
 		DB::table('damage_types')->insert([
@@ -79,6 +90,7 @@ class BasicEntries extends Seeder
 
 		DB::table('npcs')->insert([
 			['name' => 'Basic Slime','is_hostile' => true],
+			['name' => 'Rubber Slime','is_hostile' => true],
 			['name' => 'Turkey', 'is_hostile' => true],
 			['name' => 'Bear', 'is_hostile' => true],
 			['name' => 'Bandit', 'is_hostile' => true],
@@ -86,31 +98,42 @@ class BasicEntries extends Seeder
 		]);
 
 		DB::table('npc_stats')->insert([
-			['npcs_id' => 1, 'level' => 1, 'health' => 5, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 3, 'attacks_per_round' => 1],
-			['npcs_id' => 2, 'level' => 3, 'health' => 25, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 6, 'attacks_per_round' => 1],
-			['npcs_id' => 3, 'level' => 5, 'health' => 100, 'damage_types_id' => 3, 'damage_low' => 6, 'damage_high' => 15, 'attacks_per_round' => 1],
-			['npcs_id' => 4, 'level' => 5, 'health' => 135, 'damage_types_id' => 3, 'damage_low' => 3, 'damage_high' => 12, 'attacks_per_round' => 2],
-			['npcs_id' => 5, 'level' => 5, 'health' => 350, 'damage_types_id' => 3, 'damage_low' => 4, 'damage_high' => 16, 'attacks_per_round' => 3]
+			['npcs_id' => 1, 'level' => 1, 'health' => 80, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 3, 'attacks_per_round' => 1],
+			['npcs_id' => 2, 'level' => 1, 'health' => 500, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 3, 'attacks_per_round' => 1],
+			['npcs_id' => 3, 'level' => 3, 'health' => 140, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 6, 'attacks_per_round' => 1],
+			['npcs_id' => 4, 'level' => 5, 'health' => 180, 'damage_types_id' => 3, 'damage_low' => 6, 'damage_high' => 15, 'attacks_per_round' => 1],
+			['npcs_id' => 5, 'level' => 5, 'health' => 170, 'damage_types_id' => 3, 'damage_low' => 3, 'damage_high' => 12, 'attacks_per_round' => 2],
+			['npcs_id' => 6, 'level' => 5, 'health' => 500, 'damage_types_id' => 3, 'damage_low' => 4, 'damage_high' => 16, 'attacks_per_round' => 3]
 		]);
 
 		DB::table('spawn_rules')->insert([
-			['zones_id' => null, 'rooms_id' => 1, 'npcs_id' => 1, 'chance' => 1.0],
-			['zones_id' => null, 'rooms_id' => 2, 'npcs_id' => 2, 'chance' => 1.0],
-			['zones_id' => null, 'rooms_id' => 3, 'npcs_id' => 3, 'chance' => 1.0],
-			['zones_id' => null, 'rooms_id' => 5, 'npcs_id' => 4, 'chance' => 1.0],
-			['zones_id' => null, 'rooms_id' => 6, 'npcs_id' => 5, 'chance' => 1.0],
+			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 1, 'chance' => 0.33],
+			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 2, 'chance' => 0.33],
+			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 3, 'chance' => 0.33],
+			['zones_id' => null, 'rooms_id' => 3, 'npcs_id' => 4, 'chance' => 0.5],
+			['zones_id' => null, 'rooms_id' => 5, 'npcs_id' => 5, 'chance' => 0.5],
+			['zones_id' => null, 'rooms_id' => 6, 'npcs_id' => 6, 'chance' => 0.5],
 		]);
 
 		DB::table('reward_tables')->insert([
-			['npcs_id' => 1, 'award_xp' => 88000, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.25],
-			['npcs_id' => 2, 'award_xp' => 2300, 'xp_variation' => 0.3, 'award_gold' => 3, 'gold_variation' => 0.25],
-			['npcs_id' => 3, 'award_xp' => 6700, 'xp_variation' => 0.2, 'award_gold' => 5, 'gold_variation' => 0.25],
-			['npcs_id' => 4, 'award_xp' => 15000, 'xp_variation' => 0.25, 'award_gold' => 8, 'gold_variation' => 0.5],
-			['npcs_id' => 5, 'award_xp' => 38000, 'xp_variation' => 0.4, 'award_gold' => 20, 'gold_variation' => 0.5],
+			['npcs_id' => 1, 'award_xp' => 50000, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.25],
+			['npcs_id' => 2, 'award_xp' => 75000, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.25],
+			['npcs_id' => 3, 'award_xp' => 100000, 'xp_variation' => 0.3, 'award_gold' => 3, 'gold_variation' => 0.25],
+			['npcs_id' => 4, 'award_xp' => 200000, 'xp_variation' => 0.2, 'award_gold' => 5, 'gold_variation' => 0.25],
+			['npcs_id' => 5, 'award_xp' => 400000, 'xp_variation' => 0.25, 'award_gold' => 8, 'gold_variation' => 0.5],
+			['npcs_id' => 6, 'award_xp' => 800000, 'xp_variation' => 0.4, 'award_gold' => 20, 'gold_variation' => 0.5],
 		]);
 
 		DB::table('loot_tables')->insert([
 			['npcs_id' => 1, 'items_id' => 1, 'chance' => 1.0],
+			['npcs_id' => 1, 'items_id' => 2, 'chance' => 1.0],
+			['npcs_id' => 1, 'items_id' => 3, 'chance' => 1.0],
+			['npcs_id' => 1, 'items_id' => 4, 'chance' => 1.0],
+			['npcs_id' => 1, 'items_id' => 5, 'chance' => 1.0],
+		]);
+
+		DB::table('user_settings')->insert([
+			['users_id' => 1, 'short_mode' => true],
 		]);
 	}
 }
