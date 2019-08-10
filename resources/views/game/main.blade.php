@@ -205,7 +205,11 @@
 			@if ($npc)
 				<div style="display: inline-block;">
 					<strong>{{ $npc->name }}</strong><br>
+					@if ($npc->img_src)
+					<img width="250" height="250" src="{{asset('img/'.$npc->img_src)}}">
+					@else
 					<img width="250" height="250" src="{{asset('img/wtf_slime.jpg')}}">
+					@endif
 					<form method="post" action="/combat" class="ajax">
 						{{csrf_field()}}
 						<input type="hidden" name="room_id" value="{{$room->id}}">
@@ -340,7 +344,8 @@
 			{
 			console.log($(e.target)[0].className.split(/\s+/));
 			console.log('we already fired');
-			// return true;
+			// $(e.target).removeClass('event-fired');
+			return true;
 			}
 
 		$(e.target).addClass('event-fired');

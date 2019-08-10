@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Character;
+use App\UserSetting;
 
 class HomeController extends Controller
 {
@@ -24,6 +25,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+    	$UserSetting = UserSetting::where(['users_id' => auth()->user()->id])->first();
+    	if (!$UserSetting)
+    		{
+    		$UserSetting = UserSetting::create(['users_id' => auth()->user()->id, 'short_mode' => true]);
+    		}
     	// $Characters = Character::find(['users_id' => auth()->user()->id]);
     	// Other ways?
     	$Characters = Character::where('users_id', auth()->user()->id);

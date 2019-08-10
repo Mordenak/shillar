@@ -99,7 +99,7 @@ class BasicEntries extends Seeder
 			['name' => 'Basic Slime', 'img_src' => 'wtf_slime.jpg', 'is_hostile' => true],
 			['name' => 'Rubber Slime', 'img_src' => 'wtf_slime.jpg', 'is_hostile' => true],
 			['name' => 'Turkey', 'img_src' => 'turkey.jpg', 'is_hostile' => true],
-			['name' => 'Bear', 'img_src' => 'slime.jpg', 'is_hostile' => true],
+			['name' => 'Bear', 'img_src' => 'bear.jpg', 'is_hostile' => true],
 			['name' => 'Bandit', 'img_src' => null, 'is_hostile' => true],
 			['name' => 'Bandit Boss', 'img_src' => null, 'is_hostile' => true],
 		]);
@@ -115,8 +115,8 @@ class BasicEntries extends Seeder
 
 		DB::table('spawn_rules')->insert([
 			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 1, 'chance' => 0.33],
-			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 2, 'chance' => 0.33],
-			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 3, 'chance' => 0.33],
+			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 2, 'chance' => 0.08],
+			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 3, 'chance' => 0.41],
 			['zones_id' => null, 'rooms_id' => 3, 'npcs_id' => 4, 'chance' => 0.5],
 			['zones_id' => null, 'rooms_id' => 5, 'npcs_id' => 5, 'chance' => 0.5],
 			['zones_id' => null, 'rooms_id' => 6, 'npcs_id' => 6, 'chance' => 0.5],
@@ -142,8 +142,8 @@ class BasicEntries extends Seeder
 			['npcs_id' => 6, 'items_id' => 7, 'chance' => 0.3],
 		]);
 
-		DB::table('user_settings')->insert([
-			['users_id' => 1, 'short_mode' => true],
-		]);
+		// DB::table('user_settings')->insert([
+		// 	['users_id' => 1, 'short_mode' => true],
+		// ]);
 	}
 }
