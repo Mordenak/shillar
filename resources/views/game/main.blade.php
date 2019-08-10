@@ -23,7 +23,7 @@
 	<style>
 	body
 		{
-		background-color: #333;
+		background-color: #111;
 		color: white;
 		}
 
@@ -101,7 +101,7 @@
 
 	.stat-bar::-webkit-progress-bar
 		{
-		background: #999;
+		background: transparent;
 		}
 
 	.stat-bar-health::-webkit-progress-value
@@ -154,6 +154,12 @@
 				<label for="equipment">Equipment</label>
 				<input type="submit" id="equipment" style="display: none;">
 			</form>
+			<form method="post" action="/items" class="ajax">
+				{{csrf_field()}}
+				<input type="hidden" name="character_id" value="{{$character->id}}">
+				<label for="items">Items</label>
+				<input type="submit" id="items" style="display: none;">
+			</form>
 			<form method="post" action="/game" class="ajax">
 				{{csrf_field()}}
 				<input type="hidden" name="character_id" value="{{$character->id}}">
@@ -194,6 +200,7 @@
 			</p>
 			@endif
 
+			<br>
 			<div style="position: relative;">
 			@if ($npc)
 				<div style="display: inline-block;">
@@ -362,7 +369,8 @@
 					'/rest'
 					];
 				var menu_inserts = [
-					'/equipment'
+					'/equipment',
+					'/items'
 					];
 				// location.reload();
 				// console.log(this);

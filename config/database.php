@@ -37,14 +37,14 @@ return [
 
 	'connections' => [
 
-		// 'heroku' => [
-		// 	'driver' => 'pgsql',
-		// 	'username' => $heroku_opts['user'],
-		// 	'password' => $heroku_opts['pass'],
-		// 	'host' => $heroku_opts['host'],
-		// 	'port' => $heroku_opts['port'],
-		// 	'database' => ltrim($heroku_opts['path'], '/')
-		// ],
+		'heroku' => [
+			'driver' => 'pgsql',
+			'username' => $heroku_opts['user'],
+			'password' => $heroku_opts['pass'],
+			'host' => $heroku_opts['host'],
+			'port' => $heroku_opts['port'],
+			'database' => ltrim($heroku_opts['path'], '/')
+		],
 
 		'sqlite' => [
 			'driver' => 'sqlite',

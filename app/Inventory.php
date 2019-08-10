@@ -21,6 +21,30 @@ class Inventory extends Model
 		return $this->hasMany('App\InventoryItems');
 		}
 
+	public function removeItem($item_id)
+		{
+		$has_item = $this->items()->where(['items_id' => $item_id])->first();
+
+		if ($has_item)
+			{
+			$has_item->quantity = $has_item->quantity - 1;
+			// todo: if 0?
+			if ($has_item->quantity <= 0)
+				{
+				$has_item->delete();
+				return true;
+				}
+			$has_item->save();
+			}
+		else
+			{
+			// error, we don't have the item?
+			return false;
+			}
+
+		return true;
+		}
+
 	public function addItem($item_id)
 		{
 		// Add an items_to_inventories record:

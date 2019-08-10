@@ -39,4 +39,6 @@ Route::post('/rest', 'GameController@rest');
 
 Route::post('/equipment', 'GameController@equipment');
 
+Route::post('/items', 'GameController@items');
+
 // Route::post('/equip', 'GameController@equip_item');

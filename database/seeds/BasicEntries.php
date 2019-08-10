@@ -53,7 +53,12 @@ class BasicEntries extends Seeder
 			['name' => 'Rusty Helmet', 'equipment_slot' => 'head', 'armor' => 2],
 			['name' => 'Rusty Armor', 'equipment_slot' => 'chest', 'armor' => 2],
 			['name' => 'Rusty Legplates', 'equipment_slot' => 'legs', 'armor' => 2],
-		]);		
+		]);
+
+		DB::table('item_consumables')->insert([
+			['name' => 'Slime Drop', 'effect' => 'healing', 'potency' => 15],
+			['name' => 'Whey Bread', 'effect' => 'healing', 'potency' => 45],
+		]);
 
 		DB::table('items')->insert([
 			['name' => 'Rusty Sword', 'item_table' => 'item_weapons', 'item_table_id' => 1],
@@ -61,6 +66,8 @@ class BasicEntries extends Seeder
 			['name' => 'Rusty Helmet', 'item_table' => 'item_armors', 'item_table_id' => 1],
 			['name' => 'Rusty Armor', 'item_table' => 'item_armors', 'item_table_id' => 2],
 			['name' => 'Rusty Legplates', 'item_table' => 'item_armors', 'item_table_id' => 3],
+			['name' => 'Slime Drop', 'item_table' => 'item_consumables', 'item_table_id' => 1],
+			['name' => 'Whey Bread', 'item_table' => 'item_consumables', 'item_table_id' => 2],
 		]);
 
 		DB::table('damage_types')->insert([
@@ -125,11 +132,14 @@ class BasicEntries extends Seeder
 		]);
 
 		DB::table('loot_tables')->insert([
-			['npcs_id' => 1, 'items_id' => 1, 'chance' => 1.0],
-			['npcs_id' => 1, 'items_id' => 2, 'chance' => 1.0],
-			['npcs_id' => 1, 'items_id' => 3, 'chance' => 1.0],
-			['npcs_id' => 1, 'items_id' => 4, 'chance' => 1.0],
-			['npcs_id' => 1, 'items_id' => 5, 'chance' => 1.0],
+			['npcs_id' => 1, 'items_id' => 1, 'chance' => 0.2],
+			['npcs_id' => 5, 'items_id' => 2, 'chance' => 0.08],
+			['npcs_id' => 5, 'items_id' => 3, 'chance' => 0.08],
+			['npcs_id' => 5, 'items_id' => 4, 'chance' => 0.08],
+			['npcs_id' => 6, 'items_id' => 5, 'chance' => 0.02],
+			['npcs_id' => 1, 'items_id' => 6, 'chance' => 0.5],
+			['npcs_id' => 5, 'items_id' => 7, 'chance' => 0.3],
+			['npcs_id' => 6, 'items_id' => 7, 'chance' => 0.3],
 		]);
 
 		DB::table('user_settings')->insert([

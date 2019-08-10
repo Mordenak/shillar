@@ -161,6 +161,8 @@ class SetupTables extends Migration
 		Schema::create('item_consumables', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->string('effect');
+			$table->integer('potency');
 			$table->timestamps();
 		});
 
@@ -351,6 +353,22 @@ class SetupTables extends Migration
 			$table->integer('users_id');
 			$table->foreign('users_id')->references('id')->on('users');
 			$table->boolean('short_mode')->default(false);
+			$table->timestamps();
+		});
+
+		Schema::create('shops', function (Blueprint $table) {
+			$table->bigIncrements();
+			$table->integer('rooms_id');
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->timestamps();
+		});
+
+		Schema::create('shop_items', function (Blueprint $table) {
+			$table->bigIncrements();
+			$table->integer('shops_id');
+			$table->foreign('shops_id')->references('id')->on('shops');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
 			$table->timestamps();
 		});
 

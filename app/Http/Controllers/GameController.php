@@ -18,6 +18,7 @@ use App\Item;
 use App\ItemWeapon;
 use App\ItemArmor;
 use App\UserSetting;
+use App\ItemConsumable;
 
 class GameController extends Controller
 {
@@ -170,6 +171,7 @@ class GameController extends Controller
    		$flat_npc = $Npc->toArray();
    		$Equipment = Equipment::where(['characters_id' => $Character->id])->first();
    		// $total_fatigue = 0;
+   		$combat_log['begin'] = "You attacked $Npc->name";
 		while ($flat_npc['health'] > 0)
 			{
 			if ($CharacterStat->health <= 0)
@@ -206,30 +208,29 @@ class GameController extends Controller
 					continue;
 					}
 				
+				$attack_text = 'Your fists graze';
+				$low_damage = 1 + $CharacterStat->constitution;
+				$high_damage = 10 + $CharacterStat->strength;
+				if ($low_damage > $high_damage)
+					{
+					$low_damage = $high_damage;
+					}
 				// $fatigue_use = 1;
 				if ($Equipment->weapon)
 					{
 					$ItemWeapon = ItemWeapon::findOrFail($Equipment->weapon);
+					$attack_text = $ItemWeapon->attack_text;
+					$fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
 					$low_damage = $CharacterStat->constitution + $ItemWeapon->damage_low;
 					$high_damage = $CharacterStat->strength + $ItemWeapon->damage_high;
 					if ($low_damage > $high_damage)
 						{
 						$low_damage = $high_damage;
 						}
-					$damage = rand($low_damage, $high_damage);
-					$attack_text = $ItemWeapon->attack_text;
-					$fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
 					}
-				else
-					{
-					$pre_damage = $CharacterStat->strength * 0.4 + $CharacterStat->constitution * 0.2;
-					$fists_low = 1;
-					$fists_high = 10;
-					// go go:
-					// $damage = 6;
-					$damage = (int)$pre_damage + rand($fists_low, $fists_high);
-					$attack_text = "Your fists graze";
-					}
+				$combat_log['attack_text'] = $attack_text;
+				$damage = rand($low_damage, $high_damage);
+				
 				// $total_fatigue = $total_fatigue + $fatigue_use;
 				if (($CharacterStat->fatigue - $fatigue_use) < 0)
 					{
@@ -321,18 +322,25 @@ class GameController extends Controller
 			// $Wallet = Wallet::where(['wallets.characters_id' => $request->character_id])->first();
 			// die(print_r($Wallet));
 			$loot_log[] = "You received $actual_gold gold.";
+			$loot_log[] = '';
 
 			$LootTables = LootTable::where(['npcs_id' => $request->npc_id])->get();
 
 			// This should be an item id?
 			// die(print_r($Character->inventory()->first()));
 			// die('..:'.$LootTable->items_id);
+			// die(print_r('::'.$LootTables->count()));
 			if (count($LootTables) > 0)
 				{
 				foreach ($LootTables as $LootTable)
 					{
-					$Character->inventory()->first()->addItem($LootTable->items_id);
-					$loot_log[] = "You received $LootTable->items_id item?";
+					$prob = rand()/getrandmax();
+					if ($prob <= $LootTable->chance)
+						{
+						// die(print_r($LootTable->items()->first()));
+						$Character->inventory()->first()->addItem($LootTable->items_id);
+						$loot_log[] = "You received ".$LootTable->item()->first()->name;
+						}
 					}
 				}
 			// $LootTable;
@@ -363,6 +371,8 @@ class GameController extends Controller
 			// shorten:
 			// die(print_r(count($combat_log['attacks'])));
 			// sum up the attacks:
+			$formatted_log[] = $combat_log['begin'];
+			$formatted_log[] = $combat_log['attack_text'];
 			$formatted_log[] = "You made $total_attacks attacks and missed $total_miss times.";
 			$formatted_log[] = "You did ".array_sum($combat_log['attacks'])." points of damage.";
 
@@ -512,14 +522,14 @@ class GameController extends Controller
 			$healing = true;
 			$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
 
-			$healing_amount = ($CharacterStat->constitution * 0.3 + $CharacterStat->strength * 0.1);
+			$healing_amount = ($CharacterStat->constitution * 0.4 + $CharacterStat->strength * 0.2);
 			$CharacterStat->health = $CharacterStat->health + (int)$healing_amount;
 			if ($CharacterStat->health > $CharacterStat->max_health)
 				{
 				$CharacterStat->health = $CharacterStat->max_health;
 				}
 
-			$fatigue_amount = ($CharacterStat->constitution * 0.2 + $CharacterStat->strength * 0.1 + $CharacterStat->dexterity * 0.1);
+			$fatigue_amount = ($CharacterStat->constitution * 0.4 + $CharacterStat->strength * 0.2 + $CharacterStat->dexterity * 0.2);
 			$CharacterStat->fatigue = $CharacterStat->fatigue + (int)$fatigue_amount;
 			if ($CharacterStat->fatigue > $CharacterStat->max_fatigue)
 				{
@@ -666,5 +676,77 @@ class GameController extends Controller
 		// die(print_r($weapons));
 
 		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'heads' => $head_armors, 'chests' => $chest_armors, 'legs' => $leg_armors]);
+		}
+
+	public function items(Request $request)
+		{
+		$Character = Character::where(['characters.id' => $request->character_id])
+			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+			->select('character_stats.*', 'characters.*')
+			->first();
+
+		// Find current equipment:
+		// $InventoryItems = InventoryItem::where(['characters_id' => $request->character_id])->first();
+
+		if ($request->action == 'consume')
+			{
+			$Item = Item::findOrFail($request->item);
+			if ($Item->item_table != 'item_consumables')
+				{
+				// error?
+				return true;
+				}
+			$ItemConsumable = ItemConsumable::findOrFail($Item->item_table_id);
+			if ($ItemConsumable->effect == 'healing')
+				{
+				$CharacterStat = CharacterStat::where(['characters_id' => $Character->id])->first();
+				$CharacterStat->health = $CharacterStat->health + $ItemConsumable->potency;
+				if ($CharacterStat->health > $CharacterStat->max_health)
+					{
+					$CharacterStat->health = $CharacterStat->max_health;
+					}
+				$CharacterStat->fatigue = $CharacterStat->fatigue + $ItemConsumable->potency;
+				if ($CharacterStat->fatigue > $CharacterStat->max_fatigue)
+					{
+					$CharacterStat->fatigue = $CharacterStat->max_fatigue;
+					}
+				$CharacterStat->save();
+				}
+			$Character->inventory()->first()->removeItem($request->item);
+			// $request->item;
+			// $res = $Character->inventory()->where('items_id' => $request->item);
+			}
+
+		$allitems = $Character->inventory()->first()->items()->get();
+
+		$items = [];
+
+		// die(print_r($allitems));
+
+		foreach ($allitems as $inv_item)
+			{
+			// die($inv_item);s
+			$Item = Item::findOrFail($inv_item->items_id);
+
+			if ($Item->item_table == 'item_consumables')
+				{
+				$arr = $Item->toArray();
+				$arr['quantity'] = $inv_item->quantity;
+				$arr['selected'] = false;
+				if (isset($request->item) && $Item->id == $request->item)
+					{
+					$arr['selected'] = true;
+					}
+				// $items[] = $Item;
+				$items[] = $arr;
+				}
+			}
+
+		$Character = Character::where(['characters.id' => $request->character_id])
+			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+			->select('character_stats.*', 'characters.*')
+			->first();
+
+		return view('character/items', ['character' => $Character, 'items' => $items]);
 		}
 }
