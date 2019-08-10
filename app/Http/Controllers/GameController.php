@@ -220,7 +220,8 @@ class GameController extends Controller
 					{
 					$ItemWeapon = ItemWeapon::findOrFail($Equipment->weapon);
 					$attack_text = $ItemWeapon->attack_text;
-					$fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
+					// $fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
+					$fatigue_use = 2;
 					$low_damage = $CharacterStat->constitution + $ItemWeapon->damage_low;
 					$high_damage = $CharacterStat->strength + $ItemWeapon->damage_high;
 					if ($low_damage > $high_damage)
@@ -417,52 +418,21 @@ class GameController extends Controller
 			->select('character_stats.*', 'characters.*')
 			->first();
 
-		// $StatCost = StatCost::first();
-		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
+		$selected_multi = 1;
+		if ($request->train_multi)
+			{
+			$selected_multi = $request->train_multi;
+			}
+		$costs = $this->calculate_training_cost($request);
 
-		$costs = [
-			'strength' => $this->training_cost($Character->strength, $StatCost->strength_cost),
-			'dexterity' => $this->training_cost($Character->dexterity, $StatCost->dexterity_cost),
-			'constitution' => $this->training_cost($Character->constitution, $StatCost->constitution_cost),
-			'wisdom' => $this->training_cost($Character->wisdom, $StatCost->wisdom_cost),
-			'intelligence' => $this->training_cost($Character->intelligence, $StatCost->intelligence_cost),
-			'charisma' => $this->training_cost($Character->charisma, $StatCost->charisma_cost)
-			];
-
-		return view('game/train', ['character' => $Character, 'costs' => $costs]);
-		}
-
-	public function training_cost($current_stat, $cost_adjustment)
-		{
-		$cost = 5.0 * $cost_adjustment;
-		$result  = $current_stat * ($current_stat * $cost) - $current_stat;
-		return (int)$result;
-		}
-
-	public function train_stat(Request $request)
-		{
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
-
-
-
-		// $StatCost = StatCost::first();
-		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
-
-		$costs = [
-			'strength' => $this->training_cost($Character->strength, $StatCost->strength_cost),
-			'dexterity' => $this->training_cost($Character->dexterity, $StatCost->dexterity_cost),
-			'constitution' => $this->training_cost($Character->constitution, $StatCost->constitution_cost),
-			'wisdom' => $this->training_cost($Character->wisdom, $StatCost->wisdom_cost),
-			'intelligence' => $this->training_cost($Character->intelligence, $StatCost->intelligence_cost),
-			'charisma' => $this->training_cost($Character->charisma, $StatCost->charisma_cost)
-			];
-
-		// die(print_r($request->submit));
 		$stat = $request->submit;
 
+		// die(print_r($request->all()));
+		if ($stat === null)
+			{
+			return view('game/train', ['character' => $Character, 'costs' => $costs, 'multi' => $selected_multi]);
+			}
+		
 		if ($Character->xp < $costs[$stat])
 			{
 			//  return an error
@@ -477,7 +447,8 @@ class GameController extends Controller
 			// unset($new_stats['updated_at']);
 			// die(print_r($new_stats));
 			// $new_stat = $Character->
-			$new_stats[$stat]++;
+			// $new_stats[$stat]++;
+			$new_stats[$stat] = $new_stats[$stat] + $request->train_multi;
 			$new_stats['xp'] = $new_stats['xp'] - $costs[$stat];
 
 			// factor new health/mana/fatigue:
@@ -500,6 +471,91 @@ class GameController extends Controller
 			->select('character_stats.*', 'characters.*')
 			->first();
 
+		$costs = $this->calculate_training_cost($request);
+
+		return view('game/train', ['character' => $Character, 'costs' => $costs, 'multi' => $selected_multi]);
+		}
+
+	public function training_cost($current_stat, $cost_adjustment)
+		{
+		$cost = 5.0 * $cost_adjustment;
+		$result  = $current_stat * ($current_stat * $cost) - $current_stat;
+		return (int)$result;
+		}
+
+	public function calculate_training_cost(Request $request)
+		{
+		$Character = Character::where(['characters.id' => $request->character_id])
+			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+			->select('character_stats.*', 'characters.*')
+			->first();
+
+		// $StatCost = StatCost::first();
+		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
+
+		// $request->train_multi;
+		$base_stats = [
+			'strength' => $Character->strength,
+			'dexterity' => $Character->dexterity,
+			'constitution' => $Character->constitution,
+			'wisdom' => $Character->wisdom,
+			'intelligence' => $Character->intelligence,
+			'charisma' => $Character->charisma,
+			];
+
+		$costs = [
+			'strength' => 0,
+			'dexterity' => 0,
+			'constitution' => 0,
+			'wisdom' => 0,
+			'intelligence' => 0,
+			'charisma' => 0,
+			];
+
+		if ($request->train_multi)
+			{
+			$train_multi = $request->train_multi;
+			}
+		else
+			{
+			$train_multi = 1;
+			}
+
+		while ($train_multi > 0)
+			{
+			// get the training costs:
+			$costs['strength'] = $costs['strength'] + $this->training_cost($base_stats['strength'], $StatCost->strength_cost);
+			$costs['dexterity'] = $costs['dexterity'] + $this->training_cost($base_stats['dexterity'], $StatCost->dexterity_cost);
+			$costs['constitution'] = $costs['constitution'] + $this->training_cost($base_stats['constitution'], $StatCost->constitution_cost);
+			$costs['wisdom'] = $costs['wisdom'] + $this->training_cost($base_stats['wisdom'], $StatCost->wisdom_cost);
+			$costs['intelligence'] = $costs['intelligence'] + $this->training_cost($base_stats['intelligence'], $StatCost->intelligence_cost);
+			$costs['charisma'] = $costs['charisma'] + $this->training_cost($base_stats['charisma'], $StatCost->charisma_cost);
+			// cleanup:
+			$train_multi--;
+			$base_stats['strength']++;
+			$base_stats['dexterity']++;
+			$base_stats['constitution']++;
+			$base_stats['wisdom']++;
+			$base_stats['intelligence']++;
+			$base_stats['charisma']++;
+			}
+
+		return $costs;
+		}
+
+	public function train_stat(Request $request)
+		{
+		$Character = Character::where(['characters.id' => $request->character_id])
+			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+			->select('character_stats.*', 'characters.*')
+			->first();
+
+
+
+		// $StatCost = StatCost::first();
+		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
+
+		/*
 		$costs = [
 			'strength' => $this->training_cost($Character->strength, $StatCost->strength_cost),
 			'dexterity' => $this->training_cost($Character->dexterity, $StatCost->dexterity_cost),
@@ -508,6 +564,65 @@ class GameController extends Controller
 			'intelligence' => $this->training_cost($Character->intelligence, $StatCost->intelligence_cost),
 			'charisma' => $this->training_cost($Character->charisma, $StatCost->charisma_cost)
 			];
+			*/
+		$costs = $this->calculate_training_cost($request);
+
+		// die(print_r($request->submit));
+		$stat = $request->submit;
+
+		if ($stat != 'on')
+			{	
+			if ($Character->xp < $costs[$stat])
+				{
+				//  return an error
+				// return false;
+				}
+			else
+				{
+				// we can train
+				$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
+				$new_stats = $CharacterStat->toArray();
+
+				// unset($new_stats['updated_at']);
+				// die(print_r($new_stats));
+				// $new_stat = $Character->
+				// $new_stats[$stat]++;
+				$new_stats[$stat] = $new_stats[$stat] + $request->train_multi;
+				$new_stats['xp'] = $new_stats['xp'] - $costs[$stat];
+
+				// factor new health/mana/fatigue:
+				// life = str, dex, con
+				// mana = wis, int, cha
+				// fat = dex, con, wis
+				$new_stats['max_health'] = $new_stats['strength'] + $new_stats['dexterity'] + $new_stats['constitution'];
+				$new_stats['max_mana'] = $new_stats['wisdom'] + $new_stats['intelligence'] + $new_stats['charisma'];
+				$new_stats['max_fatigue'] = $new_stats['dexterity'] + $new_stats['constitution'] + $new_stats['wisdom'];
+
+				$new_stats['score'] = $new_stats['strength'] + $new_stats['dexterity'] + $new_stats['constitution'] + $new_stats['wisdom'] + $new_stats['intelligence'] + $new_stats['charisma'];
+
+				$CharacterStat->fill($new_stats);
+				$CharacterStat->save();
+				}
+			}
+
+		// Refresh values?
+		$Character = Character::where(['characters.id' => $request->character_id])
+			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+			->select('character_stats.*', 'characters.*')
+			->first();
+
+		$costs = $this->calculate_training_cost($request);
+
+		/*
+		$costs = [
+			'strength' => $this->training_cost($Character->strength, $StatCost->strength_cost),
+			'dexterity' => $this->training_cost($Character->dexterity, $StatCost->dexterity_cost),
+			'constitution' => $this->training_cost($Character->constitution, $StatCost->constitution_cost),
+			'wisdom' => $this->training_cost($Character->wisdom, $StatCost->wisdom_cost),
+			'intelligence' => $this->training_cost($Character->intelligence, $StatCost->intelligence_cost),
+			'charisma' => $this->training_cost($Character->charisma, $StatCost->charisma_cost)
+			];
+			*/
 
 		return view('game/train', ['character' => $Character, 'costs' => $costs]);
 		}
@@ -626,9 +741,9 @@ class GameController extends Controller
 			$Item = Item::findOrFail($inv_item->items_id);
 			
 			// die($Item);
-			if ($Item->item_table == 'item_weapons')
+			if ($Item->item_types_id == 2)
 				{
-				$ItemWeapon = ItemWeapon::findOrFail($Item->item_table_id);
+				$ItemWeapon = ItemWeapon::where(['items_id' => $Item->id])->first();
 				$dis_val = $ItemWeapon->toArray();
 				$dis_val['selected'] = false;
 				if ($Equipment->weapon == $ItemWeapon->id)
@@ -638,9 +753,9 @@ class GameController extends Controller
 				$weapons[] = $dis_val;
 				}
 
-			if ($Item->item_table == 'item_armors')
+			if ($Item->item_types_id == 3)
 				{
-				$ItemArmor = ItemArmor::findOrFail($Item->item_table_id);
+				$ItemArmor = ItemArmor::where(['items_id' => $Item->id])->first();
 				$dis_val = $ItemArmor->toArray();
 				$dis_val['selected'] = false;
 
@@ -691,12 +806,12 @@ class GameController extends Controller
 		if ($request->action == 'consume')
 			{
 			$Item = Item::findOrFail($request->item);
-			if ($Item->item_table != 'item_consumables')
+			if ($Item->item_types_id != 1)
 				{
 				// error?
 				return true;
 				}
-			$ItemConsumable = ItemConsumable::findOrFail($Item->item_table_id);
+			$ItemConsumable = ItemConsumable::where(['items_id' => $Item->id])->first();
 			if ($ItemConsumable->effect == 'healing')
 				{
 				$CharacterStat = CharacterStat::where(['characters_id' => $Character->id])->first();
@@ -728,7 +843,7 @@ class GameController extends Controller
 			// die($inv_item);s
 			$Item = Item::findOrFail($inv_item->items_id);
 
-			if ($Item->item_table == 'item_consumables')
+			if ($Item->item_types_id == 1)
 				{
 				$arr = $Item->toArray();
 				$arr['quantity'] = $inv_item->quantity;

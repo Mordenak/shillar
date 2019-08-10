@@ -36,38 +36,38 @@ class BasicEntries extends Seeder
 		// 	['name' => 'weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// ]);
 
-		// DB::table('item_types')->insert([
-		// 	['name' => 'Consumable', 'table_name' => 'item_consumables', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'Weapon', 'table_name' => 'item_weapons', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'Armor', 'table_name' => 'item_armors', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'Accessories', 'table_name' => 'item_accessories', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'Other', 'table_name' => 'item_others', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// ]);
-
-		DB::table('item_weapons')->insert([
-			['name' => 'Rusty Sword', 'attack_text' => 'Your rusty sword scratches the enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon', 'fatigue_use' => 1],
-			['name' => 'Steel Sword', 'attack_text' => 'Your steel sword slices the enemy', 'damage_low' => 20, 'damage_high' => 50, 'equipment_slot' => 'weapon', 'fatigue_use' => 2],
-		]);
-
-		DB::table('item_armors')->insert([
-			['name' => 'Rusty Helmet', 'equipment_slot' => 'head', 'armor' => 2],
-			['name' => 'Rusty Armor', 'equipment_slot' => 'chest', 'armor' => 2],
-			['name' => 'Rusty Legplates', 'equipment_slot' => 'legs', 'armor' => 2],
-		]);
-
-		DB::table('item_consumables')->insert([
-			['name' => 'Slime Drop', 'effect' => 'healing', 'potency' => 15],
-			['name' => 'Whey Bread', 'effect' => 'healing', 'potency' => 45],
+		DB::table('item_types')->insert([
+			['name' => 'Consumable', 'table_name' => 'item_consumables', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Weapon', 'table_name' => 'item_weapons', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Armor', 'table_name' => 'item_armors', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Accessories', 'table_name' => 'item_accessories', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Other', 'table_name' => 'item_others', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('items')->insert([
-			['name' => 'Rusty Sword', 'item_table' => 'item_weapons', 'item_table_id' => 1],
-			['name' => 'Steel Sword', 'item_table' => 'item_weapons', 'item_table_id' => 2],
-			['name' => 'Rusty Helmet', 'item_table' => 'item_armors', 'item_table_id' => 1],
-			['name' => 'Rusty Armor', 'item_table' => 'item_armors', 'item_table_id' => 2],
-			['name' => 'Rusty Legplates', 'item_table' => 'item_armors', 'item_table_id' => 3],
-			['name' => 'Slime Drop', 'item_table' => 'item_consumables', 'item_table_id' => 1],
-			['name' => 'Whey Bread', 'item_table' => 'item_consumables', 'item_table_id' => 2],
+			['name' => 'Rusty Sword', 'item_types_id' => 2],
+			['name' => 'Steel Sword', 'item_types_id' => 2],
+			['name' => 'Rusty Helmet', 'item_types_id' => 3],
+			['name' => 'Rusty Armor', 'item_types_id' => 3],
+			['name' => 'Rusty Legplates', 'item_types_id' => 3],
+			['name' => 'Slime Drop', 'item_types_id' => 1],
+			['name' => 'Whey Bread', 'item_types_id' => 1],
+		]);
+
+		DB::table('item_weapons')->insert([
+			['items_id' => 1, 'name' => 'Rusty Sword', 'attack_text' => 'Your rusty sword scratches the enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon'],
+			['items_id' => 2, 'name' => 'Steel Sword', 'attack_text' => 'Your steel sword slices the enemy', 'damage_low' => 20, 'damage_high' => 50, 'equipment_slot' => 'weapon'],
+		]);
+
+		DB::table('item_armors')->insert([
+			['items_id' => 3, 'name' => 'Rusty Helmet', 'equipment_slot' => 'head', 'armor' => 2],
+			['items_id' => 4, 'name' => 'Rusty Armor', 'equipment_slot' => 'chest', 'armor' => 2],
+			['items_id' => 5, 'name' => 'Rusty Legplates', 'equipment_slot' => 'legs', 'armor' => 2],
+		]);
+
+		DB::table('item_consumables')->insert([
+			['items_id' => 6, 'name' => 'Slime Drop', 'effect' => 'healing', 'potency' => 15],
+			['items_id' => 7, 'name' => 'Whey Bread', 'effect' => 'healing', 'potency' => 45],
 		]);
 
 		DB::table('damage_types')->insert([
@@ -96,12 +96,12 @@ class BasicEntries extends Seeder
 		]);
 
 		DB::table('npcs')->insert([
-			['name' => 'Basic Slime','is_hostile' => true],
-			['name' => 'Rubber Slime','is_hostile' => true],
-			['name' => 'Turkey', 'is_hostile' => true],
-			['name' => 'Bear', 'is_hostile' => true],
-			['name' => 'Bandit', 'is_hostile' => true],
-			['name' => 'Bandit Boss', 'is_hostile' => true],
+			['name' => 'Basic Slime', 'img_src' => 'wtf_slime.jpg', 'is_hostile' => true],
+			['name' => 'Rubber Slime', 'img_src' => 'wtf_slime.jpg', 'is_hostile' => true],
+			['name' => 'Turkey', 'img_src' => 'turkey.jpg', 'is_hostile' => true],
+			['name' => 'Bear', 'img_src' => 'slime.jpg', 'is_hostile' => true],
+			['name' => 'Bandit', 'img_src' => null, 'is_hostile' => true],
+			['name' => 'Bandit Boss', 'img_src' => null, 'is_hostile' => true],
 		]);
 
 		DB::table('npc_stats')->insert([

@@ -39,10 +39,10 @@ return [
 
 		'heroku' => [
 			'driver' => 'pgsql',
-			'username' => $heroku_opts['user'],
-			'password' => $heroku_opts['pass'],
-			'host' => $heroku_opts['host'],
-			'port' => $heroku_opts['port'],
+			'username' => isset($heroku_opts['user']) ? $heroku_opts['user'] : '',
+			'password' => isset($heroku_opts['pass']) ? $heroku_opts['pass'] : '',
+			'host' => isset($heroku_opts['host']) ? $heroku_opts['host'] : '',
+			'port' => isset($heroku_opts['port']) ? $heroku_opts['port'] : '',
 			'database' => ltrim($heroku_opts['path'], '/')
 		],
 

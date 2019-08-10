@@ -334,17 +334,23 @@
 
 	<script>
 	$('body').on('submit', 'form.ajax', function(e, i) {
+		console.log('main ajax submit fire');
 		e.preventDefault();
 		if ($(e.target).hasClass('event-fired'))
 			{
-			return true;
+			console.log($(e.target)[0].className.split(/\s+/));
+			console.log('we already fired');
+			// return true;
 			}
 
 		$(e.target).addClass('event-fired');
 
 		var formData = new FormData(e.target);
 		// console.log($(document.activeElement));
-		formData.append('submit', $(document.activeElement).val());
+		if ($(document.activeElement).hasClass('submit-val'))
+			{
+			formData.append('submit', $(document.activeElement).val());
+			}
 
 		// console.log('ajaxing to ' + $(e.target).attr('action'));
 
@@ -388,7 +394,7 @@
 				$(replace).html(resp);
 				}
 			});
-		console.log('done?');
+		// console.log('done?');
 		});
 	</script>
 
