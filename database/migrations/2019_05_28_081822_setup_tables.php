@@ -357,14 +357,14 @@ class SetupTables extends Migration
 		});
 
 		Schema::create('shops', function (Blueprint $table) {
-			$table->bigIncrements();
+			$table->bigIncrements('id');
 			$table->integer('rooms_id');
 			$table->foreign('rooms_id')->references('id')->on('rooms');
 			$table->timestamps();
 		});
 
 		Schema::create('shop_items', function (Blueprint $table) {
-			$table->bigIncrements();
+			$table->bigIncrements('id');
 			$table->integer('shops_id');
 			$table->foreign('shops_id')->references('id')->on('shops');
 			$table->integer('items_id');
