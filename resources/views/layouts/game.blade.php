@@ -190,17 +190,7 @@
 						replace = '.menu';
 						}
 					// console.log('replace:' + replace);
-					if (this['url'] == '/game' || this['url'] == '/move' || this['url'] == '/combat')
-						{
-						console.log('what');
-						$('.menu').html(resp.menu);
-						$('.main').html(resp.main);
-						$('.footer').html(resp.footer);
-						}
-					else
-						{
-						$(replace).html(resp);
-						}
+					$(replace).html(resp);
 					}
 				});
 			// console.log('done?');

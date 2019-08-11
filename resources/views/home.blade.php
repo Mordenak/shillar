@@ -30,6 +30,10 @@
 					@endforeach
 					</form>
 
+						@if (isset($admin_level) && $admin_level == 1)
+						<a href="/admin">Admin</a>
+						@endif
+
 				</div>
 			</div>
 		</div>

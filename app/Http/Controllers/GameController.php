@@ -85,71 +85,25 @@ class GameController extends Controller
 		// $CharacterStats = CharacterStats::where(['characters_id' => $Character->id])
 		// 	->join('character_stats', 'characters.id', '=', 'character_stats.character_id');
 
-		// $character = array_merge($Character->pluck(), $CharacterStats->pluck());
+		// $character = array_merge($Character->pluck(), $CharacterStats->pluck());;
+		if ($request->ajax())
+			{
+			$view = \View::make('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack]);
+			$sections = $view->renderSections();
+			return $sections;
+			}
 
 		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack]);
 		}
 
 	public function move(Request $request)
 		{
-		// Move the character:
-		// return $request->room_id;
-		// return $request->character_id;
-		// return "test";
-
 		$Character = Character::findOrFail($request->character_id);
 
-		// $Character->set(['last_rooms_id' => $request->room_id]);
 		$Character->last_rooms_id = $request->room_id;
 		$Character->save();
 
 		return $this->index($request);
-
-		// return true;
-		/**
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
-
-		$Room = Room::findOrFail($Character->last_rooms_id);
-
-		// Find spawn rules for room:
-		$SpawnRule = SpawnRule::where(['rooms_id' => $Room->id])->first();
-
-		$Npc = null;
-		if ($SpawnRule)
-			{
-			$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-			$prob = rand(0, 1.0);
-			if ($prob <= $SpawnRule->chance)
-				{
-				// then we spawn:
-				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-				// break;
-				}
-			}
-		else
-			{
-			// no room specific spawns:
-			$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id]);
-			if (count($SpawnRules) > 0)
-				{
-				foreach ($SpawnRules as $SpawnRule)
-					{
-					$prob = rand(0, 1.0);
-					if ($prob <= $SpawnRule->chance)
-						{
-						// then we spawn:
-						$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-						break;
-						}
-					}
-				}
-			}
-
-		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc]);
-		**/
 		}
 
 	public function combat(Request $request)
@@ -408,6 +362,14 @@ class GameController extends Controller
 
 		// return view('game/combat', ['combat_log' => $combat_log, 'loot_log' => $loot_log, 'character' => $Character, 'npc' => $Npc, 'return_room' => $request->room_id]);
 		$Room = Room::findOrFail($request->room_id);
+		// return $this->index($request);
+		if ($request->ajax())
+			{
+			$view = \View::make('game/main', ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'loot_log' => $loot_log]);
+			$sections = $view->renderSections();
+			return $sections;
+			}
+
 		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'loot_log' => $loot_log]);
 		}
 

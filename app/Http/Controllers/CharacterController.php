@@ -15,7 +15,7 @@ class CharacterController extends Controller
 {
 	public function show($id)
 		{
-		return view('character.profile', ['character' => Character::findOrFail($id)]);	
+		return view('character.profile', ['character' => Character::findOrFail($id)]);
 		}
 
 	public function create()
