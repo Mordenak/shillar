@@ -105,12 +105,12 @@ class BasicEntries extends Seeder
 		]);
 
 		DB::table('npc_stats')->insert([
-			['npcs_id' => 1, 'level' => 1, 'health' => 80, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 3, 'attacks_per_round' => 1],
-			['npcs_id' => 2, 'level' => 1, 'health' => 500, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 3, 'attacks_per_round' => 1],
-			['npcs_id' => 3, 'level' => 3, 'health' => 140, 'damage_types_id' => 3, 'damage_low' => 1, 'damage_high' => 6, 'attacks_per_round' => 1],
-			['npcs_id' => 4, 'level' => 5, 'health' => 180, 'damage_types_id' => 3, 'damage_low' => 6, 'damage_high' => 15, 'attacks_per_round' => 1],
-			['npcs_id' => 5, 'level' => 5, 'health' => 170, 'damage_types_id' => 3, 'damage_low' => 3, 'damage_high' => 12, 'attacks_per_round' => 2],
-			['npcs_id' => 6, 'level' => 5, 'health' => 500, 'damage_types_id' => 3, 'damage_low' => 4, 'damage_high' => 16, 'attacks_per_round' => 3]
+			['npcs_id' => 1, 'health' => 80, 'damage_low' => 1, 'damage_high' => 3, 'attacks_per_round' => 1],
+			['npcs_id' => 2, 'health' => 200, 'damage_low' => 1, 'damage_high' => 3, 'attacks_per_round' => 1],
+			['npcs_id' => 3, 'health' => 140, 'damage_low' => 1, 'damage_high' => 6, 'attacks_per_round' => 1],
+			['npcs_id' => 4, 'health' => 180, 'damage_low' => 6, 'damage_high' => 15, 'attacks_per_round' => 1],
+			['npcs_id' => 5, 'health' => 170, 'damage_low' => 3, 'damage_high' => 12, 'attacks_per_round' => 2],
+			['npcs_id' => 6, 'health' => 500, 'damage_low' => 4, 'damage_high' => 16, 'attacks_per_round' => 3]
 		]);
 
 		DB::table('spawn_rules')->insert([

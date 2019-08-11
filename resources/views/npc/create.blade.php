@@ -7,6 +7,7 @@ Create a NPC:<br>
 	{{ csrf_field() }}
 	
 	Name: <input type="text" name="name"><br>
+	Img Src: <input type="text" name="img_src"><br>
 	<input type="submit" value="Create!">
 </form>
 @endsection

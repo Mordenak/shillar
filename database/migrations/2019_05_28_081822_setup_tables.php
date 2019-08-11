@@ -314,10 +314,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('npcs_id');
 			$table->foreign('npcs_id')->references('id')->on('npcs');
-			$table->integer('level');
 			$table->integer('health');
-			$table->integer('damage_types_id');
-			$table->foreign('damage_types_id')->references('id')->on('damage_types');
+			$table->integer('armor');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
 			$table->integer('attacks_per_round');
