@@ -112,7 +112,7 @@
 				@endif
 			</form>
 		</div>
-		<div style="display: inline-block;position:absolute;top:50%;transform: translateY(-50%);">
+		<div style="display: inline-block;position:absolute;top:50%;transform: translateY(-50%);margin-left: .5rem;">
 			Health: {{$character->health}} / {{$character->max_health}}<br>
 			<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
 			Mana: {{$character->mana}} / {{$character->max_mana}}<br>
@@ -121,7 +121,7 @@
 			<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 		</div>
 	@else
-		<div style="display: inline-block;">
+		<div style="display: inline-block;margin-left: .5rem;">
 			Health: {{$character->health}} / {{$character->max_health}}<br>
 			<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
 			Mana: {{$character->mana}} / {{$character->max_mana}}<br>

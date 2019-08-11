@@ -64,11 +64,11 @@ Route::get('npc/all', 'NpcController@all');
 Route::get('npc/create', 'NpcController@create');
 Route::get('npc/edit/{id}', 'NpcController@edit')->where('id', '[0-9]+');
 Route::post('npc/save', 'NpcController@save');
-
-// Route::get('npc/all', 'NpcController@all');
-// Route::get('npc/create', 'NpcController@create');
-// Route::get('npc/edit/{id}', 'NpcController@edit')->where('id', '[0-9]+');
+// Additionals:
 Route::post('npc/stats/save', 'NpcController@save_stats');
+Route::post('npc/rewards/save', 'NpcController@save_rewards');
+Route::post('npc/spawn/save', 'NpcController@save_spawns');
+Route::post('npc/loot/save', 'NpcController@save_loot');
 
 
 // Route::post('/equip', 'GameController@equip_item');

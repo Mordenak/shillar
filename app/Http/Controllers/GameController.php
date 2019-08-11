@@ -294,7 +294,7 @@ class GameController extends Controller
 						{
 						// die(print_r($LootTable->items()->first()));
 						$Character->inventory()->first()->addItem($LootTable->items_id);
-						$loot_log[] = "You received ".$LootTable->item()->first()->name;
+						$loot_log[] = "You received ".$LootTable->item()->name;
 						}
 					}
 				}

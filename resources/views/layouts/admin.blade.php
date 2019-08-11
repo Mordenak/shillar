@@ -22,7 +22,7 @@
 			This is the master sidebar.
 		@show
 
-        <div class="flash-message"></div>
+		<div class="flash-message"></div>
 
 		<div class="container">
 			@yield('content')
@@ -41,10 +41,10 @@
 				formData.append('submit', $(document.activeElement).val());
 				}
 
-            for (var pair of formData.entries())
-                {
-                console.log(pair[0] +':' + pair[1]);
-                }
+			// for (var pair of formData.entries())
+			// 	{
+			// 	console.log(pair[0] +':' + pair[1]);
+			// 	}
 
 			$.ajax({
 				type: 'POST',
@@ -54,10 +54,10 @@
 				data: formData,
 				success: function(resp) {
 					$('.container').html(resp.content);
-                    if (resp.messages)
-                        {
-                        $('.flash-message').html(resp.messages);
-                        }
+					if (resp.messages)
+						{
+						$('.flash-message').html(resp.messages);
+						}
 					}
 				});
 			});

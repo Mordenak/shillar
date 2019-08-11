@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Npc extends Model
 {
-	protected $fillable = ['name', 'img_src'];
+	protected $fillable = ['name', 'img_src', 'is_hostile'];
 
 	public function stats()
 		{
