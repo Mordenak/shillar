@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Session;
+use View;
 use Illuminate\Http\Request;
 use App\Npc;
+use App\NpcStat;
 use App\SpawnRule;
 use App\LootTable;
 
@@ -46,7 +49,40 @@ class NpcController extends Controller
 		$Npc->fill($values);
 		$Npc->save();
 
-		// return view('admin/main');
 		return redirect()->action('AdminController@index');
+		}
+
+	public function save_stats(Request $request)
+		{
+		$NpcStat = new NpcStat;
+
+		if ($request->id)
+			{
+			$NpcStat = NpcStat::findOrFail($request->id);
+			}
+
+		$values = [
+			'health' => $request->health,
+			// 'armor' => $request->armor,
+			'damage_low' => $request->damage_low,
+			'damage_high' => $request->damage_high,
+			'attacks_per_round' => $request->attacks_per_round,
+			];
+
+		$NpcStat->fill($values);
+		$NpcStat->save();
+
+		if ($request->ajax())
+			{
+			$view = $this->edit($NpcStat->npc()->id);
+			$sections = $view->renderSections();
+			Session::flash('success', 'NPC Updated!');
+			// $sections['messages'] = View::make('partials/flash-messages')->renderSections();
+			$sections['messages'] = view('partials/flash-messages')->renderSections();
+			// die(print_r($test));
+			return $sections;
+			}
+		// return action('NpcController@edit', $NpcStat->npc()->id);
+		return $this->edit($NpcStat->npc()->id);
 		}
 }

@@ -65,5 +65,10 @@ Route::get('npc/create', 'NpcController@create');
 Route::get('npc/edit/{id}', 'NpcController@edit')->where('id', '[0-9]+');
 Route::post('npc/save', 'NpcController@save');
 
+// Route::get('npc/all', 'NpcController@all');
+// Route::get('npc/create', 'NpcController@create');
+// Route::get('npc/edit/{id}', 'NpcController@edit')->where('id', '[0-9]+');
+Route::post('npc/stats/save', 'NpcController@save_stats');
+
 
 // Route::post('/equip', 'GameController@equip_item');
