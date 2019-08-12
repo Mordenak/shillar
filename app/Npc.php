@@ -12,4 +12,9 @@ class Npc extends Model
 		{
 		return $this->hasOne('App\NpcStat', 'npcs_id');
 		}
+
+	public function spawn_rules()
+		{
+		return $this->hasMany('App\SpawnRule', 'npcs_id')->get();
+		}
 }
