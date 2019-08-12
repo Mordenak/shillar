@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Item;
+use App\ItemType;
 
 class ItemController extends Controller
 {
 	public function create()
 		{
-		return view('item.create');
+		$item_types = ItemType::all();
+		return view('item.create', ['item_types' => $item_types]);
 		}
 
 	public function all(Request $request)
@@ -20,7 +22,36 @@ class ItemController extends Controller
 
 	public function edit($id)
 		{
-		// $zones = Zone::all();
+		$Item = Item::findOrFail($id);
+
+		$ItemType = ItemType::findOrFail($Item->item_types_id);
+
+		// regretful tree:
+		if ($ItemType->name == 'Consumable')
+			{
+			$ActualItem = ItemConsumable::where(['items_id' => $Item->id])->first();
+			}
+
+		if ($ItemType->name == 'Weapon')
+			{
+			$ActualItem = ItemWeapon::where(['items_id' => $Item->id])->first();
+			}
+
+		if ($ItemType->name == 'Armor')
+			{
+			$ActualItem = ItemArmor::where(['items_id' => $Item->id])->first();
+			}
+
+		if ($ItemType->name == 'Accessories')
+			{
+			$ActualItem = ItemAccessories::where(['items_id' => $Item->id])->first();
+			}
+
+		if ($ItemType->name == 'Other')
+			{
+			$ActualItem = ItemOthers::where(['items_id' => $Item->id])->first();
+			}
+
 		return view('item.edit', ['item' => Item::findOrFail($id)]);
 		}
 
@@ -34,7 +65,8 @@ class ItemController extends Controller
 			}
 
 		$values = [
-			'name' => $request->name
+			'name' => $request->name,
+			'item_types_id' => $request->item_types_id,
 			];
 
 		$Item->fill($values);

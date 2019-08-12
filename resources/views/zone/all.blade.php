@@ -6,8 +6,25 @@
 <a href="/admin">Go back</a>
 <br><br>
 
-@foreach ($zones as $zone)
-	<a href="/zone/edit/{{$zone->id}}">({{$zone->id}}) {{$zone->name}}</a><br>
-@endforeach
+@if ($zones)
+<table id="all-zones">
+	<thead>
+		<th>ID</th>
+		<th>Zone Name</th>
+	</thead>
+	<tbody>
+		@foreach ($zones as $zone)
+		<tr>
+			<td>{{$zone->id}}</td>
+			<td><a href="/zone/edit/{{$zone->id}}">{{$zone->name}}</a></td>
+		</tr>
+		@endforeach
+	</tbody>
+</table>
+
+<script>
+$('#all-zones').dataTable();
+</script>
+@endif
 
 @endsection 
