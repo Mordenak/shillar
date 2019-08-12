@@ -32,10 +32,13 @@ class ItemController extends Controller
 
 		$item_types = ItemType::all();
 
+		$item_type_fields = null;
+
 		// regretful tree:
 		if ($ItemType->name == 'Consumable')
 			{
 			$ActualItem = ItemConsumable::where(['items_id' => $Item->id])->first();
+			$item_type_fields = view('partials/consumables', ['actual_item' => $ActualItem]);
 			}
 
 		if ($ItemType->name == 'Weapon')
@@ -58,7 +61,7 @@ class ItemController extends Controller
 			$ActualItem = ItemOthers::where(['items_id' => $Item->id])->first();
 			}
 
-		return view('item.edit', ['item' => Item::findOrFail($id), 'actual_item' => $ActualItem, 'item_types' => $item_types]);
+		return view('item.edit', ['item' => Item::findOrFail($id), 'actual_item' => $ActualItem, 'item_types' => $item_types, 'item_fields' => $item_type_fields]);
 		}
 
 	public function save(Request $request)
@@ -80,5 +83,18 @@ class ItemController extends Controller
 
 		// return view('admin/main');
 		return redirect()->action('AdminController@index');
+		}
+
+	public function get_item_fields(Request $request)
+		{
+		if ($request->id == 1)
+			{
+			return view('partials/consumables');
+			}
+
+		if ($request->id == 2)
+			{
+			return view('partials/weapons');
+			}
 		}
 }

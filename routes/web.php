@@ -59,6 +59,7 @@ Route::get('item/all', 'ItemController@all');
 Route::get('item/create', 'ItemController@create');
 Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');
 Route::post('item/save', 'ItemController@save');
+Route::get('item/get_item_type', 'ItemController@get_item_fields');
 
 Route::get('npc/all', 'NpcController@all');
 Route::get('npc/create', 'NpcController@create');

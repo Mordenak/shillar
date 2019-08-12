@@ -100,7 +100,7 @@ class BasicEntries extends Seeder
 			['name' => 'Rubber Slime', 'img_src' => 'wtf_slime.jpg', 'is_hostile' => true],
 			['name' => 'Turkey', 'img_src' => 'turkey.jpg', 'is_hostile' => true],
 			['name' => 'Bear', 'img_src' => 'bear.jpg', 'is_hostile' => true],
-			['name' => 'Bandit', 'img_src' => null, 'is_hostile' => true],
+			['name' => 'Bandit', 'img_src' => 'bandit.jpg', 'is_hostile' => true],
 			['name' => 'Bandit Boss', 'img_src' => null, 'is_hostile' => true],
 		]);
 

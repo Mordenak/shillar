@@ -79,7 +79,7 @@
 			@if ($npc->img_src)
 			<img width="250" height="250" src="{{asset('img/'.$npc->img_src)}}">
 			@else
-			<img width="250" height="250" src="{{asset('img/wtf_slime.jpg')}}">
+			<img width="250" height="250" src="{{asset('img/unknown.jpg')}}">
 			@endif
 			<form method="post" action="/combat" class="ajax">
 				{{csrf_field()}}
