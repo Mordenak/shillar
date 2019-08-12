@@ -16,7 +16,7 @@ class ItemController extends Controller
 	public function create()
 		{
 		$item_types = ItemType::all();
-		return view('item.create', ['item_types' => $item_types]);
+		return view('item.edit', ['item_types' => $item_types]);
 		}
 
 	public function all(Request $request)
@@ -32,36 +32,9 @@ class ItemController extends Controller
 
 		$item_types = ItemType::all();
 
-		$item_type_fields = null;
-
-		// regretful tree:
-		if ($ItemType->name == 'Consumable')
-			{
-			$ActualItem = ItemConsumable::where(['items_id' => $Item->id])->first();
-			$item_type_fields = view('partials/consumables', ['actual_item' => $ActualItem]);
-			}
-
-		if ($ItemType->name == 'Weapon')
-			{
-			$ActualItem = ItemWeapon::where(['items_id' => $Item->id])->first();
-			}
-
-		if ($ItemType->name == 'Armor')
-			{
-			$ActualItem = ItemArmor::where(['items_id' => $Item->id])->first();
-			}
-
-		if ($ItemType->name == 'Accessories')
-			{
-			$ActualItem = ItemAccessories::where(['items_id' => $Item->id])->first();
-			}
-
-		if ($ItemType->name == 'Other')
-			{
-			$ActualItem = ItemOthers::where(['items_id' => $Item->id])->first();
-			}
-
-		return view('item.edit', ['item' => Item::findOrFail($id), 'actual_item' => $ActualItem, 'item_types' => $item_types, 'item_fields' => $item_type_fields]);
+		$item_type_fields = $this->get_item_fields($Item->item_types_id, $Item->id);
+		
+		return view('item.edit', ['item' => Item::findOrFail($id), 'item_types' => $item_types, 'item_fields' => $item_type_fields]);
 		}
 
 	public function save(Request $request)
@@ -72,6 +45,8 @@ class ItemController extends Controller
 			{
 			$Item = Item::findOrFail($request->id);
 			}
+
+		// values saved depend on type... if we change type, we have to drop old type data:
 
 		$values = [
 			'name' => $request->name,
@@ -85,16 +60,59 @@ class ItemController extends Controller
 		return redirect()->action('AdminController@index');
 		}
 
-	public function get_item_fields(Request $request)
+	public function get_item_fields($type_id, $item_id = null)
 		{
-		if ($request->id == 1)
+		$partial_name = null;
+		switch ($type_id)
 			{
-			return view('partials/consumables');
+			case 1:
+				$partial_name = 'consumables';
+				break;
+			case 2:
+				$partial_name = 'weapons';
+				break;
+			case 3:
+				$partial_name = 'armors';
+				break;
+			case 4:
+				$partial_name = 'accessors';
+				break;
+			case 5:
+				$partial_name = 'others';
+				break;
+			}
+		$item_values = null;
+		if ($item_id)
+			{
+			$Item = Item::findOrFail($item_id);
+			$item_values = $Item->actual_item();
+			if ($Item->item_types_id == $type_id)
+				{
+				return view("partials/$partial_name", ['actual_item' => $item_values]);
+				}
 			}
 
-		if ($request->id == 2)
+		return view("partials/$partial_name");
+		}
+
+	public function get_item_fields_ajax(Request $request)
+		{
+		if ($request->item_id)
 			{
-			return view('partials/weapons');
+			return $this->get_item_fields($request->type_id, $request->item_id);
 			}
+		return $this->get_item_fields($request->type_id);
+		}
+
+	// TODO: Have controller maintain this list for now?
+	public function slot_list()
+		{
+		$slots = [
+			'weapon',
+			'head',
+			'chest',
+			'legs',
+			];
+		return $slots;
 		}
 }

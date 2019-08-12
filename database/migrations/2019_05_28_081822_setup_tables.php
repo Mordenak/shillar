@@ -229,14 +229,24 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('characters_id');
 			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('weapon')->nullable();
+			$table->foreign('weapon')->references('id')->on('item_weapons');
 			$table->integer('head')->nullable();
 			$table->foreign('head')->references('id')->on('item_armors');
 			$table->integer('chest')->nullable();
 			$table->foreign('chest')->references('id')->on('item_armors');
 			$table->integer('legs')->nullable();
 			$table->foreign('legs')->references('id')->on('item_armors');
-			$table->integer('weapon')->nullable();
-			$table->foreign('weapon')->references('id')->on('item_weapons');
+			$table->integer('hands')->nullable();
+			$table->foreign('hands')->references('id')->on('item_armors');
+			$table->integer('feet')->nullable();
+			$table->foreign('feet')->references('id')->on('item_armors');
+			$table->integer('neck')->nullable();
+			$table->foreign('neck')->references('id')->on('item_accessories');
+			$table->integer('left ring')->nullable();
+			$table->foreign('left ring')->references('id')->on('item_accessories');
+			$table->integer('right ring')->nullable();
+			$table->foreign('right ring')->references('id')->on('item_accessories');
 			$table->timestamps();
 		});
 

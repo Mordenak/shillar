@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlayerRace extends Model
 {
-    //
-    public function characters()
+	//
+	public function characters()
 		{
 		return $this->hasMany('App\Character');
 		}

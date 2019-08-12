@@ -143,9 +143,9 @@ class CharacterController extends Controller
 		// return view('home');
 
 		// $Characters = Character::find(['users_id' => auth()->user()->id]);
-    	// Other ways?
-    	$Characters = Character::where('users_id', auth()->user()->id);
-    	// die(print_r($Characters->get()));
-        return view('home', ['characters' => $Characters->get()]);
+		// Other ways?
+		$Characters = Character::where('users_id', auth()->user()->id);
+		// die(print_r($Characters->get()));
+		return view('home', ['characters' => $Characters->get()]);
 		}
 }
