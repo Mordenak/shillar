@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Item;
 use App\ItemType;
+use App\ItemConsumable;
+use App\ItemWeapon;
+use App\ItemArmor;
+use App\ItemAccessories;
+use App\ItemOthers;
 
 class ItemController extends Controller
 {
@@ -23,8 +28,9 @@ class ItemController extends Controller
 	public function edit($id)
 		{
 		$Item = Item::findOrFail($id);
-
 		$ItemType = ItemType::findOrFail($Item->item_types_id);
+
+		$item_types = ItemType::all();
 
 		// regretful tree:
 		if ($ItemType->name == 'Consumable')
@@ -52,7 +58,7 @@ class ItemController extends Controller
 			$ActualItem = ItemOthers::where(['items_id' => $Item->id])->first();
 			}
 
-		return view('item.edit', ['item' => Item::findOrFail($id)]);
+		return view('item.edit', ['item' => Item::findOrFail($id), 'actual_item' => $ActualItem, 'item_types' => $item_types]);
 		}
 
 	public function save(Request $request)
