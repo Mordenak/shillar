@@ -132,6 +132,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('table_name');
+			$table->string('model_name');
 			// $table->integer('table_id');
 			// Add all flags?
 			// $table->bool('consumable');

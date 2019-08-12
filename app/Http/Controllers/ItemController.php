@@ -46,8 +46,6 @@ class ItemController extends Controller
 			$Item = Item::findOrFail($request->id);
 			}
 
-		// values saved depend on type... if we change type, we have to drop old type data:
-
 		$values = [
 			'name' => $request->name,
 			'item_types_id' => $request->item_types_id,
@@ -55,6 +53,15 @@ class ItemController extends Controller
 
 		$Item->fill($values);
 		$Item->save();
+
+		// values saved depend on type... if we change type, we have to drop old type data:
+		// If we reference Item->item_types_id here we would have to refactor if we move save calls:
+		$ItemType = ItemType::findOrFail($request->item_types_id);
+		// $ItemType->table_name
+
+
+
+		// TODO: May save all save calls until end?
 
 		// return view('admin/main');
 		return redirect()->action('AdminController@index');

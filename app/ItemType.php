@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemType extends Model
 {
-	//
+	public function item()
+		{
+		// ??
+		return true;
+		}
 }

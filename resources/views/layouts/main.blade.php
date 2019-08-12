@@ -143,7 +143,6 @@
 		$('body').on('submit', 'form.ajax', function(e, i) {
 			console.log('main ajax submit fire');
 			e.preventDefault();
-			$(document.activeElement).attr('disabled', 'disabled');
 			var formData = new FormData(e.target);
 			// console.log($(document.activeElement));
 			if ($(document.activeElement).hasClass('submit-val'))
@@ -151,9 +150,7 @@
 				formData.append('submit', $(document.activeElement).val());
 				}
 
-			// console.log('ajaxing to ' + $(e.target).attr('action'));
-
-			// console.log(data.entries);
+			$(document.activeElement).attr('disabled', 'disabled');
 
 			for (var pair of formData.entries())
 				{
