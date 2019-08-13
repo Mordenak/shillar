@@ -60,7 +60,7 @@ Creating an item:
 $('#type-select').on('change', function(e) {
 	// when this type changes, we need to update item-type-fields:
 	var type_id = $(e.target).val();
-	$url = window.location.host+'/item/get_item_type?type_id='+type_id;
+	$url = 'http://'+window.location.host+'/item/get_item_type?type_id='+type_id;
 
 	var item_id = null;
 	if ($('#db-id').length > 0)
