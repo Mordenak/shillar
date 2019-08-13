@@ -19,19 +19,22 @@ class Equipment extends Model
 
 		if ($this->head)
 			{
-			$ItemArmor = ItemArmor::findOrFail($this->head);
+			$InventoryItem = InventoryItem::findOrFail($this->head);
+			$ItemArmor = $InventoryItem->item()->actual_item();
 			$total_armor += $ItemArmor->armor;
 			}
 
 		if ($this->chest)
 			{
-			$ItemArmor = ItemArmor::findOrFail($this->chest);
+			$InventoryItem = InventoryItem::findOrFail($this->chest);
+			$ItemArmor = $InventoryItem->item()->actual_item();
 			$total_armor += $ItemArmor->armor;
 			}
 
 		if ($this->legs)
 			{
-			$ItemArmor = ItemArmor::findOrFail($this->legs);
+			$InventoryItem = InventoryItem::findOrFail($this->legs);
+			$ItemArmor = $InventoryItem->item()->actual_item();
 			$total_armor += $ItemArmor->armor;
 			}
 

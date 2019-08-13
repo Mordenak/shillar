@@ -173,7 +173,8 @@ class GameController extends Controller
 				// $fatigue_use = 1;
 				if ($Equipment->weapon)
 					{
-					$ItemWeapon = ItemWeapon::findOrFail($Equipment->weapon);
+					$weapon_id = $Character->inventory()->inventory_items()->where(['id' => $Equipment->weapon])->first();
+					$ItemWeapon = ItemWeapon::findOrFail($weapon_id->items_id);
 					$attack_text = $ItemWeapon->attack_text;
 					// $fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
 					$fatigue_use = 2;
@@ -293,6 +294,8 @@ class GameController extends Controller
 					$prob = rand()/getrandmax();
 					if ($prob <= $LootTable->chance)
 						{
+						// TODO: So we actually want to add this to the session instead:
+						// session('loot_'.$request->room_id.'_'.$LootTable->items_id)
 						// die(print_r($LootTable->items()->first()));
 						$Character->inventory()->addItem($LootTable->items_id);
 						$loot_log[] = "You received ".$LootTable->item()->name;
@@ -647,9 +650,7 @@ class GameController extends Controller
 			// die('stuff');
 			if ($request->weapon > 0)
 				{
-				// die(print_r('Got weapon id: '.$request->weapon). ':');
 				$Equipment->weapon = $request->weapon;
-				// $Equipment->weapon = 1;
 				}
 			else
 				{
@@ -743,7 +744,8 @@ class GameController extends Controller
 		$hand_armors = [];
 		$feet_armors = [];
 		$neck_items = [];
-		$ring_items = [];
+		$left_rings = [];
+		$right_rings = [];
 
 		// die(print_r($allitems));
 
@@ -756,9 +758,12 @@ class GameController extends Controller
 			if ($Item->item_types_id == 1)
 				{
 				// $ItemWeapon = ItemWeapon::where(['items_id' => $Item->id])->first();
+				// die(print_r($CharacterItem->item()));
 
 				$dis_val = $CharacterItem->item()->toArray();
+				$dis_val['id'] = $CharacterItem->id;
 				$dis_val['selected'] = false;
+				// die(print_r($Equipment->weapon.' == '.$CharacterItem->id.'::'));
 				if ($Equipment->weapon == $CharacterItem->id)
 					{
 					$dis_val['selected'] = true;
@@ -770,9 +775,10 @@ class GameController extends Controller
 				{
 				// $ItemArmor = ItemArmor::where(['items_id' => $Item->id])->first();
 				$dis_val = $CharacterItem->item()->toArray();
+				$dis_val['id'] = $CharacterItem->id;
 				$dis_val['selected'] = false;
 
-				if ($CharacterItem->item()->equipment_slot == 2)
+				if ($Item->actual_item()->equipment_slot == 2)
 					{
 					if ($Equipment->head == $CharacterItem->id)
 						{
@@ -781,7 +787,7 @@ class GameController extends Controller
 					$head_armors[] = $dis_val;
 					}
 
-				if ($CharacterItem->item()->equipment_slot == 3)
+				if ($Item->actual_item()->equipment_slot == 3)
 					{
 					if ($Equipment->chest == $CharacterItem->id)
 						{
@@ -790,7 +796,7 @@ class GameController extends Controller
 					$chest_armors[] = $dis_val;
 					}
 
-				if ($CharacterItem->item()->equipment_slot == 4)
+				if ($Item->actual_item()->equipment_slot == 4)
 					{
 					if ($Equipment->legs == $CharacterItem->id)
 						{
@@ -799,7 +805,7 @@ class GameController extends Controller
 					$leg_armors[] = $dis_val;
 					}
 
-				if ($CharacterItem->item()->equipment_slot == 5)
+				if ($Item->actual_item()->equipment_slot == 5)
 					{
 					if ($Equipment->hands == $CharacterItem->id)
 						{
@@ -808,7 +814,7 @@ class GameController extends Controller
 					$hand_armors[] = $dis_val;
 					}
 
-				if ($CharacterItem->item()->equipment_slot == 6)
+				if ($Item->actual_item()->equipment_slot == 6)
 					{
 					if ($Equipment->feet == $CharacterItem->id)
 						{
@@ -822,9 +828,10 @@ class GameController extends Controller
 				{
 				// $ItemAccessory = ItemAccessory::where(['items_id' => $Item->id])->first();
 				$dis_val = $CharacterItem->item()->toArray();
+				$dis_val['id'] = $CharacterItem->id;
 				$dis_val['selected'] = false;
 
-				if ($CharacterItem->item()->equipment_slot == 7)
+				if ($Item->actual_item()->equipment_slot == 7)
 					{
 					if ($Equipment->neck == $CharacterItem->id)
 						{
@@ -833,29 +840,65 @@ class GameController extends Controller
 					$neck_items[] = $dis_val;
 					}
 
-				if ($CharacterItem->item()->equipment_slot == 8)
+				if ($Item->actual_item()->equipment_slot == 8)
 					{
-					if ($Equipment->left_ring == $CharacterItem->id)
+					if ($Equipment->right_ring == $CharacterItem->id 
+						|| $Equipment->left_ring == $CharacterItem->id)
 						{
-						$dis_val['selected'] = true;
-						}
-					$ring_items[] = $dis_val;
-					}
+						if ($CharacterItem->quantity > 1)
+							{
+							if ($Equipment->left_ring == $CharacterItem->id)
+								{
+								$dis_val['selected'] = true;
+								}
+							$left_rings[] = $dis_val;
+							$dis_val['selected'] = false;
+							if ($Equipment->right_ring == $CharacterItem->id)
+								{
+								$dis_val['selected'] = true;
+								}
+							$right_rings[] = $dis_val;
+							}
+						else
+							{
+							if ($Equipment->left_ring == $CharacterItem->id)
+								{
+								$dis_val['selected'] = true;
+								$left_rings[] = $dis_val;
+								}
 
-				if ($CharacterItem->item()->equipment_slot == 9)
-					{
-					if ($Equipment->right_ring == $CharacterItem->id)
-						{
-						$dis_val['selected'] = true;
+							if ($Equipment->right_ring == $CharacterItem->id)
+								{
+								$dis_val['selected'] = true;
+								$right_rings[] = $dis_val;
+								}	
+							}
 						}
-					$ring_items[] = $dis_val;
+					else
+					// if ($Equipment->right_ring != $CharacterItem->id)
+						{
+						if ($Equipment->left_ring == $CharacterItem->id)
+							{
+							$dis_val['selected'] = true;
+							}
+						$left_rings[] = $dis_val;	
+						// }
+
+					// if ($Equipment->left_ring != $CharacterItem->id)
+						// {
+						if ($Equipment->right_ring == $CharacterItem->id)
+							{
+							$dis_val['selected'] = true;
+							}
+						$right_rings[] = $dis_val;
+						}
 					}
 				}
 			}
 
 		// die(print_r($weapons));
 
-		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'heads' => $head_armors, 'chests' => $chest_armors, 'legs' => $leg_armors, 'hands' => $hand_armors, 'feets' => $feet_armors, 'necks' => $neck_items, 'rings' => $ring_items]);
+		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'heads' => $head_armors, 'chests' => $chest_armors, 'legs' => $leg_armors, 'hands' => $hand_armors, 'feets' => $feet_armors, 'necks' => $neck_items, 'left_rings' => $left_rings, 'right_rings' => $right_rings]);
 		}
 
 	public function items(Request $request)
@@ -871,7 +914,7 @@ class GameController extends Controller
 		if ($request->action == 'consume')
 			{
 			$Item = Item::findOrFail($request->item);
-			if ($Item->item_types_id != 1)
+			if ($Item->item_types_id != 4)
 				{
 				// error?
 				return true;
@@ -908,7 +951,7 @@ class GameController extends Controller
 			// die($inv_item);s
 			$Item = Item::findOrFail($inv_item->items_id);
 
-			if ($Item->item_types_id == 1)
+			if ($Item->item_types_id == 4)
 				{
 				$arr = $Item->toArray();
 				$arr['quantity'] = $inv_item->quantity;

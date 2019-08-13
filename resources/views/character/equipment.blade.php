@@ -55,14 +55,14 @@
 	Left Ring:
 	<select name="left_ring">
 		<option value="0">-- Nothing --</option>
-		@foreach ($rings as $ring)
+		@foreach ($left_rings as $ring)
 		<option value="{{$ring['id']}}" {{ $ring['selected'] ? 'selected' : '' }} >{{$ring['name']}}</option>
 		@endforeach
 	</select><br>
 	Right Ring:
 	<select name="right_ring">
 		<option value="0">-- Nothing --</option>
-		@foreach ($rings as $ring)
+		@foreach ($right_rings as $ring)
 		<option value="{{$ring['id']}}" {{ $ring['selected'] ? 'selected' : '' }} >{{$ring['name']}}</option>
 		@endforeach
 	</select><br>
