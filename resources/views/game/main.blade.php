@@ -202,4 +202,8 @@
 		<label for="begin_rest">Rest</label>
 		<input type="submit" id="begin_rest" style="display: none;">
 	</form>
+
+	@foreach ($character->inventory()->character_items() as $item)
+		{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->item()->quantity}})<br>
+	@endforeach
 @endsection

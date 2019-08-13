@@ -10,6 +10,7 @@ use App\ItemWeapon;
 use App\ItemArmor;
 use App\ItemAccessories;
 use App\ItemOthers;
+use App\EquipmentSlot;
 
 class ItemController extends Controller
 {
@@ -58,31 +59,76 @@ class ItemController extends Controller
 		// If we reference Item->item_types_id here we would have to refactor if we move save calls:
 		$ItemType = ItemType::findOrFail($request->item_types_id);
 		// $ItemType->table_name
+		$ActualItem = new $ItemType->model_name;
 
+		// Baseline values:
+		$item_values = [
+			'items_id' => $Item->id,
+			'name' => $Item->name
+			];
+
+		// Maintain per type field list???
+		if ($ItemType->table_name == 'item_consumables')
+			{
+			$item_values['effect'] = $request->effect;
+			$item_values['potency'] = $request->potency;
+			}
+
+		if ($ItemType->table_name == 'item_weapons')
+			{
+			$item_values['equipment_slot'] = 1;
+			$item_values['attack_text'] = $request->attack_text;
+			$item_values['damage_low'] = $request->damage_low;
+			$item_values['damage_high'] = $request->damage_high;
+			}
+
+		if ($ItemType->table_name == 'item_armors')
+			{
+			$item_values['equipment_slot'] = $request->equipment_slot;
+			$item_values['armor'] = $request->armor;
+			}
+
+		if ($ItemType->table_name == 'item_accessories')
+			{
+			$item_values['equipment_slot'] = $request->equipment_slot;
+			$item_values['armor'] = $request->armor;
+			}
+
+		if ($ItemType->table_name == 'item_others')
+			{
+			// ??
+			}
+
+		$ActualItem->fill($item_values);
+		$ActualItem->save();
 
 
 		// TODO: May save all save calls until end?
 
 		// return view('admin/main');
-		return redirect()->action('AdminController@index');
+		return redirect()->action('ItemController@all');
 		}
 
 	public function get_item_fields($type_id, $item_id = null)
 		{
 		$partial_name = null;
+		$equip_slots = null;
 		switch ($type_id)
 			{
 			case 1:
-				$partial_name = 'consumables';
-				break;
-			case 2:
 				$partial_name = 'weapons';
 				break;
-			case 3:
+			case 2:
+				$equip_slots = EquipmentSlot::all();
 				$partial_name = 'armors';
 				break;
+			case 3:
+				$equip_slots = EquipmentSlot::all();
+				$partial_name = 'accessories';
+				break;
 			case 4:
-				$partial_name = 'accessors';
+				$equip_slots = EquipmentSlot::all();
+				$partial_name = 'consumables';
 				break;
 			case 5:
 				$partial_name = 'others';
@@ -95,11 +141,11 @@ class ItemController extends Controller
 			$item_values = $Item->actual_item();
 			if ($Item->item_types_id == $type_id)
 				{
-				return view("partials/$partial_name", ['actual_item' => $item_values]);
+				return view("partials/$partial_name", ['actual_item' => $item_values, 'equip_slots' => $equip_slots]);
 				}
 			}
 
-		return view("partials/$partial_name");
+		return view("partials/$partial_name", ['equip_slots' => $equip_slots]);
 		}
 
 	public function get_item_fields_ajax(Request $request)
@@ -109,17 +155,5 @@ class ItemController extends Controller
 			return $this->get_item_fields($request->type_id, $request->item_id);
 			}
 		return $this->get_item_fields($request->type_id);
-		}
-
-	// TODO: Have controller maintain this list for now?
-	public function slot_list()
-		{
-		$slots = [
-			'weapon',
-			'head',
-			'chest',
-			'legs',
-			];
-		return $slots;
 		}
 }

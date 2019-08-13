@@ -16,9 +16,9 @@ class Inventory extends Model
 		return $this->belongsTo('App\Character', 'characters_id');
 		}
 
-	public function items()
+	public function character_items()
 		{
-		return $this->hasMany('App\InventoryItems');
+		return $this->hasMany('App\InventoryItems')->get();
 		}
 
 	public function removeItem($item_id)
@@ -52,7 +52,7 @@ class Inventory extends Model
 		// ItemsToInventory
 		// $ItemsToInventory = ItemsToInventory::where(['inventories_id' => $this->id, 'characters_id' => $this->characters])
 		// die($item_id);
-		$has_item = $this->items()->where(['items_id' => $item_id])->first();
+		$has_item = $this->character_items()->where(['items_id' => $item_id])->first();
 
 		if ($has_item)
 			{

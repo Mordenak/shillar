@@ -19,6 +19,6 @@ class Character extends Model
 
 	public function inventory()
 		{
-		return $this->hasOne('App\Inventory', 'characters_id');
+		return $this->hasOne('App\Inventory', 'characters_id')->first();
 		}
 }

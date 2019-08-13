@@ -30,6 +30,42 @@
 		<option value="{{$leg['id']}}" {{ $leg['selected'] ? 'selected' : '' }} >{{$leg['name']}}</option>
 		@endforeach
 	</select><br>
+	Hands:
+	<select name="hands">
+		<option value="0">-- Nothing --</option>
+		@foreach ($hands as $hand)
+		<option value="{{$hand['id']}}" {{ $hand['selected'] ? 'selected' : '' }} >{{$hand['name']}}</option>
+		@endforeach
+	</select><br>
+	Feet:
+	<select name="feet">
+		<option value="0">-- Nothing --</option>
+		@foreach ($feets as $feet)
+		<option value="{{$feet['id']}}" {{ $feet['selected'] ? 'selected' : '' }} >{{$feet['name']}}</option>
+		@endforeach
+	</select><br>
+	-- Accessories --<br>
+	Neck:
+	<select name="neck">
+		<option value="0">-- Nothing --</option>
+		@foreach ($necks as $neck)
+		<option value="{{$neck['id']}}" {{ $neck['selected'] ? 'selected' : '' }} >{{$neck['name']}}</option>
+		@endforeach
+	</select><br>
+	Left Ring:
+	<select name="left_ring">
+		<option value="0">-- Nothing --</option>
+		@foreach ($rings as $ring)
+		<option value="{{$ring['id']}}" {{ $ring['selected'] ? 'selected' : '' }} >{{$ring['name']}}</option>
+		@endforeach
+	</select><br>
+	Right Ring:
+	<select name="right_ring">
+		<option value="0">-- Nothing --</option>
+		@foreach ($rings as $ring)
+		<option value="{{$ring['id']}}" {{ $ring['selected'] ? 'selected' : '' }} >{{$ring['name']}}</option>
+		@endforeach
+	</select><br>
 	<input type="hidden" name="character_id" value="{{$character->id}}">
 	<input type="hidden" name="action" value="equip">
 	{{csrf_field()}}

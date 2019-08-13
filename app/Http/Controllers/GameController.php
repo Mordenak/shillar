@@ -19,6 +19,7 @@ use App\ItemWeapon;
 use App\ItemArmor;
 use App\UserSetting;
 use App\ItemConsumable;
+use App\ItemAccessory;
 
 class GameController extends Controller
 {
@@ -282,7 +283,7 @@ class GameController extends Controller
 			$LootTables = LootTable::where(['npcs_id' => $request->npc_id])->get();
 
 			// This should be an item id?
-			// die(print_r($Character->inventory()->first()));
+			// die(print_r($Character->inventory()));
 			// die('..:'.$LootTable->items_id);
 			// die(print_r('::'.$LootTables->count()));
 			if (count($LootTables) > 0)
@@ -293,7 +294,7 @@ class GameController extends Controller
 					if ($prob <= $LootTable->chance)
 						{
 						// die(print_r($LootTable->items()->first()));
-						$Character->inventory()->first()->addItem($LootTable->items_id);
+						$Character->inventory()->addItem($LootTable->items_id);
 						$loot_log[] = "You received ".$LootTable->item()->name;
 						}
 					}
@@ -682,77 +683,179 @@ class GameController extends Controller
 				$Equipment->legs = null;
 				}
 
+			if ($request->hands > 0)
+				{
+				$Equipment->hands = $request->hands;
+				}
+			else
+				{
+				$Equipment->hands = null;
+				}
+
+			if ($request->feet > 0)
+				{
+				$Equipment->feet = $request->feet;
+				}
+			else
+				{
+				$Equipment->feet = null;
+				}
+
+			if ($request->neck > 0)
+				{
+				$Equipment->neck = $request->neck;
+				}
+			else
+				{
+				$Equipment->neck = null;
+				}
+
+			if ($request->left_ring > 0)
+				{
+				$Equipment->left_ring = $request->left_ring;
+				}
+			else
+				{
+				$Equipment->left_ring = null;
+				}
+
+			if ($request->right_ring > 0)
+				{
+				$Equipment->right_ring = $request->right_ring;
+				}
+			else
+				{
+				$Equipment->right_ring = null;
+				}
+
 			$Equipment->save();
 			}
 
 		// Find all available item equipment:
 		// $Inventory = Inventory::where(['characters_id' => $request->character_id])->first();
-		// $Character->inventory()->first()->addItem($LootTable->items_id);
-		$allitems = $Character->inventory()->first()->items()->get();
+		// $Character->inventory()->addItem($LootTable->items_id);
+		$CharacterItems = $Character->inventory()->character_items();
 
 		$weapons = [];
 		$head_armors = [];
 		$chest_armors = [];
 		$leg_armors = [];
+		$hand_armors = [];
+		$feet_armors = [];
+		$neck_items = [];
+		$ring_items = [];
 
 		// die(print_r($allitems));
 
-		foreach ($allitems as $inv_item)
+		foreach ($CharacterItems as $CharacterItem)
 			{
 			// die($inv_item);s
-			$Item = Item::findOrFail($inv_item->items_id);
+			$Item = Item::findOrFail($CharacterItem->items_id);
 			
 			// die($Item);
-			if ($Item->item_types_id == 2)
+			if ($Item->item_types_id == 1)
 				{
-				$ItemWeapon = ItemWeapon::where(['items_id' => $Item->id])->first();
-				$dis_val = $ItemWeapon->toArray();
+				// $ItemWeapon = ItemWeapon::where(['items_id' => $Item->id])->first();
+
+				$dis_val = $CharacterItem->item()->toArray();
 				$dis_val['selected'] = false;
-				if ($Equipment->weapon == $ItemWeapon->id)
+				if ($Equipment->weapon == $CharacterItem->id)
 					{
 					$dis_val['selected'] = true;
 					}
 				$weapons[] = $dis_val;
 				}
 
-			if ($Item->item_types_id == 3)
+			if ($Item->item_types_id == 2)
 				{
-				$ItemArmor = ItemArmor::where(['items_id' => $Item->id])->first();
-				$dis_val = $ItemArmor->toArray();
+				// $ItemArmor = ItemArmor::where(['items_id' => $Item->id])->first();
+				$dis_val = $CharacterItem->item()->toArray();
 				$dis_val['selected'] = false;
 
-				if ($ItemArmor->equipment_slot == 'head')
+				if ($CharacterItem->item()->equipment_slot == 2)
 					{
-					if ($Equipment->head == $ItemArmor->id)
+					if ($Equipment->head == $CharacterItem->id)
 						{
 						$dis_val['selected'] = true;
 						}
 					$head_armors[] = $dis_val;
 					}
 
-				if ($ItemArmor->equipment_slot == 'chest')
+				if ($CharacterItem->item()->equipment_slot == 3)
 					{
-					if ($Equipment->chest == $ItemArmor->id)
+					if ($Equipment->chest == $CharacterItem->id)
 						{
 						$dis_val['selected'] = true;
 						}
 					$chest_armors[] = $dis_val;
 					}
 
-				if ($ItemArmor->equipment_slot == 'legs')
+				if ($CharacterItem->item()->equipment_slot == 4)
 					{
-					if ($Equipment->legs == $ItemArmor->id)
+					if ($Equipment->legs == $CharacterItem->id)
 						{
 						$dis_val['selected'] = true;
 						}
 					$leg_armors[] = $dis_val;
+					}
+
+				if ($CharacterItem->item()->equipment_slot == 5)
+					{
+					if ($Equipment->hands == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$hand_armors[] = $dis_val;
+					}
+
+				if ($CharacterItem->item()->equipment_slot == 6)
+					{
+					if ($Equipment->feet == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$feet_armors[] = $dis_val;
+					}
+				}
+
+			if ($Item->item_types_id == 3)
+				{
+				// $ItemAccessory = ItemAccessory::where(['items_id' => $Item->id])->first();
+				$dis_val = $CharacterItem->item()->toArray();
+				$dis_val['selected'] = false;
+
+				if ($CharacterItem->item()->equipment_slot == 7)
+					{
+					if ($Equipment->neck == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$neck_items[] = $dis_val;
+					}
+
+				if ($CharacterItem->item()->equipment_slot == 8)
+					{
+					if ($Equipment->left_ring == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$ring_items[] = $dis_val;
+					}
+
+				if ($CharacterItem->item()->equipment_slot == 9)
+					{
+					if ($Equipment->right_ring == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$ring_items[] = $dis_val;
 					}
 				}
 			}
 
 		// die(print_r($weapons));
 
-		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'heads' => $head_armors, 'chests' => $chest_armors, 'legs' => $leg_armors]);
+		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'heads' => $head_armors, 'chests' => $chest_armors, 'legs' => $leg_armors, 'hands' => $hand_armors, 'feets' => $feet_armors, 'necks' => $neck_items, 'rings' => $ring_items]);
 		}
 
 	public function items(Request $request)
@@ -789,12 +892,12 @@ class GameController extends Controller
 					}
 				$CharacterStat->save();
 				}
-			$Character->inventory()->first()->removeItem($request->item);
+			$Character->inventory()->removeItem($request->item);
 			// $request->item;
 			// $res = $Character->inventory()->where('items_id' => $request->item);
 			}
 
-		$allitems = $Character->inventory()->first()->items()->get();
+		$allitems = $Character->inventory()->character_items();
 
 		$items = [];
 

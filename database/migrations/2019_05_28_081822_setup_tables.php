@@ -160,10 +160,10 @@ class SetupTables extends Migration
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->string('name');
+			$table->integer('equipment_slot');
 			$table->string('attack_text');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
-			$table->string('equipment_slot');
 			$table->timestamps();
 		});
 
@@ -172,7 +172,17 @@ class SetupTables extends Migration
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->string('name');
-			$table->string('equipment_slot');
+			$table->integer('equipment_slot');
+			$table->integer('armor');
+			$table->timestamps();
+		});
+
+		Schema::create('item_accessories', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->string('name');
+			$table->integer('equipment_slot');
 			$table->integer('armor');
 			$table->timestamps();
 		});
@@ -187,15 +197,6 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('item_accessories', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('items_id');
-			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
-			$table->string('equipment_slot');
-			$table->timestamps();
-		});
-
 		Schema::create('item_others', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('items_id');
@@ -204,13 +205,11 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// Schema::create('equipment_slots', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->string('name');
-		// 	$table->timestamps();
-		// });
-
-
+		Schema::create('equipment_slots', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->timestamps();
+		});
 
 		Schema::create('characters', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -223,31 +222,6 @@ class SetupTables extends Migration
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
 			$table->foreign('last_rooms_id')->references('id')->on('rooms');
-			$table->timestamps();
-		});
-
-		Schema::create('equipment', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('characters_id');
-			$table->foreign('characters_id')->references('id')->on('characters');
-			$table->integer('weapon')->nullable();
-			$table->foreign('weapon')->references('id')->on('item_weapons');
-			$table->integer('head')->nullable();
-			$table->foreign('head')->references('id')->on('item_armors');
-			$table->integer('chest')->nullable();
-			$table->foreign('chest')->references('id')->on('item_armors');
-			$table->integer('legs')->nullable();
-			$table->foreign('legs')->references('id')->on('item_armors');
-			$table->integer('hands')->nullable();
-			$table->foreign('hands')->references('id')->on('item_armors');
-			$table->integer('feet')->nullable();
-			$table->foreign('feet')->references('id')->on('item_armors');
-			$table->integer('neck')->nullable();
-			$table->foreign('neck')->references('id')->on('item_accessories');
-			$table->integer('left ring')->nullable();
-			$table->foreign('left ring')->references('id')->on('item_accessories');
-			$table->integer('right ring')->nullable();
-			$table->foreign('right ring')->references('id')->on('item_accessories');
 			$table->timestamps();
 		});
 
@@ -271,6 +245,31 @@ class SetupTables extends Migration
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->integer('quantity');
+			$table->timestamps();
+		});
+
+		Schema::create('equipment', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('weapon')->nullable();
+			$table->foreign('weapon')->references('id')->on('inventory_items');
+			$table->integer('head')->nullable();
+			$table->foreign('head')->references('id')->on('inventory_items');
+			$table->integer('chest')->nullable();
+			$table->foreign('chest')->references('id')->on('inventory_items');
+			$table->integer('legs')->nullable();
+			$table->foreign('legs')->references('id')->on('inventory_items');
+			$table->integer('hands')->nullable();
+			$table->foreign('hands')->references('id')->on('inventory_items');
+			$table->integer('feet')->nullable();
+			$table->foreign('feet')->references('id')->on('inventory_items');
+			$table->integer('neck')->nullable();
+			$table->foreign('neck')->references('id')->on('inventory_items');
+			$table->integer('left_ring')->nullable();
+			$table->foreign('left_ring')->references('id')->on('inventory_items');
+			$table->integer('right_ring')->nullable();
+			$table->foreign('right_ring')->references('id')->on('inventory_items');
 			$table->timestamps();
 		});
 
@@ -422,12 +421,9 @@ class SetupTables extends Migration
 		Schema::dropIfExists('item_armors');
 		Schema::dropIfExists('item_accessories');
 		Schema::dropIfExists('item_others');
-		
 		Schema::dropIfExists('items');
 		Schema::dropIfExists('item_types');
-
-		// Schema::dropIfExists('item_types');
-		// Schema::dropIfExists('equipment_slots');
+		Schema::dropIfExists('equipment_slots');
 		Schema::dropIfExists('player_races');
 		// Schema::dropIfExists('player_classes');
 		Schema::dropIfExists('max_values');

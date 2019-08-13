@@ -29,40 +29,44 @@ class BasicEntries extends Seeder
 		// 	['strength_coefficient' => 1.45, 'dexterity_coefficient' => 1.67, 'constitution_coefficient' => 1.51, 'wisdom_coefficient' => 1.38, 'intelligence_coefficient' => 1.65, 'charisma_coefficient' => 1.53]
 		// ]);
 
-		// DB::table('equipment_slots')->insert([
-		// 	['name' => 'head', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'chest', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'legs', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// ]);
+		DB::table('equipment_slots')->insert([
+			['name' => 'weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'head', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'chest', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'legs', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'hands', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'feet', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'neck', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ring', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
 
 		DB::table('item_types')->insert([
-			['name' => 'Consumable', 'table_name' => 'item_consumables', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Weapon', 'table_name' => 'item_weapons', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Armor', 'table_name' => 'item_armors', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Accessories', 'table_name' => 'item_accessories', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Other', 'table_name' => 'item_others', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Weapon', 'table_name' => 'item_weapons', 'model_name' => 'App\ItemWeapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Armor', 'table_name' => 'item_armors', 'model_name' => 'App\ItemArmor', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Accessories', 'table_name' => 'item_accessories', 'model_name' => 'App\ItemAccessory', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Consumable', 'table_name' => 'item_consumables', 'model_name' => 'App\ItemConsumable', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Other', 'table_name' => 'item_others', 'model_name' => 'App\ItemOther', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('items')->insert([
-			['name' => 'Rusty Sword', 'item_types_id' => 2],
-			['name' => 'Steel Sword', 'item_types_id' => 2],
-			['name' => 'Rusty Helmet', 'item_types_id' => 3],
-			['name' => 'Rusty Armor', 'item_types_id' => 3],
-			['name' => 'Rusty Legplates', 'item_types_id' => 3],
-			['name' => 'Slime Drop', 'item_types_id' => 1],
-			['name' => 'Whey Bread', 'item_types_id' => 1],
+			['name' => 'Rusty Sword', 'item_types_id' => 1],
+			['name' => 'Steel Sword', 'item_types_id' => 1],
+			['name' => 'Rusty Helmet', 'item_types_id' => 2],
+			['name' => 'Rusty Armor', 'item_types_id' => 2],
+			['name' => 'Rusty Legplates', 'item_types_id' => 2],
+			['name' => 'Slime Drop', 'item_types_id' => 4],
+			['name' => 'Whey Bread', 'item_types_id' => 4],
 		]);
 
 		DB::table('item_weapons')->insert([
-			['items_id' => 1, 'name' => 'Rusty Sword', 'attack_text' => 'Your rusty sword scratches the enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 'weapon'],
-			['items_id' => 2, 'name' => 'Steel Sword', 'attack_text' => 'Your steel sword slices the enemy', 'damage_low' => 20, 'damage_high' => 50, 'equipment_slot' => 'weapon'],
+			['items_id' => 1, 'name' => 'Rusty Sword', 'attack_text' => 'Your rusty sword scratches the enemy', 'damage_low' => 10, 'damage_high' => 25, 'equipment_slot' => 1],
+			['items_id' => 2, 'name' => 'Steel Sword', 'attack_text' => 'Your steel sword slices the enemy', 'damage_low' => 20, 'damage_high' => 50, 'equipment_slot' => 1],
 		]);
 
 		DB::table('item_armors')->insert([
-			['items_id' => 3, 'name' => 'Rusty Helmet', 'equipment_slot' => 'head', 'armor' => 2],
-			['items_id' => 4, 'name' => 'Rusty Armor', 'equipment_slot' => 'chest', 'armor' => 2],
-			['items_id' => 5, 'name' => 'Rusty Legplates', 'equipment_slot' => 'legs', 'armor' => 2],
+			['items_id' => 3, 'name' => 'Rusty Helmet', 'equipment_slot' => 2, 'armor' => 2],
+			['items_id' => 4, 'name' => 'Rusty Armor', 'equipment_slot' => 3, 'armor' => 2],
+			['items_id' => 5, 'name' => 'Rusty Legplates', 'equipment_slot' => 4, 'armor' => 2],
 		]);
 
 		DB::table('item_consumables')->insert([

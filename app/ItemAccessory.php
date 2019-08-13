@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ItemWeapon extends Model
+class ItemAccessory extends Model
 {
-	protected $fillable = ['items_id', 'name', 'equipment_slot', 'damage_low', 'damage_high', 'attack_text'];
+	protected $fillable = ['items_id', 'name', 'equipment_slot', 'armor'];
 
 	public function item()
 		{

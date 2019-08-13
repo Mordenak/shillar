@@ -11,6 +11,6 @@ class InventoryItems extends Model
 
     public function item()
     	{
-    	return $this->belongsTo('App\Item');
+    	return $this->belongsTo('App\Item', 'items_id')->first();
     	}
 }

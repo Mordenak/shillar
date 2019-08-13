@@ -32,7 +32,7 @@ class Item extends Model
 
 		if ($this->type()->name == 'Accessories')
 			{
-			return ItemAccessories::where(['items_id' => $this->id])->first();
+			return ItemAccessory::where(['items_id' => $this->id])->first();
 			}
 
 		if ($this->type()->name == 'Other')
