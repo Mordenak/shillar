@@ -106,7 +106,8 @@ class GameController extends Controller
 				{
 				$item_ids[] = $loot_item;
 				}
-			$ground_items = Item::where(['id' => $item_ids])->get();
+			// die(print_r($item_ids));
+			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
 		// die(print_r($Character->playerrace()->name()));
@@ -408,7 +409,7 @@ class GameController extends Controller
 				{
 				$item_ids[] = $loot_item;
 				}
-			$ground_items = Item::where(['id' => $item_ids])->get();
+			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
 		if ($request->ajax())
@@ -425,7 +426,15 @@ class GameController extends Controller
 		{
 		$Character = Character::findOrFail($request->character_id);
 
-		$request->session()->pull('loot.'.$request->room_id, $request->item_id); 
+		$current_list = $request->session()->get('loot.'.$request->room_id);
+
+		if (($key = array_search($request->item_id, $current_list)) !== false)
+			{
+			unset($current_list[$key]);
+			}
+
+		$request->session()->put('loot.'.$request->room_id, $current_list);
+		// $request->session()->pull('loot.'.$request->room_id, $request->item_id); 
 
 		// $Character->last_rooms_id = $request->room_id;
 		// $Character->save();

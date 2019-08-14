@@ -14,6 +14,13 @@
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Attack Text:</label>
+			<div class="col-md-3">
+				<input type="text" name="attack_text" value="{{$npc->attack_text}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Img Src:</label>
 			<div class="col-md-3">
 				<input type="text" name="img_src" value="{{$npc->img_src}}" class="form-control"><br>
