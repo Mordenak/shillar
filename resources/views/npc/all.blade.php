@@ -6,6 +6,16 @@
 <a href="/admin">Go back</a>
 <br><br>
 
+<div>
+	<form method="get" action="/npc/create">
+		<div class="form-group row">
+			<div class="col-md-3">
+				<input type="submit" value="Add NPC" class="form-control">
+			</div>
+		</div>
+	</form>
+</div>
+
 @foreach ($npcs as $npc)
 	
 @endforeach

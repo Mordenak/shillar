@@ -14,7 +14,7 @@ class Character extends Model
 
 	public function stats()
 		{
-		return $this->belongsTo('App\CharacterStats', 'characters_id');
+		return $this->hasOne('App\CharacterStats', 'characters_id')->first();
 		}
 
 	public function inventory()

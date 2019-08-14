@@ -34,6 +34,11 @@ class AdminController extends Controller
 
 	public function process(Request $request)
 		{
+		if (!isset(auth()->user()->admin_level))
+			{
+			// error
+			return view('home');
+			}
 		// figure out where to go:
 		if ($request->create)
 			{

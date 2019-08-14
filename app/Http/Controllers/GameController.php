@@ -27,13 +27,12 @@ class GameController extends Controller
 	public function index(Request $request)
 		{
 		// The request should have a character for us:
-		// die(print_r($request->all()));
-		// die(print_r($request->character_id));
-		// $Character = Character::findOrFail($request->character_id);
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		// $Character = Character::where(['characters.id' => $request->character_id])
+		// 	->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+		// 	->select('character_stats.*', 'characters.*')
+		// 	->first();
+
+		$Character = Character::findOrFail($request->character_id);
 			// ->select('character_stats.id as character_stats_id, *');
 
 		if (!$Character)
@@ -41,46 +40,76 @@ class GameController extends Controller
 			return redirect('/home');
 			}
 
-		$no_attack = $Character->fatigue > 0 ? false : true;
+		$no_attack = $Character->stats()->fatigue > 0 ? false : true;
 
 		$Room = Room::findOrFail($Character->last_rooms_id);
-
-		// Find spawn rules for room:
-		$SpawnRule = SpawnRule::where(['rooms_id' => $Room->id])->first();
-
 		$Npc = null;
-		if ($SpawnRule)
+		// Block spawn in certain events:
+		// $request->session()->get('npc.'.$Room->id);
+		if ($request->session()->has('npc.'.$Room->id))
 			{
-			$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-			$prob = rand(0, 1.0);
-			if ($prob <= $SpawnRule->chance)
-				{
-				// then we spawn:
-				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-				// break;
-				}
+			// die(print_r($request->session()->get('npc.'.$Room->id)));
+			$Npc = Npc::where(['id' => $request->session()->get('npc.'.$Room->id)])->first();
+			$request->session()->pull('npc.'.$Room->id);
+			// die(print_r($Npc->id));
+			}
+		if (isset($request->no_spawn))
+			{
+			// ignore
 			}
 		else
 			{
-			// no room specific spawns:
-			$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->get();
-			if (count($SpawnRules) > 0)
+			// Find spawn rules for room:
+			$SpawnRule = SpawnRule::where(['rooms_id' => $Room->id])->first();
+
+			if ($SpawnRule)
 				{
-				foreach ($SpawnRules as $SpawnRule)
+				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+				$prob = rand() / getrandmax();
+				if ($prob <= $SpawnRule->chance)
 					{
-					// getrandmax()
-					$prob = rand() / getrandmax();
-					if ($prob <= $SpawnRule->chance)
+					// then we spawn:
+					$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+					$request->session()->put('npc.'.$Room->id, $Npc->id);
+					// break;
+					}
+				}
+			else
+				{
+				// no room specific spawns:
+				$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->get();
+				if (count($SpawnRules) > 0)
+					{
+					foreach ($SpawnRules as $SpawnRule)
 						{
-						// then we spawn:
-						$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-						break;
+						// getrandmax()
+						$prob = rand() / getrandmax();
+						if ($prob <= $SpawnRule->chance)
+							{
+							// then we spawn:
+							$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+							$request->session()->put('npc.'.$Room->id, $Npc->id);
+							break;
+							}
 						}
 					}
 				}
 			}
 
-		// die(print_r($Character->playerrace()->name()))s;
+		// Does the room have loot?
+		$ground_items = [];
+		$loot_items = $request->session()->get('loot.'.$Room->id);
+		if (isset($loot_items))
+			{
+			$item_ids = [];
+			foreach ($loot_items as $loot_item)
+				{
+				$item_ids[] = $loot_item;
+				}
+			$ground_items = Item::where(['id' => $item_ids])->get();
+			}
+
+		// die(print_r($Character->playerrace()->name()));
 		// die(print_r($Room->zone()->get()));
 
 		// $CharacterStats = CharacterStats::where(['characters_id' => $Character->id])
@@ -89,12 +118,12 @@ class GameController extends Controller
 		// $character = array_merge($Character->pluck(), $CharacterStats->pluck());;
 		if ($request->ajax())
 			{
-			$view = \View::make('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack]);
+			$view = \View::make('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items]);
 			$sections = $view->renderSections();
 			return $sections;
 			}
 
-		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack]);
+		return view('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items]);
 		}
 
 	public function move(Request $request)
@@ -111,10 +140,6 @@ class GameController extends Controller
 		{
 		// do combat stuff
 
-		// $Character = Character::where(['characters.id' => $request->character_id])
-		// 	->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-		// 	->select('character_stats.*', 'characters.*')
-		// 	->first();
 		$Character = Character::where(['characters.id' => $request->character_id])->first();
 		$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
 		// die(print_r($Character));
@@ -122,7 +147,7 @@ class GameController extends Controller
 		$Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
 
 		$combat_log = [];
-		$loot_log = [];
+		$reward_log = [];
    		$flat_npc = $Npc->toArray();
    		$Equipment = Equipment::where(['characters_id' => $Character->id])->first();
    		// $total_fatigue = 0;
@@ -135,14 +160,14 @@ class GameController extends Controller
 				}
 
 			$character_attacks = 1;
-			if ($CharacterStat->dexterity > 29)
+			if ($CharacterStat->dexterity > 9)
 				{
 				$attack_calc = ($character_attacks + ($CharacterStat->dexterity - 10) / 20);
 				$character_attacks = (int)$attack_calc;
 				}
 
 			// $combat_log[] = "number of attacks: $character_attacks";
-			$base_miss = 0.20;
+			$base_accuracy = 0.80;
 			$base_dodge = 0.05;
 			$base_crit = 0.05;
 			$crit_multipler_low = 2.0;
@@ -156,14 +181,14 @@ class GameController extends Controller
 
 				// roll for accuracy:
 				$acc_check = rand() / getrandmax();
-				if ($acc_check <= $base_miss)
+				if ($acc_check >= $base_accuracy)
 					{
 					// $combat_log[] = "You missed!";
 					$combat_log['pc_miss'] = isset($combat_log['pc_miss']) ? $combat_log['pc_miss']+1 : 1;
 					continue;
 					}
 				
-				$attack_text = 'Your fists graze';
+				$attack_text = 'Your fists graze the enemy';
 				$low_damage = 1 + $CharacterStat->constitution;
 				$high_damage = 10 + $CharacterStat->strength;
 				if ($low_damage > $high_damage)
@@ -274,12 +299,12 @@ class GameController extends Controller
 			$CharacterStat->xp += $actual_xp;
 			$CharacterStat->gold += $actual_gold;
 			$CharacterStat->save();
-			// $loot_log[] = '';
-			$loot_log[] = "You received $actual_xp xp.";
+			// $reward_log[] = '';
+			$reward_log[] = "You received $actual_xp xp.";
 			// $Wallet = Wallet::where(['wallets.characters_id' => $request->character_id])->first();
 			// die(print_r($Wallet));
-			$loot_log[] = "You received $actual_gold gold.";
-			$loot_log[] = '';
+			$reward_log[] = "You received $actual_gold gold.";
+			$reward_log[] = '';
 
 			$LootTables = LootTable::where(['npcs_id' => $request->npc_id])->get();
 
@@ -295,10 +320,22 @@ class GameController extends Controller
 					if ($prob <= $LootTable->chance)
 						{
 						// TODO: So we actually want to add this to the session instead:
-						// session('loot_'.$request->room_id.'_'.$LootTable->items_id)
+						if ($request->session()->has('loot.'.$request->room_id))
+							{
+							$current_items = $request->session()->get('loot.'.$request->room_id);
+							if (!in_array($LootTable->items_id, $current_items))
+								{
+								$request->session()->push('loot.'.$request->room_id, $LootTable->items_id);	
+								}
+							// die(print_r($request->session()->get('loot_'.$request->room_id)));
+							// ignore 2 entries:
+							}
+						else
+							{
+							$request->session()->put('loot.'.$request->room_id, [$LootTable->items_id]);
+							}
 						// die(print_r($LootTable->items()->first()));
-						$Character->inventory()->addItem($LootTable->items_id);
-						$loot_log[] = "You received ".$LootTable->item()->name;
+						// $Character->inventory()->addItem($LootTable->items_id);
 						}
 					}
 				}
@@ -357,24 +394,45 @@ class GameController extends Controller
 				}
 			}
 
-
-
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
-
-		// return view('game/combat', ['combat_log' => $combat_log, 'loot_log' => $loot_log, 'character' => $Character, 'npc' => $Npc, 'return_room' => $request->room_id]);
+		$Character = Character::findOrFail($request->character_id);
 		$Room = Room::findOrFail($request->room_id);
 		// return $this->index($request);
+
+		// Does the room have loot?
+		$ground_items = [];
+		$loot_items = $request->session()->get('loot.'.$Room->id);
+		if (isset($loot_items))
+			{
+			$item_ids = [];
+			foreach ($loot_items as $loot_item)
+				{
+				$item_ids[] = $loot_item;
+				}
+			$ground_items = Item::where(['id' => $item_ids])->get();
+			}
+
 		if ($request->ajax())
 			{
-			$view = \View::make('game/main', ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'loot_log' => $loot_log]);
+			$view = \View::make('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items]);
 			$sections = $view->renderSections();
 			return $sections;
 			}
 
-		return view('game/main', ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'loot_log' => $loot_log]);
+		return view('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items]);
+		}
+
+	public function item_pickup(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+
+		$request->session()->pull('loot.'.$request->room_id, $request->item_id); 
+
+		// $Character->last_rooms_id = $request->room_id;
+		// $Character->save();
+		// $Item = Item::findOrFail();
+		$Character->inventory()->addItem($request->item_id);
+
+		return $this->index($request);
 		}
 
 	public function train(Request $request)
@@ -444,7 +502,9 @@ class GameController extends Controller
 
 	public function training_cost($current_stat, $cost_adjustment)
 		{
-		$cost = 5.0 * $cost_adjustment;
+		// My old calc:
+		// $cost = 5.0 * $cost_adjustment;
+		$cost = $cost_adjustment;
 		$result  = $current_stat * ($current_stat * $cost) - $current_stat;
 		return (int)$result;
 		}

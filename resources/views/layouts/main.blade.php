@@ -141,7 +141,7 @@
 
 		<script>
 		$('body').on('submit', 'form.ajax', function(e, i) {
-			console.log('main ajax submit fire');
+			// console.log('main ajax submit fire');
 			e.preventDefault();
 			var formData = new FormData(e.target);
 			// console.log($(document.activeElement));
@@ -165,7 +165,6 @@
 				data: formData,
 				success: function(resp) {
 					var main_inserts = [
-						// '/combat',
 						'/train',
 						'/train_stat',
 						'/rest'
@@ -174,9 +173,6 @@
 						'/equipment',
 						'/items'
 						];
-					// location.reload();
-					// console.log(this);
-					// console.log(this['url']);
 					var replace = '.game-container';
 					if (main_inserts.includes(this['url']))
 						{
@@ -186,8 +182,8 @@
 						{
 						replace = '.menu';
 						}
-					// console.log('replace:' + replace);
-					if (this['url'] == '/game' || this['url'] == '/move' || this['url'] == '/combat')
+
+					if (this['url'] == '/game' || this['url'] == '/move' || this['url'] == '/combat' || this['url'] == '/item_pickup')
 						{
 						console.log('what');
 						$('.menu').html(resp.menu);

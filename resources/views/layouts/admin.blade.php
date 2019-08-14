@@ -27,6 +27,8 @@
 		</style>
 	</head>
 	<body style="background-color: #222;color:white;">
+
+        @if (auth()->user()->admin_level >= 1)
 		@section('sidebar')
 			This is the master sidebar.
 		@show
@@ -71,5 +73,8 @@
 				});
 			});
 		</script>
+        @else
+        You are not an Admin, <a href="/home">Go back</a>
+        @endif
 	</body>
 </html>

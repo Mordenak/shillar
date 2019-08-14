@@ -1,21 +1,21 @@
 @extends('layouts.main')
 
 @section('menu')
-	<header>{{ $character->name }}, {{$character->playerrace->name}}</header>
+	<header>{{ $character->name }}, {{$character->playerrace->gender}} {{$character->playerrace->name}}</header>
 	<ul>
-		<li>XP: {{$character->xp}}</li>
-		<li>Gold: {{$character->gold}}</li>
+		<li>XP: {{$stats->xp}}</li>
+		<li>Gold: {{$stats->gold}}</li>
 	</ul>
 	<strong> -- Stats -- </strong>
 	<ul>
-		<li>Strength: {{$character->strength}}</li>
-		<li>Dexterity: {{$character->dexterity}}</li>
-		<li>Constitution: {{$character->constitution}}</li>
-		<li>Wisdom: {{$character->wisdom}}</li>
-		<li>Intelligence: {{$character->intelligence}}</li>
-		<li>Charisma: {{$character->charisma}}</li>
+		<li>Strength: {{$stats->strength}}</li>
+		<li>Dexterity: {{$stats->dexterity}}</li>
+		<li>Constitution: {{$stats->constitution}}</li>
+		<li>Wisdom: {{$stats->wisdom}}</li>
+		<li>Intelligence: {{$stats->intelligence}}</li>
+		<li>Charisma: {{$stats->charisma}}</li>
 		<br>
-		<li>Score: {{$character->score}}</li>
+		<li>Score: {{$stats->score}}</li>
 		<!-- <li>Brute: {{$character->brute}}</li> -->
 		<!-- <li>Finesse: {{$character->finesse}}</li> -->
 		<!-- <li>Insight: {{$character->insight}}</li> -->
@@ -63,11 +63,17 @@
 	</p>
 	@endif
 
-	@if (isset($loot_log))
+	@if (isset($reward_log))
 	<p style="display: inline;">
-	@foreach ($loot_log as $log_entry)
+	@foreach ($reward_log as $log_entry)
 		{{$log_entry}}<br>
 	@endforeach
+	</p>
+	@endif
+
+	@if (isset($combat_log['pc_killed']))
+	<p style="color: red;display: inline;">
+		You have died.
 	</p>
 	@endif
 
@@ -75,7 +81,6 @@
 	<div style="position: relative;">
 	@if ($npc)
 		<div style="display: inline-block;">
-			<strong>{{ $npc->name }}</strong><br>
 			@if ($npc->img_src)
 			<img width="250" height="250" src="{{asset('img/'.$npc->img_src)}}">
 			@else
@@ -86,10 +91,6 @@
 				<input type="hidden" name="room_id" value="{{$room->id}}">
 				<input type="hidden" name="npc_id" value="{{$npc->id}}">
 				<input type="hidden" name="character_id" value="{{$character->id}}">
-				<!-- <label for="start_combat">All Out Attack</label> -->
-				<!-- <label for="start_combat">Single Attack</label> -->
-				<!-- <label for="start_combat">Run Away</label> -->
-				<!-- <input type="submit" id="start_combat" style="display: none;"> -->
 				@if (!$no_attack)
 				<table>
 					<tr>
@@ -113,37 +114,66 @@
 			</form>
 		</div>
 		<div style="display: inline-block;position:absolute;top:50%;transform: translateY(-50%);margin-left: .5rem;">
-			Health: {{$character->health}} / {{$character->max_health}}<br>
-			<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
-			Mana: {{$character->mana}} / {{$character->max_mana}}<br>
-			<progress value="{{$character->mana}}" max="{{$character->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
-			Fatigue: {{$character->fatigue}} / {{$character->max_fatigue}}<br>
-			<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
+			Health: {{$stats->health}} / {{$stats->max_health}}<br>
+			<progress value="{{$stats->health}}" max="{{$stats->max_health}}" class="stat-bar stat-bar-health {{ ($stats->health <= ($stats->max_health * .4)) ? '__low' : ''}}"></progress><br>
+			Mana: {{$stats->mana}} / {{$stats->max_mana}}<br>
+			<progress value="{{$stats->mana}}" max="{{$stats->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
+			Fatigue: {{$stats->fatigue}} / {{$stats->max_fatigue}}<br>
+			<progress value="{{$stats->fatigue}}" max="{{$stats->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 		</div>
 	@else
 		<div style="display: inline-block;margin-left: .5rem;">
-			Health: {{$character->health}} / {{$character->max_health}}<br>
-			<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
-			Mana: {{$character->mana}} / {{$character->max_mana}}<br>
-			<progress value="{{$character->mana}}" max="{{$character->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
-			Fatigue: {{$character->fatigue}} / {{$character->max_fatigue}}<br>
-			<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
+			Health: {{$stats->health}} / {{$stats->max_health}}<br>
+			<progress value="{{$stats->health}}" max="{{$stats->max_health}}" class="stat-bar stat-bar-health {{ ($stats->health <= ($stats->max_health * .4)) ? '__low' : ''}}"></progress><br>
+			Mana: {{$stats->mana}} / {{$stats->max_mana}}<br>
+			<progress value="{{$stats->mana}}" max="{{$stats->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
+			Fatigue: {{$stats->fatigue}} / {{$stats->max_fatigue}}<br>
+			<progress value="{{$stats->fatigue}}" max="{{$stats->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 		</div>
 	@endif
 	</div>
 	
-
 	<br>
 
-	<!-- {{ $room->title }} -->
-
 	<p>
-		You are walking around in the {{ $room->zone()->first()->name }}
-		<!-- {{ $room->description }} -->
+		{{$room->zone()->description}}
 	</p>
 
+	<!-- Do the loot: -->
+	@if (isset($ground_items))
+	@foreach ($ground_items as $ground_item)
+	<form method="post" action="/item_pickup" class="ajax">
+		<input type="hidden" name="room_id" value="{{$room->id}}">
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<input type="hidden" name="item_id" value="{{$ground_item->id}}">
+		<input type="hidden" name="no_spawn" value="true">
+		A <label for="pickup">{{$ground_item->name}}</label> is here.
+		<input type="submit" id="pickup" style="display: none;">
+	</form>
+	@endforeach
+	@endif
 	
 	<p>
+		@if ($room->up_rooms_id)
+			<form method="post" action="/move" class="ajax">
+				{{csrf_field()}}
+				<input type="hidden" name="room_id" value="{{$room->up_rooms_id}}">
+				<input type="hidden" name="character_id" value="{{$character->id}}">
+				You can travel <label for="move_up">up</label>
+				<input type="submit" id="move_up" style="display: none;">
+			</form>
+		@endif
+
+		@if ($room->down_rooms_id)
+			<form method="post" action="/move" class="ajax">
+				{{csrf_field()}}
+				<input type="hidden" name="room_id" value="{{$room->down_rooms_id}}">
+				<input type="hidden" name="character_id" value="{{$character->id}}">
+				You can travel <label for="move_down">down</label>
+				<input type="submit" id="move_down" style="display: none;">
+			</form>
+		@endif
+
 		@if ($room->north_rooms_id)
 			<form method="post" action="/move" class="ajax">
 				{{csrf_field()}}

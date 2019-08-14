@@ -13,22 +13,25 @@ class SetupTables extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('players', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->string('name');
-			$table->integer('users_id');
-			$table->foreign('users_id')->references('id')->on('users');
-			// $table->string('email');
-			// $table->string('hashpass');
-			// $table->string('remember_token');
-			$table->timestamps();
-		});
+		// Not used:
 
-		Schema::create('damage_types', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->string('name');
-			$table->timestamps();
-		});
+
+		// Schema::create('players', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->string('name');
+		// 	$table->integer('users_id');
+		// 	$table->foreign('users_id')->references('id')->on('users');
+		// 	// $table->string('email');
+		// 	// $table->string('hashpass');
+		// 	// $table->string('remember_token');
+		// 	$table->timestamps();
+		// });
+
+		// Schema::create('damage_types', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->string('name');
+		// 	$table->timestamps();
+		// });
 		// Damage types:
 		/*
 			Blunt (1x str)
@@ -80,6 +83,8 @@ class SetupTables extends Migration
 		Schema::create('zones', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->string('description');
+			$table->integer('darkness_level')->default(0);
 			$table->timestamps();
 		});
 
@@ -87,8 +92,11 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
-			$table->string('title');
-			$table->string('description');
+			$table->string('title')->nullable();
+			$table->string('description')->nullable();
+			$table->integer('darkness_level')->default(0);
+			$table->string('custom_img')->nullable();
+			$table->boolean('spawns_enabled')->default(true);
 			$table->integer('north_rooms_id')->nullable();
 			$table->foreign('north_rooms_id')->references('id')->on('rooms');
 			$table->integer('east_rooms_id')->nullable();
@@ -97,18 +105,23 @@ class SetupTables extends Migration
 			$table->foreign('south_rooms_id')->references('id')->on('rooms');
 			$table->integer('west_rooms_id')->nullable();
 			$table->foreign('west_rooms_id')->references('id')->on('rooms');
+			$table->integer('up_rooms_id')->nullable();
+			$table->foreign('up_rooms_id')->references('id')->on('rooms');
+			$table->integer('down_rooms_id')->nullable();
+			$table->foreign('down_rooms_id')->references('id')->on('rooms');
 			$table->timestamps();
 		});
 
-		Schema::create('max_values', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('max_level');
-			$table->timestamps();
-		});
+		// Schema::create('max_values', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('max_level');
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('player_races', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->string('gender');
 			$table->timestamps();
 		});
 
@@ -122,9 +135,19 @@ class SetupTables extends Migration
 			$table->float('wisdom_cost')->default(1.0);
 			$table->float('intelligence_cost')->default(1.0);
 			$table->float('charisma_cost')->default(1.0);
-			// $table->float('brute_cost')->nullable();
-			// $table->float('finesse_cost')->nullable();
-			// $table->float('insight_cost')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('starting_stats', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('player_races_id');
+			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->integer('strength')->default(20);
+			$table->integer('dexterity')->default(20);
+			$table->integer('constitution')->default(20);
+			$table->integer('wisdom')->default(20);
+			$table->integer('intelligence')->default(20);
+			$table->integer('charisma')->default(20);
 			$table->timestamps();
 		});
 
@@ -184,6 +207,12 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->integer('equipment_slot');
 			$table->integer('armor');
+			$table->integer('strength_bonus');
+			$table->integer('dexterity_bonus');
+			$table->integer('constitution_bonus');
+			$table->integer('wisdom_bonus');
+			$table->integer('intelligence_bonus');
+			$table->integer('charisma_bonus');
 			$table->timestamps();
 		});
 
@@ -315,8 +344,9 @@ class SetupTables extends Migration
 		Schema::create('npcs', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->string('attack_text')->nullable();
 			$table->string('img_src')->nullable();
-			$table->boolean('is_hostile');
+			$table->boolean('is_hostile')->default(true);
 			$table->timestamps();
 		});
 
@@ -325,7 +355,7 @@ class SetupTables extends Migration
 			$table->integer('npcs_id');
 			$table->foreign('npcs_id')->references('id')->on('npcs');
 			$table->integer('health');
-			$table->integer('armor');
+			$table->float('armor');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
 			$table->integer('attacks_per_round');
@@ -404,6 +434,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_stats');
 		// Schema::dropIfExists('wallets');
 		Schema::dropIfExists('stat_costs');
+		Schema::dropIfExists('starting_stats');
 		// Schema::dropIfExists('race_stat_affinities');
 		Schema::dropIfExists('equipment');
 		Schema::dropIfExists('inventory_items');

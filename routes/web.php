@@ -38,6 +38,7 @@ Route::post('/rest', 'GameController@rest');
 Route::post('/equipment', 'GameController@equipment');
 
 Route::post('/items', 'GameController@items');
+Route::post('/item_pickup', 'GameController@item_pickup');
 
 Route::get('/admin', 'AdminController@index');
 
@@ -45,6 +46,7 @@ Route::post('/admin/process', 'AdminController@process');
 
 // Do this stuff better or different?
 
+// TODO: Route these all through /admin and include an Auth Middleware
 Route::get('room/all', 'RoomController@all');
 Route::get('room/create', 'RoomController@create');
 Route::get('room/edit/{id}', 'RoomController@edit')->where('id', '[0-9]+');
