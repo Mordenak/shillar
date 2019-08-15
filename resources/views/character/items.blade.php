@@ -14,6 +14,7 @@
 	<input type="submit" value="Use">
 </form>
 
+<br>
 <div style="display: inline-block;">
 	Health: {{$character->health}} / {{$character->max_health}}<br>
 	<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
@@ -22,8 +23,9 @@
 	Fatigue: {{$character->fatigue}} / {{$character->max_fatigue}}<br>
 	<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 </div>
+<br>
 @endif
-
+<br>
 <form method="post" action="/game" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">

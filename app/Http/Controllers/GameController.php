@@ -62,7 +62,7 @@ class GameController extends Controller
 			// Find spawn rules for room:
 			$SpawnRule = SpawnRule::where(['rooms_id' => $Room->id])->first();
 
-			if ($SpawnRule)
+			if ($SpawnRule && $Room->spawns_enabled)
 				{
 				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
 				$prob = rand() / getrandmax();
@@ -76,20 +76,23 @@ class GameController extends Controller
 				}
 			else
 				{
-				// no room specific spawns:
-				$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->get();
-				if (count($SpawnRules) > 0)
+				if ($Room->spawns_enabled)
 					{
-					foreach ($SpawnRules as $SpawnRule)
+					// no room specific spawns:
+					$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->get();
+					if (count($SpawnRules) > 0)
 						{
-						// getrandmax()
-						$prob = rand() / getrandmax();
-						if ($prob <= $SpawnRule->chance)
+						foreach ($SpawnRules as $SpawnRule)
 							{
-							// then we spawn:
-							$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-							$request->session()->put('npc.'.$Room->id, $Npc->id);
-							break;
+							// getrandmax()
+							$prob = rand() / getrandmax();
+							if ($prob <= $SpawnRule->chance)
+								{
+								// then we spawn:
+								$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+								$request->session()->put('npc.'.$Room->id, $Npc->id);
+								break;
+								}
 							}
 						}
 					}
@@ -432,12 +435,19 @@ class GameController extends Controller
 		return view('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items]);
 		}
 
+	public function show_stats(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		return view('/character/stats', ['character' => $Character, 'stats' => $Character->stats()]);
+		}
+
 	public function death(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
 		// $Character->stats()->health = $Character->stats()->max_health;
 		// $Character->stats()->save();
-		$Character->stats()->update(['health' => $Character->stats()->max_health]);
+		// drop all stats:
+		$Character->stats()->death();
 		$Character->last_rooms_id = 1;
 		$Character->save();
 		$request->death = true;
@@ -655,10 +665,11 @@ class GameController extends Controller
 				$new_stats['max_mana'] = $new_stats['wisdom'] + $new_stats['intelligence'] + $new_stats['charisma'];
 				$new_stats['max_fatigue'] = $new_stats['dexterity'] + $new_stats['constitution'] + $new_stats['wisdom'];
 
-				$new_stats['score'] = $new_stats['strength'] + $new_stats['dexterity'] + $new_stats['constitution'] + $new_stats['wisdom'] + $new_stats['intelligence'] + $new_stats['charisma'];
+				// $new_stats['score'] = $new_stats['strength'] + $new_stats['dexterity'] + $new_stats['constitution'] + $new_stats['wisdom'] + $new_stats['intelligence'] + $new_stats['charisma'];
 
 				$CharacterStat->fill($new_stats);
 				$CharacterStat->save();
+				$CharacterStat->refreshScore();
 				}
 			}
 

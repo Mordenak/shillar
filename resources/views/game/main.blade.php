@@ -1,25 +1,18 @@
 @extends('layouts.main')
 
 @section('menu')
-	<header>{{ $character->name }}, {{$character->playerrace->gender}} {{$character->playerrace->name}}</header>
+	
 	<ul>
 		<li>XP: {{$stats->xp}}</li>
 		<li>Gold: {{$stats->gold}}</li>
 	</ul>
-	<strong> -- Stats -- </strong>
-	<ul>
-		<li>Strength: {{$stats->strength}}</li>
-		<li>Dexterity: {{$stats->dexterity}}</li>
-		<li>Constitution: {{$stats->constitution}}</li>
-		<li>Wisdom: {{$stats->wisdom}}</li>
-		<li>Intelligence: {{$stats->intelligence}}</li>
-		<li>Charisma: {{$stats->charisma}}</li>
-		<br>
-		<li>Score: {{$stats->score}}</li>
-		<!-- <li>Brute: {{$character->brute}}</li> -->
-		<!-- <li>Finesse: {{$character->finesse}}</li> -->
-		<!-- <li>Insight: {{$character->insight}}</li> -->
-	</ul>
+
+	<form method="post" action="/show_stats" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<label for="stats">Stats</label>
+		<input type="submit" id="stats" style="display: none;">
+	</form>
 	<form method="post" action="/equipment" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
@@ -122,22 +115,33 @@
 			<progress value="{{$stats->fatigue}}" max="{{$stats->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 		</div>
 	@else
-		<div style="display: inline-block;margin-left: .5rem;">
+<!-- 		<div style="display: inline-block;margin-left: .5rem;">
 			Health: {{$stats->health}} / {{$stats->max_health}}<br>
 			<progress value="{{$stats->health}}" max="{{$stats->max_health}}" class="stat-bar stat-bar-health {{ ($stats->health <= ($stats->max_health * .4)) ? '__low' : ''}}"></progress><br>
 			Mana: {{$stats->mana}} / {{$stats->max_mana}}<br>
 			<progress value="{{$stats->mana}}" max="{{$stats->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
 			Fatigue: {{$stats->fatigue}} / {{$stats->max_fatigue}}<br>
 			<progress value="{{$stats->fatigue}}" max="{{$stats->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
-		</div>
+		</div> -->
 	@endif
 	</div>
 	
 	<br>
 
+	@if (!$npc)
+	@if ($room->description)
+	<p>
+		{{$room->title}}
+		<br>
+		{{$room->description}}
+	</p>
+	@endif
+	@endif
+
 	<p>
 		{{$room->zone()->description}}
 	</p>
+
 
 	<!-- Do the loot: -->
 	@if (isset($ground_items))

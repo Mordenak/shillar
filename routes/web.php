@@ -31,6 +31,8 @@ Route::post('/move', 'GameController@move');
 
 Route::post('/combat', 'GameController@combat');
 
+Route::post('/show_stats', 'GameController@show_stats');
+
 Route::post('/train', 'GameController@train');
 
 Route::post('/rest', 'GameController@rest');
@@ -51,6 +53,7 @@ Route::get('room/all', 'RoomController@all');
 Route::get('room/create', 'RoomController@create');
 Route::get('room/edit/{id}', 'RoomController@edit')->where('id', '[0-9]+');
 Route::post('room/save', 'RoomController@save');
+Route::post('room/delete', 'RoomController@delete');
 
 Route::get('zone/all', 'ZoneController@all');
 Route::get('zone/create', 'ZoneController@create');

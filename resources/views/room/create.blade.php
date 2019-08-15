@@ -32,6 +32,20 @@ Creating a new room:<br>
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Custom Img:</label>
+			<div class="col-md-3">
+				<input type="text" name="custom_img" value="{{isset($room) ? $room->custom_img : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Spawns Enabled:</label>
+			<div class="col-md-3">
+				<input type="checkbox" name="spawns_enabled" class="form-control" checked>
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">North Room:</label>
 			<div class="col-md-3">
 				<input type="text" name="north_room_id" class="form-control">

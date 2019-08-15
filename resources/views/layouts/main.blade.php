@@ -171,7 +171,8 @@
 						];
 					var menu_inserts = [
 						'/equipment',
-						'/items'
+						'/items',
+						'/show_stats'
 						];
 					var replace = '.game-container';
 					if (main_inserts.includes(this['url']))
