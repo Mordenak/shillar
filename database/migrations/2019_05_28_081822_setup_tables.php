@@ -156,25 +156,15 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->string('table_name');
 			$table->string('model_name');
-			// $table->integer('table_id');
-			// Add all flags?
-			// $table->bool('consumable');
-			// $table->bool('equippable');
 			$table->timestamps();
 		});
 
 		Schema::create('items', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			// $table->string('item_table');
-			// $table->integer('item_table_id');
 			$table->integer('item_types_id');
 			$table->foreign('item_types_id')->references('id')->on('item_types');
-			// Should items have the individual flags as well?
-			// $table->string('equipment_slots');
-			// $table->foreign('equipment_slots_id')->references('id')->on('equipment_slots');
-			// $table->boolean('consumable');
-			// $table->boolean('equippable');
+			$table->integer('value');
 			$table->timestamps();
 		});
 
@@ -187,6 +177,8 @@ class SetupTables extends Migration
 			$table->string('attack_text');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
+			$table->integer('strength_requirement')->nullable();
+			$table->integer('dexterity_requirement')->nullable();
 			$table->timestamps();
 		});
 
@@ -410,6 +402,13 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('rooms_id');
 			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->string('name');
+			$table->string('description');
+			$table->boolean('buys_weapons')->default(false);
+			$table->boolean('buys_armors')->default(false);
+			$table->boolean('buys_accessories')->default(false);
+			$table->boolean('buys_consumables')->default(false);
+			$table->boolean('buys_others')->default(false);
 			$table->timestamps();
 		});
 
@@ -419,6 +418,32 @@ class SetupTables extends Migration
 			$table->foreign('shops_id')->references('id')->on('shops');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
+			$table->integer('price')->nullable();
+			$table->float('markup')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('quests', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('description');
+			$table->timestamps();
+		});
+
+		Schema::create('characters_quests', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('quests_id');
+			$table->foreign('quests_id')->references('id')->on('quests');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('progress');
+			$table->timestamps();
+		});
+
+		Schema::create('spells', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('description');
 			$table->timestamps();
 		});
 
@@ -463,5 +488,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('reward_tables');
 		Schema::dropIfExists('npcs');
 		Schema::dropIfExists('user_settings');
+		Schema::dropIfExists('quests');
+		Schema::dropIfExists('characters_quests');
+		Schema::dropIfExists('spells');
 	}
 }

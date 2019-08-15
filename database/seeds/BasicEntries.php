@@ -73,6 +73,7 @@ class BasicEntries extends Seeder
 		]);
 		*/
 
+		/*
 		DB::table('npcs')->insert([
 			['name' => 'Basic Slime', 'img_src' => 'wtf_slime.jpg', 'is_hostile' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Rubber Slime', 'img_src' => 'wtf_slime.jpg', 'is_hostile' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -90,6 +91,7 @@ class BasicEntries extends Seeder
 			['npcs_id' => 5, 'health' => 170, 'armor' => 0, 'damage_low' => 3, 'damage_high' => 12, 'attacks_per_round' => 2, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['npcs_id' => 6, 'health' => 500, 'armor' => 0, 'damage_low' => 4, 'damage_high' => 16, 'attacks_per_round' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]
 		]);
+		*/
 
 		// DB::table('spawn_rules')->insert([
 		// 	['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 1, 'chance' => 0.33, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -100,6 +102,7 @@ class BasicEntries extends Seeder
 		// 	['zones_id' => null, 'rooms_id' => 6, 'npcs_id' => 6, 'chance' => 0.5, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// ]);
 
+		/*
 		DB::table('reward_tables')->insert([
 			['npcs_id' => 1, 'award_xp' => 50000, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.25, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['npcs_id' => 2, 'award_xp' => 75000, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.25, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -119,6 +122,7 @@ class BasicEntries extends Seeder
 			['npcs_id' => 5, 'items_id' => 7, 'chance' => 0.3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['npcs_id' => 6, 'items_id' => 7, 'chance' => 0.3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
+		*/
 
 		// DB::table('user_settings')->insert([
 		// 	['users_id' => 1, 'short_mode' => true],
