@@ -115,16 +115,22 @@ class GameController extends Controller
 
 		// $CharacterStats = CharacterStats::where(['characters_id' => $Character->id])
 		// 	->join('character_stats', 'characters.id', '=', 'character_stats.character_id');
+		$request_params = ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
+
+		if ($request->death)
+			{
+			$request_params['death'] = true;
+			}
 
 		// $character = array_merge($Character->pluck(), $CharacterStats->pluck());;
 		if ($request->ajax())
 			{
-			$view = \View::make('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items]);
+			$view = \View::make('game/main', $request_params);
 			$sections = $view->renderSections();
 			return $sections;
 			}
 
-		return view('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items]);
+		return view('game/main', $request_params);
 		}
 
 	public function move(Request $request)
@@ -382,7 +388,11 @@ class GameController extends Controller
 				{
 				$formatted_log[] = "$Npc->name is dead!!!";
 				}
-			
+
+			if (isset($combat_log['pc_killed']))
+				{
+				return $this->death($request);
+				}
 			
 			}
 		else
@@ -420,6 +430,18 @@ class GameController extends Controller
 			}
 
 		return view('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items]);
+		}
+
+	public function death(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		// $Character->stats()->health = $Character->stats()->max_health;
+		// $Character->stats()->save();
+		$Character->stats()->update(['health' => $Character->stats()->max_health]);
+		$Character->last_rooms_id = 1;
+		$Character->save();
+		$request->death = true;
+		return $this->index($request);
 		}
 
 	public function item_pickup(Request $request)

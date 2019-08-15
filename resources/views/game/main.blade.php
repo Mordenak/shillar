@@ -71,7 +71,7 @@
 	</p>
 	@endif
 
-	@if (isset($combat_log['pc_killed']))
+	@if (isset($death))
 	<p style="color: red;display: inline;">
 		You have died.
 	</p>
