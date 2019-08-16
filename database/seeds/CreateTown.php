@@ -51,5 +51,17 @@ class CreateTown extends Seeder
 			['npcs_id' => 1, 'award_xp' => 0, 'xp_variation' => 0, 'award_gold' => 0, 'gold_variation' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['npcs_id' => 2, 'award_xp' => 355, 'xp_variation' => 0.2, 'award_gold' => 1, 'gold_variation' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
+
+		DB::table('items')->insert([
+			['name' => 'Crab legs', 'item_types_id' => 4, 'value' => 0, 'weight' => 0.25, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('item_consumables')->insert([
+			['items_id' => 1, 'name' => 'Crab legs', 'effect' => 'healing', 'potency' => 13, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('loot_tables')->insert([
+			['npcs_id' => 2, 'items_id' => 1, 'chance' => 0.55, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
 	}
 }

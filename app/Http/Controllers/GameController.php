@@ -136,6 +136,23 @@ class GameController extends Controller
 		return view('game/main', $request_params);
 		}
 
+	public function menu(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+
+		$request_params = ['character' => $Character, 'stats' => $Character->stats()];
+		// return $this->index($request);
+		if ($request->ajax())
+			{
+			$view = \View::make('partials/menu', $request_params);
+			$sections = $view->renderSections();
+			return $sections['menu'];
+			}
+
+		return view("partials/menu", $request_params);
+		// return view('game/main', $request_params);
+		}
+
 	public function move(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
@@ -149,16 +166,27 @@ class GameController extends Controller
 	public function combat(Request $request)
 		{
 		// do combat stuff
-
 		$Character = Character::where(['characters.id' => $request->character_id])->first();
 		$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
-		// die(print_r($Character));
-		// $Npc = Npc::findOrFail($request->npc_id);
-		$Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
+		
+		$flat_npc = null;
+		if ($request->session()->has('combat.'.$Character->id))
+			{
+			$flat_npc = $request->session()->get('combat.'.$Character->id);
+			// die(print_r($flat_npc);
+			$Npc = Npc::where(['npcs.id' => $flat_npc['id']])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
+			}
+		else
+			{
+			$Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
+			$flat_npc = $Npc->toArray();
+			// $request->session()->put('combat.'.$Character->id, $Npc->toArray());
+			}
+		
 
 		$combat_log = [];
 		$reward_log = [];
-   		$flat_npc = $Npc->toArray();
+   		// $flat_npc = $Npc->toArray();
    		$Equipment = Equipment::where(['characters_id' => $Character->id])->first();
    		// $total_fatigue = 0;
    		$combat_log['begin'] = "You attacked $Npc->name";
@@ -194,6 +222,7 @@ class GameController extends Controller
 				if ($acc_check >= $base_accuracy)
 					{
 					// $combat_log[] = "You missed!";
+					$combat_log['attacks'][] = 0;
 					$combat_log['pc_miss'] = isset($combat_log['pc_miss']) ? $combat_log['pc_miss']+1 : 1;
 					continue;
 					}
@@ -277,13 +306,27 @@ class GameController extends Controller
 						}	
 					}
 				}
+
+			// if single round:
+			if ($request->submit == 'single')
+				{
+				break;
+				}
 			}
 
+		$no_attack = $Character->stats()->fatigue > 0 ? false : true;
+
 		// $combat_log[] = "Made it here with: ". $Character->health. "health";
-		if ($CharacterStat->health > 0)
+		if ($flat_npc['health'] > 0)
+			{
+			$request->session()->put('combat.'.$Character->id, $flat_npc);
+			}
+		elseif ($flat_npc['health'] <= 0)
 			{
 			// $combat_log[] = "$Npc->name is dead!!!";
 			$combat_log['npc_killed'] = true;
+			// clean session:
+			$request->session()->pull('combat.'.$Character->id);
 			$RewardTable = RewardTable::where(['reward_tables.npcs_id' => $request->npc_id])->first();
 
 			// $actual_xp = (float)$RewardTable->award_xp * $RewardTable->xp_variation;
@@ -351,10 +394,15 @@ class GameController extends Controller
 				}
 			// $LootTable;
 			}
-		else
+		elseif ($CharacterStat->health <= 0)
 			{
 			// $combat_log[] = 'You have died!';
 			$combat_log['pc_killed'] = true;
+			return $this->death($request);
+			}
+		else
+			{
+			// nothing?
 			}
 
 		// Combat log will recorded differently if the user setting is on?
@@ -377,13 +425,26 @@ class GameController extends Controller
 			// shorten:
 			// die(print_r(count($combat_log['attacks'])));
 			// sum up the attacks:
+			$damage = isset($combat_log['attacks']) ? array_sum($combat_log['attacks']) : 0;
 			$formatted_log[] = $combat_log['begin'];
-			$formatted_log[] = $combat_log['attack_text'];
+			// $formatted_log[] = isset($combat_log['attack_text']) ? $combat_log['attack_text'] : '';
+			if ($Character->equipment()->weapon)
+				{
+				$formatted_log[] = $Character->equipment()->weapon()->attack_text;
+				}
+			else
+				{
+				$formatted_log[] = "Your fists grope the enemy";
+				}
 			$formatted_log[] = "You made $total_attacks attacks and missed $total_miss times.";
-			$formatted_log[] = "You did ".array_sum($combat_log['attacks'])." points of damage.";
+			if ($damage > 0)
+				{
+				$formatted_log[] = "You did $damage points of damage.";
+				}
 
 			if (isset($combat_log['damage_taken']))
 				{
+				$formatted_log[] = "$Npc->attack_text";
 				$formatted_log[] = "$Npc->name hit you ".count($combat_log['damage_taken'])." times for ".array_sum($combat_log['damage_taken'])." damage.";
 				}
 
@@ -425,14 +486,22 @@ class GameController extends Controller
 			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
+		$request_params = ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
+
+		if  ($request->session()->has('combat.'.$Character->id))
+			{
+			$request_params['timer'] = true;
+			$request_params['npc'] = $Npc;
+			}
+
 		if ($request->ajax())
 			{
-			$view = \View::make('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items]);
+			$view = \View::make('game/main', $request_params);
 			$sections = $view->renderSections();
 			return $sections;
 			}
 
-		return view('game/main', ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items]);
+		return view('game/main', $request_params);
 		}
 
 	public function show_stats(Request $request)

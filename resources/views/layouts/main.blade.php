@@ -150,6 +150,11 @@
 				formData.append('submit', $(document.activeElement).val());
 				}
 
+			if ($(document.activeElement).hasClass('submit-id'))
+				{
+				formData.append('submit', $(document.activeElement).attr('id'));
+				}
+
 			$(document.activeElement).attr('disabled', 'disabled');
 
 			for (var pair of formData.entries())
@@ -167,34 +172,41 @@
 					var main_inserts = [
 						'/train',
 						'/train_stat',
-						'/rest'
+						'/rest',
+						'/move',
+						'/combat',
+						'/item_pickup'
 						];
 					var menu_inserts = [
 						'/equipment',
 						'/items',
-						'/show_stats'
+						'/show_stats',
+						'/menu'
 						];
-					var replace = '.game-container';
+					// var replace = '.game-container';
 					if (main_inserts.includes(this['url']))
 						{
-						replace = '.main';
+						// replace = '.main';
+						console.log('replace main');
+						$('.main').html(resp.main);
 						}
 					if (menu_inserts.includes(this['url']))
 						{
-						replace = '.menu';
+						// replace = '.menu';
+						console.log('replace menu');
+						$('.menu').html(resp);
 						}
 
-					if (this['url'] == '/game' || this['url'] == '/move' || this['url'] == '/combat' || this['url'] == '/item_pickup')
-						{
-						console.log('what');
-						$('.menu').html(resp.menu);
-						$('.main').html(resp.main);
-						$('.footer').html(resp.footer);
-						}
-					else
-						{
-						$(replace).html(resp);
-						}
+					// if (this['url'] == '/game' || this['url'] == '/move' || this['url'] == '/combat' || this['url'] == '/item_pickup')
+					// 	{
+					// 	// $('.menu').html(resp.menu);
+					// 	$('.main').html(resp.main);
+					// 	// $('.footer').html(resp.footer);
+					// 	}
+					// else
+					// 	{
+					// 	$(replace).html(resp);
+					// 	}
 					}
 				});
 			// console.log('done?');

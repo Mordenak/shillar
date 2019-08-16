@@ -85,6 +85,7 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->string('description');
 			$table->integer('darkness_level')->default(0);
+			$table->string('custom_img')->nullable();
 			$table->timestamps();
 		});
 
@@ -165,6 +166,7 @@ class SetupTables extends Migration
 			$table->integer('item_types_id');
 			$table->foreign('item_types_id')->references('id')->on('item_types');
 			$table->integer('value');
+			$table->float('weight');
 			$table->timestamps();
 		});
 
@@ -430,12 +432,12 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('characters_quests', function (Blueprint $table) {
+		Schema::create('character_quests', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('quests_id');
 			$table->foreign('quests_id')->references('id')->on('quests');
-			$table->integer('characters_id');
-			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('character_id');
+			$table->foreign('character_id')->references('id')->on('characters');
 			$table->integer('progress');
 			$table->timestamps();
 		});
@@ -444,6 +446,44 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('description');
+			$table->timestamps();
+		});
+
+		Schema::create('character_spells', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('spells_id');
+			$table->foreign('spells_id')->references('id')->on('spells');
+			$table->integer('character_id');
+			$table->foreign('character_id')->references('id')->on('characters');
+			$table->timestamps();
+		});
+
+		Schema::create('item_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('description');
+			$table->timestamps();
+		});
+
+		Schema::create('item_property_items', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('item_property_id');
+			$table->foreign('item_property_id')->references('id')->on('item_properties');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->timestamps();
+		});
+
+		Schema::create('combat_logs', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->integer('rooms_id');
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->integer('remaining_health');
+			$table->integer('expires_on')->nullable();
 			$table->timestamps();
 		});
 
@@ -464,32 +504,35 @@ class SetupTables extends Migration
 		Schema::dropIfExists('equipment');
 		Schema::dropIfExists('inventory_items');
 		Schema::dropIfExists('inventories');
-		Schema::dropIfExists('characters');
 		Schema::dropIfExists('spawn_rules');
 		Schema::dropIfExists('loot_tables');
 		Schema::dropIfExists('shop_items');
 		Schema::dropIfExists('shops');
-		Schema::dropIfExists('rooms');
-		Schema::dropIfExists('zones');
-		Schema::dropIfExists('players');		
+		Schema::dropIfExists('players');
 		Schema::dropIfExists('item_weapons');
 		Schema::dropIfExists('item_consumables');
 		Schema::dropIfExists('item_armors');
 		Schema::dropIfExists('item_accessories');
 		Schema::dropIfExists('item_others');
+		Schema::dropIfExists('item_property_items');
+		Schema::dropIfExists('item_properties');
 		Schema::dropIfExists('items');
 		Schema::dropIfExists('item_types');
 		Schema::dropIfExists('equipment_slots');
-		Schema::dropIfExists('player_races');
-		// Schema::dropIfExists('player_classes');
 		Schema::dropIfExists('max_values');
 		Schema::dropIfExists('npc_stats');
 		Schema::dropIfExists('damage_types');
 		Schema::dropIfExists('reward_tables');
-		Schema::dropIfExists('npcs');
 		Schema::dropIfExists('user_settings');
+		Schema::dropIfExists('character_quests');
+		Schema::dropIfExists('character_spells');
+		Schema::dropIfExists('combat_logs');
+		Schema::dropIfExists('npcs');
+		Schema::dropIfExists('characters');
 		Schema::dropIfExists('quests');
-		Schema::dropIfExists('characters_quests');
 		Schema::dropIfExists('spells');
+		Schema::dropIfExists('rooms');
+		Schema::dropIfExists('zones');
+		Schema::dropIfExists('player_races');
 	}
 }

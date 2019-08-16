@@ -21,4 +21,9 @@ class Character extends Model
 		{
 		return $this->hasOne('App\Inventory', 'characters_id')->first();
 		}
+
+	public function equipment()
+		{
+		return $this->hasOne('App\Equipment', 'characters_id')->first();
+		}
 }

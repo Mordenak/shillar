@@ -13,6 +13,11 @@ class Equipment extends Model
 		return $this->belongsTo('App\Character', 'characters_id');
 		}
 
+	public function weapon()
+		{
+		return $this->hasOne('App\ItemWeapon', 'weapon')->first();
+		}
+
 	public function calculate_armor()
 		{
 		$total_armor = 3;

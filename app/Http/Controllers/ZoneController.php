@@ -10,7 +10,7 @@ class ZoneController extends Controller
 	public function create()
 		{
 		// $zones = Zone::all();
-		return view('zone.create');
+		return view('zone.edit');
 		}
 
 	public function all(Request $request)
@@ -36,6 +36,9 @@ class ZoneController extends Controller
 
 		$values = [
 			'name' => $request->name,
+			'description' => $request->description,
+			'darkness_level' => $request->darkness_level,
+			'custom_img' => $request->custom_img,
 			];
 
 		$Zone->fill($values);

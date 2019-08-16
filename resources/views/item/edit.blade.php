@@ -20,6 +20,20 @@ Creating an item:
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Value:</label>
+			<div class="col-md-3">
+				<input type="text" name="value" value="{{isset($item) ? $item->value : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Weight:</label>
+			<div class="col-md-3">
+				<input type="text" name="weight" value="{{isset($item) ? $item->weight : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Type:</label>
 			<div class="col-md-3">
 				<select id="type-select" name="item_types_id" class="form-control">

@@ -1,12 +1,19 @@
 @extends('layouts.main')
 
 @section('menu')
-	
-	<ul>
-		<li>XP: {{$stats->xp}}</li>
-		<li>Gold: {{$stats->gold}}</li>
-	</ul>
-
+<div style="text-align: left;">
+	It is the 200th cycle in<br>
+	the year of our lord 505?<br>
+	<br>
+	There is 1 active players online.
+	<br><br>
+	Menu:
+	<form method="post" action="/game" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<label for="back_home">Menu</label>
+		<input type="submit" id="back_home" style="display: none;">
+	</form>
 	<form method="post" action="/show_stats" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
@@ -24,27 +31,20 @@
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 		<label for="items">Items</label>
 		<input type="submit" id="items" style="display: none;">
-	</form>
-	<form method="post" action="/game" class="ajax">
-		{{csrf_field()}}
-		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="back_home">Main</label>
-		<input type="submit" id="back_home" style="display: none;">
-	</form>
-	
-
-	<br><br>
-	<form method="get" action="/home">
-		{{csrf_field()}}
-		<label for="char_select">Home</label>
-		<input type="submit" id="char_select" style="display: none;">
-	</form>
+	</form>	
 	<form method="post" action="/game" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 		<label for="back_home">Settings</label>
 		<input type="submit" id="back_home" style="display: none;">
 	</form>
+	<br><br>
+	<form method="get" action="/home">
+		{{csrf_field()}}
+		<label for="char_select">Logout</label>
+		<input type="submit" id="char_select" style="display: none;">
+	</form>
+</div>
 @endsection
 
 @section('main')
@@ -55,7 +55,7 @@
 	@endforeach
 	</p>
 	@endif
-
+	<br>
 	@if (isset($reward_log))
 	<p style="display: inline;">
 	@foreach ($reward_log as $log_entry)
@@ -72,7 +72,7 @@
 
 	<br>
 	<div style="position: relative;">
-	@if ($npc)
+	@if (isset($npc))
 		<div style="display: inline-block;">
 			@if ($npc->img_src)
 			<img width="250" height="250" src="{{asset('img/'.$npc->img_src)}}">
@@ -89,15 +89,15 @@
 					<tr>
 						<td style="color:yellow;">
 							All Out Attack<br>
-							<input type="submit" id="all_out" value="{{$npc->name}}">
+							<input type="submit" id="all_out" value="{{$npc->name}}" class="submit-id">
 						</td>
 						<td style="color:#55ff8b;">
 							Single Attack<br>
-							<input type="submit" id="single" value="{{$npc->name}}">
+							<input type="submit" id="single" value="{{$npc->name}}" class="submit-id">
 						</td>
 						<td style="color:red;">
 							Run Away<br>
-							<input type="submit" id="flee" value="{{$npc->name}}">
+							<input type="submit" id="flee" value="{{$npc->name}}" class="submit-id">
 						</td>
 					</tr>
 				</table>
@@ -115,16 +115,26 @@
 			<progress value="{{$stats->fatigue}}" max="{{$stats->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 		</div>
 	@else
-<!-- 		<div style="display: inline-block;margin-left: .5rem;">
-			Health: {{$stats->health}} / {{$stats->max_health}}<br>
-			<progress value="{{$stats->health}}" max="{{$stats->max_health}}" class="stat-bar stat-bar-health {{ ($stats->health <= ($stats->max_health * .4)) ? '__low' : ''}}"></progress><br>
-			Mana: {{$stats->mana}} / {{$stats->max_mana}}<br>
-			<progress value="{{$stats->mana}}" max="{{$stats->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
-			Fatigue: {{$stats->fatigue}} / {{$stats->max_fatigue}}<br>
-			<progress value="{{$stats->fatigue}}" max="{{$stats->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
-		</div> -->
+		@if (!isset($combat_log))
+			@if ($room->custom_img)
+			<img width="125" height="125" src="{{asset('img/'.$room->custom_img)}}">
+			@else
+				@if ($room->zone()->custom_img)
+				<img width="125" height="125" src="{{asset('img/'.$room->zone()->custom_img)}}">
+				@endif
+			@endif
+		@endif
+
 	@endif
 	</div>
+
+	@if (isset($timer))
+	<script>
+		setTimeout(function(e) {
+			$('#single').click();
+		}, 4000);
+	</script>
+	@endif
 	
 	<br>
 

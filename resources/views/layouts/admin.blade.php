@@ -8,9 +8,9 @@
 
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
-        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 
 		<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
@@ -20,15 +20,15 @@
 			color: #55ff8b;
 			}
 
-        table.dataTable tbody tr
-            {
-            background-color: #333;
-            }
+		table.dataTable tbody tr
+			{
+			background-color: #333;
+			}
 		</style>
 	</head>
 	<body style="background-color: #222;color:white;">
 
-        @if (auth()->user()->admin_level >= 1)
+		@if (auth()->user()->admin_level >= 1)
 		@section('sidebar')
 			This is the master sidebar.
 		@show
@@ -39,8 +39,12 @@
 			@yield('content')
 		</div>
 
-		<br><br>
-		<a href="/admin">Cancel</a>
+		<p style="margin-left: 2rem;">
+			<br><br>
+			<a href="/admin">Admin home</a>
+			<br><br>
+			<a href="/home">Back to Game</a>
+		</p>
 
 		<script>
 		$('body').on('submit', 'form.ajax', function(e, i) {
@@ -73,8 +77,8 @@
 				});
 			});
 		</script>
-        @else
-        You are not an Admin, <a href="/home">Go back</a>
-        @endif
+		@else
+		You are not an Admin, <a href="/home">Go back</a>
+		@endif
 	</body>
 </html>

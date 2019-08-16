@@ -79,7 +79,7 @@
 	});
 </script>
 
-<form method="post" action="/game" class="ajax">
+<form method="post" action="/menu" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">
 	<label for="back_home">Main</label>

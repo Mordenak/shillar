@@ -11,5 +11,4 @@
 	</div>
 
 <br><br>
-<a href="/home">Go back</a>
 @endsection

@@ -24,6 +24,17 @@ class BasicEntries extends Seeder
 			['name' => 'ring', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
+		DB::table('item_properties')->insert([
+			['name' => 'ADD_STRENGTH', 'description' => 'Adds a flat amount of strength', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADD_DEXTERITY', 'description' => 'Adds a flat amount of dexterity', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADD_CONSTITUTION', 'description' => 'Adds a flat amount of constitution', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADD_WISDOM', 'description' => 'Adds a flat amount of wisdom', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADD_INTELLIGENCE', 'description' => 'Adds a flat amount of intelligence', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADD_CHARISMA', 'description' => 'Adds a flat amount of charisma', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HEALING', 'description' => 'This flag will represent the item will heal the character', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADD_LIGHT_LEVEL', 'description' => 'Add an amount of light level', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
 		DB::table('item_types')->insert([
 			['name' => 'Weapon', 'table_name' => 'item_weapons', 'model_name' => 'App\ItemWeapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Armor', 'table_name' => 'item_armors', 'model_name' => 'App\ItemArmor', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -32,6 +43,7 @@ class BasicEntries extends Seeder
 			['name' => 'Other', 'table_name' => 'item_others', 'model_name' => 'App\ItemOther', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
+		/*
 		DB::table('items')->insert([
 			['name' => 'Rusty Sword', 'item_types_id' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Steel Sword', 'item_types_id' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -57,6 +69,7 @@ class BasicEntries extends Seeder
 			['items_id' => 6, 'name' => 'Slime Drop', 'effect' => 'healing', 'potency' => 15, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['items_id' => 7, 'name' => 'Whey Bread', 'effect' => 'healing', 'potency' => 45, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
+		*/
 
 		/*
 		DB::table('zones')->insert([

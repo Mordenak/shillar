@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Zone extends Model
 {
-	protected $fillable = ['name'];
+	protected $fillable = ['name', 'description', 'darkness_level', 'custom_img'];
 
 	public function rooms()
 		{
