@@ -26,11 +26,11 @@ class GameController extends Controller
 	//
 	public function index(Request $request)
 		{
-		// The request should have a character for us:
-		// $Character = Character::where(['characters.id' => $request->character_id])
-		// 	->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-		// 	->select('character_stats.*', 'characters.*')
-		// 	->first();
+		// TODO: This should be unreachable?
+		if (!auth()->user())
+			{
+			return redirect('/home');
+			}
 
 		$Character = Character::findOrFail($request->character_id);
 			// ->select('character_stats.id as character_stats_id, *');
@@ -168,6 +168,12 @@ class GameController extends Controller
 		// do combat stuff
 		$Character = Character::where(['characters.id' => $request->character_id])->first();
 		$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
+
+		// Safety:
+		if ($Character->stats()->health <= 0)	
+			{
+			return $this->death($request);
+			}
 		
 		$flat_npc = null;
 		if ($request->session()->has('combat.'.$Character->id))
@@ -317,7 +323,7 @@ class GameController extends Controller
 		$no_attack = $Character->stats()->fatigue > 0 ? false : true;
 
 		// $combat_log[] = "Made it here with: ". $Character->health. "health";
-		if ($flat_npc['health'] > 0)
+		if ($flat_npc['health'] > 0 && $CharacterStat->health > 0)
 			{
 			$request->session()->put('combat.'.$Character->id, $flat_npc);
 			}
@@ -394,16 +400,23 @@ class GameController extends Controller
 				}
 			// $LootTable;
 			}
-		elseif ($CharacterStat->health <= 0)
-			{
-			// $combat_log[] = 'You have died!';
-			$combat_log['pc_killed'] = true;
-			return $this->death($request);
-			}
 		else
 			{
-			// nothing?
+
 			}
+		// elseif ($CharacterStat->health <= 0)
+		// 	{
+		// 	// $combat_log[] = 'You have died!';
+		if ($CharacterStat->health <= 0)
+			{
+			$combat_log['pc_killed'] = true;
+			}
+		// 	return $this->death($request, );
+		// 	}
+		// else
+			// {
+			// nothing?
+			// }
 
 		// Combat log will recorded differently if the user setting is on?
 		$UserSetting = UserSetting::where(['users_id' => auth()->user()->id])->first();
@@ -452,11 +465,6 @@ class GameController extends Controller
 				{
 				$formatted_log[] = "$Npc->name is dead!!!";
 				}
-
-			if (isset($combat_log['pc_killed']))
-				{
-				return $this->death($request);
-				}
 			
 			}
 		else
@@ -487,6 +495,12 @@ class GameController extends Controller
 			}
 
 		$request_params = ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
+
+		if (isset($combat_log['pc_killed']))
+			{
+			$request->combat_log = $request_params['combat_log'];
+			return $this->death($request);
+			}
 
 		if  ($request->session()->has('combat.'.$Character->id))
 			{

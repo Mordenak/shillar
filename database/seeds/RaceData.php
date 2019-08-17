@@ -105,5 +105,20 @@ class RaceData extends Seeder
 			['player_races_id' => 16, 'strength' => 23, 'dexterity' => 20, 'constitution' => 20, 'wisdom' => 17, 'intelligence' => 17, 'charisma' => 23, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['player_races_id' => 17, 'strength' => 22, 'dexterity' => 19, 'constitution' => 19, 'wisdom' => 22, 'intelligence' => 20, 'charisma' => 18, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]
 		]);
+
+		DB::table('racial_modifiers')->insert([
+			['name' => 'INVENTORY_WEIGHT', 'description' => 'Percentage of normal inventory weight this race has.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_NIGHTVISION', 'description' => 'This race can see in the dark.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'AREA_RESTRICTION', 'description' => 'Percentile amount more or less wisdom this race needs to advance areas.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ARMOR_ADJUSTMENT', 'description' => 'Percentile adjustment of armor.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_TAKEN', 'description' => 'Percentage additional damage from creatures.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'SPELLS_POWER', 'description' => 'Percentile adjustment of spell damage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HEAT_DAMAGE', 'description' => 'Percentile adjustment of heat damage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'COLD_DAMAGE', 'description' => 'Percentile adjustment of cold damage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'SHOP_PRICES', 'description' => 'Shop price adjustments.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ACCURACY_ADJUSTMENT', 'description' => 'Percentile adjustment to base accuracy.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GROPE_POWER', 'description' => 'Percentile adjustment of unarmed damage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'FATIGUE_ADJUSTMENT', 'description' => 'Percentile adjustment of fatigue use.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
 	}
 }

@@ -1,8 +1,7 @@
 <select id="refresh-rate" name="refresh-rate">
-	<option value="5000">5</option>
-	<option value="10000">10</option>
-	<option value="30000">30</option>
-	<option value="60000">60</option>
+	<option value="10000" {{isset($refresh_rate) && $refresh_rate == 10000 ? 'selected' : ''}}>10</option>
+	<option value="30000" {{isset($refresh_rate) && $refresh_rate == 30000 ? 'selected' : ''}}>30</option>
+	<option value="60000" {{isset($refresh_rate) && $refresh_rate == 60000 ? 'selected' : ''}}>60</option>
 </select>
 
 <header>
@@ -34,22 +33,18 @@
 
 <script>
 
-if (!$('body').attr('data-stat-refresh'))
-	{
-	// Properly clear this interval somehow...
-	$('body').attr('data-stat-refresh', true);
-	setInterval(function(e) {	
-		var formData = new FormData(document.getElementById('menu-form'));
-		$.ajax({
-			type: 'POST',
-			url: '/show_stats',
-			contentType: false,
-			processData: false,
-			data: formData,
-			success: function(resp) {
-				$('.menu').html(resp);
-				}
-			});
-		}, $('#refresh-rate').val());
-	}
+setTimeout(function(e) {	
+	var formData = new FormData(document.getElementById('menu-form'));
+	formData.append('refresh-rate', $('refresh-rate').val());
+	$.ajax({
+		type: 'POST',
+		url: '/show_stats',
+		contentType: false,
+		processData: false,
+		data: formData,
+		success: function(resp) {
+			$('.menu').html(resp);
+			}
+		});
+	}, $('#refresh-rate').val());
 </script>

@@ -474,6 +474,22 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('racial_modifiers', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('description');
+			$table->timestamps();
+		});
+
+		Schema::create('racial_modifier_races', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('racial_modifier_id');
+			$table->foreign('racial_modifier_id')->references('id')->on('racial_modifiers');
+			$table->integer('player_races_id');
+			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->timestamps();
+		});		
+
 		Schema::create('combat_logs', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('characters_id');
