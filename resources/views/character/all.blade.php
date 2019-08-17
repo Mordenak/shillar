@@ -10,8 +10,8 @@
 <table id="all-characters">
 	<thead>
 		<th>ID</th>
-		<th>Title</th>
-		<th>Zone Name</th>
+		<th>Record</th>
+		<th>Name</th>
 	</thead>
 	<tbody>
 		@foreach ($characters as $character)

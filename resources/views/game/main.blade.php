@@ -70,14 +70,15 @@
 	</p>
 	@endif
 
+
 	<br>
 	<div style="position: relative;">
 	@if (isset($npc))
 		<div style="display: inline-block;">
 			@if ($npc->img_src)
-			<img width="250" height="250" src="{{asset('img/'.$npc->img_src)}}">
+			<img src="{{asset('img/'.$npc->img_src)}}">
 			@else
-			<img width="250" height="250" src="{{asset('img/unknown.jpg')}}">
+			<img src="{{asset('img/unknown.jpg')}}">
 			@endif
 			<form method="post" action="/combat" class="ajax">
 				{{csrf_field()}}
@@ -117,10 +118,10 @@
 	@else
 		@if (!isset($combat_log))
 			@if ($room->custom_img)
-			<img width="125" height="125" src="{{asset('img/'.$room->custom_img)}}">
+			<img src="{{asset('img/'.$room->custom_img)}}">
 			@else
 				@if ($room->zone()->custom_img)
-				<img width="125" height="125" src="{{asset('img/'.$room->zone()->custom_img)}}">
+				<img src="{{asset('img/'.$room->zone()->custom_img)}}">
 				@endif
 			@endif
 		@endif
@@ -130,15 +131,11 @@
 
 	@if (isset($timer))
 	<script>
-		console.log('Timer is set at: ' + $combatTimer);
-		if (!$combatTimer)
-			{
-			console.log('Adding timer');
-			$combatTimer = true;
-			setTimeout(function(e) {
-				$('#single').click();
-				}, 4000);
-			}
+		console.log('Adding timer');
+		// $combatTimer = true;
+		$timers.combat = setTimeout(function(e) {
+			$('#single').click();
+			}, 4000);
 	</script>
 	@endif
 	
@@ -252,6 +249,13 @@
 		<label for="begin_rest">Rest</label>
 		<input type="submit" id="begin_rest" style="display: none;">
 	</form>
+
+	<!-- Debug section -->
+
+	@if (isset($combat))
+	{{$combat->id}} {{$combat->remaining_health}}
+	@endif
+
 
 	@foreach ($character->inventory()->character_items() as $item)
 		{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>

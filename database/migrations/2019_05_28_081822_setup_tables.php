@@ -414,6 +414,16 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('kill_counts', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->integer('remaining_health')->nullable();
+			$table->timestamps();
+		});
+
 	}
 
 	/**

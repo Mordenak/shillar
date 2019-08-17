@@ -14,6 +14,7 @@
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				}
 			});
+		var $timers = {};
 		</script>
 
 		<style>
@@ -164,6 +165,11 @@
 				// console.log(pair[0] +':' + pair[1]);
 				}
 
+			if ($timers.combat)
+				{
+				console.log('clearing');
+				clearTimeout($timers.combat);
+				}
 			// Direct submit:
 			// $combatTimer = false;
 

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Character;
 use App\PlayerClass;
 use App\PlayerRace;
-use App\CharacterStats;
+use App\CharacterStat;
 use App\Wallet;
 use App\Equipment;
 use App\Inventory;
@@ -33,7 +33,7 @@ class CharacterController extends Controller
 		return view('character.all', ['characters' => $Characters]);
 		}
 
-		public function edit($id)
+	public function edit($id)
 		{
 		return view('character.edit', ['character' => Character::findOrFail($id)]);
 		}
@@ -57,7 +57,7 @@ class CharacterController extends Controller
 			$Character->fill($values);
 			$Character->save();
 
-			$CharacterStat = CharacterStats::where(['characters_id' => $Character->id])->first();
+			$CharacterStat = CharacterStat::where(['characters_id' => $Character->id])->first();
 			$stat_values = [
 				'health' => $request->health,
 				'mana' => $request->mana,
