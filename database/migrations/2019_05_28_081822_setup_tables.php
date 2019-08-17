@@ -166,8 +166,6 @@ class SetupTables extends Migration
 			$table->integer('users_id');
 			$table->foreign('users_id')->references('id')->on('users');
 			$table->string('name');
-			// $table->integer('player_classes_id');
-			// $table->foreign('player_classes_id')->references('id')->on('player_classes');
 			$table->integer('player_races_id');
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
@@ -464,6 +462,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_quests');
 		Schema::dropIfExists('character_spells');
 		Schema::dropIfExists('combat_logs');
+		Schema::dropIfExists('kill_counts');
 		Schema::dropIfExists('npcs');
 		Schema::dropIfExists('characters');
 		Schema::dropIfExists('quests');

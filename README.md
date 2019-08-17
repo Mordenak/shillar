@@ -6,9 +6,8 @@ Second Phase: Branch off own project with custom changes based on Shilla.
 
 Game Todo:
 
-* Proper combat attack differences
-* Death function
-* Spells
+* ~~Proper combat attack differences~~
+* ~~Death function~~
 * Shops
 * Quests
 * Bank
@@ -16,6 +15,7 @@ Game Todo:
 * Traders
 * Directional blocks, NPCs/locks
 * Stat tracking
+* Spells
 * Wall score ranks
 * Online character listing
 * Full admin tools
@@ -29,3 +29,5 @@ Code Todo:
 * Fix npc spawn on item pickup
 * Move functions out of game controller
 * Route admin functions through admin route with auth middleware admin level check
+* Fix Menu CSS/sizing
+* Debate: CharacterStats to Characters table???
