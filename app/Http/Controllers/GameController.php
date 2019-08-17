@@ -20,6 +20,7 @@ use App\ItemArmor;
 use App\UserSetting;
 use App\ItemConsumable;
 use App\ItemAccessory;
+use App\CombatLog;
 
 class GameController extends Controller
 {
@@ -144,6 +145,7 @@ class GameController extends Controller
 		// return $this->index($request);
 		if ($request->ajax())
 			{
+			// $this->index($request)
 			$view = \View::make('partials/menu', $request_params);
 			$sections = $view->renderSections();
 			return $sections['menu'];
@@ -172,15 +174,20 @@ class GameController extends Controller
 		// Safety:
 		if ($Character->stats()->health <= 0)	
 			{
-			return $this->death($request);
+			// return $this->death($request);
 			}
 		
 		$flat_npc = null;
-		if ($request->session()->has('combat.'.$Character->id))
+
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $request->rooms_id])->first();
+
+		if ($CombatLog)	
 			{
-			$flat_npc = $request->session()->get('combat.'.$Character->id);
-			// die(print_r($flat_npc);
 			$Npc = Npc::where(['npcs.id' => $flat_npc['id']])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
+			// $flat_npc = $request->session()->get('combat.'.$Character->id);
+			$flat_npc = $Npc->toArray();
+			$flat_npc['health'] = $CombatLog->remaining_health;
+			// die(print_r($flat_npc);
 			}
 		else
 			{
@@ -314,7 +321,7 @@ class GameController extends Controller
 				}
 
 			// if single round:
-			if ($request->submit == 'single')
+			if ($request->submit != 'all_out')
 				{
 				break;
 				}
@@ -325,14 +332,27 @@ class GameController extends Controller
 		// $combat_log[] = "Made it here with: ". $Character->health. "health";
 		if ($flat_npc['health'] > 0 && $CharacterStat->health > 0)
 			{
-			$request->session()->put('combat.'.$Character->id, $flat_npc);
+			// $request->session()->put('combat.'.$Character->id, $flat_npc);
+			$CombatLog = new CombatLog;
+			$CombatLog->fill([
+				'characters_id' => $Character->id,
+				'npcs_id' => $Npc->id,
+				'rooms_id' => $request->room_id,
+				'remaining_health' => $flat_npc['health'],
+				'expires_on' => time() + 1800
+				]);
+			$CombatLog->save();
 			}
 		elseif ($flat_npc['health'] <= 0)
 			{
 			// $combat_log[] = "$Npc->name is dead!!!";
 			$combat_log['npc_killed'] = true;
 			// clean session:
-			$request->session()->pull('combat.'.$Character->id);
+			// $request->session()->pull('combat.'.$Character->id);
+			if ($CombatLog)
+				{
+				$CombatLog->delete();
+				}
 			$RewardTable = RewardTable::where(['reward_tables.npcs_id' => $request->npc_id])->first();
 
 			// $actual_xp = (float)$RewardTable->award_xp * $RewardTable->xp_variation;
@@ -350,6 +370,11 @@ class GameController extends Controller
 			// $gold_variation = round($gold_variation, 1);
 			// $combat_log[] = "variation: $gold_variation";
 			$actual_gold = (int)($RewardTable->award_gold * (1.0 + $gold_variation));
+			// Never less than 1:
+			if ($actual_gold == 0)
+				{
+				$actual_gold = 1;
+				}
 
 			// die($actual_xp);
 			// $actual_xp = $RewardTable->award_xp;
@@ -496,13 +521,14 @@ class GameController extends Controller
 
 		$request_params = ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
 
-		if (isset($combat_log['pc_killed']))
+		if ($Character->stats()->health <= 0)
 			{
 			$request->combat_log = $request_params['combat_log'];
 			return $this->death($request);
 			}
 
-		if  ($request->session()->has('combat.'.$Character->id))
+		// if  ($request->session()->has('combat.'.$Character->id))
+		if ($CombatLog)
 			{
 			$request_params['timer'] = true;
 			$request_params['npc'] = $Npc;

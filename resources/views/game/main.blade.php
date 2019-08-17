@@ -130,9 +130,15 @@
 
 	@if (isset($timer))
 	<script>
-		setTimeout(function(e) {
-			$('#single').click();
-		}, 4000);
+		console.log('Timer is set at: ' + $combatTimer);
+		if (!$combatTimer)
+			{
+			console.log('Adding timer');
+			$combatTimer = true;
+			setTimeout(function(e) {
+				$('#single').click();
+				}, 4000);
+			}
 	</script>
 	@endif
 	

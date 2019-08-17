@@ -17,9 +17,7 @@ Route::get('/', function () {
 
 // Route::get('player/{id}', 'PlayerController@show')->where('id', '[0-9]+');
 
-Route::get('character/create', 'CharacterController@create');
 
-Route::post('character/save', 'CharacterController@save');
 
 Auth::routes();
 
@@ -76,6 +74,13 @@ Route::post('npc/stats/save', 'NpcController@save_stats');
 Route::post('npc/rewards/save', 'NpcController@save_rewards');
 Route::post('npc/spawn/save', 'NpcController@save_spawns');
 Route::post('npc/loot/save', 'NpcController@save_loot');
+
+Route::get('character/all', 'CharacterController@all');
+// Route::get('zone/create', 'ZoneController@create');
+Route::get('character/edit/{id}', 'CharacterController@edit')->where('id', '[0-9]+');
+Route::get('character/create', 'CharacterController@create');
+Route::post('character/save', 'CharacterController@save');
+// Route::post('character/save', 'ZoneController@save');
 
 
 // Route::post('/equip', 'GameController@equip_item');

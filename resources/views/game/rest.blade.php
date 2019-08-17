@@ -35,12 +35,14 @@
 		$(document).ajaxComplete(function(event, xhr,settings) {
 			if (settings.url !== '/rest')
 				{
+				console.log('killing interval');
 				clearInterval(healingTimer);
 				}
 		});
 
 		function send_rest()
 			{
+			console.log('running interval');
 			var $data = new FormData($('.rest-form')[0]);
 			// console.log($data);
 			$.ajax({

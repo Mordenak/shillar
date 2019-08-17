@@ -13,73 +13,6 @@ class SetupTables extends Migration
 	 */
 	public function up()
 	{
-		// Not used:
-
-
-		// Schema::create('players', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->string('name');
-		// 	$table->integer('users_id');
-		// 	$table->foreign('users_id')->references('id')->on('users');
-		// 	// $table->string('email');
-		// 	// $table->string('hashpass');
-		// 	// $table->string('remember_token');
-		// 	$table->timestamps();
-		// });
-
-		// Schema::create('damage_types', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->string('name');
-		// 	$table->timestamps();
-		// });
-		// Damage types:
-		/*
-			Blunt (1x str)
-			Slash (.5x str, .5x dex)
-			Pierce (1x dex)
-
-			Spells (int)
-		*/
-
-		
-
-		// Stats:
-		// Future ideas:
-		/*
-		Primaries
-		(offensives):
-			Strength (Blunt, Slash) 
-			Dexterity (Pierece, Slash)
-			Intelligence (Spells) (+mana, +mana regen)
-
-		(defensives):
-			Vitality (+health, +armor)
-			Guard (+evasion, +block)
-			Wisdom (+ward, +res)
-
-		Secondaries:
-			Brute (raw % damage?)
-			Finesse (# of attacks)
-			Insight (-# spell pen)
-
-		(others)
-			Health
-			Ward
-			Mana
-			Health Regen
-			Mana Regen
-			Ward Regen
-			Armor
-			Evasion
-			Block
-			Resistance
-			Crit Chance
-			Crit Damage
-			Armor Pen
-			Spell Pen
-			Accuracy?
-
-		*/
 		Schema::create('zones', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
@@ -112,12 +45,6 @@ class SetupTables extends Migration
 			$table->foreign('down_rooms_id')->references('id')->on('rooms');
 			$table->timestamps();
 		});
-
-		// Schema::create('max_values', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->integer('max_level');
-		// 	$table->timestamps();
-		// });
 
 		Schema::create('player_races', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -316,24 +243,8 @@ class SetupTables extends Migration
 			$table->integer('intelligence');
 			$table->integer('charisma');
 			$table->integer('score');
-			// $table->integer('brute');
-			// $table->integer('finesse');
-			// $table->integer('insight');
 			$table->timestamps();
 		});
-
-		// Deprecating this idea, adding gold to character_stats:
-		/*
-		Schema::create('wallets', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('characters_id');
-			$table->foreign('characters_id')->references('id')->on('characters');
-			$table->integer('gold');
-			$table->integer('silver');
-			$table->integer('copper');
-			$table->timestamps();
-		});*/
-
 
 		Schema::create('npcs', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -512,11 +423,11 @@ class SetupTables extends Migration
 	 */
 	public function down()
 	{
+		Schema::dropIfExists('racial_modifier_races');
+		Schema::dropIfExists('racial_modifiers');
 		Schema::dropIfExists('character_stats');
-		// Schema::dropIfExists('wallets');
 		Schema::dropIfExists('stat_costs');
 		Schema::dropIfExists('starting_stats');
-		// Schema::dropIfExists('race_stat_affinities');
 		Schema::dropIfExists('equipment');
 		Schema::dropIfExists('inventory_items');
 		Schema::dropIfExists('inventories');

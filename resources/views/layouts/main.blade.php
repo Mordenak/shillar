@@ -147,11 +147,13 @@
 			// console.log($(document.activeElement));
 			if ($(document.activeElement).hasClass('submit-val'))
 				{
+				console.log('Submitting val ' + $(document.activeElement).val());
 				formData.append('submit', $(document.activeElement).val());
 				}
 
 			if ($(document.activeElement).hasClass('submit-id'))
 				{
+				console.log('Submitting id ' + $(document.activeElement).attr('id'));
 				formData.append('submit', $(document.activeElement).attr('id'));
 				}
 
@@ -161,6 +163,9 @@
 				{
 				// console.log(pair[0] +':' + pair[1]);
 				}
+
+			// Direct submit:
+			// $combatTimer = false;
 
 			$.ajax({
 				type: 'POST',
@@ -188,7 +193,14 @@
 						{
 						// replace = '.main';
 						console.log('replace main');
-						$('.main').html(resp.main);
+						if (resp.main)
+							{
+							$('.main').html(resp.main);
+							}
+						else
+							{
+							$('.main').html(resp);
+							}
 						}
 					if (menu_inserts.includes(this['url']))
 						{
@@ -209,7 +221,6 @@
 					// 	}
 					}
 				});
-			// console.log('done?');
 			});
 		</script>
 	</body>

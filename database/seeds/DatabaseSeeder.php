@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
 			BasicEntries::class,
 			RaceData::class,
 			CreateTown::class,
+			CreatureData::class,
 		]);
 	}
 }
