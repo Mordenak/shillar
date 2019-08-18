@@ -18,7 +18,7 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->string('description');
 			$table->integer('darkness_level')->default(0);
-			$table->string('custom_img')->nullable();
+			$table->string('img_src')->nullable();
 			$table->timestamps();
 		});
 
@@ -29,7 +29,7 @@ class SetupTables extends Migration
 			$table->string('title')->nullable();
 			$table->string('description')->nullable();
 			$table->integer('darkness_level')->default(0);
-			$table->string('custom_img')->nullable();
+			$table->string('img_src')->nullable();
 			$table->boolean('spawns_enabled')->default(true);
 			$table->integer('north_rooms_id')->nullable();
 			$table->foreign('north_rooms_id')->references('id')->on('rooms');
@@ -418,7 +418,31 @@ class SetupTables extends Migration
 			$table->foreign('characters_id')->references('id')->on('characters');
 			$table->integer('npcs_id');
 			$table->foreign('npcs_id')->references('id')->on('npcs');
-			$table->integer('remaining_health')->nullable();
+			$table->integer('count')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('wall_score_ranks', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('color');
+			$table->integer('score_req');
+			$table->timestamps();
+		});
+
+		Schema::create('room_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('description');
+			$table->timestamps();
+		});
+
+		Schema::create('room_property_rooms', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('rooms_id');
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->integer('room_properties_id');
+			$table->foreign('room_properties_id')->references('id')->on('room_properties');
 			$table->timestamps();
 		});
 
@@ -467,6 +491,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('characters');
 		Schema::dropIfExists('quests');
 		Schema::dropIfExists('spells');
+		Schema::dropIfExists('room_property_rooms');
+		Schema::dropIfExists('room_properties');
 		Schema::dropIfExists('rooms');
 		Schema::dropIfExists('zones');
 		Schema::dropIfExists('player_races');

@@ -14,10 +14,10 @@ class CreatureData extends Seeder
 	{
 		// Starts @ id 5
 		DB::table('npcs')->insert([
-			['name' => 'Bat', 'attack_text' => 'Bat dives at you trying to bite your neck.', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Goblin', 'attack_text' => 'Goblin scrapes at you with its long sharp claws.', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Gypsy', 'attack_text' => 'Gypsy claws at your face.', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Convict', 'attack_text' => 'Convict attacks you with a sharpened tooth brush.', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Bat', 'attack_text' => 'Bat dives at you trying to bite your neck.', 'img_src' => 'bat.jpg', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Goblin', 'attack_text' => 'Goblin scrapes at you with its long sharp claws.', 'img_src' => 'goblin.gif', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Gypsy', 'attack_text' => 'Gypsy claws at your face.', 'img_src' => 'gypsy.gif', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Convict', 'attack_text' => 'Convict attacks you with a sharpened tooth brush.', 'img_src' => 'convict.gif', 'is_hostile' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('npc_stats')->insert([
@@ -32,6 +32,25 @@ class CreatureData extends Seeder
 			['npcs_id' => 6, 'award_xp' => 700, 'xp_variation' => 0.2, 'award_gold' => 1, 'gold_variation' => 0.5, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['npcs_id' => 7, 'award_xp' => 846, 'xp_variation' => 0.2, 'award_gold' => 1, 'gold_variation' => 0.5, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['npcs_id' => 8, 'award_xp' => 1343, 'xp_variation' => 0.2, 'award_gold' => 2, 'gold_variation' => 0.5, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('spawn_rules')->insert([
+			['zones_id' => 3, 'rooms_id' => null, 'npcs_id' => 5, 'chance' => 0.28, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['zones_id' => 3, 'rooms_id' => null, 'npcs_id' => 6, 'chance' => 0.26, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['zones_id' => 3, 'rooms_id' => null, 'npcs_id' => 7, 'chance' => 0.24, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['zones_id' => 3, 'rooms_id' => null, 'npcs_id' => 8, 'chance' => 0.22, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('items')->insert([
+			['name' => 'Whey bread', 'item_types_id' => 4, 'value' => 0, 'weight' => 0.25, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('item_consumables')->insert([
+			['items_id' => 2, 'name' => 'Whey bread', 'effect' => 'healing', 'potency' => 35, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('loot_tables')->insert([
+			['npcs_id' => 7, 'items_id' => 2, 'chance' => 0.575, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 	}
 }

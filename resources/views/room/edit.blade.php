@@ -43,9 +43,9 @@ Creating a new room:<br>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Custom Img:</label>
+			<label class="col-md-2 col-form-label text-md-right">Img Src:</label>
 			<div class="col-md-3">
-				<input type="text" name="custom_img" value="{{isset($room) ? $room->custom_img : ''}}" class="form-control">
+				<input type="text" name="img_src" value="{{isset($room) ? $room->img_src : ''}}" class="form-control">
 			</div>
 		</div>
 

@@ -117,11 +117,11 @@
 		</div>
 	@else
 		@if (!isset($combat_log))
-			@if ($room->custom_img)
-			<img src="{{asset('img/'.$room->custom_img)}}">
+			@if ($room->img_src)
+			<img src="{{asset('img/'.$room->img_src)}}">
 			@else
-				@if ($room->zone()->custom_img)
-				<img src="{{asset('img/'.$room->zone()->custom_img)}}">
+				@if ($room->zone()->img_src)
+				<img src="{{asset('img/'.$room->zone()->img_src)}}">
 				@endif
 			@endif
 		@endif
@@ -140,6 +140,15 @@
 	@endif
 	
 	<br>
+
+	@if ($room->properties())
+		@foreach ($room->properties() as $prop)
+		prop -- {{$prop}}
+		@if ($prop->name == 'CAN_TRAIN')
+		We training
+		@endif
+		@endforeach
+	@endif
 
 	@if (!$npc)
 	@if ($room->description)
@@ -164,7 +173,7 @@
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 		<input type="hidden" name="item_id" value="{{$ground_item->id}}">
 		<input type="hidden" name="no_spawn" value="true">
-		A <label for="pickup">{{$ground_item->name}}</label> is here.
+		You notice a <label for="pickup">{{$ground_item->name}}</label> just dropped.
 		<input type="submit" id="pickup" style="display: none;">
 	</form>
 	@endforeach

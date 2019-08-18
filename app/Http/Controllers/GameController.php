@@ -20,6 +20,7 @@ use App\UserSetting;
 use App\ItemConsumable;
 use App\ItemAccessory;
 use App\CombatLog;
+use App\KillCount;
 
 class GameController extends Controller
 {
@@ -362,6 +363,26 @@ class GameController extends Controller
 				{
 				$CombatLog->delete();
 				}
+
+			// Record the kill:
+			$KillCount = KillCount::where(['characters_id' => $Character->id, 'npcs_id' => $Npc->id])->first();
+			if ($KillCount)
+				{
+				$KillCount->count = $KillCount->count + 1;
+				}
+			else
+				{
+				$KillCount = new KillCount;
+				$KillCount->fill([
+					'characters_id' => $Character->id,
+					'npcs_id' => $Npc->id,
+					'count' => 1
+					]);
+				}
+
+			$KillCount->save();
+
+
 			$RewardTable = RewardTable::where(['reward_tables.npcs_id' => $request->npc_id])->first();
 
 			// $actual_xp = (float)$RewardTable->award_xp * $RewardTable->xp_variation;
@@ -489,14 +510,18 @@ class GameController extends Controller
 				$formatted_log[] = "You did $damage points of damage.";
 				}
 
-			$formatted_log[] = "$Npc->attack_text";
 			if (isset($combat_log['damage_taken']))
 				{
+				$formatted_log[] = "$Npc->attack_text";
 				$formatted_log[] = "$Npc->name hit you ".count($combat_log['damage_taken'])." times for ".array_sum($combat_log['damage_taken'])." damage.";
 				}
 			else
 				{
-				$formatted_log[] = "$Npc->name couldn't get through your armor!";
+				if (isset($combat_log['no_damage']) && $combat_log['no_damage'])
+					{
+					$formatted_log[] = "$Npc->attack_text";
+					$formatted_log[] = "$Npc->name couldn't get through your armor!";
+					}
 				}
 
 			if (isset($combat_log['npc_killed']))

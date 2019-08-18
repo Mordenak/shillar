@@ -14,11 +14,12 @@ Game Todo:
 * Forge
 * Traders
 * Directional blocks, NPCs/locks
-* Stat tracking
+* ~~Kill tracking~~
 * Spells
-* Wall score ranks
+* ~~Wall score ranks~~
 * Online character listing
 * Full admin tools
+* Items on ground stack
 
 Test bed: http://laravel-adventure.herokuapp.com/
 
