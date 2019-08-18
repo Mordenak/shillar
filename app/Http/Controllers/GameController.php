@@ -114,12 +114,14 @@ class GameController extends Controller
 			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
-		// die(print_r($Character->playerrace()->name()));
-		// die(print_r($Room->zone()->get()));
-
-		// $CharacterStats = CharacterStats::where(['characters_id' => $Character->id])
-		// 	->join('character_stats', 'characters.id', '=', 'character_stats.character_id');
 		$request_params = ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
+
+		// Small checks:
+		if ($Room->training_enabled)
+			{
+			$request_params['multi'] = 1;
+			$request_params['costs'] = $this->calculate_training_cost($request);
+			}
 
 		if ($request->death)
 			{

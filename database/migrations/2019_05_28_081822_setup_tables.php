@@ -455,6 +455,7 @@ class SetupTables extends Migration
 	 */
 	public function down()
 	{
+		Schema::dropIfExists('wall_score_ranks');
 		Schema::dropIfExists('racial_modifier_races');
 		Schema::dropIfExists('racial_modifiers');
 		Schema::dropIfExists('character_stats');

@@ -13,6 +13,6 @@ class RoomPropertyRoom extends Model
 
 	public function room_property()
 		{
-		return $this->belongsTo('App\RoomProperty')->first();
+		return $this->belongsTo('App\RoomProperty', 'room_properties_id')->first();
 		}
 }
