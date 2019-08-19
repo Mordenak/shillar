@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Character;
 use App\PlayerClass;
 use App\PlayerRace;
-use App\CharacterStat;
 use App\Wallet;
 use App\Equipment;
 use App\Inventory;
@@ -51,14 +50,7 @@ class CharacterController extends Controller
 			$values = [
 				'name' => $request->name,
 				'player_races_id' => $request->player_races_id,
-				'last_rooms_id' => $request->last_rooms_id
-				];
-
-			$Character->fill($values);
-			$Character->save();
-
-			$CharacterStat = CharacterStat::where(['characters_id' => $Character->id])->first();
-			$stat_values = [
+				'last_rooms_id' => $request->last_rooms_id,
 				'health' => $request->health,
 				'mana' => $request->mana,
 				'fatigue' => $request->fatigue,
@@ -72,11 +64,11 @@ class CharacterController extends Controller
 				'charisma' => $request->charisma
 				];
 			// $NpcStat->fill($stat_values);
-			$CharacterStat->fill($stat_values);
-			$CharacterStat->save();
+			$Character->fill($values);
+			$Character->save();
 
-			$CharacterStat->calcQuickStats();
-			$CharacterStat->refreshScore();
+			$Character->calcQuickStats();
+			$Character->refreshScore();
 
 			Session::flash('success', 'Character Updated!');
 			return $this->edit($Character->id);
@@ -85,30 +77,17 @@ class CharacterController extends Controller
 			{
 			$Character = new Character;
 
-			$Character->users_id = auth()->user()->id;
-			$Character->name = $request->name;
 			$selected_race = $request->selected_race;
 			if ($request->selected_gender == 'female')
 				{
 				$selected_race = $selected_race + 17;
 				}
-			$Character->player_races_id = $selected_race;
-			$Character->last_rooms_id = 1;
-			$Character->save();
-
-			$Equipment = new Equipment;
-			$Equipment->fill(['characters_id' => $Character->id]);
-			$Equipment->save();
-
-
-			$Inventory = new Inventory;
-			$Inventory->fill(['characters_id' => $Character->id, 'max_size' => 100, 'max_weight' => 100]);
-			$Inventory->save();
-
-			// Create a stats entry as well:
 
 			$values = [
-				'characters_id' => $Character->id,
+				'users_id' => auth()->user()->id,
+				'player_races_id' => $selected_race,
+				'name' => $request->name,
+				'last_rooms_id' => 1,
 				'xp' => 0,
 				'gold' => 0,
 				'health' => 0,
@@ -151,9 +130,16 @@ class CharacterController extends Controller
 			$values['fatigue'] = $fatigue_calc;
 			$values['max_fatigue'] = $fatigue_calc;
 
-			$CharacterStat = new CharacterStat;
-			$CharacterStat->fill($values);
-			$CharacterStat->save();
+			$Character->fill($values);
+			$Character->save();
+
+			$Equipment = new Equipment;
+			$Equipment->fill(['characters_id' => $Character->id]);
+			$Equipment->save();
+
+			$Inventory = new Inventory;
+			$Inventory->fill(['characters_id' => $Character->id, 'max_size' => 100, 'max_weight' => 100]);
+			$Inventory->save();
 
 			$Characters = Character::where('users_id', auth()->user()->id);
 			// die(print_r($Characters->get()));

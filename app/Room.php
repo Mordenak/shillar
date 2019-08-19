@@ -18,11 +18,23 @@ class Room extends Model
 		return $this->hasMany('App\RoomPropertyRoom', 'rooms_id')->get();
 		}
 
-	public function training_enabled()
+	public function can_train()
 		{
 		foreach ($this->properties() as $prop)
 			{
-			if ($prop->room_property->name == 'CAN_TRAIN')
+			if ($prop->room_property()->name == 'CAN_TRAIN')
+				{
+				return true;
+				}
+			}
+		return false;
+		}
+
+	public function has_property(string $property_name)
+		{
+		foreach ($this->properties() as $prop)
+			{
+			if ($prop->room_property()->name == $property_name)
 				{
 				return true;
 				}

@@ -36,7 +36,7 @@
 			grid-template-areas:
 				'menu main'
 				'footer footer';
-			grid-template-columns: 20% auto;
+			grid-template-columns: 15rem auto;
 			grid-gap: .25rem;
 			}
 
@@ -51,7 +51,7 @@
 		.game-container .menu
 			{
 			grid-area: menu;
-			text-align: center;
+			/*text-align: center;*/
 			}
 
 		.game-container .menu header

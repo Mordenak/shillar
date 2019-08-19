@@ -108,12 +108,12 @@
 			</form>
 		</div>
 		<div style="display: inline-block;position:absolute;top:50%;transform: translateY(-50%);margin-left: .5rem;">
-			Health: {{$stats->health}} / {{$stats->max_health}}<br>
-			<progress value="{{$stats->health}}" max="{{$stats->max_health}}" class="stat-bar stat-bar-health {{ ($stats->health <= ($stats->max_health * .4)) ? '__low' : ''}}"></progress><br>
-			Mana: {{$stats->mana}} / {{$stats->max_mana}}<br>
-			<progress value="{{$stats->mana}}" max="{{$stats->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
-			Fatigue: {{$stats->fatigue}} / {{$stats->max_fatigue}}<br>
-			<progress value="{{$stats->fatigue}}" max="{{$stats->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
+			Health: {{$character->health}} / {{$character->max_health}}<br>
+			<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
+			Mana: {{$character->mana}} / {{$character->max_mana}}<br>
+			<progress value="{{$character->mana}}" max="{{$character->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
+			Fatigue: {{$character->fatigue}} / {{$character->max_fatigue}}<br>
+			<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 		</div>
 	@else
 		@if (!isset($combat_log))
@@ -141,10 +141,7 @@
 	
 	<br>
 
-	@if ($room->properties())
-		@foreach ($room->properties() as $prop)
-		prop -- {{$prop}}
-		@if ($prop->room_property()->name == 'CAN_TRAIN')
+	@if ($room->can_train())
 		<style>
 			.non-train
 				{
@@ -205,8 +202,6 @@
 				$(e.target).closest('form').submit();
 				});
 		</script>
-		@endif
-		@endforeach
 	@endif
 
 	@if (!$npc)
@@ -300,6 +295,27 @@
 		@endif
 
 	</p>
+
+	@if ($room->has_property('WALL_SCORE'))
+		<table>
+		@foreach ($score_list as $listing)
+			<tr>
+				<td>{!! $listing->display_name() !!}</td>
+				<td>{{$listing->score}}</td>
+				<td>{{ $listing->rank() }}</td>
+				<td>{{$listing->playerrace()->gender}}</td>
+				<td>{{$listing->playerrace()->name}}</td>
+			</tr>
+		@endforeach
+		</table>
+	@endif
+
+
+	<!-- Debug -->
+	@if ($is_admin)
+		Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a>
+		n: {{$room->north_rooms_id}}, e: {{$room->east_rooms_id}}, s: {{$room->south_rooms_id}}, w: {{$room->west_rooms_id}}, u: {{$room->up_rooms_id}}, d: {{$room->down_rooms_id}}<br>
+	@endif
 @endsection
 
 @section('footer')
@@ -320,12 +336,14 @@
 
 	<!-- Debug section -->
 
-	@if (isset($combat))
-	{{$combat->id}} {{$combat->remaining_health}}
+	@if ($is_admin)
+
+		@if (isset($combat))
+		{{$combat->id}} {{$combat->remaining_health}}
+		@endif
+
+		@foreach ($character->inventory()->character_items() as $item)
+			{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>
+		@endforeach
 	@endif
-
-
-	@foreach ($character->inventory()->character_items() as $item)
-		{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>
-	@endforeach
 @endsection

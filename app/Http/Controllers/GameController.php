@@ -9,7 +9,6 @@ use App\SpawnRule;
 use App\Npc;
 use App\RewardTable;
 use App\LootTable;
-use App\CharacterStat;
 use App\StatCost;
 use App\RaceStatAffinity;
 use App\Equipment;
@@ -41,7 +40,7 @@ class GameController extends Controller
 			return redirect('/home');
 			}
 
-		$no_attack = $Character->stats()->fatigue > 0 ? false : true;
+		$no_attack = $Character->fatigue > 0 ? false : true;
 
 		$Room = Room::findOrFail($Character->last_rooms_id);
 		$Npc = null;
@@ -114,13 +113,22 @@ class GameController extends Controller
 			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
-		$request_params = ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
+		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
 
 		// Small checks:
-		if ($Room->training_enabled)
+		if ($Room->can_train())
 			{
-			$request_params['multi'] = 1;
+			$request_params['multi'] = $request->train_multi ? $request->train_multi : 1;
 			$request_params['costs'] = $this->calculate_training_cost($request);
+			// $request_params['costs'] = $request->costs;
+			}
+
+		if ($Room->has_property('WALL_SCORE'))
+			{
+			$Results = Character::select()->orderBy('score', 'desc')->get();
+			// display name them as well:
+			// die(print_r($Results));
+			$request_params['score_list'] = $Results;
 			}
 
 		if ($request->death)
@@ -128,7 +136,12 @@ class GameController extends Controller
 			$request_params['death'] = true;
 			}
 
-		// $character = array_merge($Character->pluck(), $CharacterStats->pluck());;
+		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
+			{
+			$request_params['is_admin'] = true;
+			}
+
+		// $character = array_merge($Character->pluck(), $Characters->pluck());;
 		if ($request->ajax())
 			{
 			$view = \View::make('game/main', $request_params);
@@ -143,7 +156,7 @@ class GameController extends Controller
 		{
 		$Character = Character::findOrFail($request->character_id);
 
-		$request_params = ['character' => $Character, 'stats' => $Character->stats()];
+		$request_params = ['character' => $Character];
 		// return $this->index($request);
 		if ($request->ajax())
 			{
@@ -171,10 +184,10 @@ class GameController extends Controller
 		{
 		// do combat stuff
 		$Character = Character::where(['characters.id' => $request->character_id])->first();
-		$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
+		// $Character = Character::where(['character_stats.characters_id' => $request->character_id])->first();
 
 		// Safety:
-		if ($Character->stats()->health <= 0)	
+		if ($Character->health <= 0)	
 			{
 			// return $this->death($request);
 			}
@@ -209,16 +222,16 @@ class GameController extends Controller
    		$combat_log['begin'] = "You attacked $Npc->name";
 		while ($flat_npc['health'] > 0)
 			{
-			if ($CharacterStat->health <= 0)
+			if ($Character->health <= 0)
 				{
 				break;
 				}
 
 			$character_attacks = 1;
-			if ($CharacterStat->dexterity > 10)
+			if ($Character->dexterity > 10)
 				{
 				$character_attacks = 2;
-				$attack_calc = ($character_attacks + ($CharacterStat->dexterity - 10) / 20);
+				$attack_calc = ($character_attacks + ($Character->dexterity - 10) / 20);
 				$character_attacks = (int)$attack_calc;
 				}
 
@@ -246,8 +259,8 @@ class GameController extends Controller
 					}
 				
 				$attack_text = 'Your fists graze the enemy';
-				$low_damage = 1 + $CharacterStat->constitution;
-				$high_damage = 10 + $CharacterStat->strength;
+				$low_damage = 1 + $Character->constitution;
+				$high_damage = 10 + $Character->strength;
 				if ($low_damage > $high_damage)
 					{
 					$low_damage = $high_damage;
@@ -260,8 +273,8 @@ class GameController extends Controller
 					$attack_text = $ItemWeapon->attack_text;
 					// $fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
 					$fatigue_use = 2;
-					$low_damage = $CharacterStat->constitution + $ItemWeapon->damage_low;
-					$high_damage = $CharacterStat->strength + $ItemWeapon->damage_high;
+					$low_damage = $Character->constitution + $ItemWeapon->damage_low;
+					$high_damage = $Character->strength + $ItemWeapon->damage_high;
 					if ($low_damage > $high_damage)
 						{
 						$low_damage = $high_damage;
@@ -271,15 +284,15 @@ class GameController extends Controller
 				$damage = rand($low_damage, $high_damage);
 				
 				// $total_fatigue = $total_fatigue + $fatigue_use;
-				if (($CharacterStat->fatigue - $fatigue_use) < 0)
+				if (($Character->fatigue - $fatigue_use) < 0)
 					{
-					$CharacterStat->fatigue = 0;
+					$Character->fatigue = 0;
 					}
 				else
 					{
-					$CharacterStat->fatigue = $CharacterStat->fatigue - $fatigue_use;
+					$Character->fatigue = $Character->fatigue - $fatigue_use;
 					}
-				$CharacterStat->save();
+				$Character->save();
 				$flat_npc['health'] = $flat_npc['health'] - $damage;
 				// $combat_log[] = "$attack_text $Npc->name for $damage damage.";
 				// $combat_log['pc_attacks'][] = "$attack_text $Npc->name for $damage damage.";
@@ -313,12 +326,12 @@ class GameController extends Controller
 					}
 				else
 					{
-					$CharacterStat->health = $CharacterStat->health - $npc_damage;
+					$Character->health = $Character->health - $npc_damage;
 					// $combat_log[] = "$Npc->name dealt $npc_damage to you!";
 					// $combat_log['npc_attacks'][] = "$Npc->name dealt $npc_damage to you!";
 					$combat_log['damage_taken'][] = $npc_damage;
-					$CharacterStat->save();
-					if ($CharacterStat->health <= 0)
+					$Character->save();
+					if ($Character->health <= 0)
 						{
 						break;
 						}	
@@ -332,10 +345,10 @@ class GameController extends Controller
 				}
 			}
 
-		$no_attack = $Character->stats()->fatigue > 0 ? false : true;
+		$no_attack = $Character->fatigue > 0 ? false : true;
 
 		// $combat_log[] = "Made it here with: ". $Character->health. "health";
-		if ($flat_npc['health'] > 0 && $CharacterStat->health > 0)
+		if ($flat_npc['health'] > 0 && $Character->health > 0)
 			{
 			// $request->session()->put('combat.'.$Character->id, $flat_npc);
 			if ($CombatLog)
@@ -412,9 +425,9 @@ class GameController extends Controller
 			// $actual_xp = $RewardTable->award_xp;
 			// die($actual_xp);
 
-			$CharacterStat->xp += $actual_xp;
-			$CharacterStat->gold += $actual_gold;
-			$CharacterStat->save();
+			$Character->xp += $actual_xp;
+			$Character->gold += $actual_gold;
+			$Character->save();
 			// $reward_log[] = '';
 			$reward_log[] = "You received $actual_xp xp.";
 			// $Wallet = Wallet::where(['wallets.characters_id' => $request->character_id])->first();
@@ -461,10 +474,10 @@ class GameController extends Controller
 			{
 
 			}
-		// elseif ($CharacterStat->health <= 0)
+		// elseif ($Character->health <= 0)
 		// 	{
 		// 	// $combat_log[] = 'You have died!';
-		if ($CharacterStat->health <= 0)
+		if ($Character->health <= 0)
 			{
 			$combat_log['pc_killed'] = true;
 			}
@@ -559,9 +572,9 @@ class GameController extends Controller
 			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
-		$request_params = ['character' => $Character, 'stats' => $Character->stats(), 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
+		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $formatted_log, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
 
-		if ($Character->stats()->health <= 0)
+		if ($Character->health <= 0)
 			{
 			$request->combat_log = $request_params['combat_log'];
 			return $this->death($request);
@@ -578,6 +591,11 @@ class GameController extends Controller
 			$request_params['npc'] = $Npc;
 			}
 
+		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
+			{
+			$request_params['is_admin'] = true;
+			}
+
 		if ($request->ajax())
 			{
 			$view = \View::make('game/main', $request_params);
@@ -591,16 +609,14 @@ class GameController extends Controller
 	public function show_stats(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		return view('/character/stats', ['character' => $Character, 'stats' => $Character->stats()]);
+		return view('/character/stats', ['character' => $Character]);
 		}
 
 	public function death(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		// $Character->stats()->health = $Character->stats()->max_health;
-		// $Character->stats()->save();
 		// drop all stats:
-		$Character->stats()->death();
+		$Character->death();
 		$Character->last_rooms_id = 1;
 		$Character->save();
 		$request->death = true;
@@ -631,10 +647,8 @@ class GameController extends Controller
 
 	public function train(Request $request)
 		{
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		$Character = Character::findOrFail($request->character_id);
+		// $Character = Character::where(['characters.id' => $request->character_id])->first();
 
 		$selected_multi = 1;
 		if ($request->train_multi)
@@ -642,13 +656,15 @@ class GameController extends Controller
 			$selected_multi = $request->train_multi;
 			}
 		$costs = $this->calculate_training_cost($request);
+		$request->costs = $costs;
 
 		$stat = $request->submit;
 
 		// die(print_r($request->all()));
 		if ($stat === null)
 			{
-			return view('game/train', ['character' => $Character, 'costs' => $costs, 'multi' => $selected_multi]);
+			return $this->index($request);
+			// return view('game/train', ['character' => $Character, 'costs' => $costs, 'multi' => $selected_multi]);
 			}
 		
 		if ($Character->xp < $costs[$stat])
@@ -659,8 +675,8 @@ class GameController extends Controller
 		else
 			{
 			// we can train
-			$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
-			$new_stats = $CharacterStat->toArray();
+			// $Character = Character::where(['character_stats.characters_id' => $request->character_id])->first();
+			$new_stats = $Character->toArray();
 
 			// unset($new_stats['updated_at']);
 			// die(print_r($new_stats));
@@ -679,19 +695,20 @@ class GameController extends Controller
 
 			$new_stats['score'] = $new_stats['strength'] + $new_stats['dexterity'] + $new_stats['constitution'] + $new_stats['wisdom'] + $new_stats['intelligence'] + $new_stats['charisma'];
 
-			$CharacterStat->fill($new_stats);
-			$CharacterStat->save();
+			$Character->fill($new_stats);
+			$Character->save();
 			}
 
 		// Refresh values?
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		$Character = Character::findOrFail($request->character_id);
+		// $Character = Character::where(['characters.id' => $request->character_id])->first();
 
 		$costs = $this->calculate_training_cost($request);
+		$request->costs = $costs;
 
-		return view('game/train', ['character' => $Character, 'costs' => $costs, 'multi' => $selected_multi]);
+
+		return $this->index($request);
+		// return view('game/train', ['character' => $Character, 'costs' => $costs, 'multi' => $selected_multi]);
 		}
 
 	public function training_cost($current_stat, $cost_adjustment)
@@ -705,10 +722,8 @@ class GameController extends Controller
 
 	public function calculate_training_cost(Request $request)
 		{
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		$Character = Character::findOrFail($request->character_id);
+		// $Character = Character::where(['characters.id' => $request->character_id])->first();
 
 		// $StatCost = StatCost::first();
 		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
@@ -765,12 +780,7 @@ class GameController extends Controller
 
 	public function train_stat(Request $request)
 		{
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
-
-
+		$Character = Character::findOrFail($request->character_id);
 
 		// $StatCost = StatCost::first();
 		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
@@ -800,8 +810,8 @@ class GameController extends Controller
 			else
 				{
 				// we can train
-				$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
-				$new_stats = $CharacterStat->toArray();
+				// $Character = Character::where(['character_stats.characters_id' => $request->character_id])->first();
+				$new_stats = $Character->toArray();
 
 				// unset($new_stats['updated_at']);
 				// die(print_r($new_stats));
@@ -820,17 +830,18 @@ class GameController extends Controller
 
 				// $new_stats['score'] = $new_stats['strength'] + $new_stats['dexterity'] + $new_stats['constitution'] + $new_stats['wisdom'] + $new_stats['intelligence'] + $new_stats['charisma'];
 
-				$CharacterStat->fill($new_stats);
-				$CharacterStat->save();
-				$CharacterStat->refreshScore();
+				$Character->fill($new_stats);
+				$Character->save();
+				$Character->refreshScore();
 				}
 			}
 
 		// Refresh values?
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		$Character = Character::findOrFail($request->character_id);
+		// $Character = Character::where(['characters.id' => $request->character_id])
+		// 	->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
+		// 	->select('character_stats.*', 'characters.*')
+		// 	->first();
 
 		$costs = $this->calculate_training_cost($request);
 
@@ -856,46 +867,41 @@ class GameController extends Controller
 			{
 			// die(print_r($request->all()));
 			$healing = true;
-			$CharacterStat = CharacterStat::where(['character_stats.characters_id' => $request->character_id])->first();
+			// $Character = Character::where(['character_stats.characters_id' => $request->character_id])->first();
+			$Character = Character::findOrFail($request->character_id);
 
-			$healing_amount = ($CharacterStat->constitution * 0.4 + $CharacterStat->strength * 0.2);
-			$CharacterStat->health = $CharacterStat->health + (int)$healing_amount;
-			if ($CharacterStat->health > $CharacterStat->max_health)
+			$healing_amount = ($Character->constitution * 0.4 + $Character->strength * 0.2);
+			$Character->health = $Character->health + (int)$healing_amount;
+			if ($Character->health > $Character->max_health)
 				{
-				$CharacterStat->health = $CharacterStat->max_health;
+				$Character->health = $Character->max_health;
 				}
 
-			$fatigue_amount = ($CharacterStat->constitution * 0.4 + $CharacterStat->strength * 0.2 + $CharacterStat->dexterity * 0.2);
-			$CharacterStat->fatigue = $CharacterStat->fatigue + (int)$fatigue_amount;
-			if ($CharacterStat->fatigue > $CharacterStat->max_fatigue)
+			$fatigue_amount = ($Character->constitution * 0.4 + $Character->strength * 0.2 + $Character->dexterity * 0.2);
+			$Character->fatigue = $Character->fatigue + (int)$fatigue_amount;
+			if ($Character->fatigue > $Character->max_fatigue)
 				{
-				$CharacterStat->fatigue = $CharacterStat->max_fatigue;
+				$Character->fatigue = $Character->max_fatigue;
 				}
 
-			$mana_amount = ($CharacterStat->intelligence * 0.2 + $CharacterStat->wisdom * 0.2);
-			$CharacterStat->mana = $CharacterStat->mana + (int)$mana_amount;
-			if ($CharacterStat->mana > $CharacterStat->max_mana)
+			$mana_amount = ($Character->intelligence * 0.2 + $Character->wisdom * 0.2);
+			$Character->mana = $Character->mana + (int)$mana_amount;
+			if ($Character->mana > $Character->max_mana)
 				{
-				$CharacterStat->mana = $CharacterStat->max_mana;
+				$Character->mana = $Character->max_mana;
 				}
 
-			$CharacterStat->save();
+			$Character->save();
 			}
 
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		$Character = Character::findOrFail($request->character_id);
 
 		return view('game/rest', ['character' => $Character, 'healing' => $healing]);
 		}
 
 	public function equipment(Request $request)
 		{
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		$Character = Character::findOrFail($request->character_id);
 
 		// Find current equipment:
 		$Equipment = Equipment::where(['characters_id' => $request->character_id])->first();
@@ -1158,11 +1164,7 @@ class GameController extends Controller
 
 	public function items(Request $request)
 		{
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
-
+		$Character = Character::findOrFail($request->character_id);
 		// Find current equipment:
 		// $InventoryItems = InventoryItem::where(['characters_id' => $request->character_id])->first();
 
@@ -1177,18 +1179,18 @@ class GameController extends Controller
 			$ItemConsumable = ItemConsumable::where(['items_id' => $Item->id])->first();
 			if ($ItemConsumable->effect == 'healing')
 				{
-				$CharacterStat = CharacterStat::where(['characters_id' => $Character->id])->first();
-				$CharacterStat->health = $CharacterStat->health + $ItemConsumable->potency;
-				if ($CharacterStat->health > $CharacterStat->max_health)
-					{
-					$CharacterStat->health = $CharacterStat->max_health;
-					}
-				$CharacterStat->fatigue = $CharacterStat->fatigue + $ItemConsumable->potency;
-				if ($CharacterStat->fatigue > $CharacterStat->max_fatigue)
-					{
-					$CharacterStat->fatigue = $CharacterStat->max_fatigue;
-					}
-				$CharacterStat->save();
+				$Character->heal($ItemConsumable->potency);
+				// $Character->health = $Character->health + $ItemConsumable->potency;
+				// if ($Character->health > $Character->max_health)
+				// 	{
+				// 	$Character->health = $Character->max_health;
+				// 	}
+				// $Character->fatigue = $Character->fatigue + $ItemConsumable->potency;
+				// if ($Character->fatigue > $Character->max_fatigue)
+				// 	{
+				// 	$Character->fatigue = $Character->max_fatigue;
+				// 	}
+				// $Character->save();
 				}
 			$Character->inventory()->removeItem($request->item);
 			// $request->item;
@@ -1220,10 +1222,7 @@ class GameController extends Controller
 				}
 			}
 
-		$Character = Character::where(['characters.id' => $request->character_id])
-			->join('character_stats', 'character_stats.characters_id', '=', 'characters.id')
-			->select('character_stats.*', 'characters.*')
-			->first();
+		$Character = Character::findOrFail($request->character_id);
 
 		return view('character/items', ['character' => $Character, 'items' => $items]);
 		}

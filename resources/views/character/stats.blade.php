@@ -6,23 +6,54 @@
 
 <header>
 	{{$character->name}}<br>
-	{{$character->playerrace->gender}} {{$character->playerrace->name}}
+	{{$character->playerrace()->gender}} {{$character->playerrace()->name}}
 </header>
-<strong> -- Stats -- </strong>
-<ul>
-	<li>XP: {{$stats->xp}}</li>
-	<li>Gold: {{$stats->gold}}</li>
-</ul>
-<ul>
-	<li>Strength: {{$stats->strength}}</li>
-	<li>Dexterity: {{$stats->dexterity}}</li>
-	<li>Constitution: {{$stats->constitution}}</li>
-	<li>Wisdom: {{$stats->wisdom}}</li>
-	<li>Intelligence: {{$stats->intelligence}}</li>
-	<li>Charisma: {{$stats->charisma}}</li>
-	<br>
-	<li>Score: {{$stats->score}}</li>
-</ul>
+
+<table>
+	<tr>
+		<td>XP</td>
+		<td>{{$character->xp}}</td>
+	</tr>
+	<tr>
+		<td>Gold</td>
+		<td>{{$character->gold}}</td>
+	</tr>
+	<tr>
+		<td>Deaths</td>
+		<td>{{$character->deaths}}</td>
+	</tr>
+</table>
+
+<table>
+	<tr>
+		<td>Wall Score</td>
+		<td><strong>{{$character->score}}</strong></td>
+	</tr>
+	<tr>
+		<td>Strength</td>
+		<td>{{$character->strength}}</td>
+	</tr>
+	<tr>
+		<td>Dexterity</td>
+		<td>{{$character->dexterity}}</td>
+	</tr>
+	<tr>
+		<td>Constitution</td>
+		<td>{{$character->constitution}}</td>
+	</tr>
+	<tr>
+		<td>Wisdom</td>
+		<td>{{$character->wisdom}}</td>
+	</tr>
+	<tr>
+		<td>Intelligence</td>
+		<td>{{$character->intelligence}}</td>
+	</tr>
+	<tr>
+		<td>Charisma</td>
+		<td>{{$character->charisma}}</td>
+	</tr>
+</table>
 
 <form method="post" id="menu-form" action="/menu" class="ajax">
 	{{csrf_field()}}

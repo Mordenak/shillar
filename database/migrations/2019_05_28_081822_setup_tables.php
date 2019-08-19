@@ -92,8 +92,8 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->integer('item_types_id');
 			$table->foreign('item_types_id')->references('id')->on('item_types');
-			$table->integer('value');
-			$table->float('weight');
+			$table->integer('value')->nullable();
+			$table->float('weight')->nullable();
 			$table->timestamps();
 		});
 
@@ -170,6 +170,22 @@ class SetupTables extends Migration
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
 			$table->foreign('last_rooms_id')->references('id')->on('rooms');
+			$table->integer('xp');
+			$table->integer('gold');
+			$table->integer('health');
+			$table->integer('max_health');
+			$table->integer('mana');
+			$table->integer('max_mana');
+			$table->integer('fatigue');
+			$table->integer('max_fatigue');
+			$table->integer('strength');
+			$table->integer('dexterity');
+			$table->integer('constitution');
+			$table->integer('wisdom');
+			$table->integer('intelligence');
+			$table->integer('charisma');
+			$table->integer('score');
+			$table->integer('death_count')->default(0);
 			$table->timestamps();
 		});
 
@@ -202,8 +218,12 @@ class SetupTables extends Migration
 			$table->foreign('characters_id')->references('id')->on('characters');
 			$table->integer('weapon')->nullable();
 			$table->foreign('weapon')->references('id')->on('inventory_items');
+			$table->integer('shield')->nullable();
+			$table->foreign('shield')->references('id')->on('inventory_items');
 			$table->integer('head')->nullable();
 			$table->foreign('head')->references('id')->on('inventory_items');
+			$table->integer('neck')->nullable();
+			$table->foreign('neck')->references('id')->on('inventory_items');
 			$table->integer('chest')->nullable();
 			$table->foreign('chest')->references('id')->on('inventory_items');
 			$table->integer('legs')->nullable();
@@ -212,37 +232,40 @@ class SetupTables extends Migration
 			$table->foreign('hands')->references('id')->on('inventory_items');
 			$table->integer('feet')->nullable();
 			$table->foreign('feet')->references('id')->on('inventory_items');
-			$table->integer('neck')->nullable();
-			$table->foreign('neck')->references('id')->on('inventory_items');
+			$table->integer('amulet')->nullable();
+			$table->foreign('amulet')->references('id')->on('inventory_items');
 			$table->integer('left_ring')->nullable();
 			$table->foreign('left_ring')->references('id')->on('inventory_items');
 			$table->integer('right_ring')->nullable();
 			$table->foreign('right_ring')->references('id')->on('inventory_items');
+			$table->integer('bracelet')->nullable();
+			$table->foreign('bracelet')->references('id')->on('inventory_items');
 			$table->timestamps();
 		});
 
-		Schema::create('character_stats', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			// $table->string('name');
-			$table->integer('characters_id');
-			$table->foreign('characters_id')->references('id')->on('characters');
-			$table->integer('xp');
-			$table->integer('gold');
-			$table->integer('health');
-			$table->integer('max_health');
-			$table->integer('mana');
-			$table->integer('max_mana');
-			$table->integer('fatigue');
-			$table->integer('max_fatigue');
-			$table->integer('strength');
-			$table->integer('dexterity');
-			$table->integer('constitution');
-			$table->integer('wisdom');
-			$table->integer('intelligence');
-			$table->integer('charisma');
-			$table->integer('score');
-			$table->timestamps();
-		});
+		// Schema::create('character_stats', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	// $table->string('name');
+		// 	$table->integer('characters_id');
+		// 	$table->foreign('characters_id')->references('id')->on('characters');
+		// 	$table->integer('xp');
+		// 	$table->integer('gold');
+		// 	$table->integer('health');
+		// 	$table->integer('max_health');
+		// 	$table->integer('mana');
+		// 	$table->integer('max_mana');
+		// 	$table->integer('fatigue');
+		// 	$table->integer('max_fatigue');
+		// 	$table->integer('strength');
+		// 	$table->integer('dexterity');
+		// 	$table->integer('constitution');
+		// 	$table->integer('wisdom');
+		// 	$table->integer('intelligence');
+		// 	$table->integer('charisma');
+		// 	$table->integer('score');
+		// 	$table->integer('death_count')->default(0);
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('npcs', function (Blueprint $table) {
 			$table->bigIncrements('id');
