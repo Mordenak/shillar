@@ -243,29 +243,6 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// Schema::create('character_stats', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	// $table->string('name');
-		// 	$table->integer('characters_id');
-		// 	$table->foreign('characters_id')->references('id')->on('characters');
-		// 	$table->integer('xp');
-		// 	$table->integer('gold');
-		// 	$table->integer('health');
-		// 	$table->integer('max_health');
-		// 	$table->integer('mana');
-		// 	$table->integer('max_mana');
-		// 	$table->integer('fatigue');
-		// 	$table->integer('max_fatigue');
-		// 	$table->integer('strength');
-		// 	$table->integer('dexterity');
-		// 	$table->integer('constitution');
-		// 	$table->integer('wisdom');
-		// 	$table->integer('intelligence');
-		// 	$table->integer('charisma');
-		// 	$table->integer('score');
-		// 	$table->integer('death_count')->default(0);
-		// 	$table->timestamps();
-		// });
 
 		Schema::create('npcs', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -273,19 +250,15 @@ class SetupTables extends Migration
 			$table->string('attack_text')->nullable();
 			$table->string('img_src')->nullable();
 			$table->boolean('is_hostile')->default(true);
-			$table->timestamps();
-		});
-
-		Schema::create('npc_stats', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('npcs_id');
-			$table->foreign('npcs_id')->references('id')->on('npcs');
 			$table->integer('health');
 			$table->float('armor');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
 			$table->integer('attacks_per_round');
-			// $table->float('critical_chance');
+			$table->integer('award_xp');
+			$table->float('xp_variation')->default(0.15);
+			$table->integer('award_gold');
+			$table->float('gold_variation')->default(0.15);
 			$table->timestamps();
 		});
 
@@ -301,16 +274,16 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('reward_tables', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('npcs_id');
-			$table->foreign('npcs_id')->references('id')->on('npcs');
-			$table->integer('award_xp');
-			$table->float('xp_variation')->nullable();
-			$table->integer('award_gold');
-			$table->float('gold_variation')->nullable();
-			$table->timestamps();
-		});		
+		// Schema::create('reward_tables', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('npcs_id');
+		// 	$table->foreign('npcs_id')->references('id')->on('npcs');
+		// 	$table->integer('award_xp');
+		// 	$table->float('xp_variation')->nullable();
+		// 	$table->integer('award_gold');
+		// 	$table->float('gold_variation')->nullable();
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('loot_tables', function (Blueprint $table) {
 			$table->bigIncrements('id');

@@ -40,32 +40,32 @@ Create a Character:<br>
 		<label class="col-md-2 col-form-label text-md-right">Bonus Stats:</label>
 		<div class="col-md-2">
 			<select name="bonus_stats_1" class="form-control">
-				<option value="strength">+5 Str</option>
-				<option value="dexterity">+5 Dex</option>
-				<option value="constitution">+5 Con</option>
-				<option value="wisdom">+5 Wis</option>
-				<option value="intelligence">+5 Int</option>
-				<option value="charisma">+5 Cha</option>
+				<option value="strength">Str</option>
+				<option value="dexterity">Dex</option>
+				<option value="constitution">Con</option>
+				<option value="wisdom">Wis</option>
+				<option value="intelligence">Int</option>
+				<option value="charisma">Cha</option>
 			</select>
 		</div>
 		<div class="col-md-2">
 			<select name="bonus_stats_2" class="form-control">
-				<option value="strength">+5 Str</option>
-				<option value="dexterity">+5 Dex</option>
-				<option value="constitution">+5 Con</option>
-				<option value="wisdom">+5 Wis</option>
-				<option value="intelligence">+5 Int</option>
-				<option value="charisma">+5 Cha</option>
+				<option value="strength">Str</option>
+				<option value="dexterity">Dex</option>
+				<option value="constitution">Con</option>
+				<option value="wisdom">Wis</option>
+				<option value="intelligence">Int</option>
+				<option value="charisma">Cha</option>
 			</select>
 		</div>
 		<div class="col-md-2">
 			<select name="bonus_stats_3" class="form-control">
-				<option value="strength">+5 Str</option>
-				<option value="dexterity">+5 Dex</option>
-				<option value="constitution">+5 Con</option>
-				<option value="wisdom">+5 Wis</option>
-				<option value="intelligence">+5 Int</option>
-				<option value="charisma">+5 Cha</option>
+				<option value="strength">Str</option>
+				<option value="dexterity">Dex</option>
+				<option value="constitution">Con</option>
+				<option value="wisdom">Wis</option>
+				<option value="intelligence">Int</option>
+				<option value="charisma">Cha</option>
 			</select>
 		</div>
 	</div>
@@ -74,40 +74,39 @@ Create a Character:<br>
 		<label class="col-md-2 col-form-label text-md-right"></label>
 		<div class="col-md-2">
 			<select name="bonus_stats_4" class="form-control">
-				<option value="strength">+5 Str</option>
-				<option value="dexterity">+5 Dex</option>
-				<option value="constitution">+5 Con</option>
-				<option value="wisdom">+5 Wis</option>
-				<option value="intelligence">+5 Int</option>
-				<option value="charisma">+5 Cha</option>
+				<option value="strength">Str</option>
+				<option value="dexterity">Dex</option>
+				<option value="constitution">Con</option>
+				<option value="wisdom">Wis</option>
+				<option value="intelligence">Int</option>
+				<option value="charisma">Cha</option>
 			</select>
 		</div>
 		<div class="col-md-2">
 			<select name="bonus_stats_5" class="form-control">
-				<option value="strength">+5 Str</option>
-				<option value="dexterity">+5 Dex</option>
-				<option value="constitution">+5 Con</option>
-				<option value="wisdom">+5 Wis</option>
-				<option value="intelligence">+5 Int</option>
-				<option value="charisma">+5 Cha</option>
+				<option value="strength">Str</option>
+				<option value="dexterity">Dex</option>
+				<option value="constitution">Con</option>
+				<option value="wisdom">Wis</option>
+				<option value="intelligence">Int</option>
+				<option value="charisma">Cha</option>
 			</select>
 		</div>
 		<div class="col-md-2">
 			<select name="bonus_stats_6" class="form-control">
-				<option value="strength">+5 Str</option>
-				<option value="dexterity">+5 Dex</option>
-				<option value="constitution">+5 Con</option>
-				<option value="wisdom">+5 Wis</option>
-				<option value="intelligence">+5 Int</option>
-				<option value="charisma">+5 Cha</option>
+				<option value="strength">Str</option>
+				<option value="dexterity">Dex</option>
+				<option value="constitution">Con</option>
+				<option value="wisdom">Wis</option>
+				<option value="intelligence">Int</option>
+				<option value="charisma">Cha</option>
 			</select>
 		</div>
 	</div>
 
-
 	<div class="form-group row mb-0">
 		<div class="col-md-1 offset-md-1">
-			<a href="/npc/all" class="btn btn-primary">Cancel</a>
+			<a href="/home" class="btn btn-primary">Cancel</a>
 		</div>
 		<div class="col-md-2 offset-md-2">
 			<input type="submit" value="Save" class="btn btn-primary">

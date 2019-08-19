@@ -28,14 +28,16 @@ class BasicEntries extends Seeder
 		]);
 
 		DB::table('item_properties')->insert([
-			['name' => 'ADD_STRENGTH', 'description' => 'Adds a flat amount of strength', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADD_DEXTERITY', 'description' => 'Adds a flat amount of dexterity', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADD_CONSTITUTION', 'description' => 'Adds a flat amount of constitution', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADD_WISDOM', 'description' => 'Adds a flat amount of wisdom', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADD_INTELLIGENCE', 'description' => 'Adds a flat amount of intelligence', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADD_CHARISMA', 'description' => 'Adds a flat amount of charisma', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HAS_HEALINGp', 'description' => 'This flag will represent the item will heal the character', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADJUST_STRENGTH', 'description' => 'Adjusts strength by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADJUST_DEXTERITY', 'description' => 'Adjusts dexterity by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADJUST_CONSTITUTION', 'description' => 'Adjusts constitution by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADJUST_WISDOM', 'description' => 'Adjusts wisdom by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADJUST_INTELLIGENCE', 'description' => 'Adjusts intelligence by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADJUST_CHARISMA', 'description' => 'Adjusts charisma by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_HEALING', 'description' => 'This flag will represent the item will heal the character', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'ADD_LIGHT_LEVEL', 'description' => 'Add an amount of light level', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'IGNORE_ACCURACY', 'description' => 'Accuracy will always be 100%.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ADJUST_ACCURACY', 'description' => 'Adjust accuracy by a percentage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('room_properties')->insert([

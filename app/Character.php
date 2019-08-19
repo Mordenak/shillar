@@ -71,9 +71,9 @@ class Character extends Model
 		return true;
 		}
 
-	public function heal(integer $amount)
+	public function heal($amount)
 		{
-		$this->health = $this->health + $amount;
+		$this->health = $this->health + (int)$amount;
 		if ($this->health > $this->max_health)
 			{
 			$this->health = $this->max_health;

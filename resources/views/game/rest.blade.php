@@ -17,6 +17,13 @@
 
 	resting
 
+	<form method="post" action="/game" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<label for="wake_up">Wake Up</label>
+		<input type="submit" id="wake_up" style="display: none;">
+	</form>
+
 	<br><br>
 
 	<form method="post" action="/rest"  class="rest-form">

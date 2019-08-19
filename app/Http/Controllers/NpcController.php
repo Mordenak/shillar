@@ -34,11 +34,11 @@ class NpcController extends Controller
 		$zones = Zone::all();
 		$items = Item::all();
 		// Should be only one:
-		$RewardTable = RewardTable::where(['npcs_id' => $Npc->id])->first();
+		// $RewardTable = RewardTable::where(['npcs_id' => $Npc->id])->first();
 		$SpawnRules = SpawnRule::where(['npcs_id' => $Npc->id])->get();
 		$LootTables = LootTable::where(['npcs_id' => $Npc->id])->get();
 		// die(print_r($SpawnRules->count()));
-		return view('npc.edit', ['npc' => $Npc, 'stats' => $Npc->stats()->first(), 'reward_table' => $RewardTable, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
+		return view('npc.edit', ['npc' => $Npc, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
 		}
 
 	public function save(Request $request)
@@ -54,35 +54,19 @@ class NpcController extends Controller
 			'name' => $request->name,
 			'img_src' => $request->img_src,
 			'is_hostile' => isset($request->is_hostile) ? true : false,
-			];
-
-		$Npc->fill($values);
-		$Npc->save();
-
-		// We also need to create an NpcStats records.
-		$NpcStat = new NpcStat;
-		// $NpcStat->npcs_id = $request->id;
-		$stat_values = [
-			'npcs_id' => $Npc->id,
 			'health' => $request->health,
 			'armor' => $request->armor,
 			'damage_low' => $request->damage_low,
 			'damage_high' => $request->damage_high,
 			'attacks_per_round' => $request->attacks_per_round,
-			];
-		$NpcStat->fill($stat_values);
-		$NpcStat->save();
-
-		$RewardTable = new RewardTable;
-		$reward_values = [
-			'npcs_id' => $Npc->id,
 			'award_xp' => $request->award_xp,
 			'xp_variation' => $request->xp_variation,
 			'award_gold' => $request->award_gold,
 			'gold_variation' => $request->gold_variation,
 			];
-		$RewardTable->fill($reward_values);
-		$RewardTable->save();
+
+		$Npc->fill($values);
+		$Npc->save();
 
 		return $this->edit($Npc->id);
 		// return redirect()->action('AdminController@index');

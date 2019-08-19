@@ -20,6 +20,7 @@ use App\ItemConsumable;
 use App\ItemAccessory;
 use App\CombatLog;
 use App\KillCount;
+use App\InventoryItem;
 
 class GameController extends Controller
 {
@@ -33,6 +34,8 @@ class GameController extends Controller
 			}
 
 		$Character = Character::findOrFail($request->character_id);
+
+		// die(print_r(Equipment::all()->toArray()));
 			// ->select('character_stats.id as character_stats_id, *');
 
 		if (!$Character)
@@ -199,7 +202,8 @@ class GameController extends Controller
 		if ($CombatLog)	
 			{
 			// die('something');
-			$Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
+			$Npc = Npc::findOrFail($request->npc_id);
+			// $Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
 			// $flat_npc = $request->session()->get('combat.'.$Character->id);
 			$flat_npc = $Npc->toArray();
 			$flat_npc['health'] = $CombatLog->remaining_health;
@@ -208,7 +212,8 @@ class GameController extends Controller
 		else
 			{
 			// die('no combat log?');
-			$Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
+			$Npc = Npc::findOrFail($request->npc_id);
+			// $Npc = Npc::where(['npcs.id' => $request->npc_id])->join('npc_stats', 'npcs.id', '=', 'npc_stats.npcs_id')->first();
 			$flat_npc = $Npc->toArray();
 			// $request->session()->put('combat.'.$Character->id, $Npc->toArray());
 			}
@@ -266,10 +271,10 @@ class GameController extends Controller
 					$low_damage = $high_damage;
 					}
 				// $fatigue_use = 1;
-				if ($Equipment->weapon)
+				if ($Character->equipment()->weapon)
 					{
-					$weapon_id = $Character->inventory()->inventory_items()->where(['id' => $Equipment->weapon])->first();
-					$ItemWeapon = ItemWeapon::findOrFail($weapon_id->items_id);
+					$weapon_id = $Character->inventory()->inventory_items()->where(['id' => $Character->equipment()->weapon])->first();
+					$ItemWeapon = ItemWeapon::where(['items_id' => $weapon_id->items_id])->first();
 					$attack_text = $ItemWeapon->attack_text;
 					// $fatigue_use = $fatigue_use + $ItemWeapon->fatigue_use;
 					$fatigue_use = 2;
@@ -398,23 +403,23 @@ class GameController extends Controller
 			$KillCount->save();
 
 
-			$RewardTable = RewardTable::where(['reward_tables.npcs_id' => $request->npc_id])->first();
+			// $RewardTable = RewardTable::where(['reward_tables.npcs_id' => $request->npc_id])->first();
 
 			// $actual_xp = (float)$RewardTable->award_xp * $RewardTable->xp_variation;
-			$xp_variation = rand()/getrandmax()*($RewardTable->xp_variation*2)-$RewardTable->xp_variation;
+			$xp_variation = rand()/getrandmax()*($Npc->xp_variation*2)-$Npc->xp_variation;
 
 			// $xp_variation = mt_rand() / mt_getrandmax();
 			// $combat_log[] = "pre-variation: $xp_variation";
 			// $xp_variation = round($xp_variation, 2);
 			// $combat_log[] = "variation: $xp_variation";
-			$actual_xp = (int)($RewardTable->award_xp * (1.0 + $xp_variation));
+			$actual_xp = (int)($Npc->award_xp * (1.0 + $xp_variation));
 
-			$gold_variation = rand()/getrandmax()*($RewardTable->gold_variation*2)-$RewardTable->gold_variation;
+			$gold_variation = rand()/getrandmax()*($Npc->gold_variation*2)-$Npc->gold_variation;
 
 			// $combat_log[] = "pre-variation: $gold_variation";
 			// $gold_variation = round($gold_variation, 1);
 			// $combat_log[] = "variation: $gold_variation";
-			$actual_gold = (int)($RewardTable->award_gold * (1.0 + $gold_variation));
+			$actual_gold = (int)($Npc->award_gold * (1.0 + $gold_variation));
 			// Never less than 1:
 			if ($actual_gold == 0)
 				{
@@ -513,7 +518,8 @@ class GameController extends Controller
 			// $formatted_log[] = isset($combat_log['attack_text']) ? $combat_log['attack_text'] : '';
 			if ($Character->equipment()->weapon)
 				{
-				$formatted_log[] = $Character->equipment()->weapon()->attack_text;
+				$ItemWeapon = ItemWeapon::where(['items_id' => $Character->equipment()->weapon()->first()->items_id])->first();
+				$formatted_log[] = $ItemWeapon->attack_text;
 				}
 			else
 				{

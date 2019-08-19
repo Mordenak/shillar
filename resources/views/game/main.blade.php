@@ -116,16 +116,13 @@
 			<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 		</div>
 	@else
-		@if (!isset($combat_log))
-			@if ($room->img_src)
-			<img src="{{asset('img/'.$room->img_src)}}">
-			@else
-				@if ($room->zone()->img_src)
-				<img src="{{asset('img/'.$room->zone()->img_src)}}">
-				@endif
+		@if ($room->img_src)
+		<img src="{{asset('img/'.$room->img_src)}}">
+		@else
+			@if ($room->zone()->img_src)
+			<img src="{{asset('img/'.$room->zone()->img_src)}}">
 			@endif
 		@endif
-
 	@endif
 	</div>
 
@@ -217,6 +214,15 @@
 	<p>
 		{{$room->zone()->description}}
 	</p>
+
+	@if ($room->has_property('CAN_SLEEP'))
+	<form method="post" action="/rest" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		You can <label for="begin_rest">sleep</label> here.
+		<input type="submit" id="begin_rest" style="display: none;">
+	</form>
+	@endif
 
 
 	<!-- Do the loot: -->

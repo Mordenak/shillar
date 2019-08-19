@@ -38,7 +38,7 @@ class ZoneController extends Controller
 			'name' => $request->name,
 			'description' => $request->description,
 			'darkness_level' => $request->darkness_level,
-			'custom_img' => $request->custom_img,
+			'img_src' => $request->img_src,
 			];
 
 		$Zone->fill($values);

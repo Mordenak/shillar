@@ -26,97 +26,74 @@
 				<input type="text" name="img_src" value="{{$npc->img_src}}" class="form-control"><br>
 			</div>
 		</div>
-		
-		<input type="hidden" name="id" value="{{$npc->id}}">
-
-		<div class="form-group row mb-0">
-			<div class="col-md-2 offset-md-4">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
-	</form>
 
 	<h3>Stats:</h3>
-	<form action="/npc/stats/save" method="POST" class="form-horizontal ajax">
-		{{ csrf_field() }}
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Health:</label>
 			<div class="col-md-3">
-				<input type="text" name="health" value="{{$stats->health}}" class="form-control">
+				<input type="text" name="health" value="{{$npc->health}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Armor:</label>
 			<div class="col-md-3">
-				<input type="text" name="armor" value="{{$stats->armor}}" class="form-control">
+				<input type="text" name="armor" value="{{$npc->armor}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Damage Min:</label>
 			<div class="col-md-3">
-				<input type="text" name="damage_low" value="{{$stats->damage_low}}" class="form-control">
+				<input type="text" name="damage_low" value="{{$npc->damage_low}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Damage Max:</label>
 			<div class="col-md-3">
-				<input type="text" name="damage_high" value="{{$stats->damage_high}}" class="form-control">
+				<input type="text" name="damage_high" value="{{$npc->damage_high}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Attacks:</label>
 			<div class="col-md-3">
-				<input type="text" name="attacks_per_round" value="{{$stats->attacks_per_round}}" class="form-control">
+				<input type="text" name="attacks_per_round" value="{{$npc->attacks_per_round}}" class="form-control">
 			</div>
 		</div>
-		
-		<input type="hidden" name="id" value="{{$stats->id}}">
-
-		<div class="form-group row mb-0">
-			<div class="col-md-2 offset-md-4">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
-	</form>
 
 	<h3>Reward Tables:</h3>
-	
-	<form action="/npc/rewards/save" method="POST" class="form-horizontal ajax">
-		{{ csrf_field() }}
+
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Award XP:</label>
 			<div class="col-md-3">
-				<input type="text" name="award_xp" value="{{$reward_table->award_xp}}" class="form-control">
+				<input type="text" name="award_xp" value="{{$npc->award_xp}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">XP Variation:</label>
 			<div class="col-md-3">
-				<input type="text" name="xp_variation" value="{{$reward_table->xp_variation}}" class="form-control">
+				<input type="text" name="xp_variation" value="{{$npc->xp_variation}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Award Gold:</label>
 			<div class="col-md-3">
-				<input type="text" name="award_gold" value="{{$reward_table->award_gold}}" class="form-control">
+				<input type="text" name="award_gold" value="{{$npc->award_gold}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Gold Variation:</label>
 			<div class="col-md-3">
-				<input type="text" name="gold_variation" value="{{$reward_table->gold_variation}}" class="form-control">
+				<input type="text" name="gold_variation" value="{{$npc->gold_variation}}" class="form-control">
 			</div>
 		</div>
 		
-		<input type="hidden" name="id" value="{{$reward_table->id}}">
-		<input type="hidden" name="npc_id" value="{{$npc->id}}">
+		<input type="hidden" name="id" value="{{$npc->id}}">
 
 		<div class="form-group row mb-0">
 			<div class="col-md-2 offset-md-4">

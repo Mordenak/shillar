@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>App Name - @yield('title')</title>
+		<title>Sheller - @yield('title')</title>
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -186,7 +186,8 @@
 						'/rest',
 						'/move',
 						'/combat',
-						'/item_pickup'
+						'/item_pickup',
+						'/game'
 						];
 					var menu_inserts = [
 						'/equipment',

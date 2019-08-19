@@ -50,6 +50,8 @@ class ItemController extends Controller
 		$values = [
 			'name' => $request->name,
 			'item_types_id' => $request->item_types_id,
+			'value' => $request->value,
+			'weight' => $request->weight,
 			];
 
 		$Item->fill($values);
