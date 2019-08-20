@@ -45,7 +45,7 @@ class RoomController extends Controller
 			'zones_id' => $request->selected_zone,
 			'title' => $request->title,
 			'description' => $request->description,
-			'custom_img' => $request->custom_img,
+			'img_src' => $request->img_src,
 			'spawns_enabled' => $request->spawns_enabled ? true : false,
 			'north_rooms_id' => $request->north_room_id,
 			'east_rooms_id' => $request->east_room_id,
