@@ -26,20 +26,19 @@ class Inventory extends Model
 		return $this->hasMany('App\InventoryItems')->get();
 		}
 
+	public function grouped_items()
+		{
+		// TODO:
+		return true;
+		}
+
 	public function removeItem($item_id)
 		{
 		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
 
 		if ($has_item)
 			{
-			$has_item->quantity = $has_item->quantity - 1;
-			// todo: if 0?
-			if ($has_item->quantity <= 0)
-				{
-				$has_item->delete();
-				return true;
-				}
-			$has_item->save();
+			$has_item->delete();
 			}
 		else
 			{
@@ -55,19 +54,10 @@ class Inventory extends Model
 		// Add an items_to_inventories record:;
 		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
 
-		if ($has_item)
-			{
-			// die('we has');
-			$has_item->quantity = $has_item->quantity + 1;
-			$has_item->save();
-			}
-		else
-			{
-			$InventoryItems = new InventoryItems;
-			// die('..:'.$this->id);
-			$InventoryItems->fill(['inventory_id' => $this->id, 'items_id' => $item_id, 'quantity' => 1]);
-			$InventoryItems->save();
-			}
+		$InventoryItems = new InventoryItems;
+		// die('..:'.$this->id);
+		$InventoryItems->fill(['inventory_id' => $this->id, 'items_id' => $item_id, 'quantity' => 1]);
+		$InventoryItems->save();
 
 		return true;
 		}

@@ -30,5 +30,6 @@ Code Todo:
 * Fix npc spawn on item pickup
 * Move functions out of game controller
 * Route admin functions through admin route with auth middleware admin level check
-* Fix Menu CSS/sizing
-* Debate: CharacterStats to Characters table???
+* ~~Fix Menu CSS/sizing~~
+* ~~Debate: CharacterStats to Characters table???~~
+* Debate: InventoryItems to no quantity, count of records.

@@ -924,6 +924,15 @@ class GameController extends Controller
 				$Equipment->weapon = null;
 				}
 
+			if ($request->shield > 0)
+				{
+				$Equipment->shield = $request->shield;
+				}
+			else
+				{
+				$Equipment->shield = null;
+				}
+
 			if ($request->head > 0)
 				{
 				$Equipment->head = $request->head;
@@ -932,6 +941,15 @@ class GameController extends Controller
 				{
 				$Equipment->head = null;
 				}
+
+			if ($request->neck > 0)
+				{
+				$Equipment->neck = $request->neck;
+				}
+			else
+				{
+				$Equipment->neck = null;
+				}			
 
 			if ($request->chest > 0)
 				{
@@ -969,13 +987,13 @@ class GameController extends Controller
 				$Equipment->feet = null;
 				}
 
-			if ($request->neck > 0)
+			if ($request->amulet > 0)
 				{
-				$Equipment->neck = $request->neck;
+				$Equipment->amulet = $request->amulet;
 				}
 			else
 				{
-				$Equipment->neck = null;
+				$Equipment->amulet = null;
 				}
 
 			if ($request->left_ring > 0)
@@ -996,6 +1014,15 @@ class GameController extends Controller
 				$Equipment->right_ring = null;
 				}
 
+			if ($request->bracelet > 0)
+				{
+				$Equipment->bracelet = $request->bracelet;
+				}
+			else
+				{
+				$Equipment->bracelet = null;
+				}
+
 			$Equipment->save();
 			}
 
@@ -1005,14 +1032,17 @@ class GameController extends Controller
 		$CharacterItems = $Character->inventory()->character_items();
 
 		$weapons = [];
+		$shields = [];
 		$head_armors = [];
+		$neck_armors = [];
 		$chest_armors = [];
 		$leg_armors = [];
 		$hand_armors = [];
 		$feet_armors = [];
-		$neck_items = [];
+		$amulet_items = [];
 		$left_rings = [];
 		$right_rings = [];
+		$bracelet_items = [];
 
 		// die(print_r($allitems));
 
@@ -1047,6 +1077,15 @@ class GameController extends Controller
 
 				if ($Item->actual_item()->equipment_slot == 2)
 					{
+					if ($Equipment->shield == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$shields[] = $dis_val;
+					}
+
+				if ($Item->actual_item()->equipment_slot == 3)
+					{
 					if ($Equipment->head == $CharacterItem->id)
 						{
 						$dis_val['selected'] = true;
@@ -1054,7 +1093,16 @@ class GameController extends Controller
 					$head_armors[] = $dis_val;
 					}
 
-				if ($Item->actual_item()->equipment_slot == 3)
+				if ($Item->actual_item()->equipment_slot == 4)
+					{
+					if ($Equipment->neck == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$neck_armors[] = $dis_val;
+					}
+
+				if ($Item->actual_item()->equipment_slot == 5)
 					{
 					if ($Equipment->chest == $CharacterItem->id)
 						{
@@ -1063,7 +1111,7 @@ class GameController extends Controller
 					$chest_armors[] = $dis_val;
 					}
 
-				if ($Item->actual_item()->equipment_slot == 4)
+				if ($Item->actual_item()->equipment_slot == 6)
 					{
 					if ($Equipment->legs == $CharacterItem->id)
 						{
@@ -1072,7 +1120,7 @@ class GameController extends Controller
 					$leg_armors[] = $dis_val;
 					}
 
-				if ($Item->actual_item()->equipment_slot == 5)
+				if ($Item->actual_item()->equipment_slot == 7)
 					{
 					if ($Equipment->hands == $CharacterItem->id)
 						{
@@ -1081,7 +1129,7 @@ class GameController extends Controller
 					$hand_armors[] = $dis_val;
 					}
 
-				if ($Item->actual_item()->equipment_slot == 6)
+				if ($Item->actual_item()->equipment_slot == 8)
 					{
 					if ($Equipment->feet == $CharacterItem->id)
 						{
@@ -1098,57 +1146,29 @@ class GameController extends Controller
 				$dis_val['id'] = $CharacterItem->id;
 				$dis_val['selected'] = false;
 
-				if ($Item->actual_item()->equipment_slot == 7)
+				if ($Item->actual_item()->equipment_slot == 9)
 					{
-					if ($Equipment->neck == $CharacterItem->id)
+					if ($Equipment->amulet == $CharacterItem->id)
 						{
 						$dis_val['selected'] = true;
 						}
-					$neck_items[] = $dis_val;
+					$amulet_items[] = $dis_val;
 					}
 
 				if ($Item->actual_item()->equipment_slot == 8)
 					{
-					if ($Equipment->right_ring == $CharacterItem->id 
-						|| $Equipment->left_ring == $CharacterItem->id)
-						{
-						if ($CharacterItem->quantity > 1)
-							{
-							if ($Equipment->left_ring == $CharacterItem->id)
-								{
-								$dis_val['selected'] = true;
-								}
-							$left_rings[] = $dis_val;
-							$dis_val['selected'] = false;
-							if ($Equipment->right_ring == $CharacterItem->id)
-								{
-								$dis_val['selected'] = true;
-								}
-							$right_rings[] = $dis_val;
-							}
-						else
-							{
-							if ($Equipment->left_ring == $CharacterItem->id)
-								{
-								$dis_val['selected'] = true;
-								$left_rings[] = $dis_val;
-								}
-
-							if ($Equipment->right_ring == $CharacterItem->id)
-								{
-								$dis_val['selected'] = true;
-								$right_rings[] = $dis_val;
-								}	
-							}
-						}
-					else
-					// if ($Equipment->right_ring != $CharacterItem->id)
+					if ($Equipment->right_ring == $CharacterItem->id)
 						{
 						if ($Equipment->left_ring == $CharacterItem->id)
 							{
 							$dis_val['selected'] = true;
 							}
-						$left_rings[] = $dis_val;	
+						$left_rings[] = $dis_val;
+						}
+					else
+					// if ($Equipment->right_ring != $CharacterItem->id)
+						{
+							
 						// }
 
 					// if ($Equipment->left_ring != $CharacterItem->id)
@@ -1165,7 +1185,7 @@ class GameController extends Controller
 
 		// die(print_r($weapons));
 
-		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'heads' => $head_armors, 'chests' => $chest_armors, 'legs' => $leg_armors, 'hands' => $hand_armors, 'feets' => $feet_armors, 'necks' => $neck_items, 'left_rings' => $left_rings, 'right_rings' => $right_rings]);
+		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'shields' => $shields, 'heads' => $head_armors, 'necks' => $neck_armors, 'chests' => $chest_armors, 'legs' => $leg_armors, 'hands' => $hand_armors, 'feets' => $feet_armors, 'amulet' => $amulet_items, 'left_rings' => $left_rings, 'right_rings' => $right_rings, 'bracelets' => $bracelet_items]);
 		}
 
 	public function items(Request $request)

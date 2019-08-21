@@ -208,7 +208,7 @@ class SetupTables extends Migration
 			$table->foreign('inventory_id')->references('id')->on('inventories');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->integer('quantity');
+			// $table->integer('quantity');
 			$table->timestamps();
 		});
 
