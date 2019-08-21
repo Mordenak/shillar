@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>App Name - @yield('title')</title>
+		<title>Admin Panel - @yield('title')</title>
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 

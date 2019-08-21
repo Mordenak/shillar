@@ -17,7 +17,7 @@ class NpcController extends Controller
 {
 	public function create()
 		{
-		return view('npc.create');
+		return view('npc.edit');
 		}
 
 	public function all(Request $request)
@@ -33,17 +33,18 @@ class NpcController extends Controller
 		// Remove?
 		$zones = Zone::all();
 		$items = Item::all();
-		// Should be only one:
-		// $RewardTable = RewardTable::where(['npcs_id' => $Npc->id])->first();
+
 		$SpawnRules = SpawnRule::where(['npcs_id' => $Npc->id])->get();
 		$LootTables = LootTable::where(['npcs_id' => $Npc->id])->get();
-		// die(print_r($SpawnRules->count()));
+
 		return view('npc.edit', ['npc' => $Npc, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
 		}
 
 	public function save(Request $request)
 		{
 		$Npc = new Npc;
+
+		// die(print_r($request->all()));
 
 		if ($request->id)
 			{
@@ -68,76 +69,46 @@ class NpcController extends Controller
 		$Npc->fill($values);
 		$Npc->save();
 
+		foreach ($request->spawns as $spawn)
+			{
+			$SpawnRule = new SpawnRule;
+
+			if (isset($spawn['id']))
+				{
+				$SpawnRule = SpawnRule::findOrFail($spawn['id']);
+
+				if (!$spawn['zone_id'] && !$spawn['room_id'] && !$spawn['chance'])
+					{
+					$SpawnRule->delete();
+					continue;
+					}
+				}
+
+			$zone = null;
+			if (isset($spawn['zone_id']) && $spawn['zone_id'] != 'null')
+				{
+				$zone = $spawn['zone_id'];
+				}
+
+			$room = null;
+			if (isset($spawn['room_id']) && $spawn['room_id'] != 'null')
+				{
+				$room = $spawn['room_id'];
+				}
+
+			$values = [
+				'zones_id' => $zone,
+				'rooms_id' => $room,
+				'npcs_id' => $Npc->id,
+				'chance' => $spawn['chance'],
+				];
+
+			$SpawnRule->fill($values);
+			$SpawnRule->save();
+			}
+
 		return $this->edit($Npc->id);
 		// return redirect()->action('AdminController@index');
-		}
-
-	public function save_stats(Request $request)
-		{
-		$NpcStat = new NpcStat;
-
-		if ($request->id)
-			{
-			$NpcStat = NpcStat::findOrFail($request->id);
-			}
-
-		$values = [
-			'health' => $request->health,
-			'armor' => $request->armor,
-			'damage_low' => $request->damage_low,
-			'damage_high' => $request->damage_high,
-			'attacks_per_round' => $request->attacks_per_round,
-			];
-
-		$NpcStat->fill($values);
-		$NpcStat->save();
-
-		if ($request->ajax())
-			{
-			$view = $this->edit($NpcStat->npc()->id);
-			$sections = $view->renderSections();
-			Session::flash('success', 'NPC Updated!');
-			// $sections['messages'] = View::make('partials/flash-messages')->renderSections();
-			$sections['messages'] = view('partials/flash-messages')->renderSections()['messages'];
-			// die(print_r($test));
-			return $sections;
-			}
-		// return action('NpcController@edit', $NpcStat->npc()->id);
-		return $this->edit($NpcStat->npc()->id);
-		}
-
-	public function save_rewards(Request $request)
-		{
-		$RewardTable = new RewardTable;
-
-		if ($request->id)
-			{
-			$RewardTable = RewardTable::findOrFail($request->id);
-			}
-
-		$values = [
-			'npcs_id' => $request->npc_id,
-			'award_xp' => $request->award_xp,
-			'xp_variation' => $request->xp_variation,
-			'award_gold' => $request->award_gold,
-			'gold_variation' => $request->gold_variation,
-			];
-
-		$RewardTable->fill($values);
-		$RewardTable->save();
-
-		if ($request->ajax())
-			{
-			$view = $this->edit($RewardTable->npc()->id);
-			$sections = $view->renderSections();
-			Session::flash('success', 'NPC Updated!');
-			// $sections['messages'] = View::make('partials/flash-messages')->renderSections();
-			$sections['messages'] = view('partials/flash-messages')->renderSections()['messages'];
-			// die(print_r($test));
-			return $sections;
-			}
-		// return action('NpcController@edit', $NpcStat->npc()->id);
-		return $this->edit($RewardTable->npc()->id);
 		}
 
 	public function save_spawns(Request $request)
