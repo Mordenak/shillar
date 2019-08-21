@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
-	protected $fillable = ['name', 'item_types_id'];
+	protected $fillable = ['name', 'item_types_id', 'value', 'weight', 'is_stackable'];
 
 	public function type()
 		{

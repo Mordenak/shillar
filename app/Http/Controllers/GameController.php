@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Session;
 use Illuminate\Http\Request;
 use App\Character;
 use App\Room;
@@ -21,6 +22,8 @@ use App\ItemAccessory;
 use App\CombatLog;
 use App\KillCount;
 use App\InventoryItem;
+use App\Shop;
+use App\ShopItem;
 
 class GameController extends Controller
 {
@@ -46,6 +49,7 @@ class GameController extends Controller
 		$no_attack = $Character->fatigue > 0 ? false : true;
 
 		$Room = Room::findOrFail($Character->last_rooms_id);
+
 		$Npc = null;
 		// Block spawn in certain events:
 		// $request->session()->get('npc.'.$Room->id);
@@ -142,6 +146,21 @@ class GameController extends Controller
 		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
 			{
 			$request_params['is_admin'] = true;
+			}
+
+		$request_params['room_custom'] = null;
+		if ($Room->can_train())
+			{
+			$view = \View::make('game/train', $request_params);
+			$request_params['room_custom'] = $view->render();
+			}
+
+		if ($Room->has_shop())
+			{
+			$request_params['shop'] = $Room->shop();
+
+			$view = \View::make('game/shop', $request_params);
+			$request_params['room_custom'] = $view->render();
 			}
 
 		// $character = array_merge($Character->pluck(), $Characters->pluck());;
@@ -1113,20 +1132,20 @@ class GameController extends Controller
 
 				if ($Item->actual_item()->equipment_slot == 6)
 					{
-					if ($Equipment->legs == $CharacterItem->id)
-						{
-						$dis_val['selected'] = true;
-						}
-					$leg_armors[] = $dis_val;
-					}
-
-				if ($Item->actual_item()->equipment_slot == 7)
-					{
 					if ($Equipment->hands == $CharacterItem->id)
 						{
 						$dis_val['selected'] = true;
 						}
 					$hand_armors[] = $dis_val;
+					}
+
+				if ($Item->actual_item()->equipment_slot == 7)
+					{
+					if ($Equipment->legs == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$leg_armors[] = $dis_val;
 					}
 
 				if ($Item->actual_item()->equipment_slot == 8)
@@ -1155,9 +1174,9 @@ class GameController extends Controller
 					$amulet_items[] = $dis_val;
 					}
 
-				if ($Item->actual_item()->equipment_slot == 8)
+				if ($Item->actual_item()->equipment_slot == 10)
 					{
-					if ($Equipment->right_ring == $CharacterItem->id)
+					if ($Equipment->right_ring != $CharacterItem->id)
 						{
 						if ($Equipment->left_ring == $CharacterItem->id)
 							{
@@ -1165,14 +1184,9 @@ class GameController extends Controller
 							}
 						$left_rings[] = $dis_val;
 						}
-					else
-					// if ($Equipment->right_ring != $CharacterItem->id)
-						{
-							
-						// }
 
-					// if ($Equipment->left_ring != $CharacterItem->id)
-						// {
+					if ($Equipment->left_ring != $CharacterItem->id)
+						{
 						if ($Equipment->right_ring == $CharacterItem->id)
 							{
 							$dis_val['selected'] = true;
@@ -1180,12 +1194,21 @@ class GameController extends Controller
 						$right_rings[] = $dis_val;
 						}
 					}
+
+				if ($Item->actual_item()->equipment_slot == 11)
+					{
+					if ($Equipment->bracelet == $CharacterItem->id)
+						{
+						$dis_val['selected'] = true;
+						}
+					$bracelet_items[] = $dis_val;
+					}
 				}
 			}
 
 		// die(print_r($weapons));
 
-		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'shields' => $shields, 'heads' => $head_armors, 'necks' => $neck_armors, 'chests' => $chest_armors, 'legs' => $leg_armors, 'hands' => $hand_armors, 'feets' => $feet_armors, 'amulet' => $amulet_items, 'left_rings' => $left_rings, 'right_rings' => $right_rings, 'bracelets' => $bracelet_items]);
+		return view('character/equipment', ['character' => $Character, 'weapons' => $weapons, 'shields' => $shields, 'heads' => $head_armors, 'necks' => $neck_armors, 'chests' => $chest_armors, 'legs' => $leg_armors, 'hands' => $hand_armors, 'feets' => $feet_armors, 'amulets' => $amulet_items, 'left_rings' => $left_rings, 'right_rings' => $right_rings, 'bracelets' => $bracelet_items]);
 		}
 
 	public function items(Request $request)
@@ -1251,5 +1274,43 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 
 		return view('character/items', ['character' => $Character, 'items' => $items]);
+		}
+
+	public function purchase(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		// $Room = Room::findOrFail($request->room_id);
+		// Probably auth some stuff about the store:
+		$Shop = Shop::findOrFail($request->shop_id);
+
+		// Then we find the item:
+		// $PurchaseItem = $Shop->shop_items()->where(['id' => $request->item_purchase])->first();
+		$PurchaseItem = ShopItem::where(['id' => $request->item_purchase, 'shops_id' => $Shop->id])->first();
+
+		// $PurchaseItem->item();
+
+		// die(print_r($PurchaseItem->first()));
+
+		// $request_params = ['character' => $Character, 'room' => $Room, 'shop' => $Shop];
+
+		if ($Character->gold < $PurchaseItem->price)
+			{
+			// $request->insufficient_funds = true;
+			// die('price');
+			Session::flash('purchase', 'You cannot afford that!');
+			return $this->index($request);
+			// $request_params['insufficient_funds'] = true;
+			// return view('game/main', $request_params);
+			}
+
+		$Character->inventory()->addItem($PurchaseItem->item()->id);
+		$Character->gold = $Character->gold - $PurchaseItem->price;
+		$Character->save();
+		// $request->purchased_item = $PurchaseItem->item()->name;
+		// $request_params['purchased_item'] = $PurchaseItem->item()->name;
+		Session::flash('purchase', "You purchased a ".$PurchaseItem->item()->name);
+
+		return $this->index($request);
+		// return view('game/main', $request_params);
 		}
 }

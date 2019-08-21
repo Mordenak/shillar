@@ -1,7 +1,3 @@
-training
-
-<br><br>
-
 <style>
 	.non-train
 		{
@@ -50,8 +46,8 @@ training
 		<!-- <label for="charisma_submit" class="fa fa-plus"></label> -->
 		<input type="submit" id="charisma_submit" name="submit" value="charisma" class="submit-val">
 		<br>
-		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
+		{{csrf_field()}}
 	</form>
 	
 @endif

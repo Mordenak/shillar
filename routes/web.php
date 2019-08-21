@@ -33,6 +33,8 @@ Route::post('/combat', 'GameController@combat');
 Route::post('/show_stats', 'GameController@show_stats');
 
 Route::post('/train', 'GameController@train');
+Route::post('/shop', 'GameController@shop');
+Route::post('/shop/purchase', 'GameController@purchase');
 
 Route::post('/rest', 'GameController@rest');
 
@@ -85,6 +87,11 @@ Route::get('user/all', 'UserController@all');
 Route::get('user/edit/{id}', 'UserController@edit')->where('id', '[0-9]+');
 Route::get('user/create', 'UserController@create');
 Route::post('user/save', 'UserController@save');
+
+Route::get('shop/all', 'ShopController@all');
+Route::get('shop/create', 'ShopController@edit');
+Route::get('shop/edit/{id}', 'ShopController@edit')->where('id', '[0-9]+');
+Route::post('shop/save', 'ShopController@save');
 
 
 // Route::post('/equip', 'GameController@equip_item');

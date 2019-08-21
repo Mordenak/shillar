@@ -18,6 +18,11 @@ class Room extends Model
 		return $this->hasMany('App\RoomPropertyRoom', 'rooms_id')->get();
 		}
 
+	public function shop()
+		{
+		return $this->hasOne('App\Shop', 'rooms_id')->first();
+		}
+
 	public function can_train()
 		{
 		foreach ($this->properties() as $prop)
@@ -26,6 +31,15 @@ class Room extends Model
 				{
 				return true;
 				}
+			}
+		return false;
+		}
+
+	public function has_shop()
+		{
+		if ($this->shop())
+			{
+			return true;
 			}
 		return false;
 		}

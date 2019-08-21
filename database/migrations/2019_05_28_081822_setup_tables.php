@@ -94,6 +94,7 @@ class SetupTables extends Migration
 			$table->foreign('item_types_id')->references('id')->on('item_types');
 			$table->integer('value')->nullable();
 			$table->float('weight')->nullable();
+			$table->float('is_stackable')->default(false);
 			$table->timestamps();
 		});
 
@@ -127,13 +128,12 @@ class SetupTables extends Migration
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->string('name');
 			$table->integer('equipment_slot');
-			$table->integer('armor');
-			$table->integer('strength_bonus');
-			$table->integer('dexterity_bonus');
-			$table->integer('constitution_bonus');
-			$table->integer('wisdom_bonus');
-			$table->integer('intelligence_bonus');
-			$table->integer('charisma_bonus');
+			$table->integer('strength_bonus')->nullable();
+			$table->integer('dexterity_bonus')->nullable();
+			$table->integer('constitution_bonus')->nullable();
+			$table->integer('wisdom_bonus')->nullable();
+			$table->integer('intelligence_bonus')->nullable();
+			$table->integer('charisma_bonus')->nullable();
 			$table->timestamps();
 		});
 
@@ -170,8 +170,9 @@ class SetupTables extends Migration
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
 			$table->foreign('last_rooms_id')->references('id')->on('rooms');
-			$table->integer('xp');
-			$table->integer('gold');
+			$table->bigInteger('xp');
+			$table->bigInteger('gold');
+			$table->bigInteger('bank');
 			$table->integer('health');
 			$table->integer('max_health');
 			$table->integer('mana');
@@ -208,7 +209,7 @@ class SetupTables extends Migration
 			$table->foreign('inventory_id')->references('id')->on('inventories');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			// $table->integer('quantity');
+			$table->integer('quantity')->default(1);
 			$table->timestamps();
 		});
 

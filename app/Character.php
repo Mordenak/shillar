@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Character extends Model
 {
-    protected $fillable = ['users_id', 'name', 'player_races_id', 'last_rooms_id', 'xp', 'gold', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'score'];
+    protected $fillable = ['users_id', 'name', 'player_races_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'score'];
 
 	public function playerrace()
 		{
@@ -121,6 +121,7 @@ class Character extends Model
 
 		$this->xp = 0;
 		$this->gold = 0;
+		$this->death_count = $this->death_count + 1;
 
 		$this->save();
 		$this->calcQuickStats();

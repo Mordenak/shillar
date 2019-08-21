@@ -23,9 +23,23 @@ class Equipment extends Model
 		{
 		$total_armor = 3;
 
+		if ($this->shield)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->shield);
+			$ItemArmor = $InventoryItem->item()->actual_item();
+			$total_armor += $ItemArmor->armor;
+			}
+
 		if ($this->head)
 			{
 			$InventoryItem = InventoryItem::findOrFail($this->head);
+			$ItemArmor = $InventoryItem->item()->actual_item();
+			$total_armor += $ItemArmor->armor;
+			}
+
+		if ($this->neck)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->neck);
 			$ItemArmor = $InventoryItem->item()->actual_item();
 			$total_armor += $ItemArmor->armor;
 			}
@@ -37,9 +51,23 @@ class Equipment extends Model
 			$total_armor += $ItemArmor->armor;
 			}
 
+		if ($this->hands)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->hands);
+			$ItemArmor = $InventoryItem->item()->actual_item();
+			$total_armor += $ItemArmor->armor;
+			}
+
 		if ($this->legs)
 			{
 			$InventoryItem = InventoryItem::findOrFail($this->legs);
+			$ItemArmor = $InventoryItem->item()->actual_item();
+			$total_armor += $ItemArmor->armor;
+			}
+
+		if ($this->feet)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->feet);
 			$ItemArmor = $InventoryItem->item()->actual_item();
 			$total_armor += $ItemArmor->armor;
 			}

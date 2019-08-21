@@ -187,7 +187,8 @@
 						'/move',
 						'/combat',
 						'/item_pickup',
-						'/game'
+						'/game',
+						'/shop/purchase'
 						];
 					var menu_inserts = [
 						'/equipment',
@@ -196,6 +197,7 @@
 						'/menu'
 						];
 					// var replace = '.game-container';
+					// console.log(this['url']);
 					if (main_inserts.includes(this['url']))
 						{
 						// replace = '.main';

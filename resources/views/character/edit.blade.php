@@ -46,6 +46,13 @@ Creating a character:
 			</div>
 		</div>
 
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Bank:</label>
+			<div class="col-md-3">
+				<input type="text" name="bank" value="{{isset($character) ? $character->bank : ''}}" class="form-control">
+			</div>
+		</div>
+
 		<h3>Stats</h3>
 
 		<div class="form-group row">

@@ -20,7 +20,11 @@
 	</tr>
 	<tr>
 		<td>Deaths</td>
-		<td>{{$character->deaths}}</td>
+		<td>{{$character->death_count}}</td>
+	</tr>
+	<tr>
+		<td>Armor</td>
+		<td>{{$character->equipment()->calculate_armor()}}</td>
 	</tr>
 </table>
 

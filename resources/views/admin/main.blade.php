@@ -13,6 +13,7 @@
 		<h3>Admin Tools</h3>
 		<a href="user/all">All Users</a><br>
 		<a href="character/all">All Characters</a><br>
+		<a href="shop/all">All Shops</a><br>
 	</div>
 
 <br><br>

@@ -26,19 +26,20 @@ class Inventory extends Model
 		return $this->hasMany('App\InventoryItems')->get();
 		}
 
-	public function grouped_items()
-		{
-		// TODO:
-		return true;
-		}
-
 	public function removeItem($item_id)
 		{
 		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
 
 		if ($has_item)
 			{
-			$has_item->delete();
+			$has_item->quantity = $has_item->quantity - 1;
+			// todo: if 0?
+			if ($has_item->quantity <= 0)
+				{
+				$has_item->delete();
+				return true;
+				}
+			$has_item->save();
 			}
 		else
 			{
@@ -52,12 +53,21 @@ class Inventory extends Model
 	public function addItem($item_id)
 		{
 		// Add an items_to_inventories record:;
+		$Item = Item::findOrFail($item_id);
 		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
 
-		$InventoryItems = new InventoryItems;
-		// die('..:'.$this->id);
-		$InventoryItems->fill(['inventory_id' => $this->id, 'items_id' => $item_id, 'quantity' => 1]);
-		$InventoryItems->save();
+		if ($has_item && $Item->is_stackable)
+			{
+			$has_item->quantity = $has_item->quantity + 1;
+			$has_item->save();
+			}
+		else
+			{
+			$InventoryItems = new InventoryItems;
+			// die('..:'.$this->id);
+			$InventoryItems->fill(['inventory_id' => $this->id, 'items_id' => $item_id]);
+			$InventoryItems->save();
+			}
 
 		return true;
 		}
