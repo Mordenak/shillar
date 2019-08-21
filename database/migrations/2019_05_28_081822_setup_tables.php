@@ -327,7 +327,7 @@ class SetupTables extends Migration
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->integer('price')->nullable();
-			$table->float('markup')->nullable();
+			$table->float('markup')->default(0.0);
 			$table->timestamps();
 		});
 

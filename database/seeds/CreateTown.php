@@ -103,17 +103,18 @@ class CreateTown extends Seeder
 
 
 		DB::table('shop_items')->insert([
-			['shops_id' => 1, 'items_id' => 1, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 2, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 3, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 4, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 5, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 6, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 7, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 8, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 9, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 10, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 11, 'price' => 1, 'markup' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 1, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 2, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 3, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 4, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 5, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 6, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 7, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 8, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 9, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 10, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 11, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 12, 'price' => 1, 'markup' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('item_weapons')->insert([
