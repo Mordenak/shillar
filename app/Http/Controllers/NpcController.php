@@ -69,8 +69,11 @@ class NpcController extends Controller
 		$Npc->fill($values);
 		$Npc->save();
 
+		die(print_r($request->spawns));
+
 		foreach ($request->spawns as $spawn)
 			{
+			die(print_r($spawn));
 			$SpawnRule = new SpawnRule;
 
 			if (isset($spawn['id']))
@@ -107,8 +110,30 @@ class NpcController extends Controller
 			$SpawnRule->save();
 			}
 
+		foreach ($request->loot_tables as $loot_table)
+			{
+			$LootTable = new LootTable;
+
+			if ($request->id)
+				{
+				$LootTable = LootTable::findOrFail($request->id);
+				if (!$loot_table['item_id'] && !$loot_table['chance'])
+					{
+					$LootTable->delete();
+					}
+				}
+
+			$values = [
+				'npcs_id' => $Npc->id,
+				'items_id' => $loot_table['item_id'],
+				'chance' => $loot_table['chance'],
+				];
+
+			$LootTable->fill($values);
+			$LootTable->save();
+			}
+
 		return $this->edit($Npc->id);
-		// return redirect()->action('AdminController@index');
 		}
 
 	public function save_spawns(Request $request)
@@ -158,28 +183,7 @@ class NpcController extends Controller
 
 	public function save_loot(Request $request)
 		{
-		$LootTable = new LootTable;
 
-		if ($request->id)
-			{
-			$LootTable = LootTable::findOrFail($request->id);
-			}
-
-		// $zone = null;
-		// if ($request->zone_id != 'null')
-		// 	{
-		// 	$zone = $request->zone_id;
-		// 	}
-
-		$values = [
-			// 'zones_id' => $zone,
-			'npcs_id' => $request->npc_id,
-			'items_id' => $request->item_id,
-			'chance' => $request->chance,
-			];
-
-		$LootTable->fill($values);
-		$LootTable->save();
 
 		if ($request->ajax())
 			{

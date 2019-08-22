@@ -75,12 +75,11 @@
 			<div class="spawn-forms">
 			@if ($spawn_rules->count() > 0)
 				@foreach ($spawn_rules as $spawn_rule)
-				{{ csrf_field() }}
-				<input type="hidden" name="spawns[id][]" value="{{$spawn_rule->id}}">
+				<input type="hidden" name="id[spawns][]" value="{{$spawn_rule->id}}">
 				<div class="form-group row">
 					<div class="col">
 						<label>Zone:</label>
-						<select name="spawns[zone_id][]" class="form-control">
+						<select name="zone_id[spawns][]" class="form-control">
 							<option value="null">--None--</option>
 							@foreach ($zones as $zone)
 							@if ($spawn_rule->zone())
@@ -94,46 +93,95 @@
 					<div class="col">
 						<label>Room:</label>
 						@if ($spawn_rule->room())
-							<input type="text" name="spawns[room_id][]" value="{{$spawn_rule->room()->id}}" class="form-control">
+							<input type="text" name="room_id[spawns][]" value="{{$spawn_rule->room()->id}}" class="form-control">
 						@else
-							<input type="text" name="spawns[room_id][]" class="form-control">
+							<input type="text" name="room_id[spawns][]" class="form-control">
 						@endif
 					</div>
 					<div class="col">
 						<label>Chance:</label>
-						<input type="text" name="spawns[chance][]" value="{{$spawn_rule->chance}}" class="form-control">
+						<input type="text" name="chance[spawns][]" value="{{$spawn_rule->chance}}" class="form-control">
 					</div>
 				</div>
 				@endforeach
 			@else
-			<form action="/npc/spawn/save" method="POST" class="form-horizontal ajax spawn-forms">
-				{{ csrf_field() }}
-				<div class="form-group row">
-					<div class="col">
-						<label>Zone:</label>
-						<select name="spawns[zone_id][]" class="form-control">
-							<option value="null">--None--</option>
-							@foreach ($zones as $zone)
-							<option value="{{$zone->id}}">({{$zone->id}}) {{$zone->name}}</option>
-							@endforeach
-						</select>
-					</div>
-					<div class="col">
-						<label>Room:</label>
-						<input type="text" name="spawns[room_id]" class="form-control">
-					</div>
-					<div class="col">
-						<label>Chance:</label>
-						<input type="text" name="spawns[chance]" class="form-control">
-					</div>
+			<div class="form-group row">
+				<div class="col">
+					<label>Zone:</label>
+					<select name="spawns[zone_id][]" class="form-control">
+						<option value="null">--None--</option>
+						@foreach ($zones as $zone)
+						<option value="{{$zone->id}}">({{$zone->id}}) {{$zone->name}}</option>
+						@endforeach
+					</select>
 				</div>
-			</form>
+				<div class="col">
+					<label>Room:</label>
+					<input type="text" name="spawns[room_id]" class="form-control">
+				</div>
+				<div class="col">
+					<label>Chance:</label>
+					<input type="text" name="spawns[chance]" class="form-control">
+				</div>
+			</div>
 			@endif
 			</div>
 		</div>
 
 		<br>
 		<a class="fa fa-plus" onclick="addSpawnRule(this);">Add Spawn Rule</a>
+
+		<br><br>
+		<h3>Loot Tables</h3>
+
+		<div class="loot-tables">
+			<div class="loot-forms">
+			@if ($loot_tables->count() > 0)
+				@foreach ($loot_tables as $loot_table)
+				<input type="hidden" name="loot_tables[id][]" value="{{$spawn_rule->id}}">
+				<div class="form-group row">
+					<div class="col">
+						<label>Item:</label>
+						<select name="loot_tables[item_id][]" class="form-control">
+							<option value="null">--None--</option>
+							@foreach ($items as $item)
+							@if ($loot_table->item())
+							<option value="{{$item->id}}" {{$item->id == $loot_table->item()->id ? 'selected' : ''}}>({{$item->id}}) {{$item->name}}</option>
+							@else
+							<option value="{{$item->id}}">({{$item->id}}) {{$item->name}}</option>
+							@endif
+							@endforeach
+						</select>
+					</div>
+					<div class="col">
+						<label>Chance:</label>
+						<input type="text" name="loot_tables[chance][]" value="{{$loot_table->chance}}" class="form-control">
+					</div>
+				</div>
+				@endforeach
+			@else
+				<div class="form-group row">
+					<div class="col">
+						<label>Item:</label>
+						<select name="loot_tables[item_id][]" class="form-control">
+							<option value="null">--None--</option>
+							@foreach ($items as $item)
+							<option value="{{$item->id}}">({{$item->id}}) {{$item->name}}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="col">
+						<label>Chance:</label>
+						<input type="text" name="loot_tables[chance][]" class="form-control">
+					</div>
+				</div>
+			@endif
+			</div>
+		</div>
+
+		<br>
+		<a class="fa fa-plus" onclick="addLootTable(this);">Add Loot Table</a>
+		<br><br>
 
 		<input type="hidden" name="id" value="{{$npc->id}}">
 
@@ -145,70 +193,7 @@
 	</form>
 
 	<br><br>
-	<h3>Loot Tables</h3>
 
-	<div class="loot-tables">
-		@if ($loot_tables->count() > 0)
-		@foreach ($loot_tables as $loot_table)
-		<form action="/npc/loot/save" method="POST" class="form-horizontal ajax loot-forms">
-			{{ csrf_field() }}
-			<input type="hidden" name="id" value="{{$loot_table->id}}">
-			<input type="hidden" name="npc_id" value="{{$npc->id}}">
-			<div class="form-group row">
-				<div class="col">
-					<label>Item:</label>
-					<select name="item_id" class="form-control">
-						<option value="null">--None--</option>
-						@foreach ($items as $item)
-						@if ($loot_table->item())
-						<option value="{{$item->id}}" {{$item->id == $loot_table->item()->id ? 'selected' : ''}}>({{$item->id}}) {{$item->name}}</option>
-						@else
-						<option value="{{$item->id}}">({{$item->id}}) {{$item->name}}</option>
-						@endif
-						@endforeach
-					</select>
-				</div>
-				<div class="col">
-					<label>Chance:</label>
-					<input type="text" name="chance" value="{{$loot_table->chance}}" class="form-control">
-				</div>
-				<div class="col">
-					<br>
-					<input type="submit" value="Save" class="btn btn-primary">
-				</div>
-			</div>
-		</form>
-		@endforeach
-		@else
-		<form action="/npc/loot/save" method="POST" class="form-horizontal ajax loot-forms">
-			{{ csrf_field() }}
-			<input type="hidden" name="npc_id" value="{{$npc->id}}">
-			<div class="form-group row">
-				<div class="col">
-					<label>Item:</label>
-					<select name="item_id" class="form-control">
-						<option value="null">--None--</option>
-						@foreach ($items as $item)
-						<option value="{{$item->id}}">({{$item->id}}) {{$item->name}}</option>
-						@endforeach
-					</select>
-				</div>
-				<div class="col">
-					<label>Chance:</label>
-					<input type="text" name="chance" class="form-control">
-				</div>
-				<div class="col">
-					<br>
-					<input type="submit" value="Save" class="btn btn-primary">
-				</div>
-			</div>
-		</form>
-		@endif
-	</div>
-
-	<br>
-	<a class="fa fa-plus" onclick="addLootTable(this);">Add Loot Table</a>
-	<br><br>
 </div>
 
 <a href="/npc/all">Back</a>
