@@ -8,7 +8,7 @@ Game Todo:
 
 * ~~Proper combat attack differences~~
 * ~~Death function~~
-* Shops
+* ~~Shops~~
 * Quests
 * Bank
 * Forge

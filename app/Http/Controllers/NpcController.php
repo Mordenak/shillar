@@ -14,10 +14,13 @@ use App\Zone;
 use App\Item;
 
 class NpcController extends Controller
-{
+	{
 	public function create()
 		{
-		return view('npc.edit');
+		// TODO: Fix this repeat:
+		$zones = Zone::all();
+		$items = Item::all();
+		return view('npc.edit', ['zones' => $zones, 'items' => $items]);
 		}
 
 	public function all(Request $request)
@@ -69,22 +72,28 @@ class NpcController extends Controller
 		$Npc->fill($values);
 		$Npc->save();
 
-		die(print_r($request->spawns));
+		// die(print_r($request->all()));
+		// die(print_r($request->spawns));
 
 		foreach ($request->spawns as $spawn)
 			{
-			die(print_r($spawn));
+			// die(print_r($spawn));
 			$SpawnRule = new SpawnRule;
 
 			if (isset($spawn['id']))
 				{
 				$SpawnRule = SpawnRule::findOrFail($spawn['id']);
 
-				if (!$spawn['zone_id'] && !$spawn['room_id'] && !$spawn['chance'])
+				if ($spawn['zone_id'] == 'null' && !$spawn['room_id'] && !$spawn['chance'])
 					{
 					$SpawnRule->delete();
 					continue;
 					}
+				}
+
+			if (!$spawn['chance'])
+				{
+				continue;
 				}
 
 			$zone = null;
@@ -114,13 +123,18 @@ class NpcController extends Controller
 			{
 			$LootTable = new LootTable;
 
-			if ($request->id)
+			if (isset($loot_table['id']))
 				{
-				$LootTable = LootTable::findOrFail($request->id);
-				if (!$loot_table['item_id'] && !$loot_table['chance'])
+				$LootTable = LootTable::findOrFail($loot_table['id']);
+				if ($loot_table['item_id'] == 'null' && !$loot_table['chance'])
 					{
 					$LootTable->delete();
 					}
+				}
+
+			if (!$loot_table['item_id'] || !$loot_table['chance'])
+				{
+				continue;
 				}
 
 			$values = [
@@ -133,69 +147,8 @@ class NpcController extends Controller
 			$LootTable->save();
 			}
 
-		return $this->edit($Npc->id);
+		Session::flash('success', 'NPC Updated!');
+
+		return $this->edit($Npc->fresh()->id);
 		}
-
-	public function save_spawns(Request $request)
-		{
-		$SpawnRule = new SpawnRule;
-
-		if ($request->id)
-			{
-			$SpawnRule = SpawnRule::findOrFail($request->id);
-			}
-
-		$zone = null;
-		if ($request->zone_id != 'null')
-			{
-			$zone = $request->zone_id;
-			}
-
-		$room = null;
-		if ($request->room_id != 'null')
-			{
-			$room = $request->room_id;
-			}
-
-		$values = [
-			'zones_id' => $zone,
-			'rooms_id' => $room,
-			'npcs_id' => $request->npc_id,
-			'chance' => $request->chance,
-			];
-
-		$SpawnRule->fill($values);
-		$SpawnRule->save();
-
-		if ($request->ajax())
-			{
-			$view = $this->edit($SpawnRule->npc()->id);
-			$sections = $view->renderSections();
-			Session::flash('success', 'NPC Updated!');
-			// $sections['messages'] = View::make('partials/flash-messages')->renderSections();
-			$sections['messages'] = view('partials/flash-messages')->renderSections()['messages'];
-			// die(print_r($test));
-			return $sections;
-			}
-
-		return $this->edit($SpawnRule->npc()->id);
-		}
-
-	public function save_loot(Request $request)
-		{
-
-
-		if ($request->ajax())
-			{
-			$view = $this->edit($LootTable->npc()->id);
-			$sections = $view->renderSections();
-			Session::flash('success', 'NPC Updated!');
-			// $sections['messages'] = View::make('partials/flash-messages')->renderSections();
-			$sections['messages'] = view('partials/flash-messages')->renderSections()['messages'];
-			// die(print_r($test));
-			return $sections;
-			}
-		// return action('NpcController@edit', $NpcStat->npc()->id);
-		return $this->edit($LootTable->npc()->id);
-		}
-}
+	}

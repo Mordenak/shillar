@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Session;
 use Illuminate\Http\Request;
 use App\Shop;
+use App\ShopItem;
+use App\Room;
+use App\Item;
 
 class ShopController extends Controller
 {
@@ -15,12 +19,24 @@ class ShopController extends Controller
 
 	public function create()
 		{
-		return view('shop.edit');
+		$rooms = Room::all();
+		$items = Item::all();
+		return view('shop.edit', ['items' => $items, 'rooms' => $rooms]);
 		}
 
 	public function edit($id)
 		{
-		return view('shop.edit', ['shop' => Shop::findOrFail($id)]);
+		// $zones = Zone::all();
+		// $Npc = Npc::findOrFail($id);
+		// Remove?
+		$rooms = Room::all();
+		$items = Item::all();
+
+		// $SpawnRules = SpawnRule::where(['npcs_id' => $Npc->id])->get();
+		// $LootTables = LootTable::where(['npcs_id' => $Npc->id])->get();
+
+		// return view('npc.edit', ['npc' => $Npc, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
+		return view('shop.edit', ['shop' => Shop::findOrFail($id), 'items' => $items, 'rooms' => $rooms]);
 		}
 
 	public function delete($id)
@@ -31,15 +47,53 @@ class ShopController extends Controller
 
 	public function save(Request $request)
 		{
+		$Shop = new Shop;
+
 		if ($request->id)
 			{
-			// 
+			$Shop = Shop::findOrFail($request->id);
 			}
-		else
+		
+		$values = [
+			'name' => $request->name,
+			'description' => $request->description,
+			];
+
+		$Shop->fill($values);
+		$Shop->save();
+
+		foreach ($request->shop_items as $shop_item)
 			{
-			// 
+			$ShopItem = new ShopItem;
+
+			if (isset($shop_item['id']))
+				{
+				$ShopItem = ShopItem::findOrFail($shop_item['id']);
+
+				if ($shop_item['item_id'] == 'null' && !$shop_item['price'])
+					{
+					$ShopItem->delete();
+					continue;
+					}
+				}
+
+			if ($shop_item['item_id'] == 'null' && !$shop_item['price'])
+				{
+				continue;
+				}
+
+			$values = [
+				'shops_id' => $Shop->id,
+				'items_id' => $shop_item['item_id'],
+				'price' => $shop_item['price'],
+				];
+
+			$ShopItem->fill($values);
+			$ShopItem->save();
 			}
 
-		return true;
+		Session::flash('success', 'Shop Updated!');
+
+		return $this->edit($Shop->fresh()->id);
 		}
 }

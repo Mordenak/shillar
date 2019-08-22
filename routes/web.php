@@ -89,7 +89,7 @@ Route::get('user/create', 'UserController@create');
 Route::post('user/save', 'UserController@save');
 
 Route::get('shop/all', 'ShopController@all');
-Route::get('shop/create', 'ShopController@edit');
+Route::get('shop/create', 'ShopController@create');
 Route::get('shop/edit/{id}', 'ShopController@edit')->where('id', '[0-9]+');
 Route::post('shop/save', 'ShopController@save');
 
