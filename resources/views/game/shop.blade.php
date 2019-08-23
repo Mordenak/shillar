@@ -15,9 +15,9 @@ This is a shop:<br>
 		<option>-- Select --</option>
 	@foreach ($shop->shop_items() as $shop_item)
 		@if ($shop_item->price)
-		<option value="{{$shop_item->id}}">{{$shop_item->item()->name}} ({{$shop_item->price}})</option>
+		<option value="{{$shop_item->id}}">{{$shop_item->item()->name}} ({{$shop_item->price / $character->charisma}})</option>
 		@else
-		<option value="{{$shop_item->id}}">{{$shop_item->item()->name}} ({{$shop_item->item()->value * $shop_item->markup}})</option>
+		<option value="{{$shop_item->id}}">{{$shop_item->item()->name}} ({{ ($shop_item->item()->value * $shop_item->markup) / $character->charisma }})</option>
 		@endif
 	@endforeach
 	</select>

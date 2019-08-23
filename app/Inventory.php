@@ -55,7 +55,14 @@ class Inventory extends Model
 		$total_weight = 0.0;
 		foreach ($this->character_items() as $inv_item)
 			{
-			$total_weight += $inv_item->item()->weight;
+			if ($inv_item->quantity > 1)
+				{
+				$total_weight += $inv_item->item()->weight * $inv_item->quantity;
+				}
+			else
+				{
+				$total_weight += $inv_item->item()->weight;
+				}
 			}
 		return $total_weight;
 		}

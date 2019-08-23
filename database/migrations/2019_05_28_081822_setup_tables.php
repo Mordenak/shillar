@@ -17,9 +17,10 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('description');
-			$table->integer('wisdom_req');
+			$table->integer('intelligence_req')->default(0);
 			$table->integer('darkness_level')->default(0);
 			$table->string('img_src')->nullable();
+			$table->string('bg_color')->nullable();
 			$table->timestamps();
 		});
 
@@ -44,6 +45,14 @@ class SetupTables extends Migration
 			$table->foreign('up_rooms_id')->references('id')->on('rooms');
 			$table->integer('down_rooms_id')->nullable();
 			$table->foreign('down_rooms_id')->references('id')->on('rooms');
+			$table->integer('northeast_rooms_id')->nullable();
+			$table->foreign('northeast_rooms_id')->references('id')->on('rooms');
+			$table->integer('southeast_rooms_id')->nullable();
+			$table->foreign('southeast_rooms_id')->references('id')->on('rooms');
+			$table->integer('southwest_rooms_id')->nullable();
+			$table->foreign('southwest_rooms_id')->references('id')->on('rooms');
+			$table->integer('northwest_rooms_id')->nullable();
+			$table->foreign('northwest_rooms_id')->references('id')->on('rooms');
 			$table->timestamps();
 		});
 
@@ -58,6 +67,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('color');
+			$table->boolean('selectable');
 			$table->timestamps();
 		});
 
@@ -180,7 +190,7 @@ class SetupTables extends Migration
 			$table->integer('last_rooms_id');
 			$table->foreign('last_rooms_id')->references('id')->on('rooms');
 			$table->integer('alignments_id')->nullable();
-			$table->integer('alignments_id')->references('id')->on('alignments');
+			$table->foreign('alignments_id')->references('id')->on('alignments');
 			$table->bigInteger('xp');
 			$table->bigInteger('gold');
 			$table->bigInteger('bank');
@@ -264,7 +274,7 @@ class SetupTables extends Migration
 			$table->string('img_src')->nullable();
 			$table->boolean('is_hostile')->default(true);
 			$table->integer('alignments_id')->nullable();
-			$table->integer('alignments_id')->references('id')->on('alignments');
+			$table->foreign('alignments_id')->references('id')->on('alignments');
 			$table->integer('health');
 			$table->float('armor');
 			$table->integer('damage_low');
@@ -342,14 +352,14 @@ class SetupTables extends Migration
 			$table->integer('intelligence_req');
 			$table->integer('score_req');
 			$table->integer('quest_prereq');
-			$table->integer('quest_prereq')->references('id')->on('quests');
+			$table->foreign('quest_prereq')->references('id')->on('quests');
 			$table->timestamps();
 		});
 		
 		Schema::create('quest_rewards', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('quests_id');
-			$table->integer('quests_id')->references('id')->on('quests');
+			$table->foreign('quests_id')->references('id')->on('quests');
 			$table->bigInteger('xp_reward');
 			$table->bigInteger('gold_reward');
 			$table->bigInteger('quest_point_reward');
@@ -461,6 +471,16 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		// This is a cheat:
+		Schema::create('game_progression', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->boolean('sewer_lifted');
+			$table->timestamps();
+		});
+
+
 	}
 
 	/**
@@ -504,7 +524,9 @@ class SetupTables extends Migration
 		Schema::dropIfExists('combat_logs');
 		Schema::dropIfExists('kill_counts');
 		Schema::dropIfExists('npcs');
+		Schema::dropIfExists('game_progression');
 		Schema::dropIfExists('characters');
+		Schema::dropIfExists('alignments');
 		Schema::dropIfExists('quest_rewards');
 		Schema::dropIfExists('quests');
 		Schema::dropIfExists('spells');

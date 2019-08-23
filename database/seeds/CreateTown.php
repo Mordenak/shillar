@@ -13,9 +13,10 @@ class CreateTown extends Seeder
 	public function run()
 	{
 		DB::table('zones')->insert([
-			['name' => 'Town', 'description' => 'You are standing on a street in Town.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Beach', 'description' => 'You are standing on the Beach.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Outskirts', 'description' => 'You are standing in the Outskirts.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Town', 'description' => 'You are standing on a street in Town.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Beach', 'description' => 'You are standing on the Beach.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => 'beach.gif', 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Outskirts', 'description' => 'You are standing in the Outskirts.', 'intelligence_req' => 40, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Sewers', 'description' => 'You are standing in the dismal sewers.', 'intelligence_req' => 60, 'darkness_level' => 1, 'img_src' => null, 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('rooms')->insert([
