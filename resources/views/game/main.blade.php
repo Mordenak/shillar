@@ -51,7 +51,29 @@
 	@if (isset($combat_log))
 	<p style="color: red;display: inline;">
 	@foreach ($combat_log as $log_entry)
-		{{$log_entry}}<br>
+		@if (!auth()->user()->short_mode)
+		{{$log_entry['attack_text']}}<br>
+		@if ($log_entry['no_fatigue'])
+		You are too tired to attack.<br>
+		@else
+		You made attacks {{$log_entry['attack_count']}} and missed {{$log_entry['miss_count']}} times.<br>
+		You did {{$log_entry['round_damage']}} damage.<br>
+		@endif
+		@if ($log_entry['npc_round'] > 0)
+		{{$log_entry['npc_text']}}, doing {{$log_entry['npc_round']}} damage.<br>
+		@endif
+
+		@if (isset($log_entry['pc_died']))
+		You have died!</br>
+		<form method="post" action="/game">
+			{{csrf_field()}}
+			<input type="hidden" name="character_id" value="{{$character->id}}">
+			<input type="submit" value="Continue">
+		</form>
+		@endif
+		@else
+
+		@endif
 	@endforeach
 	</p>
 	@endif
@@ -171,6 +193,9 @@
 
 
 	<!-- Do the loot: -->
+	@if (isset($no_carry))
+	<span style="color:red;">You cannot carry anymore!</span><br>
+	@endif
 	@if (isset($ground_items))
 	@foreach ($ground_items as $ground_item)
 	<form method="post" action="/item_pickup" class="ajax">
@@ -279,6 +304,8 @@
 		@if (isset($combat))
 		{{$combat->id}} {{$combat->remaining_health}}
 		@endif
+
+		Current weight: {{$character->inventory()->currentWeight()}} / {{$character->inventory()->max_weight}}<br>
 
 		@foreach ($character->inventory()->character_items() as $item)
 			{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>

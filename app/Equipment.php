@@ -16,7 +16,7 @@ class Equipment extends Model
 	public function weapon()
 		{
 		// Weapon = InventoryItem record, items_id.
-		return $this->hasOne('App\InventoryItem', 'id', 'weapon');
+		return $this->hasOne('App\InventoryItem', 'id', 'weapon')->first()->item()->actual_item();
 		}
 
 	public function calculate_armor()

@@ -140,7 +140,7 @@ class CharacterController extends Controller
 			$Equipment->save();
 
 			$Inventory = new Inventory;
-			$Inventory->fill(['characters_id' => $Character->id, 'max_size' => 100, 'max_weight' => 100]);
+			$Inventory->fill(['characters_id' => $Character->id, 'max_size' => 100, 'max_weight' => $values['strength']]);
 			$Inventory->save();
 
 			$Characters = Character::where('users_id', auth()->user()->id);

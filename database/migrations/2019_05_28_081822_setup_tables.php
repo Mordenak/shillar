@@ -196,6 +196,7 @@ class SetupTables extends Migration
 			$table->integer('wisdom');
 			$table->integer('intelligence');
 			$table->integer('charisma');
+			$table->integer('quest_points')->default(0);
 			$table->integer('score');
 			$table->integer('death_count')->default(0);
 			$table->timestamps();
@@ -349,7 +350,9 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('quests_id');
 			$table->integer('quests_id')->references('id')->on('quests');
-			$t
+			$table->bigInteger('xp_reward');
+			$table->bigInteger('gold_reward');
+			$table->bigInteger('quest_point_reward');
 			$table->timestamps();
 		});
 

@@ -51,6 +51,7 @@
 		.game-container .menu
 			{
 			grid-area: menu;
+			min-height: 500px;
 			/*text-align: center;*/
 			}
 

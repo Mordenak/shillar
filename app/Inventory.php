@@ -50,10 +50,26 @@ class Inventory extends Model
 		return true;
 		}
 
+	public function currentWeight()
+		{
+		$total_weight = 0.0;
+		foreach ($this->character_items() as $inv_item)
+			{
+			$total_weight += $inv_item->item()->weight;
+			}
+		return $total_weight;
+		}
+
 	public function addItem($item_id)
 		{
 		// Add an items_to_inventories record:;
 		$Item = Item::findOrFail($item_id);
+
+		if (($this->currentWeight() + $Item->weight) > $this->max_weight)
+			{
+			return false;
+			}
+
 		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
 
 		if ($has_item && $Item->is_stackable)
