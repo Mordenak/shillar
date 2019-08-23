@@ -39,10 +39,23 @@ class ShopController extends Controller
 		return view('shop.edit', ['shop' => Shop::findOrFail($id), 'items' => $items, 'rooms' => $rooms]);
 		}
 
-	public function delete($id)
+	public function delete(Request $request)
 		{
-		Shop::delete($id);
-		return $this->action('ShopController@all');
+		// clear out shop items:
+		$Shop = Shop::findOrFail($request->id);
+
+		if ($Shop->shop_items())
+			{
+			foreach ($Shop->shop_items() as $shop_item)
+				{
+				$shop_item->delete();
+				}
+			}
+
+		$Shop->delete();
+		Session::flash('success', 'Shop Deleted!');
+		// return $this->all($request);
+		return redirect()->action('ShopController@all');
 		}
 
 	public function save(Request $request)
@@ -57,6 +70,12 @@ class ShopController extends Controller
 		$values = [
 			'name' => $request->name,
 			'description' => $request->description,
+			'rooms_id' => $request->rooms_id,
+			'buys_weapons' => $request->buys_weapons ? true : false,
+			'buys_armors' => $request->buys_armors ? true : false,
+			'buys_accessories' => $request->buys_accessories ? true : false,
+			'buys_consumables' => $request->buys_consumables ? true : false,
+			'buys_others' => $request->buys_others ? true : false,
 			];
 
 		$Shop->fill($values);
@@ -70,14 +89,14 @@ class ShopController extends Controller
 				{
 				$ShopItem = ShopItem::findOrFail($shop_item['id']);
 
-				if ($shop_item['item_id'] == 'null' && !$shop_item['price'])
+				if (!$shop_item['item_id'] && !$shop_item['price'] && !$shop_item['markup'])
 					{
 					$ShopItem->delete();
 					continue;
 					}
 				}
 
-			if ($shop_item['item_id'] == 'null' && !$shop_item['price'])
+			if (!$shop_item['item_id'] || (!$shop_item['price'] && !$shop_item['markup']))
 				{
 				continue;
 				}
@@ -85,6 +104,7 @@ class ShopController extends Controller
 			$values = [
 				'shops_id' => $Shop->id,
 				'items_id' => $shop_item['item_id'],
+				'markup' => $shop_item['markup'],
 				'price' => $shop_item['price'],
 				];
 
@@ -94,6 +114,7 @@ class ShopController extends Controller
 
 		Session::flash('success', 'Shop Updated!');
 
-		return $this->edit($Shop->fresh()->id);
+		return redirect()->action('ShopController@edit', ['id' => $Shop->id]);
+		// return $this->edit($Shop->fresh()->id);
 		}
 }

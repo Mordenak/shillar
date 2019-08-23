@@ -86,18 +86,18 @@ class CreateTown extends Seeder
 		]);
 
 		DB::table('items')->insert([
-			['name' => 'Knife', 'item_types_id' => 1, 'value' => 0, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Shield', 'item_types_id' => 2, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Helm', 'item_types_id' => 2, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Neckband', 'item_types_id' => 2, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Shirt', 'item_types_id' => 2, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Gloves', 'item_types_id' => 2, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Pants', 'item_types_id' => 2, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Boots', 'item_types_id' => 2, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Blue Amulet', 'item_types_id' => 3, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Glowing Ring', 'item_types_id' => 3, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Knife', 'item_types_id' => 1, 'value' => 2500, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Leather Shield', 'item_types_id' => 2, 'value' => 3000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Leather Helm', 'item_types_id' => 2, 'value' => 3000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Leather Neckband', 'item_types_id' => 2, 'value' => 2500, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Leather Shirt', 'item_types_id' => 2, 'value' => 4500, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Leather Gloves', 'item_types_id' => 2, 'value' => 2000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Leather Pants', 'item_types_id' => 2, 'value' => 4000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Leather Boots', 'item_types_id' => 2, 'value' => 2500, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Blue Amulet', 'item_types_id' => 3, 'value' => 10000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Glowing Ring', 'item_types_id' => 3, 'value' => 5000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			// end 10
-			['name' => 'Green Bracelet', 'item_types_id' => 3, 'value' => 0, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Green Bracelet', 'item_types_id' => 3, 'value' => 20000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Crab legs', 'item_types_id' => 4, 'value' => 0, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 

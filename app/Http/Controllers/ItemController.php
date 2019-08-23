@@ -158,4 +158,73 @@ class ItemController extends Controller
 			}
 		return $this->get_item_fields($request->type_id);
 		}
+
+	public function lookup(Request $request)
+		{
+		if ($request->term == 'has:title')
+			{
+			// $Rooms = Room::whereNotNull('title')->get();
+			}
+		elseif (preg_match("/type:(.+)/", $request->term, $matches))
+			{
+			// if (is_numeric($matches[1]))
+			// 	{
+			// 	$Zone = Zone::findOrFail($matches[1]);
+			// 	}
+			// else
+			// 	{
+			// 	$Zone = Zone::where('name', 'ilike', "%$matches[1]%")->first();
+			// 	if ($Zone->count === 0)
+			// 		{
+			// 		return [];
+			// 		}
+
+			// 	}
+			// $Rooms = $Zone->rooms();
+			}
+		else
+			{
+			$Items = Item::where('name', 'ilike', "%$request->term%")->get();
+			}
+
+		$arr = [];
+
+		if ($Items)
+			{
+			foreach ($Items as $Item)
+				{
+				$label = "($Item->id) $Item->name [".$Item->type()->name."]";
+				$arr[] = [
+					'label' => $label,
+					'value' => $Item->id,
+					];
+				}
+			}
+
+		// Also search IDs:
+		if (is_numeric($request->term))
+			{
+			$Items = Item::where('id', '=', $request->term)->get();
+
+			if ($Items)
+				{
+				foreach ($Items as $Item)
+					{
+					$label = "($Item->id) $Item->name [".$Item->type()->name."]";
+					$arr[] = [
+						'label' => $label,
+						'value' => $Item->id,
+						];
+					}
+				}
+			}
+
+		if (empty($arr))
+			{
+			$arr[] = ['label' => 'No Results', 'value' => $request->term];
+			}
+
+		echo (json_encode($arr));;
+		header('Content-type: application/json');
+		}
 }

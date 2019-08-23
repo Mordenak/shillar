@@ -54,6 +54,14 @@ class BasicEntries extends Seeder
 			['name' => 'Other', 'table_name' => 'item_others', 'model_name' => 'App\ItemOther', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
+		DB::table('alignments')->insert([
+			['name' => 'Fire', 'color' => 'EE0000', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Air', 'color' => '00FFFF', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Earth', 'color' => '55FF8B', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Water', 'color' => '0066FF', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Spirit', 'color' => 'FFFF00', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
 		DB::table('wall_score_ranks')->insert([
 			['name' => 'Leper', 'color' => '996600', 'score_req' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Peasant', 'color' => '999999', 'score_req' => 151, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],

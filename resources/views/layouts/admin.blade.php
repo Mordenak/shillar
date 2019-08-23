@@ -10,6 +10,10 @@
 
 		<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
+		<!-- jquery ui -->
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 
 		<link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -62,6 +66,57 @@
 		</p>
 
 		<script>
+		// autocompletes"
+		$('body').on('focusin', '.room-lookup', function(e, i) {
+			// add autocomplete:
+			$(e.target).autocomplete({
+				source: function(request, response) {
+					console.log(request);
+					$.ajax({
+						url: '/room/lookup',
+						dataType: 'json',
+						data: {
+							term: request.term,
+							},
+						success: response,
+						timeout: 5000
+						});
+					},
+				delay: 200,
+				minLength: 1
+				});
+			if ($(e.target).val() != '')
+				{
+				$(e.target).autocomplete("search");
+				}
+			});
+
+		// Combine the autocomplete things and use a data attrib for the types:
+		$('body').on('focusin', '.item-lookup', function(e, i) {
+			// add autocomplete:
+			$(e.target).autocomplete({
+				source: function(request, response) {
+					console.log(request);
+					$.ajax({
+						url: '/item/lookup',
+						dataType: 'json',
+						data: {
+							term: request.term,
+							},
+						success: response,
+						timeout: 5000
+						});
+					},
+				delay: 200,
+				minLength: 1
+				});
+			if ($(e.target).val() != '')
+				{
+				$(e.target).autocomplete("search");
+				}
+			});
+
+
 		$('body').on('submit', 'form.ajax', function(e, i) {
 			e.preventDefault();
 

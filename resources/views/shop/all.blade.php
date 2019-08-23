@@ -10,7 +10,7 @@
 	<form method="get" action="/shop/create">
 		<div class="form-group row">
 			<div class="col-md-3">
-				<input type="submit" value="Add Shop" class="form-control">
+				<input type="submit" value="Add Shop" class="btn btn-success">
 			</div>
 		</div>
 	</form>

@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemType extends Model
 {
-	public function item()
+	public function items()
 		{
-		// ??
-		return true;
+		return $this->hasMany('App\Item')->get();
 		}
 }

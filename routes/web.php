@@ -55,6 +55,8 @@ Route::get('room/create', 'RoomController@create');
 Route::get('room/edit/{id}', 'RoomController@edit')->where('id', '[0-9]+');
 Route::post('room/save', 'RoomController@save');
 Route::post('room/delete', 'RoomController@delete');
+// Autocomplete:
+Route::get('/room/lookup', 'RoomController@lookup');
 
 Route::get('zone/all', 'ZoneController@all');
 Route::get('zone/create', 'ZoneController@create');
@@ -66,16 +68,13 @@ Route::get('item/create', 'ItemController@create');
 Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');
 Route::post('item/save', 'ItemController@save');
 Route::get('item/get_item_type', 'ItemController@get_item_fields_ajax');
+// Auto complete:
+Route::get('/item/lookup', 'ItemController@lookup');
 
 Route::get('npc/all', 'NpcController@all');
 Route::get('npc/create', 'NpcController@create');
 Route::get('npc/edit/{id}', 'NpcController@edit')->where('id', '[0-9]+');
 Route::post('npc/save', 'NpcController@save');
-// Additionals:
-Route::post('npc/stats/save', 'NpcController@save_stats');
-Route::post('npc/rewards/save', 'NpcController@save_rewards');
-Route::post('npc/spawn/save', 'NpcController@save_spawns');
-Route::post('npc/loot/save', 'NpcController@save_loot');
 
 Route::get('character/all', 'CharacterController@all');
 Route::get('character/edit/{id}', 'CharacterController@edit')->where('id', '[0-9]+');
@@ -92,6 +91,7 @@ Route::get('shop/all', 'ShopController@all');
 Route::get('shop/create', 'ShopController@create');
 Route::get('shop/edit/{id}', 'ShopController@edit')->where('id', '[0-9]+');
 Route::post('shop/save', 'ShopController@save');
+Route::post('shop/delete', 'ShopController@delete');
 
 
 // Route::post('/equip', 'GameController@equip_item');

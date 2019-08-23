@@ -103,4 +103,76 @@ class RoomController extends Controller
 		// return view('admin/main');
 		return redirect()->action('RoomController@all');
 		}
+
+	public function lookup(Request $request)
+		{
+		if ($request->term == 'has:title')
+			{
+			$Rooms = Room::whereNotNull('title')->get();
+			}
+		elseif (preg_match("/zone:(.+)/", $request->term, $matches))
+			{
+			if (is_numeric($matches[1]))
+				{
+				$Zone = Zone::findOrFail($matches[1]);
+				}
+			else
+				{
+				$Zone = Zone::where('name', 'ilike', "%$matches[1]%")->first();
+				if ($Zone->count === 0)
+					{
+					return [];
+					}
+
+				}
+			$Rooms = $Zone->rooms();
+			}
+		else
+			{
+			$Rooms = Room::where('title', 'ilike', "%$request->term%")->get();	
+			}
+
+		$arr = [];
+
+		if ($Rooms)
+			{
+			foreach ($Rooms as $Room)
+				{
+				$title = $Room->title ? $Room->title : '-- No Title --';
+				$label = "($Room->id) $title [".$Room->zone()->name."]";
+				// $label = '('.$Room->id.') '.$title.' ['.$Room->zone()->name.']';
+				$arr[] = [
+					'label' => $label,
+					'value' => $Room->id,
+					];
+				}
+			}
+
+		// Also search IDs:
+		if (is_numeric($request->term))
+			{
+			$Rooms = Room::where('id', '=', $request->term)->get();
+
+			if ($Rooms)
+				{
+				foreach ($Rooms as $Room)
+					{
+					$title = $Room->title ? $Room->title : '-- No Title --';
+					$label = "($Room->id) $title [".$Room->zone()->name."]";
+					$arr[] = [
+						'label' => $label,
+						'value' => $Room->id,
+						];
+					}
+				}
+			}
+
+		if (empty($arr))
+			{
+			$arr[] = ['label' => 'No Results', 'value' => $request->term];
+			}
+
+		echo (json_encode($arr));;
+		header('Content-type: application/json');
+		}
 }

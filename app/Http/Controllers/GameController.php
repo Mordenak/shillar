@@ -67,7 +67,7 @@ class GameController extends Controller
 		else
 			{
 			// Find spawn rules for room:
-			$SpawnRule = SpawnRule::where(['rooms_id' => $Room->id])->first();
+			$SpawnRule = SpawnRule::where(['rooms_id' => $Room->id])->inRandomOrder()->first();
 
 			if ($SpawnRule && $Room->spawns_enabled)
 				{
@@ -86,7 +86,7 @@ class GameController extends Controller
 				if ($Room->spawns_enabled)
 					{
 					// no room specific spawns:
-					$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->get();
+					$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->inRandomOrder()->get();
 					if (count($SpawnRules) > 0)
 						{
 						foreach ($SpawnRules as $SpawnRule)
@@ -1292,8 +1292,14 @@ class GameController extends Controller
 		// die(print_r($PurchaseItem->first()));
 
 		// $request_params = ['character' => $Character, 'room' => $Room, 'shop' => $Shop];
+		$price = $PurchaseItem->item()->value * $PurchaseItem->markup;
+		if ($PurchaseItem->price)
+			{
+			// if specific price is set, override:
+			$price = $PurchaseItem->price;
+			}
 
-		if ($Character->gold < $PurchaseItem->price)
+		if ($Character->gold < $price)
 			{
 			// $request->insufficient_funds = true;
 			// die('price');
@@ -1304,7 +1310,7 @@ class GameController extends Controller
 			}
 
 		$Character->inventory()->addItem($PurchaseItem->item()->id);
-		$Character->gold = $Character->gold - $PurchaseItem->price;
+		$Character->gold = $Character->gold - $price;
 		$Character->save();
 		// $request->purchased_item = $PurchaseItem->item()->name;
 		// $request_params['purchased_item'] = $PurchaseItem->item()->name;

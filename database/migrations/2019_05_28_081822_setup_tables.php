@@ -17,6 +17,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('description');
+			$table->integer('wisdom_req');
 			$table->integer('darkness_level')->default(0);
 			$table->string('img_src')->nullable();
 			$table->timestamps();
@@ -50,6 +51,13 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('gender');
+			$table->timestamps();
+		});
+
+		Schema::create('alignments', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('color');
 			$table->timestamps();
 		});
 
@@ -92,9 +100,10 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->integer('item_types_id');
 			$table->foreign('item_types_id')->references('id')->on('item_types');
-			$table->integer('value')->nullable();
+			$table->bigInteger('value')->nullable();
 			$table->float('weight')->nullable();
 			$table->float('is_stackable')->default(false);
+			$table->integer('score_req')->nullable();
 			$table->timestamps();
 		});
 
@@ -170,6 +179,8 @@ class SetupTables extends Migration
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
 			$table->foreign('last_rooms_id')->references('id')->on('rooms');
+			$table->integer('alignments_id')->nullable();
+			$table->integer('alignments_id')->references('id')->on('alignments');
 			$table->bigInteger('xp');
 			$table->bigInteger('gold');
 			$table->bigInteger('bank');
@@ -251,6 +262,8 @@ class SetupTables extends Migration
 			$table->string('attack_text')->nullable();
 			$table->string('img_src')->nullable();
 			$table->boolean('is_hostile')->default(true);
+			$table->integer('alignments_id')->nullable();
+			$table->integer('alignments_id')->references('id')->on('alignments');
 			$table->integer('health');
 			$table->float('armor');
 			$table->integer('damage_low');
@@ -274,17 +287,6 @@ class SetupTables extends Migration
 			$table->float('chance');
 			$table->timestamps();
 		});
-
-		// Schema::create('reward_tables', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->integer('npcs_id');
-		// 	$table->foreign('npcs_id')->references('id')->on('npcs');
-		// 	$table->integer('award_xp');
-		// 	$table->float('xp_variation')->nullable();
-		// 	$table->integer('award_gold');
-		// 	$table->float('gold_variation')->nullable();
-		// 	$table->timestamps();
-		// });
 
 		Schema::create('loot_tables', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -326,8 +328,8 @@ class SetupTables extends Migration
 			$table->foreign('shops_id')->references('id')->on('shops');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->integer('price')->nullable();
-			$table->float('markup')->default(0.0);
+			$table->bigInteger('price')->nullable();
+			$table->float('markup')->default(2.0);
 			$table->timestamps();
 		});
 
@@ -335,6 +337,19 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('description');
+			$table->integer('wisdom_req');
+			$table->integer('intelligence_req');
+			$table->integer('score_req');
+			$table->integer('quest_prereq');
+			$table->integer('quest_prereq')->references('id')->on('quests');
+			$table->timestamps();
+		});
+		
+		Schema::create('quest_rewards', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('quests_id');
+			$table->integer('quests_id')->references('id')->on('quests');
+			$t
 			$table->timestamps();
 		});
 
@@ -487,6 +502,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('kill_counts');
 		Schema::dropIfExists('npcs');
 		Schema::dropIfExists('characters');
+		Schema::dropIfExists('quest_rewards');
 		Schema::dropIfExists('quests');
 		Schema::dropIfExists('spells');
 		Schema::dropIfExists('room_property_rooms');

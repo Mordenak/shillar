@@ -10,6 +10,6 @@ class Zone extends Model
 
 	public function rooms()
 		{
-		return $this->hasMany('App\Rooms');
+		return $this->hasMany('App\Room', 'zones_id')->get();
 		}
 }

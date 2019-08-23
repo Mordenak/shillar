@@ -59,7 +59,7 @@ Creating a new room:<br>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">North Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="north_room_id" value="{{isset($room) ? $room->north_rooms_id : ''}}" class="form-control">
+				<input type="text" name="north_room_id" value="{{isset($room) ? $room->north_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
 				<input type="checkbox" name="north_room_link"> Link?
@@ -69,7 +69,7 @@ Creating a new room:<br>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">East Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="east_room_id" value="{{isset($room) ? $room->east_rooms_id : ''}}" class="form-control">
+				<input type="text" name="east_room_id" value="{{isset($room) ? $room->east_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
 				<input type="checkbox" name="east_room_link"> Link?
@@ -79,7 +79,7 @@ Creating a new room:<br>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">South Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="south_room_id" value="{{isset($room) ? $room->south_rooms_id : ''}}" class="form-control">
+				<input type="text" name="south_room_id" value="{{isset($room) ? $room->south_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
 				<input type="checkbox" name="south_room_link"> Link?
@@ -89,7 +89,7 @@ Creating a new room:<br>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">West Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="west_room_id" value="{{isset($room) ? $room->west_rooms_id : ''}}" class="form-control">
+				<input type="text" name="west_room_id" value="{{isset($room) ? $room->west_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
 				<input type="checkbox" name="west_room_link"> Link?
@@ -99,7 +99,7 @@ Creating a new room:<br>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Up Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="up_room_id" value="{{isset($room) ? $room->up_rooms_id : ''}}" class="form-control">
+				<input type="text" name="up_room_id" value="{{isset($room) ? $room->up_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
 				<input type="checkbox" name="up_room_link"> Link?
@@ -109,7 +109,7 @@ Creating a new room:<br>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Down Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="down_room_id" value="{{isset($room) ? $room->down_rooms_id : ''}}" class="form-control">
+				<input type="text" name="down_room_id" value="{{isset($room) ? $room->down_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
 				<input type="checkbox" name="down_room_link"> Link?

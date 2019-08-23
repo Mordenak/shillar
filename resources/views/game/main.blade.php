@@ -271,19 +271,6 @@
 
 @section('footer')
 	A chat?
-	<form method="post" action="/train" class="ajax">
-		{{csrf_field()}}
-		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="begin_train">Train</label>
-		<input type="submit" id="begin_train" style="display: none;">
-	</form>
-
-	<form method="post" action="/rest" class="ajax">
-		{{csrf_field()}}
-		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="begin_rest">Rest</label>
-		<input type="submit" id="begin_rest" style="display: none;">
-	</form>
 
 	<!-- Debug section -->
 

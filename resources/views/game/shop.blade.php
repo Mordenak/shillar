@@ -14,7 +14,11 @@ This is a shop:<br>
 	<select name="item_purchase">
 		<option>-- Select --</option>
 	@foreach ($shop->shop_items() as $shop_item)
+		@if ($shop_item->price)
 		<option value="{{$shop_item->id}}">{{$shop_item->item()->name}} ({{$shop_item->price}})</option>
+		@else
+		<option value="{{$shop_item->id}}">{{$shop_item->item()->name}} ({{$shop_item->item()->value * $shop_item->markup}})</option>
+		@endif
 	@endforeach
 	</select>
 	<input type="submit" value="Buy">
