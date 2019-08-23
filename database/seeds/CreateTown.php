@@ -69,7 +69,7 @@ class CreateTown extends Seeder
 
 
 		DB::table('shops')->insert([
-			['rooms_id' => 31, 'name' => 'Food Shop', 'description' => 'The food shop', 'buys_weapons' => true, 'buys_armors' => true, 'buys_accessories' => true, 'buys_consumables' => true, 'buys_others' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['rooms_id' => 31, 'name' => 'Food Shop', 'description' => 'The food shop', 'buys_weapons' => true, 'buys_armors' => true, 'buys_accessories' => true, 'buys_foods' => true, 'buys_others' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('npcs')->insert([
@@ -138,8 +138,8 @@ class CreateTown extends Seeder
 			['items_id' => 11, 'name' => 'Green Bracelet', 'equipment_slot' => 11, 'strength_bonus' => 20, 'dexterity_bonus' => 20, 'constitution_bonus' => null, 'wisdom_bonus' => 20, 'intelligence_bonus' => null, 'charisma_bonus' => 20, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		DB::table('item_consumables')->insert([
-			['items_id' => 12, 'name' => 'Crab legs', 'effect' => 'healing', 'potency' => 13, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		DB::table('item_foods')->insert([
+			['items_id' => 12, 'name' => 'Crab legs', 'potency' => 13, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('loot_tables')->insert([

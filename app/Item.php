@@ -35,6 +35,16 @@ class Item extends Model
 			return ItemAccessory::where(['items_id' => $this->id])->first();
 			}
 
+		if ($this->type()->name == 'Jewel')
+			{
+			return ItemJewel::where(['items_id' => $this->id])->first();
+			}
+
+		if ($this->type()->name == 'Dust')
+			{
+			return ItemDust::where(['items_id' => $this->id])->first();
+			}
+
 		if ($this->type()->name == 'Other')
 			{
 			return ItemOthers::where(['items_id' => $this->id])->first();

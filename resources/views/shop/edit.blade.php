@@ -52,9 +52,21 @@ Creating a shop:
 					</label>
 				</div>
 				<div class="form-check">
-					<input type="checkbox" name="buys_consumables" class="form-check-input" id="consumables" {{isset($shop) && $shop->buys_consumables ? 'checked' : ''}}>
-					<label class="form-check-label" for="consumables">
-						Consumables
+					<input type="checkbox" name="buys_foods" class="form-check-input" id="foods" {{isset($shop) && $shop->buys_foods ? 'checked' : ''}}>
+					<label class="form-check-label" for="foods">
+						Foods
+					</label>
+				</div>
+				<div class="form-check">
+					<input type="checkbox" name="buys_jewels" class="form-check-input" id="jewels" {{isset($shop) && $shop->buys_jewels ? 'checked' : ''}}>
+					<label class="form-check-label" for="jewels">
+						Jewels
+					</label>
+				</div>
+				<div class="form-check">
+					<input type="checkbox" name="buys_dusts" class="form-check-input" id="dusts" {{isset($shop) && $shop->buys_dusts ? 'checked' : ''}}>
+					<label class="form-check-label" for="dusts">
+						Dusts
 					</label>
 				</div>
 				<div class="form-check">

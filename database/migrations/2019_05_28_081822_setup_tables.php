@@ -156,13 +156,28 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('item_consumables', function (Blueprint $table) {
+		Schema::create('item_foods', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->string('name');
-			$table->string('effect');
 			$table->integer('potency');
+			$table->timestamps();
+		});
+
+		Schema::create('item_jewels', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->string('name');
+			$table->timestamps();
+		});
+
+		Schema::create('item_dusts', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->string('name');
 			$table->timestamps();
 		});
 
@@ -328,7 +343,9 @@ class SetupTables extends Migration
 			$table->boolean('buys_weapons')->default(false);
 			$table->boolean('buys_armors')->default(false);
 			$table->boolean('buys_accessories')->default(false);
-			$table->boolean('buys_consumables')->default(false);
+			$table->boolean('buys_foods')->default(false);
+			$table->boolean('buys_jewels')->default(false);
+			$table->boolean('buys_dusts')->default(false);
 			$table->boolean('buys_others')->default(false);
 			$table->timestamps();
 		});
@@ -383,12 +400,22 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('spell_levels', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('spells_id');
+			$table->foreign('spells_id')->references('id')->on('spells');
+			$table->integer('level');
+			$table->string('value');
+			$table->timestamps();
+		});
+
 		Schema::create('character_spells', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('spells_id');
 			$table->foreign('spells_id')->references('id')->on('spells');
 			$table->integer('character_id');
 			$table->foreign('character_id')->references('id')->on('characters');
+			$table->integer('level');
 			$table->timestamps();
 		});
 
@@ -471,16 +498,15 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// This is a cheat:
+		// This is a cheat until I can do something better::
 		Schema::create('game_progression', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('characters_id');
 			$table->foreign('characters_id')->references('id')->on('characters');
-			$table->boolean('sewer_lifted');
+			$table->boolean('sewer_lifted')->default(false);
+			$table->boolean('park_ranger')->default(false);
 			$table->timestamps();
 		});
-
-
 	}
 
 	/**
@@ -505,9 +531,13 @@ class SetupTables extends Migration
 		Schema::dropIfExists('shops');
 		Schema::dropIfExists('players');
 		Schema::dropIfExists('item_weapons');
+		// legacy:
 		Schema::dropIfExists('item_consumables');
+		Schema::dropIfExists('item_foods');
 		Schema::dropIfExists('item_armors');
 		Schema::dropIfExists('item_accessories');
+		Schema::dropIfExists('item_jewels');
+		Schema::dropIfExists('item_dusts');
 		Schema::dropIfExists('item_others');
 		Schema::dropIfExists('item_property_items');
 		Schema::dropIfExists('item_properties');

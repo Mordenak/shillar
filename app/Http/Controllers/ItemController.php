@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Item;
 use App\ItemType;
-use App\ItemConsumable;
+use App\ItemFood;
 use App\ItemWeapon;
 use App\ItemArmor;
 use App\ItemAccessories;
@@ -70,11 +70,6 @@ class ItemController extends Controller
 			];
 
 		// Maintain per type field list???
-		if ($ItemType->table_name == 'item_consumables')
-			{
-			$item_values['effect'] = $request->effect;
-			$item_values['potency'] = $request->potency;
-			}
 
 		if ($ItemType->table_name == 'item_weapons')
 			{
@@ -93,7 +88,21 @@ class ItemController extends Controller
 		if ($ItemType->table_name == 'item_accessories')
 			{
 			$item_values['equipment_slot'] = $request->equipment_slot;
-			$item_values['armor'] = $request->armor;
+			}
+
+		if ($ItemType->table_name == 'item_foods')
+			{
+			$item_values['potency'] = $request->potency;
+			}
+
+		if ($ItemType->table_name == 'item_jewels')
+			{
+			// ??
+			}
+
+		if ($ItemType->table_name == 'item_dusts')
+			{
+			// ??
 			}
 
 		if ($ItemType->table_name == 'item_others')
@@ -129,10 +138,15 @@ class ItemController extends Controller
 				$partial_name = 'accessories';
 				break;
 			case 4:
-				$equip_slots = EquipmentSlot::all();
-				$partial_name = 'consumables';
+				$partial_name = 'foods';
 				break;
 			case 5:
+				$partial_name = 'jewels';
+				break;
+			case 6:
+				$partial_name = 'dusts';
+				break;
+			case 7:
 				$partial_name = 'others';
 				break;
 			}

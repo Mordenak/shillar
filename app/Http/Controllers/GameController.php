@@ -17,7 +17,7 @@ use App\Item;
 use App\ItemWeapon;
 use App\ItemArmor;
 use App\UserSetting;
-use App\ItemConsumable;
+use App\ItemFood;
 use App\ItemAccessory;
 use App\CombatLog;
 use App\KillCount;
@@ -1157,22 +1157,8 @@ class GameController extends Controller
 				// error?
 				return true;
 				}
-			$ItemConsumable = ItemConsumable::where(['items_id' => $Item->id])->first();
-			if ($ItemConsumable->effect == 'healing')
-				{
-				$Character->heal($ItemConsumable->potency);
-				// $Character->health = $Character->health + $ItemConsumable->potency;
-				// if ($Character->health > $Character->max_health)
-				// 	{
-				// 	$Character->health = $Character->max_health;
-				// 	}
-				// $Character->fatigue = $Character->fatigue + $ItemConsumable->potency;
-				// if ($Character->fatigue > $Character->max_fatigue)
-				// 	{
-				// 	$Character->fatigue = $Character->max_fatigue;
-				// 	}
-				// $Character->save();
-				}
+			$ItemFood = ItemFood::where(['items_id' => $Item->id])->first();
+			$Character->heal($ItemFood->potency);
 			$Character->inventory()->removeItem($request->item);
 			// $request->item;
 			// $res = $Character->inventory()->where('items_id' => $request->item);
@@ -1224,12 +1210,8 @@ class GameController extends Controller
 		// die(print_r($PurchaseItem->first()));
 
 		// $request_params = ['character' => $Character, 'room' => $Room, 'shop' => $Shop];
-		$price = $PurchaseItem->item()->value * $PurchaseItem->markup;
-		if ($PurchaseItem->price)
-			{
-			// if specific price is set, override:
-			$price = $PurchaseItem->price;
-			}
+		// $price = $PurchaseItem->item()->value * $PurchaseItem->markup;
+		$price = $PurchaseItem->get_cost($Character->charisma);
 
 		if ($Character->gold < $price)
 			{
@@ -1251,6 +1233,35 @@ class GameController extends Controller
 		else
 			{
 			$request->no_carry = true;
+			}
+
+		return $this->index($request);
+		}
+
+	public function sell(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		// $Room = Room::findOrFail($request->room_id);
+		// Probably auth some stuff about the store:
+		$Shop = Shop::findOrFail($request->shop_id);
+
+		$SellItem = InventoryItem::findOrFail($request->item_sell);
+
+		// if not, throw error?
+
+		$earnings = round($SellItem->item()->value * 0.01, 0);
+		
+		
+		$sold = $Character->inventory()->removeItem($SellItem->item()->id);
+		if ($sold)
+			{
+			$Character->gold += $earnings;
+			$Character->save();
+			Session::flash('sell', 'You sold a '.$SellItem->item()->name.' for '.$earnings.' gold.');
+			}
+		else
+			{
+			// can't sell for some reason??
 			}
 
 		return $this->index($request);

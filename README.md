@@ -20,6 +20,8 @@ Game Todo:
 * Online character listing
 * Full admin tools
 * Items on ground stack
+* Add Consider feature
+* Scramble Combat buttons
 
 Test bed: http://laravel-adventure.herokuapp.com/
 
@@ -27,9 +29,9 @@ Info pool: http://www.shillatime.org/shillatime.html
 
 Code Todo:
 
-* Fix npc spawn on item pickup
+* ~~Fix npc spawn on item pickup~~
 * Move functions out of game controller
 * Route admin functions through admin route with auth middleware admin level check
 * ~~Fix Menu CSS/sizing~~
 * ~~Debate: CharacterStats to Characters table???~~
-* Debate: InventoryItems to no quantity, count of records.
+* ~~Debate: InventoryItems to no quantity, count of records.~~

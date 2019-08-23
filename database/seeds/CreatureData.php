@@ -31,8 +31,8 @@ class CreatureData extends Seeder
 			['name' => 'Whey bread', 'item_types_id' => 4, 'value' => 0, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		DB::table('item_consumables')->insert([
-			['items_id' => 13, 'name' => 'Whey bread', 'effect' => 'healing', 'potency' => 35, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		DB::table('item_foods')->insert([
+			['items_id' => 13, 'name' => 'Whey bread', 'potency' => 35, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('loot_tables')->insert([

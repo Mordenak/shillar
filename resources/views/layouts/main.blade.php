@@ -189,7 +189,8 @@
 						'/combat',
 						'/item_pickup',
 						'/game',
-						'/shop/purchase'
+						'/shop/purchase',
+						'/shop/sell'
 						];
 					var menu_inserts = [
 						'/equipment',

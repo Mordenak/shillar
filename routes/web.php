@@ -35,6 +35,7 @@ Route::post('/show_stats', 'GameController@show_stats');
 Route::post('/train', 'GameController@train');
 Route::post('/shop', 'GameController@shop');
 Route::post('/shop/purchase', 'GameController@purchase');
+Route::post('/shop/sell', 'GameController@sell');
 
 Route::post('/rest', 'GameController@rest');
 
