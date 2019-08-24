@@ -35,3 +35,4 @@ Code Todo:
 * ~~Fix Menu CSS/sizing~~
 * ~~Debate: CharacterStats to Characters table???~~
 * ~~Debate: InventoryItems to no quantity, count of records.~~
+* Fix stats page refresh killing intervals for rest/combat.

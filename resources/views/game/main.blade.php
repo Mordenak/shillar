@@ -77,7 +77,6 @@
 	@endforeach
 	</p>
 	@endif
-	<br>
 	@if (isset($reward_log))
 	<p style="display: inline;">
 	@foreach ($reward_log as $log_entry)
@@ -157,19 +156,12 @@
 			}, 4000);
 	</script>
 	@endif
-	
-	<br>
-
-	@if ($room->has_shop())
-	--test--
-	@endif
 
 	@if (isset($room_custom))
 	{!! $room_custom !!}
 	@endif
 
-	@if (!$npc)
-	
+	@if (!$npc && ($room->title || $room->description))
 	<p>
 		@if ($room->title)
 		{{$room->title}}
