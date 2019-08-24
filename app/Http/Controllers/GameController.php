@@ -207,6 +207,15 @@ class GameController extends Controller
 		{
 		$Character = Character::findOrFail($request->character_id);
 
+		// Just double check that the room is reachable?
+		$LastRoom = Room::findOrFail($Character->last_rooms_id);
+
+		if (!$LastRoom->is_reachable($request->room_id))
+			{
+			// Don't move:
+			return $this->index($request);
+			}
+
 		$Character->last_rooms_id = $request->room_id;
 		$Character->save();
 

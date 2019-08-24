@@ -138,6 +138,12 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->integer('equipment_slot');
 			$table->integer('armor');
+			$table->integer('strength_bonus')->nullable();
+			$table->integer('dexterity_bonus')->nullable();
+			$table->integer('constitution_bonus')->nullable();
+			$table->integer('wisdom_bonus')->nullable();
+			$table->integer('intelligence_bonus')->nullable();
+			$table->integer('charisma_bonus')->nullable();
 			$table->timestamps();
 		});
 
@@ -281,6 +287,45 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('forge_recipes', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('item_weapons_id');
+			$table->foreign('item_weapons_id')->references('id')->on('item_weapons');
+			$table->integer('item_armors_id');
+			$table->foreign('item_armors_id')->references('id')->on('item_armors');
+			$table->integer('items_foods_id');
+			$table->foreign('items_foods_id')->references('id')->on('item_foods');
+			$table->integer('item_jewels_id');
+			$table->foreign('item_jewels_id')->references('id')->on('item_jewels');
+			$table->integer('item_dusts_id');
+			$table->foreign('item_dusts_id')->references('id')->on('item_dusts');
+			$table->string('name');
+			$table->integer('result_items_id');
+			$table->foreign('result_items_id')->references('id')->on('items');
+			$table->timestamps();
+		});
+
+		Schema::create('traders', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('description');
+			$table->integer('rooms_id');
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->timestamps();
+		});
+
+		Schema::create('traders_items', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('traders_id');
+			$table->foreign('traders_id')->references('id')->on('traders');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->integer('from_characters_id');
+			$table->foreign('from_characters_id')->references('id')->on('characters');
+			$table->timestamps();
+		});
 
 		Schema::create('npcs', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -530,6 +575,9 @@ class SetupTables extends Migration
 		Schema::dropIfExists('shop_items');
 		Schema::dropIfExists('shops');
 		Schema::dropIfExists('players');
+		Schema::dropIfExists('forge_recipes');
+		Schema::dropIfExists('traders_items');
+		Schema::dropIfExists('traders');
 		Schema::dropIfExists('item_weapons');
 		// legacy:
 		Schema::dropIfExists('item_consumables');
@@ -559,6 +607,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('alignments');
 		Schema::dropIfExists('quest_rewards');
 		Schema::dropIfExists('quests');
+		Schema::dropIfExists('spell_levels');
+		Schema::dropIfExists('character_spells');
 		Schema::dropIfExists('spells');
 		Schema::dropIfExists('room_property_rooms');
 		Schema::dropIfExists('room_properties');

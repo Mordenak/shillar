@@ -41,6 +41,18 @@ class Character extends Model
 		return true;
 		}
 
+	public function display_rank()
+		{
+		$WallScoreRank = WallScoreRank::where('score_req', '<=', $this->score)->orderBy('score_req', 'desc')->first();
+
+		if ($WallScoreRank)
+			{
+			return '<span style="color:#'.$WallScoreRank->color.';">'.$WallScoreRank->name.'</span>';
+			}
+
+		return true;
+		}
+
 	public function display_name()
 		{
 		// Get rank:
