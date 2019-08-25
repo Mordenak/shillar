@@ -26,6 +26,18 @@ class BasicEntries extends Seeder
 			['name' => 'bracelet', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
+		DB::table('weapon_types')->insert([
+			['name' => 'Sword', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Axe', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Dagger', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Ranged', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Club', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// End 5
+			['name' => 'Staff', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Mana', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Other', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
 		// Deprecate this idea:
 		/*
 		DB::table('item_properties')->insert([
@@ -43,12 +55,15 @@ class BasicEntries extends Seeder
 		*/
 
 		DB::table('room_properties')->insert([
-			['name' => 'CAN_TRAIN', 'description' => 'This room will show the training form.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'CAN_SLEEP', 'description' => 'Characters can sleep in this room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'WALL_SCORE', 'description' => 'This room will show the Wall of Flame.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'GIVES_QUEST', 'description' => 'This room can give a Quest.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HAS_BANK', 'description' => 'This room has a bank.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HAS_FORGE', 'description' => 'This room has a forge.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'CAN_SLEEP', 'custom_view' => 'partials/rest', 'description' => 'Characters can sleep in this room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'CAN_TRAIN', 'custom_view' => 'partials/train', 'description' => 'This room will show the training form.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'WALL_OF_FLAME', 'custom_view' => 'partials/wall-flame', 'description' => 'This room will show the Wall of Flame.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_BANK', 'custom_view' => 'partials/bank', 'description' => 'This room has a bank.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_FORGE', 'custom_view' => 'partials/forge', 'description' => 'This room has a forge.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_AIR_TEMPLE', 'custom_view' => 'partials/temple-air', 'description' => 'This room has the Air Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_EARTH_TEMPLE', 'custom_view' => 'partials/temple-earth', 'description' => 'This room has the Earth Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_FIRE_TEMPLE', 'custom_view' => 'partials/temple-fire', 'description' => 'This room has the Fire Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_WATER_TEMPLE', 'custom_view' => 'partials/temple-water', 'description' => 'This room has the Water Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('item_types')->insert([

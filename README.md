@@ -22,6 +22,7 @@ Game Todo:
 * Items on ground stack
 * Add Consider feature
 * Scramble Combat buttons
+* Add Tutorial back in?
 
 Test bed: http://laravel-adventure.herokuapp.com/
 

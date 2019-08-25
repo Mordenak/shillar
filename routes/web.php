@@ -36,6 +36,7 @@ Route::post('/train', 'GameController@train');
 Route::post('/shop', 'GameController@shop');
 Route::post('/shop/purchase', 'GameController@purchase');
 Route::post('/shop/sell', 'GameController@sell');
+Route::post('/game/forge', 'GameController@forge');
 
 Route::post('/rest', 'GameController@rest');
 
@@ -57,7 +58,7 @@ Route::get('room/edit/{id}', 'RoomController@edit')->where('id', '[0-9]+');
 Route::post('room/save', 'RoomController@save');
 Route::post('room/delete', 'RoomController@delete');
 // Autocomplete:
-Route::get('/room/lookup', 'RoomController@lookup');
+
 
 Route::get('zone/all', 'ZoneController@all');
 Route::get('zone/create', 'ZoneController@create');
@@ -70,7 +71,7 @@ Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');
 Route::post('item/save', 'ItemController@save');
 Route::get('item/get_item_type', 'ItemController@get_item_fields_ajax');
 // Auto complete:
-Route::get('/item/lookup', 'ItemController@lookup');
+
 
 Route::get('npc/all', 'NpcController@all');
 Route::get('npc/create', 'NpcController@create');
@@ -94,5 +95,7 @@ Route::get('shop/edit/{id}', 'ShopController@edit')->where('id', '[0-9]+');
 Route::post('shop/save', 'ShopController@save');
 Route::post('shop/delete', 'ShopController@delete');
 
-
-// Route::post('/equip', 'GameController@equip_item');
+// Autocoimplete lookup routes:
+Route::get('/item/lookup', 'ItemController@lookup');
+Route::get('/room/lookup', 'RoomController@lookup');
+Route::get('/room_property/lookup', 'RoomPropertyController@lookup');

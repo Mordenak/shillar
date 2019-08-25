@@ -107,22 +107,49 @@
 				<input type="hidden" name="npc_id" value="{{$npc->id}}">
 				<input type="hidden" name="character_id" value="{{$character->id}}">
 				@if (!$no_attack)
-				<table>
+				<table id="combat-table">
 					<tr>
-						<td style="color:yellow;">
-							All Out Attack<br>
-							<input type="submit" id="all_out" value="{{$npc->name}}" class="submit-id">
+<!-- 						<td style="color:yellow;">
+							<div>All Out Attack</div>
+							<div><input type="submit" id="all_out" value="{{$npc->name}}" class="submit-id"></div>
 						</td>
 						<td style="color:#55ff8b;">
-							Single Attack<br>
-							<input type="submit" id="single" value="{{$npc->name}}" class="submit-id">
+							<div>Single Attack</div>
+							<div><input type="submit" id="single" value="{{$npc->name}}" class="submit-id"></div>
 						</td>
 						<td style="color:red;">
-							Run Away<br>
-							<input type="submit" id="flee" value="{{$npc->name}}" class="submit-id">
-						</td>
+							<div>Run Away</div>
+							<div><input type="submit" id="flee" value="{{$npc->name}}" class="submit-id"></div>
+						</td> -->
 					</tr>
 				</table>
+				<script>
+					// TODO: OPTIMIZE!!!
+					var $options = {
+						all_out: 'All Out Attack',
+						single: 'Single Attack',
+						flee: 'Run Away'
+					}
+
+					var npc = '{{$npc->name}}';
+
+					var $new_options = shuffle($options);
+
+					for (var key in $new_options)
+						{
+						if (Math.random() > 0.5)
+							{
+							$('#combat-table tr').append($new_options[key]+'<br>');
+							$('#combat-table tr').append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
+							}
+						else
+							{
+							$('#combat-table tr').append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
+							$('#combat-table tr').append($new_options[key]+'<br>');
+							}
+						}
+
+				</script>
 				@else
 				<span style="color:red;">You are too tired to attack</span>
 				@endif
@@ -279,6 +306,14 @@
 			</tr>
 		@endforeach
 		</table>
+	@endif
+
+	@if ($room->current_characters())
+		@foreach ($room->current_characters() as $entry)
+		@if ($entry->id != $character->id)
+		{!! $entry->display_name() !!} is here.<br>
+		@endif
+		@endforeach
 	@endif
 
 

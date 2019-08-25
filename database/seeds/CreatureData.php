@@ -28,15 +28,15 @@ class CreatureData extends Seeder
 		]);
 
 		DB::table('items')->insert([
-			['name' => 'Whey bread', 'item_types_id' => 4, 'value' => 0, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Spicey Bat Wings', 'item_types_id' => 4, 'value' => 0, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('item_foods')->insert([
-			['items_id' => 13, 'name' => 'Whey bread', 'potency' => 35, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 32, 'potency' => 18, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('loot_tables')->insert([
-			['npcs_id' => 7, 'items_id' => 2, 'chance' => 0.575, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['npcs_id' => 5, 'items_id' => 32, 'chance' => 0.575, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 	}
 }

@@ -128,22 +128,6 @@ class GameController extends Controller
 
 		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
 
-		// Small checks:
-		if ($Room->can_train())
-			{
-			$request_params['multi'] = $request->train_multi ? $request->train_multi : 1;
-			$request_params['costs'] = $this->calculate_training_cost($request);
-			// $request_params['costs'] = $request->costs;
-			}
-
-		if ($Room->has_property('WALL_SCORE'))
-			{
-			$Results = Character::select()->orderBy('score', 'desc')->get();
-			// display name them as well:
-			// die(print_r($Results));
-			$request_params['score_list'] = $Results;
-			}
-
 		if ($request->death)
 			{
 			$request_params['death'] = true;
@@ -159,18 +143,39 @@ class GameController extends Controller
 			$request_params['is_admin'] = true;
 			}
 
-		$request_params['room_custom'] = null;
-		if ($Room->can_train())
-			{
-			$view = \View::make('game/train', $request_params);
-			$request_params['room_custom'] = $view->render();
-			}
-
 		if ($Room->has_shop())
 			{
 			$request_params['shop'] = $Room->shop();
+			}
 
-			$view = \View::make('game/shop', $request_params);
+		$request_params['room_custom'] = null;
+		if ($Room->has_property())
+			{
+			// Set specific room properties?
+			if ($Room->has_property('CAN_TRAIN'))
+				{
+				$request_params['multi'] = $request->train_multi ? $request->train_multi : 1;
+				$request_params['costs'] = $this->calculate_training_cost($request);
+				}
+
+			if ($Room->has_property('WALL_SCORE'))
+				{
+				$Results = Character::select()->orderBy('score', 'desc')->get();
+				$request_params['score_list'] = $Results;
+				}
+
+			// Make the view:
+			// $view_to_render = $Room->property()->custom_view;
+			// die(print_r($view_to_render));
+			$view = \View::make($Room->property()->custom_view, $request_params);
+			$request_params['room_custom'] = $view->render();
+			}
+
+		// Shops are a special case:
+		if ($Room->has_shop())
+			{
+			$request_params['shop'] = $Room->shop();
+			$view = \View::make('partials/shop', $request_params);
 			$request_params['room_custom'] = $view->render();
 			}
 

@@ -139,13 +139,35 @@ class RoomController extends Controller
 			foreach ($Rooms as $Room)
 				{
 				$title = $Room->title ? $Room->title : '-- No Title --';
-				$label = "($Room->id) $title [".$Room->zone()->name."]";
+				if ($Room->uid)
+					{
+					$title = $title . ' ['. $Room->uid . '] ';
+					}
+				$label = "($Room->id) $title in ".$Room->zone()->name;
 				// $label = '('.$Room->id.') '.$title.' ['.$Room->zone()->name.']';
 				$arr[] = [
 					'label' => $label,
 					'value' => $Room->id,
 					];
 				}
+			}
+
+		// All check the uids:
+		$Rooms = Room::where('uid', 'ilike', "%$request->term%")->get();
+
+		foreach ($Rooms as $Room)
+			{
+			$title = $Room->title ? $Room->title : '-- No Title --';
+			if ($Room->uid)
+				{
+				$title = $title . ' ['. $Room->uid . '] ';
+				}
+			$label = "($Room->id) $title in ".$Room->zone()->name;
+			// $label = '('.$Room->id.') '.$title.' ['.$Room->zone()->name.']';
+			$arr[] = [
+				'label' => $label,
+				'value' => $Room->id,
+				];
 			}
 
 		// Also search IDs:
@@ -158,7 +180,11 @@ class RoomController extends Controller
 				foreach ($Rooms as $Room)
 					{
 					$title = $Room->title ? $Room->title : '-- No Title --';
-					$label = "($Room->id) $title [".$Room->zone()->name."]";
+					if ($Room->uid)
+						{
+						$title = $title . ' ['. $Room->uid . '] ';
+						}
+					$label = "($Room->id) $title in ".$Room->zone()->name;
 					$arr[] = [
 						'label' => $label,
 						'value' => $Room->id,

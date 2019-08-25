@@ -116,6 +116,30 @@
 				}
 			});
 
+		$('body').on('focusin', '.room-property-lookup', function(e, i) {
+			// add autocomplete:
+			$(e.target).autocomplete({
+				source: function(request, response) {
+					console.log(request);
+					$.ajax({
+						url: '/room_property/lookup',
+						dataType: 'json',
+						data: {
+							term: request.term,
+							},
+						success: response,
+						timeout: 5000
+						});
+					},
+				delay: 200,
+				minLength: 1
+				});
+			if ($(e.target).val() != '')
+				{
+				$(e.target).autocomplete("search");
+				}
+			});
+
 
 		$('body').on('submit', 'form.ajax', function(e, i) {
 			e.preventDefault();

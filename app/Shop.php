@@ -10,7 +10,7 @@ class Shop extends Model
 
 	public function room()
 		{
-		return $this->belongsTo('App\Room')->first();
+		return $this->belongsTo('App\Room', 'rooms_id')->first();
 		}
 
 	public function shop_items()

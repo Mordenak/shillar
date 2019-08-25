@@ -16,11 +16,20 @@ class SetupTables extends Migration
 		Schema::create('zones', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			$table->string('description');
+			$table->string('description')->nullable();
 			$table->integer('intelligence_req')->default(0);
 			$table->integer('darkness_level')->default(0);
 			$table->string('img_src')->nullable();
 			$table->string('bg_color')->nullable();
+			$table->string('bg_img')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('room_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->string('custom_view')->nullable();
+			$table->string('description')->nullable();
 			$table->timestamps();
 		});
 
@@ -28,6 +37,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->string('uid')->nullable();
 			$table->string('title')->nullable();
 			$table->string('description')->nullable();
 			$table->integer('darkness_level')->default(0);
@@ -53,6 +63,8 @@ class SetupTables extends Migration
 			$table->foreign('southwest_rooms_id')->references('id')->on('rooms');
 			$table->integer('northwest_rooms_id')->nullable();
 			$table->foreign('northwest_rooms_id')->references('id')->on('rooms');
+			$table->integer('room_properties_id')->nullable();
+			$table->foreign('room_properties_id')->references('id')->on('room_properties');
 			$table->timestamps();
 		});
 
@@ -117,17 +129,27 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('weapon_types', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->timestamps();
+		});
+
 		Schema::create('item_weapons', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
+			$table->integer('weapon_types_id');
+			$table->foreign('weapon_types_id')->references('id')->on('weapon_types');
+			// TODO: Remove duplicate name for now?  Consider re-adding?
+			// $table->string('name');
 			$table->integer('equipment_slot');
 			$table->string('attack_text');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
-			$table->integer('strength_requirement')->nullable();
-			$table->integer('dexterity_requirement')->nullable();
+			$table->float('accuracy')->default(0.8);
+			$table->string('required_stat')->nullable();
+			$table->integer('required_amount')->nullable();
 			$table->timestamps();
 		});
 
@@ -135,7 +157,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
+			// TODO: Remove duplicate name for now?  Consider re-adding?
+			// $table->string('name');
 			$table->integer('equipment_slot');
 			$table->integer('armor');
 			$table->integer('strength_bonus')->nullable();
@@ -151,8 +174,10 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
+			// TODO: Remove duplicate name for now?  Consider re-adding?
+			// $table->string('name');
 			$table->integer('equipment_slot');
+			$table->integer('light_level')->nullable();
 			$table->integer('strength_bonus')->nullable();
 			$table->integer('dexterity_bonus')->nullable();
 			$table->integer('constitution_bonus')->nullable();
@@ -166,7 +191,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
+			// TODO: Remove duplicate name for now?  Consider re-adding?
+			// $table->string('name');
 			$table->integer('potency');
 			$table->timestamps();
 		});
@@ -175,7 +201,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
+			// TODO: Remove duplicate name for now?  Consider re-adding?
+			// $table->string('name');
 			$table->timestamps();
 		});
 
@@ -183,7 +210,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
+			// TODO: Remove duplicate name for now?  Consider re-adding?
+			// $table->string('name');
 			$table->timestamps();
 		});
 
@@ -191,7 +219,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			$table->string('name');
+			// TODO: Remove duplicate name for now?  Consider re-adding?
+			// $table->string('name');
 			$table->timestamps();
 		});
 
@@ -307,10 +336,10 @@ class SetupTables extends Migration
 
 		Schema::create('traders', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->string('name');
-			$table->string('description');
 			$table->integer('rooms_id');
 			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->string('name');
+			$table->string('description')->nullable();
 			$table->timestamps();
 		});
 
@@ -344,6 +373,14 @@ class SetupTables extends Migration
 			$table->float('xp_variation')->default(0.15);
 			$table->integer('award_gold');
 			$table->float('gold_variation')->default(0.15);
+			$table->timestamps();
+		});
+
+		Schema::create('npc_kills', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->bigInteger('count');
 			$table->timestamps();
 		});
 
@@ -384,7 +421,7 @@ class SetupTables extends Migration
 			$table->integer('rooms_id');
 			$table->foreign('rooms_id')->references('id')->on('rooms');
 			$table->string('name');
-			$table->string('description');
+			$table->string('description')->nullable();
 			$table->boolean('buys_weapons')->default(false);
 			$table->boolean('buys_armors')->default(false);
 			$table->boolean('buys_accessories')->default(false);
@@ -409,12 +446,16 @@ class SetupTables extends Migration
 		Schema::create('quests', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			$table->string('description');
+			$table->string('description')->nullable();
 			$table->integer('wisdom_req');
 			$table->integer('intelligence_req');
 			$table->integer('score_req');
 			$table->integer('quest_prereq');
 			$table->foreign('quest_prereq')->references('id')->on('quests');
+			$table->integer('start_rooms_id');
+			$table->foreign('start_rooms_id')->references('id')->on('rooms');
+			$table->integer('end_rooms_id');
+			$table->foreign('end_rooms_id')->references('id')->on('rooms');
 			$table->timestamps();
 		});
 		
@@ -441,7 +482,7 @@ class SetupTables extends Migration
 		Schema::create('spells', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			$table->string('description');
+			$table->string('description')->nullable();
 			$table->timestamps();
 		});
 
@@ -467,7 +508,7 @@ class SetupTables extends Migration
 		Schema::create('item_properties', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			$table->string('description');
+			$table->string('description')->nullable();
 			$table->timestamps();
 		});
 
@@ -483,7 +524,7 @@ class SetupTables extends Migration
 		Schema::create('racial_modifiers', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			$table->string('description');
+			$table->string('description')->nullable();
 			$table->timestamps();
 		});
 
@@ -527,21 +568,15 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('room_properties', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->string('name');
-			$table->string('description');
-			$table->timestamps();
-		});
-
-		Schema::create('room_property_rooms', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('rooms_id');
-			$table->foreign('rooms_id')->references('id')->on('rooms');
-			$table->integer('room_properties_id');
-			$table->foreign('room_properties_id')->references('id')->on('room_properties');
-			$table->timestamps();
-		});
+		// Deprecate 8/24: Rooms will only have 1 special property each:
+		// Schema::create('room_property_rooms', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('rooms_id');
+		// 	$table->foreign('rooms_id')->references('id')->on('rooms');
+		// 	$table->integer('room_properties_id');
+		// 	$table->foreign('room_properties_id')->references('id')->on('room_properties');
+		// 	$table->timestamps();
+		// });
 
 		// This is a cheat until I can do something better::
 		Schema::create('game_progression', function (Blueprint $table) {
@@ -579,6 +614,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('traders_items');
 		Schema::dropIfExists('traders');
 		Schema::dropIfExists('item_weapons');
+		Schema::dropIfExists('weapon_types');
 		// legacy:
 		Schema::dropIfExists('item_consumables');
 		Schema::dropIfExists('item_foods');
@@ -601,6 +637,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_spells');
 		Schema::dropIfExists('combat_logs');
 		Schema::dropIfExists('kill_counts');
+		Schema::dropIfExists('npc_kills');
 		Schema::dropIfExists('npcs');
 		Schema::dropIfExists('game_progression');
 		Schema::dropIfExists('characters');
@@ -611,8 +648,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_spells');
 		Schema::dropIfExists('spells');
 		Schema::dropIfExists('room_property_rooms');
-		Schema::dropIfExists('room_properties');
 		Schema::dropIfExists('rooms');
+		Schema::dropIfExists('room_properties');
 		Schema::dropIfExists('zones');
 		Schema::dropIfExists('player_races');
 	}

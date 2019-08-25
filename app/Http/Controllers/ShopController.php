@@ -74,7 +74,9 @@ class ShopController extends Controller
 			'buys_weapons' => $request->buys_weapons ? true : false,
 			'buys_armors' => $request->buys_armors ? true : false,
 			'buys_accessories' => $request->buys_accessories ? true : false,
-			'buys_consumables' => $request->buys_consumables ? true : false,
+			'buys_foods' => $request->buys_foods ? true : false,
+			'buys_jewels' => $request->buys_others ? true : false,
+			'buys_dusts' => $request->buys_others ? true : false,
 			'buys_others' => $request->buys_others ? true : false,
 			];
 

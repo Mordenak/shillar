@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
 {
-	protected $fillable = ['zones_id', 'title', 'description', 'img_src', 'spawns_enabled', 'north_rooms_id', 'east_rooms_id', 'south_rooms_id', 'west_rooms_id', 'up_rooms_id', 'down_rooms_id', 'northeast_rooms_id', 'southeast_rooms_id', 'southwest_rooms_id', 'northwest_rooms_id'];
+	protected $fillable = ['zones_id', 'title', 'description', 'img_src', 'spawns_enabled', 'north_rooms_id', 'east_rooms_id', 'south_rooms_id', 'west_rooms_id', 'up_rooms_id', 'down_rooms_id', 'northeast_rooms_id', 'southeast_rooms_id', 'southwest_rooms_id', 'northwest_rooms_id', 'room_properties_id'];
 
 	// doc?
 	public function zone()
@@ -14,9 +14,9 @@ class Room extends Model
 		return $this->belongsTo('App\Zone', 'zones_id')->first();
 		}
 
-	public function properties()
+	public function property()
 		{
-		return $this->hasMany('App\RoomPropertyRoom', 'rooms_id')->get();
+		return $this->belongsTo('App\RoomProperty', 'room_properties_id')->first();
 		}
 
 	public function shop()
@@ -26,33 +26,23 @@ class Room extends Model
 
 	public function can_train()
 		{
-		foreach ($this->properties() as $prop)
-			{
-			if ($prop->room_property()->name == 'CAN_TRAIN')
-				{
-				return true;
-				}
-			}
-		return false;
+		return $this->has_property('CAN_TRAIN');
 		}
 
 	public function has_shop()
 		{
-		if ($this->shop())
-			{
-			return true;
-			}
-		return false;
+		return $this->shop() ? true : false;
 		}
 
-	public function has_property(string $property_name)
+	public function has_property(string $property_name = null)
 		{
-		foreach ($this->properties() as $prop)
+		if ($this->room_properties_id)
 			{
-			if ($prop->room_property()->name == $property_name)
+			if (!$property_name)
 				{
 				return true;
 				}
+			return $this->property()->name == $property_name ? true : false;
 			}
 		return false;
 		}
@@ -101,6 +91,18 @@ class Room extends Model
 			return true;
 			}
 		return false;
+		}
+
+	public function current_characters()
+		{
+		$Characters = Character::where(['last_rooms_id' => $this->id])->get();
+
+		if ($Characters->count() == 0)
+			{
+			return false;
+			}
+
+		return $Characters;
 		}
 
 }

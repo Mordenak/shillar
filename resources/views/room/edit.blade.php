@@ -116,6 +116,13 @@ Creating a new room:<br>
 			</div>
 		</div>
 
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Special Property:</label>
+			<div class="col-md-3">
+				<input type="text" name="room_properties_id" value="{{isset($room) ? $room->room_properties_id : ''}}" class="form-control room-property-lookup">
+			</div>
+		</div>
+
 		@if (isset($room))
 		<input type="hidden" name="id" id="db-id" value="{{$room->id}}">
 		@endif
