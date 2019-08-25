@@ -8,6 +8,8 @@ use App\ItemType;
 use App\ItemFood;
 use App\ItemWeapon;
 use App\ItemArmor;
+use App\ItemJewel;
+use App\ItemDust;
 use App\ItemAccessories;
 use App\ItemOthers;
 use App\EquipmentSlot;
@@ -141,13 +143,13 @@ class ItemController extends Controller
 				$partial_name = 'foods';
 				break;
 			case 5:
-				$partial_name = 'jewels';
+				$partial_name = null;
 				break;
 			case 6:
-				$partial_name = 'dusts';
+				$partial_name = null;
 				break;
 			case 7:
-				$partial_name = 'others';
+				$partial_name = null;
 				break;
 			}
 		$item_values = null;
@@ -157,11 +159,21 @@ class ItemController extends Controller
 			$item_values = $Item->actual_item();
 			if ($Item->item_types_id == $type_id)
 				{
-				return view("partials/$partial_name", ['actual_item' => $item_values, 'equip_slots' => $equip_slots]);
+				if ($partial_name)
+					{
+					return view("partials/$partial_name", ['actual_item' => $item_values, 'equip_slots' => $equip_slots]);
+					}
 				}
 			}
 
-		return view("partials/$partial_name", ['equip_slots' => $equip_slots]);
+		if ($partial_name)
+			{
+			return view("partials/$partial_name", ['equip_slots' => $equip_slots]);
+			}
+		else
+			{
+			return '';
+			}
 		}
 
 	public function get_item_fields_ajax(Request $request)
@@ -181,7 +193,10 @@ class ItemController extends Controller
 			}
 		elseif (preg_match("/type:(.+)/", $request->term, $matches))
 			{
-			// if (is_numeric($matches[1]))
+			if (is_numeric($matches[1]))
+				{
+				$Items = Item::where('item_types_id', '=', $matches[1])->get();
+				}
 			// 	{
 			// 	$Zone = Zone::findOrFail($matches[1]);
 			// 	}

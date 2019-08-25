@@ -48,6 +48,12 @@ Route::post('/item_pickup', 'GameController@item_pickup');
 Route::get('/admin', 'AdminController@index');
 
 Route::post('/admin/process', 'AdminController@process');
+// Admin bit:
+Route::post('/admin/give_item', 'AdminController@give_item');
+
+Route::post('/game/deposit', 'GameController@deposit');
+Route::post('/game/withdraw', 'GameController@withdraw');
+Route::post('/game/consider', 'GameController@consider');
 
 // Do this stuff better or different?
 
@@ -59,7 +65,6 @@ Route::post('room/save', 'RoomController@save');
 Route::post('room/delete', 'RoomController@delete');
 // Autocomplete:
 
-
 Route::get('zone/all', 'ZoneController@all');
 Route::get('zone/create', 'ZoneController@create');
 Route::get('zone/edit/{id}', 'ZoneController@edit')->where('id', '[0-9]+');
@@ -70,8 +75,6 @@ Route::get('item/create', 'ItemController@create');
 Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');
 Route::post('item/save', 'ItemController@save');
 Route::get('item/get_item_type', 'ItemController@get_item_fields_ajax');
-// Auto complete:
-
 
 Route::get('npc/all', 'NpcController@all');
 Route::get('npc/create', 'NpcController@create');
@@ -94,6 +97,12 @@ Route::get('shop/create', 'ShopController@create');
 Route::get('shop/edit/{id}', 'ShopController@edit')->where('id', '[0-9]+');
 Route::post('shop/save', 'ShopController@save');
 Route::post('shop/delete', 'ShopController@delete');
+
+Route::get('forge/all', 'ForgeRecipeController@all');
+Route::get('forge/create', 'ForgeRecipeController@create');
+Route::get('forge/edit/{id}', 'ForgeRecipeController@edit')->where('id', '[0-9]+');
+Route::post('forge/save', 'ForgeRecipeController@save');
+Route::post('forge/delete', 'ForgeRecipeController@delete');
 
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');

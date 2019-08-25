@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Character;
+use App\Item;
 
 class AdminController extends Controller
 {
@@ -75,5 +77,27 @@ class AdminController extends Controller
 			return view($request->create.'/delete');
 			}
 		return true;
+		}
+
+	public function give_item(Request $request)
+		{
+		if ($request->characters_id)
+			{
+			if ($request->items_id)
+				{
+				$Character = Character::findOrFail($request->characters_id);
+				$Item = Item::findOrFail($request->items_id);
+				if ($Item->is_stackable && $request->quantity)
+					{
+					$Character->inventory()->addItem($Item->id, $request->quantity);
+					}
+				else
+					{
+					$Character->inventory()->addItem($Item->id);
+					}
+				}
+			}
+
+		return view('admin/give_item');
 		}
 }

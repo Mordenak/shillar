@@ -13,7 +13,7 @@ use App\StartingStat;
 use Session;
 
 class CharacterController extends Controller
-{
+	{
 	public function show($id)
 		{
 		return view('character.profile', ['character' => Character::findOrFail($id)]);
@@ -50,6 +50,7 @@ class CharacterController extends Controller
 			$values = [
 				'name' => $request->name,
 				'player_races_id' => $request->player_races_id,
+				'alignments_id' => $request->alignments_id,
 				'last_rooms_id' => $request->last_rooms_id,
 				'health' => $request->health,
 				'mana' => $request->mana,
@@ -149,4 +150,4 @@ class CharacterController extends Controller
 			return redirect()->action('HomeController@index');
 			}
 		}
-}
+	}

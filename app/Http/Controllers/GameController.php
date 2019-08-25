@@ -24,9 +24,10 @@ use App\KillCount;
 use App\InventoryItem;
 use App\Shop;
 use App\ShopItem;
+use App\ForgeRecipe;
 
 class GameController extends Controller
-{
+	{
 	//
 	public function index(Request $request)
 		{
@@ -57,16 +58,13 @@ class GameController extends Controller
 
 		$Npc = null;
 		// Block spawn in certain events:
-		// $request->session()->get('npc.'.$Room->id);
 		if ($request->session()->has('npc.'.$Room->id))
 			{
-			// die(print_r($request->session()->get('npc.'.$Room->id)));
 			$Npc = Npc::where(['id' => $request->session()->get('npc.'.$Room->id)])->first();
 			$request->session()->pull('npc.'.$Room->id);
-			// die(print_r($Npc->id));
 			}
 
-		if (isset($request->no_spawn))
+		if (isset($request->no_spawn) || $Npc)
 			{
 			// ignore
 			}
@@ -158,7 +156,7 @@ class GameController extends Controller
 				$request_params['costs'] = $this->calculate_training_cost($request);
 				}
 
-			if ($Room->has_property('WALL_SCORE'))
+			if ($Room->has_property('WALL_OF_FLAME'))
 				{
 				$Results = Character::select()->orderBy('score', 'desc')->get();
 				$request_params['score_list'] = $Results;
@@ -167,8 +165,11 @@ class GameController extends Controller
 			// Make the view:
 			// $view_to_render = $Room->property()->custom_view;
 			// die(print_r($view_to_render));
-			$view = \View::make($Room->property()->custom_view, $request_params);
-			$request_params['room_custom'] = $view->render();
+			if ($Room->property()->custom_view)
+				{
+				$view = \View::make($Room->property()->custom_view, $request_params);
+				$request_params['room_custom'] = $view->render();
+				}
 			}
 
 		// Shops are a special case:
@@ -224,6 +225,14 @@ class GameController extends Controller
 		$Character->last_rooms_id = $request->room_id;
 		$Character->save();
 
+		// Clear up any combat logs?  Remove last_room?
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $LastRoom->id])->first();
+		if ($CombatLog)
+			{
+			// check room?  $CombatLog->room_id == $request->room_id ??
+			$CombatLog->delete();
+			}
+
 		return $this->index($request);
 		}
 
@@ -273,11 +282,17 @@ class GameController extends Controller
 		// $crit_multipler_high = 4.0;
 		if ($Character->equipment()->weapon)
 			{
-			$low_damage = $low_damage + $Character->equipment()->weapon()->low_damage;
-			$high_damage = $high_damage + $Character->equipment()->weapon()->high_damage;
+			// die(print_r($Character->equipment()->weapon()->toArray()));
+			$low_damage = $low_damage + $Character->equipment()->weapon()->damage_low;
+			$high_damage = $high_damage + $Character->equipment()->weapon()->damage_high;
 			$attack_text = $Character->equipment()->weapon()->attack_text;
 			// check weapon requirements:
-			$fatigue_use = 2;
+			$fatigue_use = 1.5;
+			$stat_check = $Character->equipment()->weapon()->required_stat;
+			if ($Character->$stat_check < $Character->equipment()->weapon()->required_amount)
+				{
+				$fatigue_use = 3;
+				}
 			}
 
 		// $combat_notes['attack_text'] = $attack_text;
@@ -382,7 +397,7 @@ class GameController extends Controller
 			error_log("This round took $finish seconds.");
 
 			// We ran out of fatigue:
-			if ($flat_character['fatigue'] < $fatigue_use)
+			if ((int)$flat_character['fatigue'] < $fatigue_use)
 				{
 				break;
 				}
@@ -399,6 +414,8 @@ class GameController extends Controller
 				}
 			}
 
+		// Int fatigue first:
+		$flat_character['fatigue'] = round($flat_character['fatigue'], 0);
 		// Save the character record based on the $flat_character:
 		$Character->fill($flat_character);
 		$Character->save();
@@ -1280,4 +1297,101 @@ class GameController extends Controller
 
 		return $this->index($request);
 		}
-}
+
+	public function forge(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		// Find a forge recipe based on submitted items:
+		$query = [
+			'item_weapons_id' => $request->forge_weapon,
+			'item_armors_id' => $request->forge_armor,
+			'item_foods_id' => $request->forge_food,
+			'item_jewels_id' => $request->forge_jewel,
+			'item_dusts_id' => $request->forge_dust,
+			];
+
+		$ForgeRecipe = ForgeRecipe::where($query)->first();
+
+		if (!$ForgeRecipe)
+			{
+			Session::flash('forged', 'The combination did not produce any results.');
+			return $this->index($request);
+			}
+		$Character->inventory()->removeItem($request->forge_weapon);
+		$Character->inventory()->removeItem($request->forge_armor);
+		$Character->inventory()->removeItem($request->forge_food);
+		$Character->inventory()->removeItem($request->forge_jewel);
+		$Character->inventory()->removeItem($request->forge_dust);
+		$Character->inventory()->addItem($ForgeRecipe->result_items_id);
+		Session::flash('forged', 'You have successfully forged a '.$ForgeRecipe->result_item()->name);
+
+		return $this->index($request);
+		}
+
+	public function deposit(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		if ($request->deposit > $Character->gold)
+			{
+			Session::flash('bank', 'You do not have that much gold!');
+			return $this->index($request);
+			}
+		$Character->gold = $Character->gold - $request->deposit;
+		$Character->bank = $Character->bank + $request->deposit;
+		$Character->save();
+		Session::flash('bank', 'You deposited '.$request->deposit.' gold into the bank.');
+		return $this->index($request);
+		}
+
+	public function withdraw(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		if ($request->withdraw > $Character->bank)
+			{
+			Session::flash('bank', 'You do not have that much gold in the bank!');
+			return $this->index($request);
+			}
+		$Character->bank = $Character->bank - $request->withdraw;
+		$Character->gold = $Character->gold + $request->withdraw;
+		$Character->save();
+		Session::flash('bank', 'You withdraw '.$request->withdraw.' gold from the bank.');
+		return $this->index($request);
+		}
+
+	public function consider(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		$Npc = Npc::findOrFail($request->npc_id);
+
+		$request->session()->put('npc.'.$request->room_id, $Npc->id);
+
+		if ($Npc->attacks_per_round > 1)
+			{
+			if ($Character->health >= $Npc->damage_high * $Npc->attacks_per_round)
+				{
+				Session::flash('consider', 'You can survive all attacks');
+				}
+			elseif ($Character->health >= $Npc->damage_high)
+				{
+				Session::flash('consider', 'You can survive a few hits...');
+				}
+			else
+				{
+				Session::flash('consider', 'Run away!');
+				}
+			}
+		else
+			{
+			if ($Character->health >= $Npc->damage_high)
+				{
+				Session::flash('consider', 'You can survive the first hit');
+				}
+			else
+				{
+				Session::flash('consider', 'This is certainly death!');
+				}
+			}
+
+		return $this->index($request);
+		}
+	}

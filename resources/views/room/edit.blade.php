@@ -29,6 +29,13 @@ Creating a new room:<br>
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">UID:</label>
+			<div class="col-md-3">
+				<input type="text" name="uid" value="{{isset($room) ? $room->uid : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Title:</label>
 			<div class="col-md-3">
 				<input type="text" name="title" value="{{isset($room) ? $room->title : ''}}" class="form-control">
@@ -46,6 +53,13 @@ Creating a new room:<br>
 			<label class="col-md-2 col-form-label text-md-right">Img Src:</label>
 			<div class="col-md-3">
 				<input type="text" name="img_src" value="{{isset($room) ? $room->img_src : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Special Property:</label>
+			<div class="col-md-3">
+				<input type="text" name="room_properties_id" value="{{isset($room) ? $room->room_properties_id : ''}}" class="form-control room-property-lookup">
 			</div>
 		</div>
 
@@ -117,12 +131,46 @@ Creating a new room:<br>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Special Property:</label>
+			<label class="col-md-2 col-form-label text-md-right">Northeast Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="room_properties_id" value="{{isset($room) ? $room->room_properties_id : ''}}" class="form-control room-property-lookup">
+				<input type="text" name="northeast_rooms_id" value="{{isset($room) ? $room->northeast_rooms_id : ''}}" class="form-control room-lookup">
+			</div>
+			<div class="offset-md">
+				<input type="checkbox" name="northeast_room_link"> Link?
 			</div>
 		</div>
 
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Southeast Room:</label>
+			<div class="col-md-3">
+				<input type="text" name="southeast_rooms_id" value="{{isset($room) ? $room->southeast_rooms_id : ''}}" class="form-control room-lookup">
+			</div>
+			<div class="offset-md">
+				<input type="checkbox" name="southeast_room_link"> Link?
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Southwest Room:</label>
+			<div class="col-md-3">
+				<input type="text" name="southwest_rooms_id" value="{{isset($room) ? $room->southwest_rooms_id : ''}}" class="form-control room-lookup">
+			</div>
+			<div class="offset-md">
+				<input type="checkbox" name="southwest_room_link"> Link?
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Northwest Room:</label>
+			<div class="col-md-3">
+				<input type="text" name="northwest_rooms_id" value="{{isset($room) ? $room->northwest_rooms_id : ''}}" class="form-control room-lookup">
+			</div>
+			<div class="offset-md">
+				<input type="checkbox" name="northwest_room_link"> Link?
+			</div>
+		</div>
+
+		
 		@if (isset($room))
 		<input type="hidden" name="id" id="db-id" value="{{$room->id}}">
 		@endif

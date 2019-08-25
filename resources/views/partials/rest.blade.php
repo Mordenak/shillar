@@ -1,8 +1,3 @@
-
-@if ($healing)
-	healin
-@endif
-
 @if ($character)
 
 	<div style="float:left;">

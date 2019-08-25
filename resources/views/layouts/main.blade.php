@@ -124,7 +124,7 @@
 			background: gray;
 			}
 
-		.all-out
+		.all_out
 			{
 			color: yellow;
 			}
@@ -139,6 +139,70 @@
 		</style>
 	</head>
 	<body>
+		<script>
+			function randomize(hash)
+				{
+				var ret_hash = {};
+
+				var arr = Object.keys(hash);
+				var new_arr = shuffle(arr);
+				
+				for (i=0;i<new_arr.length;i++)
+					{
+					ret_hash[new_arr[i]] = hash[new_arr[i]];
+					}
+
+				return ret_hash;
+				}
+
+			function shuffle(array) 
+				{
+				var currentIndex = array.length, temporaryValue, randomIndex;
+
+				// While there remain elements to shuffle...
+				while (0 !== currentIndex) 
+					{
+					// Pick a remaining element...
+					randomIndex = Math.floor(Math.random() * currentIndex);
+					currentIndex -= 1;
+					// And swap it with the current element.
+					temporaryValue = array[currentIndex];
+					array[currentIndex] = array[randomIndex];
+					array[randomIndex] = temporaryValue;
+					}
+
+				return array;
+				}
+
+			function combat_shuffle(npc)
+				{
+				var $options = {
+					all_out: 'All Out Attack',
+					single: 'Single Attack',
+					flee: 'Run Away'
+					};
+
+				var $new_options = randomize($options);
+
+				for (var key in $new_options)
+					{
+					if (Math.random() > 0.5)
+						{
+						var $cell = $('<td/>', {"class": key});
+						$cell.append($new_options[key]+'<br>');
+						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
+						$('#combat-table tr').append($cell);
+						}
+					else
+						{
+						var $cell = $('<td/>', {"class": key});
+						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
+						$cell.append('<br>'+$new_options[key]);
+						$('#combat-table tr').append($cell);
+						}
+					}
+				}
+		</script>
 
 		<div class="game-container">
 			<div class="menu">
@@ -194,17 +258,23 @@
 				processData: false,
 				data: formData,
 				success: function(resp) {
-					var main_inserts = [
-						'/train',
-						'/train_stat',
-						'/rest',
-						'/move',
-						'/combat',
-						'/item_pickup',
-						'/game',
-						'/shop/purchase',
-						'/shop/sell'
+					var main_exceptions = [
+						'nothing',
 						];
+					// var main_inserts = [
+					// 	'/train',
+					// 	'/train_stat',
+					// 	'/rest',
+					// 	'/move',
+					// 	'/combat',
+					// 	'/item_pickup',
+					// 	'/game',
+					// 	'/shop/purchase',
+					// 	'/shop/sell',
+					// 	'/game/forge',
+					// 	'/game/deposit',
+					// 	'/game/withdraw',
+					// 	];
 					var menu_inserts = [
 						'/equipment',
 						'/items',
@@ -213,7 +283,8 @@
 						];
 					// var replace = '.game-container';
 					// console.log(this['url']);
-					if (main_inserts.includes(this['url']))
+					// if (main_inserts.includes(this['url']))
+					if (!main_exceptions.includes(this['url']) && !menu_inserts.includes(this['url']))
 						{
 						// replace = '.main';
 						console.log('replace main');
@@ -233,39 +304,9 @@
 						$('.menu').html(resp);
 						}
 
-					// if (this['url'] == '/game' || this['url'] == '/move' || this['url'] == '/combat' || this['url'] == '/item_pickup')
-					// 	{
-					// 	// $('.menu').html(resp.menu);
-					// 	$('.main').html(resp.main);
-					// 	// $('.footer').html(resp.footer);
-					// 	}
-					// else
-					// 	{
-					// 	$(replace).html(resp);
-					// 	}
 					}
 				});
 			});
-
-			function shuffle(array) 
-				{
-				var currentIndex = array.length, temporaryValue, randomIndex;
-
-				// While there remain elements to shuffle...
-				while (0 !== currentIndex) 
-					{
-					// Pick a remaining element...
-					randomIndex = Math.floor(Math.random() * currentIndex);
-					currentIndex -= 1;
-
-					// And swap it with the current element.
-					temporaryValue = array[currentIndex];
-					array[currentIndex] = array[randomIndex];
-					array[randomIndex] = temporaryValue;
-					}
-
-				return array;
-				}
 		</script>
 	</body>
 </html>

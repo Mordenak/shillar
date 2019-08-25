@@ -67,7 +67,7 @@ class Inventory extends Model
 		return $total_weight;
 		}
 
-	public function addItem($item_id)
+	public function addItem($item_id, $quantity = 1)
 		{
 		// Add an items_to_inventories record:;
 		$Item = Item::findOrFail($item_id);
@@ -81,13 +81,12 @@ class Inventory extends Model
 
 		if ($has_item && $Item->is_stackable)
 			{
-			$has_item->quantity = $has_item->quantity + 1;
+			$has_item->quantity = $has_item->quantity + $quantity;
 			$has_item->save();
 			}
 		else
 			{
 			$InventoryItems = new InventoryItems;
-			// die('..:'.$this->id);
 			$InventoryItems->fill(['inventory_id' => $this->id, 'items_id' => $item_id]);
 			$InventoryItems->save();
 			}

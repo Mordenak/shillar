@@ -55,7 +55,7 @@ class BasicEntries extends Seeder
 		*/
 
 		DB::table('room_properties')->insert([
-			['name' => 'CAN_SLEEP', 'custom_view' => 'partials/rest', 'description' => 'Characters can sleep in this room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'CAN_SLEEP', 'custom_view' => null, 'description' => 'Characters can sleep in this room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'CAN_TRAIN', 'custom_view' => 'partials/train', 'description' => 'This room will show the training form.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'WALL_OF_FLAME', 'custom_view' => 'partials/wall-flame', 'description' => 'This room will show the Wall of Flame.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_BANK', 'custom_view' => 'partials/bank', 'description' => 'This room has a bank.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],

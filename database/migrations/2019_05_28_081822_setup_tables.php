@@ -319,15 +319,15 @@ class SetupTables extends Migration
 		Schema::create('forge_recipes', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('item_weapons_id');
-			$table->foreign('item_weapons_id')->references('id')->on('item_weapons');
+			$table->foreign('item_weapons_id')->references('id')->on('items');
 			$table->integer('item_armors_id');
-			$table->foreign('item_armors_id')->references('id')->on('item_armors');
-			$table->integer('items_foods_id');
-			$table->foreign('items_foods_id')->references('id')->on('item_foods');
+			$table->foreign('item_armors_id')->references('id')->on('items');
+			$table->integer('item_foods_id');
+			$table->foreign('item_foods_id')->references('id')->on('items');
 			$table->integer('item_jewels_id');
-			$table->foreign('item_jewels_id')->references('id')->on('item_jewels');
+			$table->foreign('item_jewels_id')->references('id')->on('items');
 			$table->integer('item_dusts_id');
-			$table->foreign('item_dusts_id')->references('id')->on('item_dusts');
+			$table->foreign('item_dusts_id')->references('id')->on('items');
 			$table->string('name');
 			$table->integer('result_items_id');
 			$table->foreign('result_items_id')->references('id')->on('items');

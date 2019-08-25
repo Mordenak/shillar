@@ -43,6 +43,7 @@ class RoomController extends Controller
 
 		$values = [
 			'zones_id' => $request->selected_zone,
+			'uid' => $request->uid,
 			'title' => $request->title,
 			'description' => $request->description,
 			'img_src' => $request->img_src,
@@ -53,6 +54,10 @@ class RoomController extends Controller
 			'west_rooms_id' => $request->west_room_id,
 			'up_rooms_id' => $request->up_room_id,
 			'down_rooms_id' => $request->down_room_id,
+			'northeast_rooms_id' => $request->northeast_rooms_id,
+			'southeast_rooms_id' => $request->southeast_rooms_id,
+			'southwest_rooms_id' => $request->southwest_rooms_id,
+			'northwest_rooms_id' => $request->northwest_rooms_id,
 			];
 
 		$Room->fill($values);
@@ -99,6 +104,35 @@ class RoomController extends Controller
 			$LinkRoom->up_rooms_id = $Room->id;
 			$LinkRoom->save();
 			}
+
+		if ($request->northeast_room_link)
+			{
+			$LinkRoom = Room::findOrFail($Room->northeast_rooms_id);
+			$LinkRoom->southwest_rooms_id = $Room->id;
+			$LinkRoom->save();
+			}
+
+		if ($request->southeast_room_link)
+			{
+			$LinkRoom = Room::findOrFail($Room->southeast_rooms_id);
+			$LinkRoom->northwest_rooms_id = $Room->id;
+			$LinkRoom->save();
+			}
+
+		if ($request->southwest_room_link)
+			{
+			$LinkRoom = Room::findOrFail($Room->southwest_rooms_id);
+			$LinkRoom->northeast_rooms_id = $Room->id;
+			$LinkRoom->save();
+			}
+
+		if ($request->northwest_room_link)
+			{
+			$LinkRoom = Room::findOrFail($Room->northwest_room_id);
+			$LinkRoom->southeast_rooms_id = $Room->id;
+			$LinkRoom->save();
+			}
+
 
 		// return view('admin/main');
 		return redirect()->action('RoomController@all');

@@ -109,59 +109,39 @@
 				@if (!$no_attack)
 				<table id="combat-table">
 					<tr>
-<!-- 						<td style="color:yellow;">
-							<div>All Out Attack</div>
-							<div><input type="submit" id="all_out" value="{{$npc->name}}" class="submit-id"></div>
-						</td>
-						<td style="color:#55ff8b;">
-							<div>Single Attack</div>
-							<div><input type="submit" id="single" value="{{$npc->name}}" class="submit-id"></div>
-						</td>
-						<td style="color:red;">
-							<div>Run Away</div>
-							<div><input type="submit" id="flee" value="{{$npc->name}}" class="submit-id"></div>
-						</td> -->
 					</tr>
 				</table>
 				<script>
-					// TODO: OPTIMIZE!!!
-					var $options = {
-						all_out: 'All Out Attack',
-						single: 'Single Attack',
-						flee: 'Run Away'
-					}
-
-					var npc = '{{$npc->name}}';
-
-					var $new_options = shuffle($options);
-
-					for (var key in $new_options)
-						{
-						if (Math.random() > 0.5)
-							{
-							$('#combat-table tr').append($new_options[key]+'<br>');
-							$('#combat-table tr').append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
-							}
-						else
-							{
-							$('#combat-table tr').append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
-							$('#combat-table tr').append($new_options[key]+'<br>');
-							}
-						}
-
+					combat_shuffle('{{$npc->name}}');
 				</script>
 				@else
 				<span style="color:red;">You are too tired to attack</span>
 				@endif
 			</form>
 		</div>
-		<div style="display: inline-block;position:absolute;top:50%;transform: translateY(-50%);margin-left: .5rem;">
-			Health: {{$character->health}} / {{$character->max_health}}<br>
-			<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
-			Mana: {{$character->mana}} / {{$character->max_mana}}<br>
-			<progress value="{{$character->mana}}" max="{{$character->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
-			Fatigue: {{$character->fatigue}} / {{$character->max_fatigue}}<br>
-			<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
+		<div style="display: inline-grid;position:absolute;top:50%;transform: translateY(-50%);margin-left: .5rem;grid-template-columns: 1fr 1fr;">
+			<div>
+				Health: {{$character->health}} / {{$character->max_health}}<br>
+				<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
+				Mana: {{$character->mana}} / {{$character->max_mana}}<br>
+				<progress value="{{$character->mana}}" max="{{$character->max_mana}}" class="stat-bar stat-bar-mana"></progress><br>
+				Fatigue: {{$character->fatigue}} / {{$character->max_fatigue}}<br>
+				<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
+			</div>
+			<div style="margin-left: 1rem;margin-top: 2rem;">
+				<form method="get" action="/game/consider" class="ajax">
+					{{csrf_field()}}
+					<input type="hidden" name="room_id" value="{{$room->id}}">
+					<input type="hidden" name="npc_id" value="{{$npc->id}}">
+					<input type="hidden" name="character_id" value="{{$character->id}}">
+					<label for="consider">Consider</label>
+					<input type="submit" id="consider" style="display:none;">
+				</form>
+				@if( Session::has("consider") )
+				<br>
+				{{ Session::get("consider") }}
+				@endif
+			</div>
 		</div>
 	@else
 		@if ($room->img_src)

@@ -94,7 +94,7 @@ Refresh Rate:
 </form>
 
 <style>
-table tr td:first-child
+.menu table tr td:first-child
 	{
 	color: #0099FF;
 	}

@@ -3,21 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-// use App\WallScoreRank;
 
 class Character extends Model
 {
-    protected $fillable = ['users_id', 'name', 'player_races_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
+    protected $fillable = ['users_id', 'name', 'player_races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
 
 	public function playerrace()
 		{
 		return $this->belongsTo('App\PlayerRace', 'player_races_id')->first();
 		}
-
-	// public function stats()
-	// 	{
-	// 	return $this->hasOne('App\CharacterStat', 'characters_id')->first();
-	// 	}
 
 	public function inventory()
 		{
@@ -27,6 +21,11 @@ class Character extends Model
 	public function equipment()
 		{
 		return $this->hasOne('App\Equipment', 'characters_id')->first();
+		}
+
+	public function alignment()
+		{
+		return $this->belongsTo('App\Alignment', 'alignments_id')->first();
 		}
 
 	public function rank()

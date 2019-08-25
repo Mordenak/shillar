@@ -19,3 +19,17 @@
 		<input type="text" name="damage_high" value="{{isset($actual_item) ? $actual_item->damage_high : ''}}" class="form-control">
 	</div>
 </div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Required Stat:</label>
+	<div class="col-md-3">
+		<input type="text" name="required_stat" value="{{isset($actual_item) ? $actual_item->required_stat : ''}}" class="form-control">
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Required Amount:</label>
+	<div class="col-md-3">
+		<input type="text" name="required_amount" value="{{isset($actual_item) ? $actual_item->required_amount : ''}}" class="form-control">
+	</div>
+</div>
