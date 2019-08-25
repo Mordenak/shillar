@@ -41,6 +41,7 @@ Route::post('/game/forge', 'GameController@forge');
 Route::post('/rest', 'GameController@rest');
 
 Route::post('/equipment', 'GameController@equipment');
+Route::post('/settings', 'GameController@settings');
 
 Route::post('/items', 'GameController@items');
 Route::post('/item_pickup', 'GameController@item_pickup');

@@ -1394,4 +1394,12 @@ class GameController extends Controller
 
 		return $this->index($request);
 		}
+
+	public function settings(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		// stuff
+		return view('character/settings', ['character' => $Character]);
+		// return view('character/settings');
+		}
 	}

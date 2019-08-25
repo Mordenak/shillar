@@ -279,7 +279,8 @@
 						'/equipment',
 						'/items',
 						'/show_stats',
-						'/menu'
+						'/menu',
+						'/settings'
 						];
 					// var replace = '.game-container';
 					// console.log(this['url']);

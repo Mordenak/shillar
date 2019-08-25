@@ -32,11 +32,11 @@
 		<label for="items">Items</label>
 		<input type="submit" id="items" style="display: none;">
 	</form>	
-	<form method="post" action="/game" class="ajax">
+	<form method="post" action="/settings" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="back_home">Settings</label>
-		<input type="submit" id="back_home" style="display: none;">
+		<label for="settings">Settings</label>
+		<input type="submit" id="settings" style="display: none;">
 	</form>
 	<br><br>
 	<form method="get" action="/home">
