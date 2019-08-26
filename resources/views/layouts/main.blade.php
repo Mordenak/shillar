@@ -303,8 +303,8 @@
 						$('.menu').html(resp);
 						}
 					// some type of full page reload:
-					// Probably a shit idea...
-					$('body').html(resp);
+					// Probably a shit idea... REAL shit, whoops!
+					// $('body').html(resp);
 					}
 				});
 			});
