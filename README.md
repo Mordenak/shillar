@@ -7,13 +7,13 @@ Second Phase: Branch off own project with custom changes based on Shilla.
 Game Todo:
 
 * ~~Proper combat attack differences~~
-* ~~Death function~~
+* ~~Death functions~~
 * ~~Shops~~
 * Quests
 * ~~Bank~~
 * ~~Forge~~
-* Traders
-* Directional blocks, NPCs/locks
+* ~~Traders~~
+* Directional blocks, NPCs/locks -- Working?
 * ~~Kill tracking~~
 * Spells
 * ~~Wall score ranks~~
@@ -22,7 +22,10 @@ Game Todo:
 * Items on ground stack
 * ~~Add Consider feature~~
 * ~~Scramble Combat buttons~~
+* Light levels
+* Environmental Heat/Cold
 * Add Tutorial back in?
+* Encumbrance?  Probably not.
 
 
 Test bed: http://laravel-adventure.herokuapp.com/
@@ -41,3 +44,6 @@ Code Todo:
 * Button up security on preventing macros.  
 * Drop equipment on death
 * Make stats on equipment apply
+* Fix inline JS/CSS
+* Fix Menu view usage, currently in main & partials.
+* Fix Character listings within rooms to be only online characters (currently is all characters)

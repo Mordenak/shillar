@@ -89,11 +89,11 @@ class AdminController extends Controller
 				$Item = Item::findOrFail($request->items_id);
 				if ($Item->is_stackable && $request->quantity)
 					{
-					$Character->inventory()->addItem($Item->id, $request->quantity);
+					$Character->inventory()->add_item($Item->id, $request->quantity);
 					}
 				else
 					{
-					$Character->inventory()->addItem($Item->id);
+					$Character->inventory()->add_item($Item->id);
 					}
 				}
 			}

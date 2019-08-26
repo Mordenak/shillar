@@ -1,10 +1,3 @@
-Refresh Rate:  
-<select id="refresh-rate" name="refresh-rate">
-	<option value="10000" {{isset($refresh_rate) && $refresh_rate == 10000 ? 'selected' : ''}}>10</option>
-	<option value="30000" {{isset($refresh_rate) && $refresh_rate == 30000 ? 'selected' : ''}}>30</option>
-	<option value="60000" {{isset($refresh_rate) && $refresh_rate == 60000 ? 'selected' : ''}}>60</option>
-</select>
-<br><br>
 <span style="color: #00FFFF">
 	<strong>Player Score</strong>
 </span>
@@ -22,6 +15,12 @@ Refresh Rate:
 		<td>Sex</td>
 		<td>{{$character->playerrace()->gender}}</td>
 	</tr>
+	@if ($character->alignment())
+	<tr>
+		<td>Alignment</td>
+		<td><span style="color: #{{$character->alignment()->color}}">{{$character->alignment()->name}}</span></td>
+	</tr>
+	@endif
 	<tr>
 		<td>Strength</td>
 		<td>{{$character->strength}}</td>
@@ -89,8 +88,47 @@ Refresh Rate:
 <form method="post" id="menu-form" action="/menu" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">
-	<label for="back_home">Main</label>
+	<input type="submit" style="display: none;">
+</form>
+
+<span style="color: #00FFFF">
+	<strong>Menu:</strong>
+</span>
+<form method="post" action="/menu" class="ajax">
+	{{csrf_field()}}
+	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<label for="back_home">Menu</label>
 	<input type="submit" id="back_home" style="display: none;">
+</form>
+<form method="post" action="/show_stats" class="ajax">
+	{{csrf_field()}}
+	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<label for="stats" class="disabled" disabled>Stats</label>
+	<input type="submit" id="stats" style="display: none;">
+</form>
+<form method="post" action="/equipment" class="ajax">
+	{{csrf_field()}}
+	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<label for="equipment">Equipment</label>
+	<input type="submit" id="equipment" style="display: none;">
+</form>
+<form method="post" action="/food" class="ajax">
+	{{csrf_field()}}
+	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<label for="food">Food</label>
+	<input type="submit" id="food" style="display: none;">
+</form>	
+<form method="post" action="/settings" class="ajax">
+	{{csrf_field()}}
+	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<label for="settings">Options</label>
+	<input type="submit" id="settings" style="display: none;">
+</form>
+<br><br>
+<form method="get" action="/home">
+	{{csrf_field()}}
+	<label for="char_select">Logout</label>
+	<input type="submit" id="char_select" style="display: none;">
 </form>
 
 <style>
@@ -101,9 +139,10 @@ Refresh Rate:
 </style>
 
 <script>
-setTimeout(function(e) {	
+var refresh_rate = parseInt('{{$character->settings()->refresh_rate * 1000}}');
+setTimeout(function(e) {
+	console.log('Refreshing stats every '+refresh_rate);
 	var formData = new FormData(document.getElementById('menu-form'));
-	formData.append('refresh-rate', $('refresh-rate').val());
 	$.ajax({
 		type: 'POST',
 		url: '/show_stats',
@@ -114,5 +153,5 @@ setTimeout(function(e) {
 			$('.menu').html(resp);
 			}
 		});
-	}, $('#refresh-rate').val());
+	}, refresh_rate);
 </script>

@@ -64,7 +64,50 @@ class BasicEntries extends Seeder
 			['name' => 'HAS_EARTH_TEMPLE', 'custom_view' => 'partials/temple-earth', 'description' => 'This room has the Earth Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_FIRE_TEMPLE', 'custom_view' => 'partials/temple-fire', 'description' => 'This room has the Fire Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_WATER_TEMPLE', 'custom_view' => 'partials/temple-water', 'description' => 'This room has the Water Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'CAN_TRAIN_SPELLS', 'custom_view' => 'partials/train-spell', 'description' => 'This room will show the Spell training.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
+
+		DB::table('spell_properties')->insert([
+			['uid' => 'TELEPORT_ROOM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['uid' => 'MAGIC_DAMAGE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['uid' => 'DAMAGE_ABSORB', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['uid' => 'AVOIDANCE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['uid' => 'RESTORE_HEALTH', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['uid' => 'RESTORE_FATIGUE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['uid' => 'EXTRA_ARMOR', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('spells')->insert([
+			['name' => 'Teleport', 'description' => 'Teleport spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Town Portal', 'description' => 'Town Portal spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Bind Wounds', 'description' => 'Bind Wounds spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Rejuvinate', 'description' => 'Rejuvinate spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Bedazzle', 'description' => 'Bedazzle spell.', 'formula' => 'level', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Magic Shield', 'description' => 'Magic Shield spell.', 'formula' => 'level * 0.5', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('spell_levels')->insert([
+			['spells_id' => 1, 'name' => 'Beach Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 10, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Middle of Beach', 'level' => 5, 'value' => null, 'wisdom_req' => 20, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Far End of Beach', 'level' => 10, 'value' => null, 'wisdom_req' => 30, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Outskirts Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 40, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		DB::table('spell_property_spells')->insert([
+			['spells_id' => 1, 'spell_property_id' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
+		// Deprecate for now:
+		// DB::table('quest_criteria')->insert([
+		// 	['name' => 'KILL_NPC', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'ENTER_ZONE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'ENTER_ROOM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'SUPPLY_ITEM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'KILL_AT_ROOM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'KILL_AT_ROOM_COUNT', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'KILL_NPCS_ALIGN', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'KILL_NPCS_ALIGN_COUNT', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// ]);
 
 		DB::table('item_types')->insert([
 			['name' => 'Weapon', 'table_name' => 'item_weapons', 'model_name' => 'App\ItemWeapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],

@@ -23,9 +23,24 @@ class Character extends Model
 		return $this->hasOne('App\Equipment', 'characters_id')->first();
 		}
 
+	public function trader_items()
+		{
+		return $this->hasMany('App\TraderItem', 'characters_id')->get();
+		}
+
 	public function alignment()
 		{
 		return $this->belongsTo('App\Alignment', 'alignments_id')->first();
+		}
+
+	public function settings()
+		{
+		return $this->hasOne('App\CharacterSetting', 'characters_id')->first();
+		}
+
+	public function stats()
+		{
+		return true;
 		}
 
 	public function rank()
@@ -64,7 +79,7 @@ class Character extends Model
 		return true;
 		}
 
-	public function refreshScore()
+	public function refresh_score()
 		{
 		$this->score = $this->strength + $this->dexterity + $this->constitution + $this->wisdom + $this->intelligence + $this->charisma + $this->quest_points;
 		$this->save();
@@ -72,7 +87,7 @@ class Character extends Model
 		return true;
 		}
 
-	public function calcQuickStats()
+	public function calc_quick_stats()
 		{
 		$this->max_health = $this->strength + $this->constitution + $this->dexterity;
 		$this->max_mana = $this->wisdom + $this->intelligence + $this->charisma;
@@ -142,12 +157,28 @@ class Character extends Model
 
 
 		$this->save();
-		$this->calcQuickStats();
+		$this->calc_quick_stats();
 		$this->health = $this->max_health;
 		$this->mana = $this->max_mana;
 		$this->fatigue = $this->max_fatigue;
 		$this->save();
-		$this->refreshScore();
+		$this->refresh_score();
 		return true;
+		}
+
+	public function get_trader_items()
+		{
+		// TODO: Refactor this to account for which trader is at:
+		$arr = [];
+		if ($this->trader_items()->count() > 0)
+			{
+			foreach ($this->trader_items() as $trader_item)
+				{
+				// TODO: Refactor the price calculation
+				$price = round(($trader_item->item()->value * 0.66) / $this->charisma, 0);
+				$arr[] = ['id' => $trader_item->id, 'label' => $trader_item->item()->name." ($price) from ".$trader_item->from_character()->name];
+				}
+			}
+		return $arr;
 		}
 }

@@ -24,6 +24,16 @@ class Room extends Model
 		return $this->hasOne('App\Shop', 'rooms_id')->first();
 		}
 
+	public function trader()
+		{
+		return $this->hasOne('App\Trader', 'rooms_id')->first();
+		}
+
+	public function room_actions()
+		{
+		return $this->hasOne('App\RoomAction', 'rooms_id')->first();
+		}
+
 	public function can_train()
 		{
 		return $this->has_property('CAN_TRAIN');
@@ -32,6 +42,11 @@ class Room extends Model
 	public function has_shop()
 		{
 		return $this->shop() ? true : false;
+		}
+
+	public function has_trader()
+		{
+		return $this->trader() ? true : false;
 		}
 
 	public function has_property(string $property_name = null)
@@ -45,6 +60,24 @@ class Room extends Model
 			return $this->property()->name == $property_name ? true : false;
 			}
 		return false;
+		}
+
+	public function directions()
+		{
+		$arr = [
+			'north_rooms_id' => $this->north_rooms_id,
+			'east_rooms_id' => $this->east_rooms_id,
+			'south_rooms_id' => $this->south_rooms_id,
+			'west_rooms_id' => $this->west_rooms_id,
+			'up_rooms_id' => $this->up_rooms_id,
+			'down_rooms_id' => $this->down_rooms_id,
+			'northeast_rooms_id' => $this->northeast_rooms_id,
+			'southeast_rooms_id' => $this->southeast_rooms_id,
+			'southwest_rooms_id' => $this->southwest_rooms_id,
+			'northwest_rooms_id' => $this->northwest_rooms_id,
+			];
+
+		return $arr;
 		}
 
 	public function is_reachable($room_id)

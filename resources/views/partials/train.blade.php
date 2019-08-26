@@ -12,14 +12,25 @@
 
 @if ($character)
 
-	XP: {{ $character->xp }}
+	Current Exp: {{ $character->xp }}
 
+	@if( Session::has("training") )
+	<p>
+	{{ Session::get("training") }}
+	</p>
+	@endif
+
+	<br><br>
 	<form method="post" id="training-form" action="/train" class="ajax">
-		<br>
-		<input type="radio" name="train_multi" value="1" {{ $multi == 1 ? 'checked' : '' }}>1
-		<input type="radio" name="train_multi" value="10" {{ $multi == 10 ? 'checked' : '' }}>10
-		<input type="radio" name="train_multi" value="100" {{ $multi == 100 ? 'checked' : '' }}>100
-		<input type="radio" name="train_multi" value="all" {{ $multi == "all" ? 'checked' : '' }}>All
+		Training Amount:
+		<input type="radio" id="train1" name="train_multi" value="1" {{ $multi == 1 ? 'checked' : '' }}>
+		<label for="train1">1</label>
+		<input type="radio" id="train10" name="train_multi" value="10" {{ $multi == 10 ? 'checked' : '' }}>
+		<label for="train10">10</label>
+		<input type="radio" id="train100" name="train_multi" value="100" {{ $multi == 100 ? 'checked' : '' }}>
+		<label for="train100">100</label>
+		<input type="radio" id="trainAll" name="train_multi" value="all" {{ $multi == "all" ? 'checked' : '' }}>
+		<label for="trainAll">All</label>
 		<br><br>
 		
 		Str: {{$character->strength}} - <span class="{{$costs['strength'] > $character->xp ? 'non-train' : ''}}">{{$costs['strength']}}</span>

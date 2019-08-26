@@ -340,10 +340,17 @@ class SetupTables extends Migration
 			$table->foreign('rooms_id')->references('id')->on('rooms');
 			$table->string('name');
 			$table->string('description')->nullable();
+			$table->boolean('trades_weapons')->default(false);
+			$table->boolean('trades_armors')->default(false);
+			$table->boolean('trades_accessories')->default(false);
+			$table->boolean('trades_foods')->default(false);
+			$table->boolean('trades_jewels')->default(false);
+			$table->boolean('trades_dusts')->default(false);
+			$table->boolean('trades_others')->default(false);
 			$table->timestamps();
 		});
 
-		Schema::create('traders_items', function (Blueprint $table) {
+		Schema::create('trader_items', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('traders_id');
 			$table->foreign('traders_id')->references('id')->on('traders');
@@ -408,11 +415,18 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('user_settings',function (Blueprint $table) {
+		Schema::create('character_settings',function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('users_id');
-			$table->foreign('users_id')->references('id')->on('users');
-			$table->boolean('short_mode')->default(false);
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('refresh_rate')->default(60);
+			$table->boolean('brief_mode')->default(false);
+			$table->boolean('life_gauge')->default(true);
+			$table->boolean('mana_gauge')->default(true);
+			$table->boolean('fatigue_gauge')->default(true);
+			$table->integer('food_sort')->default(0);
+			$table->boolean('number_commas')->default(false);
+			$table->boolean('creature_images')->default(true);
 			$table->timestamps();
 		});
 
@@ -447,15 +461,27 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('description')->nullable();
-			$table->integer('wisdom_req');
-			$table->integer('intelligence_req');
-			$table->integer('score_req');
-			$table->integer('quest_prereq');
+			$table->boolean('optional')->default(false);
+			$table->integer('wisdom_req')->default(0);
+			$table->integer('intelligence_req')->default(0);
+			$table->integer('score_req')->default(0);
+			$table->string('progression_req')->nullable();
+			$table->integer('quest_prereq')->nullable();
 			$table->foreign('quest_prereq')->references('id')->on('quests');
-			$table->integer('start_rooms_id');
-			$table->foreign('start_rooms_id')->references('id')->on('rooms');
-			$table->integer('end_rooms_id');
-			$table->foreign('end_rooms_id')->references('id')->on('rooms');
+			$table->integer('pickup_rooms_id')->nullable();
+			$table->foreign('pickup_rooms_id')->references('id')->on('rooms');
+			$table->integer('turnin_rooms_id')->nullable();
+			$table->foreign('turnin_rooms_id')->references('id')->on('rooms');
+			$table->timestamps();
+		});
+
+		Schema::create('quest_tasks', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('quests_id');
+			$table->foreign('quests_id')->references('id')->on('quests');
+			$table->string('name');
+			$table->string('description')->nullable();
+			$table->integer('seq')->nullable();
 			$table->timestamps();
 		});
 		
@@ -463,11 +489,52 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('quests_id');
 			$table->foreign('quests_id')->references('id')->on('quests');
-			$table->bigInteger('xp_reward');
-			$table->bigInteger('gold_reward');
-			$table->bigInteger('quest_point_reward');
+			$table->integer('item_reward')->nullable();
+			$table->foreign('item_reward')->references('id')->on('items');
+			$table->bigInteger('xp_reward')->nullable();
+			$table->bigInteger('gold_reward')->nullable();
+			$table->bigInteger('quest_point_reward')->nullable();
+			// comma separate string list of item rewards, pick 1
+			$table->string('item_choices')->nullable();
 			$table->timestamps();
 		});
+
+		Schema::create('quest_criteria', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('quest_tasks_id');
+			$table->foreign('quest_tasks_id')->references('id')->on('quests');
+			$table->string('name')->nullable();
+			$table->string('description')->nullable();
+			$table->integer('npc_target')->nullable();
+			$table->foreign('npc_target')->references('id')->on('npcs');
+			$table->integer('zones_target')->nullable();
+			$table->foreign('zones_target')->references('id')->on('zones');
+			$table->integer('room_target')->nullable();
+			$table->foreign('room_target')->references('id')->on('rooms');
+			$table->integer('item_target')->nullable();
+			$table->foreign('item_target')->references('id')->on('items');
+			$table->integer('npc_target_alignment')->nullable();
+			$table->foreign('npc_target_alignment')->references('id')->on('alignments');
+			$table->integer('npc_target_amount')->nullable();
+			$table->timestamps();
+		});
+
+		// Schema::create('quest_criteria', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->string('name')->nullable();
+		// 	$table->string('description')->nullable();
+		// 	$table->timestamps();
+		// });
+
+		// Schema::create('quest_criteria_quests', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('quest_criteria_id');
+		// 	$table->foreign('quest_criteria_id')->references('id')->on('quest_criteria');
+		// 	$table->integer('quests_id');
+		// 	$table->foreign('quests_id')->references('id')->on('quests');
+		// 	$table->string('value');
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('character_quests', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -475,14 +542,59 @@ class SetupTables extends Migration
 			$table->foreign('quests_id')->references('id')->on('quests');
 			$table->integer('character_id');
 			$table->foreign('character_id')->references('id')->on('characters');
-			$table->integer('progress');
+			$table->boolean('complete')->default(false);
 			$table->timestamps();
 		});
+
+		// One size fits all spatula
+		Schema::create('room_actions', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('rooms_id');
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->integer('redirect_room')->nullable();
+			$table->foreign('redirect_room')->references('id')->on('rooms');
+			$table->string('uid')->nullable();
+			$table->string('description')->nullable();
+			$table->string('action')->nullable();
+			$table->string('failed_action')->nullable();
+			$table->string('success_action')->nullable();
+			$table->string('display')->nullable();
+			// comma seperated list of blocked directions until the action is performed?
+			$table->string('directions_blocked')->nullable();
+			$table->boolean('remember')->default(false);
+			$table->integer('has_item')->nullable();
+			$table->foreign('has_item')->references('id')->on('items');
+			$table->integer('completed_quest')->nullable();
+			$table->foreign('completed_quest')->references('id')->on('quests');
+			$table->integer('completed_quest_task')->nullable();
+			$table->foreign('completed_quest_task')->references('id')->on('quest_tasks');
+			$table->integer('strength_req')->default(0)->nullable();
+			$table->integer('dexterity_req')->default(0)->nullable();
+			$table->integer('constitution_req')->default(0)->nullable();
+			$table->integer('wisdom_req')->default(0)->nullable();
+			$table->integer('intelligence_req')->default(0)->nullable();
+			$table->integer('charisma_req')->default(0)->nullable();
+			$table->integer('score_req')->default(0)->nullable();
+			$table->timestamps();
+		});
+
+		// A record here means a character performed a room action that is set to remember
+		Schema::create('character_room_actions', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('room_actions_id');
+			$table->foreign('room_actions_id')->references('id')->on('room_actions');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->timestamps();
+		});
+
 
 		Schema::create('spells', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('description')->nullable();
+			$table->string('formula')->nullable();
+			$table->integer('duration')->nullable();
 			$table->timestamps();
 		});
 
@@ -490,8 +602,26 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('spells_id');
 			$table->foreign('spells_id')->references('id')->on('spells');
+			$table->string('name')->nullable();
 			$table->integer('level');
-			$table->string('value');
+			$table->string('value')->nullable();
+			$table->integer('wisdom_req');
+			$table->timestamps();
+		});
+
+		Schema::create('spell_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('uid');
+			$table->string('description')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('spell_property_spells', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('spells_id');
+			$table->foreign('spells_id')->references('id')->on('spells');
+			$table->integer('spell_property_id');
+			$table->foreign('spell_property_id')->references('id')->on('spell_properties');
 			$table->timestamps();
 		});
 
@@ -611,12 +741,10 @@ class SetupTables extends Migration
 		Schema::dropIfExists('shops');
 		Schema::dropIfExists('players');
 		Schema::dropIfExists('forge_recipes');
-		Schema::dropIfExists('traders_items');
+		Schema::dropIfExists('trader_items');
 		Schema::dropIfExists('traders');
 		Schema::dropIfExists('item_weapons');
 		Schema::dropIfExists('weapon_types');
-		// legacy:
-		Schema::dropIfExists('item_consumables');
 		Schema::dropIfExists('item_foods');
 		Schema::dropIfExists('item_armors');
 		Schema::dropIfExists('item_accessories');
@@ -625,6 +753,10 @@ class SetupTables extends Migration
 		Schema::dropIfExists('item_others');
 		Schema::dropIfExists('item_property_items');
 		Schema::dropIfExists('item_properties');
+		Schema::dropIfExists('quest_rewards');
+		Schema::dropIfExists('quest_criteria');
+		Schema::dropIfExists('character_room_actions');
+		Schema::dropIfExists('room_actions');
 		Schema::dropIfExists('items');
 		Schema::dropIfExists('item_types');
 		Schema::dropIfExists('equipment_slots');
@@ -633,6 +765,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('damage_types');
 		Schema::dropIfExists('reward_tables');
 		Schema::dropIfExists('user_settings');
+		Schema::dropIfExists('character_settings');
 		Schema::dropIfExists('character_quests');
 		Schema::dropIfExists('character_spells');
 		Schema::dropIfExists('combat_logs');
@@ -642,8 +775,11 @@ class SetupTables extends Migration
 		Schema::dropIfExists('game_progression');
 		Schema::dropIfExists('characters');
 		Schema::dropIfExists('alignments');
-		Schema::dropIfExists('quest_rewards');
+		Schema::dropIfExists('quest_tasks');
 		Schema::dropIfExists('quests');
+		// Schema::dropIfExists('quest_criteria_quests');
+		Schema::dropIfExists('spell_property_spells');
+		Schema::dropIfExists('spell_properties');
 		Schema::dropIfExists('spell_levels');
 		Schema::dropIfExists('character_spells');
 		Schema::dropIfExists('spells');

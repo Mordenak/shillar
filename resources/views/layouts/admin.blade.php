@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Admin Panel - @yield('title')</title>
+		<title>Shillar Admin Panel - @yield('title')</title>
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 

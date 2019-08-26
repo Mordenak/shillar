@@ -43,7 +43,7 @@ Route::post('/rest', 'GameController@rest');
 Route::post('/equipment', 'GameController@equipment');
 Route::post('/settings', 'GameController@settings');
 
-Route::post('/items', 'GameController@items');
+Route::post('/food', 'GameController@food');
 Route::post('/item_pickup', 'GameController@item_pickup');
 
 Route::get('/admin', 'AdminController@index');
@@ -55,7 +55,14 @@ Route::post('/admin/give_item', 'AdminController@give_item');
 Route::post('/game/deposit', 'GameController@deposit');
 Route::post('/game/withdraw', 'GameController@withdraw');
 Route::post('/game/consider', 'GameController@consider');
+Route::post('/game/choose_alignment', 'GameController@choose_alignment');
 
+Route::post('/character/update_settings', 'CharacterController@update_settings');
+Route::post('/room_action/attempt', 'GameController@process_action');
+
+Route::post('/trade', 'GameController@trade');
+Route::post('/trade/receive', 'GameController@receive');
+Route::post('/trade/send', 'GameController@send');
 // Do this stuff better or different?
 
 // TODO: Route these all through /admin and include an Auth Middleware
@@ -104,6 +111,24 @@ Route::get('forge/create', 'ForgeRecipeController@create');
 Route::get('forge/edit/{id}', 'ForgeRecipeController@edit')->where('id', '[0-9]+');
 Route::post('forge/save', 'ForgeRecipeController@save');
 Route::post('forge/delete', 'ForgeRecipeController@delete');
+
+Route::get('room_action/all', 'RoomActionController@all');
+Route::get('room_action/create', 'RoomActionController@create');
+Route::get('room_action/edit/{id}', 'RoomActionController@edit')->where('id', '[0-9]+');
+Route::post('room_action/save', 'RoomActionController@save');
+Route::post('room_action/delete', 'RoomActionController@delete');
+
+Route::get('quest/all', 'QuestController@all');
+Route::get('quest/create', 'QuestController@create');
+Route::get('quest/edit/{id}', 'QuestController@edit')->where('id', '[0-9]+');
+Route::post('quest/save', 'QuestController@save');
+Route::post('quest/delete', 'QuestController@delete');
+
+Route::get('spell/all', 'SpellController@all');
+Route::get('spell/create', 'SpellController@create');
+Route::get('spell/edit/{id}', 'SpellController@edit')->where('id', '[0-9]+');
+Route::post('spell/save', 'SpellController@save');
+Route::post('spell/delete', 'SpellController@delete');
 
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');

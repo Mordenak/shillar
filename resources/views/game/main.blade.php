@@ -7,7 +7,9 @@
 	<br>
 	There is 1 active players online.
 	<br><br>
-	Menu:
+	<span style="color: #00FFFF">
+		<strong>Menu:</strong>
+	</span>
 	<form method="post" action="/game" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
@@ -26,16 +28,16 @@
 		<label for="equipment">Equipment</label>
 		<input type="submit" id="equipment" style="display: none;">
 	</form>
-	<form method="post" action="/items" class="ajax">
+	<form method="post" action="/food" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="items">Items</label>
-		<input type="submit" id="items" style="display: none;">
+		<label for="food">Food</label>
+		<input type="submit" id="food" style="display: none;">
 	</form>	
 	<form method="post" action="/settings" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="settings">Settings</label>
+		<label for="settings">Options</label>
 		<input type="submit" id="settings" style="display: none;">
 	</form>
 	<br><br>
@@ -51,29 +53,7 @@
 	@if (isset($combat_log))
 	<p style="color: red;display: inline;">
 	@foreach ($combat_log as $log_entry)
-		@if (!auth()->user()->short_mode)
-		{{$log_entry['attack_text']}}<br>
-		@if ($log_entry['no_fatigue'])
-		You are too tired to attack.<br>
-		@else
-		You made attacks {{$log_entry['attack_count']}} and missed {{$log_entry['miss_count']}} times.<br>
-		You did {{$log_entry['round_damage']}} damage.<br>
-		@endif
-		@if ($log_entry['npc_round'] > 0)
-		{{$log_entry['npc_text']}}, doing {{$log_entry['npc_round']}} damage.<br>
-		@endif
-
-		@if (isset($log_entry['pc_died']))
-		You have died!</br>
-		<form method="post" action="/game">
-			{{csrf_field()}}
-			<input type="hidden" name="character_id" value="{{$character->id}}">
-			<input type="submit" value="Continue">
-		</form>
-		@endif
-		@else
-
-		@endif
+		{!! $log_entry !!}
 	@endforeach
 	</p>
 	@endif
@@ -210,68 +190,35 @@
 	</form>
 	@endforeach
 	@endif
+
+	<!-- Special actions? -->
+	@if( Session::has("action_failed") )
+	<p style="color:red;">{{ Session::get("action_failed") }}</p>
+	@endif
+	@if( Session::has("action_success") )
+	<p style="color:#55ff8b;">{{ Session::get("action_success") }}</p>
+	@endif
+	@if (isset($special_actions))
+	<form method="post" action="/room_action/attempt" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="room_id" value="{{$room->id}}">
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<input type="hidden" name="room_action_id" value="{{$special_actions->id}}">
+		{!! $special_actions->show_action() !!}
+		<input type="submit" id="room-action" style="display: none;">
+	</form>
+	@endif
 	
 	<p>
-		@if ($room->up_rooms_id)
-			<form method="post" action="/move" class="ajax">
-				{{csrf_field()}}
-				<input type="hidden" name="room_id" value="{{$room->up_rooms_id}}">
-				<input type="hidden" name="character_id" value="{{$character->id}}">
-				You can travel <label for="move_up">up</label>
-				<input type="submit" id="move_up" style="display: none;">
-			</form>
-		@endif
-
-		@if ($room->down_rooms_id)
-			<form method="post" action="/move" class="ajax">
-				{{csrf_field()}}
-				<input type="hidden" name="room_id" value="{{$room->down_rooms_id}}">
-				<input type="hidden" name="character_id" value="{{$character->id}}">
-				You can travel <label for="move_down">down</label>
-				<input type="submit" id="move_down" style="display: none;">
-			</form>
-		@endif
-
-		@if ($room->north_rooms_id)
-			<form method="post" action="/move" class="ajax">
-				{{csrf_field()}}
-				<input type="hidden" name="room_id" value="{{$room->north_rooms_id}}">
-				<input type="hidden" name="character_id" value="{{$character->id}}">
-				You can travel <label for="move_north">north</label>
-				<input type="submit" id="move_north" style="display: none;">
-			</form>
-		@endif
-
-		@if ($room->east_rooms_id)
-			<form method="post" action="/move" class="ajax">
-				{{csrf_field()}}
-				<input type="hidden" name="room_id" value="{{$room->east_rooms_id}}">
-				<input type="hidden" name="character_id" value="{{$character->id}}">
-				You can travel <label for="move_east">east</label>
-				<input type="submit" id="move_east" style="display: none;">
-			</form>
-		@endif
-
-		@if ($room->south_rooms_id)
-			<form method="post" action="/move" class="ajax">
-				{{csrf_field()}}
-				<input type="hidden" name="room_id" value="{{$room->south_rooms_id}}">
-				<input type="hidden" name="character_id" value="{{$character->id}}">
-				You can travel <label for="move_south">south</label>
-				<input type="submit" id="move_south" style="display: none;">
-			</form>
-		@endif
-
-		@if ($room->west_rooms_id)
-			<form method="post" action="/move" class="ajax">
-				{{csrf_field()}}
-				<input type="hidden" name="room_id" value="{{$room->west_rooms_id}}">
-				<input type="hidden" name="character_id" value="{{$character->id}}">
-				You can travel <label for="move_west">west</label>
-				<input type="submit" id="move_west" style="display: none;">
-			</form>
-		@endif
-
+		@foreach ($directions as $col => $room_id)
+		<form method="post" action="/move" class="ajax">
+			{{csrf_field()}}
+			<input type="hidden" name="room_id" value="{{$room_id}}">
+			<input type="hidden" name="character_id" value="{{$character->id}}">
+			You can travel <label for="move_{{$col}}">{{ substr($col, 0, strpos($col, '_')) }}</label>
+			<input type="submit" id="move_{{$col}}" style="display: none;">
+		</form>
+		@endforeach
 	</p>
 
 	@if ($room->has_property('WALL_SCORE'))
@@ -318,7 +265,7 @@
 		{{$combat->id}} {{$combat->remaining_health}}
 		@endif
 
-		Current weight: {{$character->inventory()->currentWeight()}} / {{$character->inventory()->max_weight}}<br>
+		Current weight: {{$character->inventory()->current_weight()}} / {{$character->inventory()->max_weight}}<br>
 
 		@foreach ($character->inventory()->character_items() as $item)
 			{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>

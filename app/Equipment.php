@@ -74,4 +74,70 @@ class Equipment extends Model
 
 		return $total_armor;
 		}
+
+	public function calculate_stats()
+		{
+		$bonus_stats = [];
+
+		if ($this->shield)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->shield);
+			}
+
+		if ($this->head)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->head);
+			}
+
+		if ($this->neck)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->neck);
+			}
+
+		if ($this->chest)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->chest);
+			}
+
+		if ($this->hands)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->hands);
+			}
+
+		if ($this->legs)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->legs);
+			}
+
+		if ($this->feet)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->feet);
+			}
+
+		if ($this->amulet)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->feet);
+			$InventoryItem->get_bonus_stats();
+			}
+
+		if ($this->left_ring)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->feet);
+			$InventoryItem->get_bonus_stats();
+			}
+
+		if ($this->right_ring)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->feet);
+			$InventoryItem->get_bonus_stats();
+			}
+
+		if ($this->bracelet)
+			{
+			$InventoryItem = InventoryItem::findOrFail($this->feet);
+			$InventoryItem->get_bonus_stats();
+			}
+
+		return $bonus_stats;
+		}
 }

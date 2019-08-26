@@ -50,4 +50,24 @@ class Item extends Model
 			return ItemOthers::where(['items_id' => $this->id])->first();
 			}
 		}
+
+	public function get_bonus_stats()
+		{
+		$arr = [];
+
+		// Must be 2 (armor) or 3 (accessory)
+		if ($this->item_types_id == 2 || $this->items_types_id == 3)
+			{
+			$arr = [
+				'strength' => $this->actual_item()->strength_bonus,
+				'dexterity' => $this->actual_item()->dexterity_bonus,
+				'constitution' => $this->actual_item()->constitution_bonus,
+				'wisdom' => $this->actual_item()->wisdom_bonus,
+				'intelligence' => $this->actual_item()->intelligence_bonus,
+				'charisma' => $this->actual_item()->charisma_bonus,
+				];
+			}
+
+		return $arr;
+		}
 }

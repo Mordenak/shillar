@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Character;
+use App\CharacterSetting;
 use App\PlayerClass;
 use App\PlayerRace;
 use App\Wallet;
@@ -69,8 +70,8 @@ class CharacterController extends Controller
 			$Character->fill($values);
 			$Character->save();
 
-			$Character->calcQuickStats();
-			$Character->refreshScore();
+			$Character->calc_quick_stats();
+			$Character->refresh_score();
 
 			Session::flash('success', 'Character Updated!');
 			return $this->edit($Character->id);
@@ -144,10 +145,41 @@ class CharacterController extends Controller
 			$Inventory->fill(['characters_id' => $Character->id, 'max_size' => 100, 'max_weight' => $values['strength']]);
 			$Inventory->save();
 
+			// Creating a settings entry:
+			$CharacterSetting = new CharacterSetting;
+			$CharacterSetting->characters_id = $Character->id;
+			$CharacterSetting->save();
+
 			$Characters = Character::where('users_id', auth()->user()->id);
 			// die(print_r($Characters->get()));
 			// return view('home', ['characters' => $Characters->get()]);
 			return redirect()->action('HomeController@index');
 			}
+		}
+
+	public function update_settings(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+
+		$new_values = [
+			'refresh_rate' => $request->refresh_rate,
+			'brief_mode' => $request->brief_mode == '1' ? true : false,
+			'life_gauge' => $request->life_gauge == '1' ? true : false,
+			'mana_gauge' => $request->mana_gauge == '1' ? true : false,
+			'fatigue_gauge' => $request->fatigue_gauge == '1' ? true : false,
+			'food_sort' => $request->food_sort,
+			'number_commas' => $request->number_commas == '1' ? true : false,
+			'creature_images' => $request->creature_images == '1' ? true : false
+			];
+
+		// $Character->settings()->fill($new_values);
+		// $Character->settings()->save();
+		$CharacterSetting = CharacterSetting::where(['characters_id' => $Character->id])->first();
+		$CharacterSetting->fill($new_values);
+		$CharacterSetting->save();
+
+		Session::flash('settings', 'Settings updated!');
+
+		return view('character.settings', ['character' => $Character, 'settings' => $CharacterSetting->fresh()]);
 		}
 	}

@@ -1,7 +1,6 @@
 @if ($character)
 
-	<div style="float:left;">
-		Quick Stats here:<br>
+	<div style="">
 		Health: {{$character->health}} / {{$character->max_health}}<br>
 		<progress value="{{$character->health}}" max="{{$character->max_health}}" class="stat-bar stat-bar-health {{ ($character->health <= ($character->max_health * .4)) ? '__low' : ''}}"></progress><br>
 		Mana: {{$character->mana}} / {{$character->max_mana}}<br>
@@ -10,14 +9,18 @@
 		<progress value="{{$character->fatigue}}" max="{{$character->max_fatigue}}" class="stat-bar stat-bar-fatigue"></progress><br>
 	</div>
 
-	resting
+	<br><br>
+	<div style="margin-left: .5rem;">
+		You drift off to sleep...
 
-	<form method="post" action="/game" class="ajax">
-		{{csrf_field()}}
-		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="wake_up">Wake Up</label>
-		<input type="submit" id="wake_up" style="display: none;">
-	</form>
+		<br><br>
+		<form method="post" action="/game" class="ajax">
+			{{csrf_field()}}
+			<input type="hidden" name="character_id" value="{{$character->id}}">
+			<label for="wake_up">Wake Up</label>
+			<input type="submit" id="wake_up" style="display: none;">
+		</form>
+	</div>
 
 	<br><br>
 

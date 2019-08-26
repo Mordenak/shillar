@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Sheller - @yield('title')</title>
+		<title>Shillar - @yield('title')</title>
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -24,10 +24,27 @@
 			color: white;
 			}
 
+		form
+			{
+			margin-block-end: 0px;
+			}
+
+		label
+			{
+			text-decoration: underline;
+			color: blue;
+			}
+
 		form label
 			{
 			color: #55ff8b;
 			cursor: pointer;
+			}
+
+		form label.disabled
+			{
+			color: #CCC;
+			text-decoration: none;
 			}
 
 		.game-container
@@ -79,17 +96,6 @@
 			grid-area: footer;
 			}
 
-		form
-			{
-			margin-block-end: 0px;
-			}
-
-		label
-			{
-			text-decoration: underline;
-			color: blue;
-			}
-
 		.stat-bar
 			{
 			-webkit-appearance: none;
@@ -135,6 +141,11 @@
 		.flee
 			{
 			color: red;
+			}
+
+		#combat-table td
+			{
+			padding: .5rem;
 			}
 		</style>
 	</head>
@@ -220,10 +231,9 @@
 
 		<script>
 		$('body').on('submit', 'form.ajax', function(e, i) {
-			// console.log('main ajax submit fire');
 			e.preventDefault();
 			var formData = new FormData(e.target);
-			// console.log($(document.activeElement));
+
 			if ($(document.activeElement).hasClass('submit-val'))
 				{
 				console.log('Submitting val ' + $(document.activeElement).val());
@@ -259,28 +269,16 @@
 				data: formData,
 				success: function(resp) {
 					var main_exceptions = [
-						'nothing',
+						'/teleport',
 						];
-					// var main_inserts = [
-					// 	'/train',
-					// 	'/train_stat',
-					// 	'/rest',
-					// 	'/move',
-					// 	'/combat',
-					// 	'/item_pickup',
-					// 	'/game',
-					// 	'/shop/purchase',
-					// 	'/shop/sell',
-					// 	'/game/forge',
-					// 	'/game/deposit',
-					// 	'/game/withdraw',
-					// 	];
+
 					var menu_inserts = [
 						'/equipment',
-						'/items',
+						'/food',
 						'/show_stats',
 						'/menu',
-						'/settings'
+						'/settings',
+						'/character/update_settings'
 						];
 					// var replace = '.game-container';
 					// console.log(this['url']);
@@ -304,7 +302,9 @@
 						console.log('replace menu');
 						$('.menu').html(resp);
 						}
-
+					// some type of full page reload:
+					// Probably a shit idea...
+					$('body').html(resp);
 					}
 				});
 			});

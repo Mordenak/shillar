@@ -26,7 +26,7 @@ class Inventory extends Model
 		return $this->hasMany('App\InventoryItems')->get();
 		}
 
-	public function removeItem($item_id)
+	public function remove_item($item_id)
 		{
 		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
 
@@ -50,7 +50,7 @@ class Inventory extends Model
 		return true;
 		}
 
-	public function currentWeight()
+	public function current_weight()
 		{
 		$total_weight = 0.0;
 		foreach ($this->character_items() as $inv_item)
@@ -67,12 +67,12 @@ class Inventory extends Model
 		return $total_weight;
 		}
 
-	public function addItem($item_id, $quantity = 1)
+	public function add_item($item_id, $quantity = 1)
 		{
 		// Add an items_to_inventories record:;
 		$Item = Item::findOrFail($item_id);
 
-		if (($this->currentWeight() + $Item->weight) > $this->max_weight)
+		if (($this->current_weight() + $Item->weight) > $this->max_weight)
 			{
 			return false;
 			}
@@ -87,7 +87,15 @@ class Inventory extends Model
 		else
 			{
 			$InventoryItems = new InventoryItems;
-			$InventoryItems->fill(['inventory_id' => $this->id, 'items_id' => $item_id]);
+			$values = [
+				'inventory_id' => $this->id,
+				'items_id' => $item_id
+				];
+			if ($Item->is_stackable)
+				{
+				$values['quantity'] = $quantity;
+				}
+			$InventoryItems->fill($values);
 			$InventoryItems->save();
 			}
 

@@ -5,7 +5,9 @@
 	<br>
 	There is 1 active players online.
 	<br><br>
-	Menu:
+	<span style="color: #00FFFF">
+		<strong>Menu:</strong>
+	</span>
 	<form method="post" action="/game" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
@@ -24,17 +26,17 @@
 		<label for="equipment">Equipment</label>
 		<input type="submit" id="equipment" style="display: none;">
 	</form>
-	<form method="post" action="/items" class="ajax">
+	<form method="post" action="/food" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="items">Items</label>
-		<input type="submit" id="items" style="display: none;">
+		<label for="food">Food</label>
+		<input type="submit" id="food" style="display: none;">
 	</form>	
-	<form method="post" action="/game" class="ajax">
+	<form method="post" action="/settings" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<label for="back_home">Settings</label>
-		<input type="submit" id="back_home" style="display: none;">
+		<label for="settings">Options</label>
+		<input type="submit" id="settings" style="display: none;">
 	</form>
 	<br><br>
 	<form method="get" action="/home">

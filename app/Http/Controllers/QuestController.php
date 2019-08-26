@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Session;
 use Illuminate\Http\Request;
-use App\ForgeRecipe;
 
-class ForgeRecipeController extends Controller
+class QuestController extends Controller
 {
 	public function create()
 		{

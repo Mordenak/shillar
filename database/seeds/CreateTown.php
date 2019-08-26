@@ -4,14 +4,14 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class CreateTown extends Seeder
-{
+	{
 	/**
 	 * Run the database seeds.
 	 *
 	 * @return void
 	 */
 	public function run()
-	{
+		{
 		DB::table('zones')->insert([
 			['name' => 'Town', 'description' => 'You are standing on a street in Town.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Beach', 'description' => 'You are standing on the Beach.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => 'beach.gif', 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -97,7 +97,7 @@ class CreateTown extends Seeder
 			['zones_id' => 1, 'title' => 'Trader Bob', 'description' => null, 'img_src' => null, 'spawns_enabled' => false, 'north_rooms_id' => 60, 'east_rooms_id' => null, 'south_rooms_id' => null, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at	' => date("Y-m-d H:i:s")],
 			['zones_id' => 1, 'title' => 'Air Temple', 'description' => null, 'img_src' => null, 'spawns_enabled' => false, 'north_rooms_id' => null, 'east_rooms_id' => null, 'south_rooms_id' => 59, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at	' => date("Y-m-d H:i:s")],
 			['zones_id' => 1, 'title' => null, 'description' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => 58, 'east_rooms_id' => null, 'south_rooms_id' => 65, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at	' => date("Y-m-d H:i:s")],
-			['zones_id' => 1, 'title' => 'The Trinket Exchange', 'description' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => 64, 'east_rooms_id' => null, 'south_rooms_id' => null, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at	' => date("Y-m-d H:i:s")],
+			['zones_id' => 1, 'title' => 'Amulet Shop?', 'description' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => 64, 'east_rooms_id' => null, 'south_rooms_id' => null, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at	' => date("Y-m-d H:i:s")],
 			// End 65
 			['zones_id' => 1, 'title' => null, 'description' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => 32, 'east_rooms_id' => null, 'south_rooms_id' => 56, 'west_rooms_id' => 67, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at	' => date("Y-m-d H:i:s")],
 			['zones_id' => 1, 'title' => 'Graveyard?', 'description' => null, 'img_src' => null, 'spawns_enabled' => false, 'north_rooms_id' => null, 'east_rooms_id' => 66, 'south_rooms_id' => null, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at	' => date("Y-m-d H:i:s")],
@@ -143,6 +143,7 @@ class CreateTown extends Seeder
 		DB::table('rooms')->updateOrInsert(['id' => 88], ['room_properties_id' => 7]);
 		DB::table('rooms')->updateOrInsert(['id' => 53], ['room_properties_id' => 8]);
 		DB::table('rooms')->updateOrInsert(['id' => 78], ['room_properties_id' => 9]);
+		DB::table('rooms')->updateOrInsert(['id' => 77], ['room_properties_id' => 10]);
 
 		DB::table('shops')->insert([
 			['rooms_id' => 91, 'name' => 'Weapon Shop', 'description' => 'The weapon shop', 'buys_weapons' => true, 'buys_armors' => false, 'buys_accessories' => false, 'buys_foods' => false, 'buys_jewels' => false, 'buys_dusts' => false, 'buys_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -152,70 +153,9 @@ class CreateTown extends Seeder
 		]);
 
 		DB::table('traders')->insert([
-			['rooms_id' => 86, 'name' => 'Trader Jack', 'description' => 'Trader Jack', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['rooms_id' => 62, 'name' => 'Trader Bob', 'description' => 'Trader Bob', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['rooms_id' => 86, 'name' => 'Trader Jack', 'description' => 'Trader Jack', 'trades_weapons' => true, 'trades_armors' => true, 'trades_accessories' => false, 'trades_foods' => false, 'trades_jewels' => false, 'trades_dusts' => false, 'trades_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['rooms_id' => 62, 'name' => 'Trader Bob', 'description' => 'Trader Bob', 'trades_weapons' => false, 'trades_armors' => false, 'trades_accessories' => true, 'trades_foods' => true, 'trades_jewels' => false, 'trades_dusts' => false, 'trades_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
-
-		DB::table('npcs')->insert([
-			['name' => 'Town Guard', 'attack_text' => 'Town Guard attacks you with his shiney sword.', 'img_src' => 'townguard.jpg', 'is_hostile' => false, 'health' => 125000, 'armor' => 0.1, 'damage_low' => 60, 'damage_high' => 60, 'attacks_per_round' => 1, 'award_xp' => 0, 'xp_variation' => 0, 'award_gold' => 0, 'gold_variation' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Hermit Crab', 'attack_text' => 'The small crab flexes his claws at you, then pinches you!', 'img_src' => 'HermitCrab.jpg', 'is_hostile' => true, 'health' => 75, 'armor' => 0, 'damage_low' => 1, 'damage_high' => 20, 'attacks_per_round' => 1, 'award_xp' => 355, 'xp_variation' => 0.2, 'award_gold' => 1, 'gold_variation' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Crab', 'attack_text' => 'The small crab flexes his claws at you, then pinches you!', 'img_src' => 'Crab.jpg', 'is_hostile' => true, 'health' => 100, 'armor' => 0, 'damage_low' => 1, 'damage_high' => 28, 'attacks_per_round' => 1, 'award_xp' => 355, 'xp_variation' => 0.2, 'award_gold' => 1, 'gold_variation' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Stone Crab', 'attack_text' => 'The small crab flexes his claws at you, then pinches you!', 'img_src' => 'StoneCrab.jpg', 'is_hostile' => true, 'health' => 125, 'armor' => 0.01, 'damage_low' => 1, 'damage_high' => 35, 'attacks_per_round' => 1, 'award_xp' => 550, 'xp_variation' => 0.2, 'award_gold' => 1, 'gold_variation' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
-
-		DB::table('spawn_rules')->insert([
-			['zones_id' => 1, 'rooms_id' => null, 'npcs_id' => 1, 'chance' => 0.48, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['zones_id' => 2, 'rooms_id' => null, 'npcs_id' => 2, 'chance' => 0.41, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['zones_id' => 2, 'rooms_id' => null, 'npcs_id' => 3, 'chance' => 0.41, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['zones_id' => 2, 'rooms_id' => null, 'npcs_id' => 4, 'chance' => 0.41, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
-
-		DB::table('items')->insert([
-			// Town weapons first:
-			['name' => 'Knife', 'item_types_id' => 1, 'value' => 2500, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Staff', 'item_types_id' => 1, 'value' => 16500, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Gleaming Short Sword', 'item_types_id' => 1, 'value' => 18050, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Obsidian Wand', 'item_types_id' => 1, 'value' => 17200, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Mace', 'item_types_id' => 1, 'value' => 17400, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// End 5
-			['name' => 'Throwing Daggers', 'item_types_id' => 1, 'value' => 18650, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Battle Axe', 'item_types_id' => 1, 'value' => 57800, 'weight' => 1, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// End weapons:
-			// Town armors:
-			['name' => 'Leather Shield', 'item_types_id' => 2, 'value' => 3000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Helm', 'item_types_id' => 2, 'value' => 3000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Neckband', 'item_types_id' => 2, 'value' => 2500, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// End 10
-			['name' => 'Leather Shirt', 'item_types_id' => 2, 'value' => 4500, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Gloves', 'item_types_id' => 2, 'value' => 2000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Pants', 'item_types_id' => 2, 'value' => 4000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Leather Boots', 'item_types_id' => 2, 'value' => 2500, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Wooden Shield', 'item_types_id' => 2, 'value' => 24000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// End 15
-			['name' => 'Chain Mail Coif', 'item_types_id' => 2, 'value' => 24000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Chain Mail Neckband', 'item_types_id' => 2, 'value' => 20000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Chain Mail Shirt', 'item_types_id' => 2, 'value' => 72000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Chain Mail Gauntlets', 'item_types_id' => 2, 'value' => 16000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Chain Mail Leggings', 'item_types_id' => 2, 'value' => 32000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// End 20
-			['name' => 'Chain Mail Boots', 'item_types_id' => 2, 'value' => 20000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// End armors:
-			['name' => 'Blue Amulet', 'item_types_id' => 3, 'value' => 10000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Black Amulet', 'item_types_id' => 3, 'value' => 37500000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Amulet of Apprentice', 'item_types_id' => 3, 'value' => 37500000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Glowing Ring', 'item_types_id' => 3, 'value' => 5000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Ring of Bone', 'item_types_id' => 3, 'value' => 5000000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Lightening Ring', 'item_types_id' => 3, 'value' => 5000000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// Forged, not bought:
-			['name' => 'Green Bracelet', 'item_types_id' => 3, 'value' => 20000, 'weight' => 0.25, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Crab legs', 'item_types_id' => 4, 'value' => 100, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// Fix values?
-			['name' => 'Goats Milk', 'item_types_id' => 4, 'value' => 10000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// End 30
-			['name' => 'Zombie Punch', 'item_types_id' => 4, 'value' => 20000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-
-		]);
-
 
 		DB::table('shop_items')->insert([
 			// Weapon shop:
@@ -255,54 +195,9 @@ class CreateTown extends Seeder
 			['shops_id' => 4, 'items_id' => 29, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		DB::table('item_weapons')->insert([
-			['items_id' => 1, 'weapon_types_id' => 3, 'equipment_slot' => 1, 'attack_text' => 'Your dagger does damage...', 'damage_low' => 5, 'damage_high' => 15, 'required_stat' => null, 'required_amount' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 2, 'weapon_types_id' => 6, 'equipment_slot' => 1, 'attack_text' => 'You bash your opponent...', 'damage_low' => 20, 'damage_high' => 30, 'required_stat' => 'constitution', 'required_amount' => 40, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 3, 'weapon_types_id' => 1, 'equipment_slot' => 1, 'attack_text' => 'Your sword fades in and out of view as it peels the flesh off your opponent...', 'damage_low' => 25, 'damage_high' => 40, 'required_stat' => 'strength', 'required_amount' => 45, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 4, 'weapon_types_id' => 7, 'equipment_slot' => 1, 'attack_text' => 'Smell pebbles fly from the end of the wand...', 'damage_low' => 30, 'damage_high' => 50, 'required_stat' => 'intelligence', 'required_amount' => 40, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 5, 'weapon_types_id' => 5, 'equipment_slot' => 1, 'attack_text' => 'You heave a huge weapon...', 'damage_low' => 20, 'damage_high' => 35, 'required_stat' => 'constitution', 'required_amount' => 40, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 6, 'weapon_types_id' => 4, 'equipment_slot' => 1, 'attack_text' => 'You launch your daggers through the air...', 'damage_low' => 25, 'damage_high' => 35, 'required_stat' => 'dexterity', 'required_amount' => 60, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 7, 'weapon_types_id' => 2, 'equipment_slot' => 1, 'attack_text' => 'Your mighty battle axe cleaves the foe...', 'damage_low' => 30, 'damage_high' => 50, 'required_stat' => 'strength', 'required_amount' => 60, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// setup the room action:
+		DB::table('room_actions')->insert([
+			['uid' => 'sewer_cover', 'rooms_id' => 48, 'redirect_room' => null, 'description' => null, 'action' => 'lift', 'failed_action' => 'You are not strong enough to lift the cover!', 'success_action' => 'You succesfully lift the manhole cover, granting access to the Sewers!', 'display' => 'Try to [action] the manhole cover.', 'directions_blocked' => 'down', 'remember' => true, 'has_item' => null, 'completed_quest' => null, 'completed_quest_task' => null, 'strength_req' => 60, 'dexterity_req' => null, 'constitution_req' => null, 'wisdom_req' => null, 'intelligence_req' => null, 'charisma_req' => null, 'score_req' => null],
 		]);
-
-		DB::table('item_armors')->insert([
-			['items_id' => 8, 'equipment_slot' => 2, 'armor' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 9, 'equipment_slot' => 3, 'armor' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 10, 'equipment_slot' => 4, 'armor' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 11, 'equipment_slot' => 5, 'armor' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 12, 'equipment_slot' => 6, 'armor' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 13, 'equipment_slot' => 7, 'armor' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 14, 'equipment_slot' => 8, 'armor' => 3, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 15, 'equipment_slot' => 2, 'armor' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 16, 'equipment_slot' => 3, 'armor' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 17, 'equipment_slot' => 4, 'armor' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 18, 'equipment_slot' => 5, 'armor' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 19, 'equipment_slot' => 6, 'armor' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 20, 'equipment_slot' => 7, 'armor' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 21, 'equipment_slot' => 8, 'armor' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
-
-		DB::table('item_accessories')->insert([
-			['items_id' => 22, 'equipment_slot' => 9, 'light_level' => null, 'strength_bonus' => 10, 'dexterity_bonus' => null, 'constitution_bonus' => null, 'wisdom_bonus' => null, 'intelligence_bonus' => null, 'charisma_bonus' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 23, 'equipment_slot' => 9, 'light_level' => null, 'strength_bonus' => 50, 'dexterity_bonus' => null, 'constitution_bonus' => null, 'wisdom_bonus' => null, 'intelligence_bonus' => null, 'charisma_bonus' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 24, 'equipment_slot' => 9, 'light_level' => null, 'strength_bonus' => null, 'dexterity_bonus' => null, 'constitution_bonus' => null, 'wisdom_bonus' => 50, 'intelligence_bonus' => null, 'charisma_bonus' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// 
-			['items_id' => 25, 'equipment_slot' => 10, 'light_level' => null, 'strength_bonus' => 5, 'dexterity_bonus' => null, 'constitution_bonus' => null, 'wisdom_bonus' => null, 'intelligence_bonus' => null, 'charisma_bonus' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 26, 'equipment_slot' => 10, 'light_level' => null, 'strength_bonus' => null, 'dexterity_bonus' => null, 'constitution_bonus' => null, 'wisdom_bonus' => null, 'intelligence_bonus' => 25, 'charisma_bonus' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 27, 'equipment_slot' => 10, 'light_level' => 1, 'strength_bonus' => null, 'dexterity_bonus' => 20, 'constitution_bonus' => null, 'wisdom_bonus' => null, 'intelligence_bonus' => null, 'charisma_bonus' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// 
-			['items_id' => 28, 'equipment_slot' => 11, 'light_level' => null, 'strength_bonus' => 20, 'dexterity_bonus' => 20, 'constitution_bonus' => null, 'wisdom_bonus' => 20, 'intelligence_bonus' => null, 'charisma_bonus' => 20, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
-
-		DB::table('item_foods')->insert([
-			['items_id' => 29, 'potency' => 9, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 30, 'potency' => 36, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['items_id' => 31, 'potency' => 54, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
-
-		DB::table('loot_tables')->insert([
-			['npcs_id' => 2, 'items_id' => 29, 'chance' => 0.575, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['npcs_id' => 3, 'items_id' => 29, 'chance' => 0.675, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+		}
 	}
-}
