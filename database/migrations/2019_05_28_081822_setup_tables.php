@@ -745,6 +745,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('traders');
 		Schema::dropIfExists('item_weapons');
 		Schema::dropIfExists('weapon_types');
+		// legacy
+		Schema::dropIfExists('item_consumables');
 		Schema::dropIfExists('item_foods');
 		Schema::dropIfExists('item_armors');
 		Schema::dropIfExists('item_accessories');
