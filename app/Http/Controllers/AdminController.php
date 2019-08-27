@@ -34,6 +34,17 @@ class AdminController extends Controller
 		return view('admin/main');
 		}
 
+	public function zone_editor()
+		{
+		if (!isset(auth()->user()->admin_level))
+			{
+			// error
+			return view('home');
+			}
+
+		return view('admin.zone-editor');
+		}
+
 	public function process(Request $request)
 		{
 		if (!isset(auth()->user()->admin_level))

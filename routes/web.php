@@ -65,6 +65,8 @@ Route::post('/trade/receive', 'GameController@receive');
 Route::post('/trade/send', 'GameController@send');
 // Do this stuff better or different?
 
+Route::get('/admin/zone-editor', 'AdminController@zone_editor');
+
 // TODO: Route these all through /admin and include an Auth Middleware
 Route::get('room/all', 'RoomController@all');
 Route::get('room/create', 'RoomController@create');

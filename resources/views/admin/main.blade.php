@@ -23,6 +23,7 @@
 		<h3>Admin Tools (Admin Level 3)</h3>
 		<a href="user/all">All Users</a><br>
 		<a href="character/all">All Characters</a><br>
+		<a href="admin/zone-editor">Zone Editor</a><br>
 	</div>
 
 <br><br>

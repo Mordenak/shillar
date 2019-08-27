@@ -160,9 +160,13 @@
 	</p>
 	@endif
 
-	<p>
-		{{$room->zone()->description}}
+	
+
+	@if (isset($quest_text))
+	<p style="color:#3487D5">
+		{!! nl2br($quest_text) !!}
 	</p>
+	@endif
 
 	@if ($room->has_property('CAN_SLEEP'))
 	<form method="post" action="/rest" class="ajax">
@@ -172,7 +176,6 @@
 		<input type="submit" id="begin_rest" style="display: none;">
 	</form>
 	@endif
-
 
 	<!-- Do the loot: -->
 	@if (isset($no_carry))
@@ -209,6 +212,12 @@
 	</form>
 	@endif
 	
+	<p>
+		{{$room->zone()->description}}
+	</p>
+	@if( Session::has("zone_travel") )
+	<p style="color:red;">{{ Session::pull("zone_travel") }}</p>
+	@endif
 	<p>
 		@foreach ($directions as $col => $room_id)
 		<form method="post" action="/move" class="ajax">

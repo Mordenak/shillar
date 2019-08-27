@@ -28,6 +28,11 @@ use App\ForgeRecipe;
 use App\TraderItem;
 use App\Spell;
 use App\Quest;
+use App\QuestTask;
+use App\QuestCriteria;
+use App\QuestReward;
+use App\CharacterQuest;
+use App\CharacterQuestCriteria;
 use App\RoomAction;
 use App\CharacterRoomAction;
 
@@ -146,16 +151,6 @@ class GameController extends Controller
 			$request_params['is_admin'] = true;
 			}
 
-		// if ($Room->has_shop())
-		// 	{
-		// 	$request_params['shop'] = $Room->shop();
-		// 	}
-
-		// if ($Room->has_trader())
-		// 	{
-		// 	$request_params['trader'] = $Room->trader();
-		// 	}
-
 		$request_params['room_custom'] = null;
 		if ($Room->has_property())
 			{
@@ -222,37 +217,62 @@ class GameController extends Controller
 				}
 			}
 
+		// Quest Stuff?
+		// TODO: A room could have multiples, but only 1 ever should be "available" per requirements:
+		$PickupQuest = Quest::where(['pickup_rooms_id' => $Room->id])->first();
+
+		if ($PickupQuest)
+			{
+			// Character already has it?
+			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
+
+			if (!$CharacterQuest)
+				{
+				// Don't already have it -- can we get it?
+				if ($PickupQuest->eligible($Character))
+					{
+					// Get it!
+					$CharacterQuest = new CharacterQuest;
+					$CharacterQuest->fill(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id]);
+					$CharacterQuest->save();
+					// Also the criterias?
+					foreach ($PickupQuest->criterias() as $criteria)
+						{
+						$CharacterQuestCriteria = new CharacterQuestCriteria;
+						$CharacterQuestCriteria->fill(['character_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
+						$CharacterQuestCriteria->save();
+						}
+					$request_params['quest_text'] = $PickupQuest->description;
+					}
+				}
+			}
+
+		$TurninQuest = Quest::where(['turnin_rooms_id' => $Room->id])->first();
+
+		if ($TurninQuest)
+			{
+			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
+
+			if ($CharacterQuest)
+				{
+				// Just a quick refresh
+				$CharacterQuest->check_completes();
+				// die(print_r($CharacterQuest));
+				if ($CharacterQuest->complete && !$CharacterQuest->rewarded)
+					{
+					$this->reward_character($CharacterQuest, $Character);
+					$request_params['quest_text'] = $TurninQuest->completion_message;
+					// Hand out reward... *IF* we haven't already!
+					}
+				}
+			// Something is turned in at this room:
+			// die('turn in?');
+			}
+
 		// Directions:
 		if ($Room)
 			{
-			$directions = [];
-			foreach ($Room->directions() as $col => $room_id)
-				{
-				if ($room_id)
-					{
-					if ($RoomAction)
-						{
-						if (in_array($col, array_keys($RoomAction->blocked_dirs())))
-							{
-							// better have character record:
-							$CharacterRoomAction = CharacterRoomAction::where(['characters_id' => $Character->id, 'room_actions_id' => $RoomAction->id])->first();
-							if ($CharacterRoomAction)
-								{
-								$directions[$col] = $room_id;
-								}
-							}
-						else
-							{
-							$directions[$col] = $room_id;
-							}
-						}
-					else
-						{
-						$directions[$col] = $room_id;
-						}
-					}
-				}
-			$request_params['directions'] = $directions;
+			$request_params['directions'] = $Room->generate_directions($Character);
 			}
 
 		// $character = array_merge($Character->pluck(), $Characters->pluck());;
@@ -288,20 +308,47 @@ class GameController extends Controller
 		{
 		$Character = Character::findOrFail($request->character_id);
 
-		// Just double check that the room is reachable?
-		$LastRoom = Room::findOrFail($Character->last_rooms_id);
+		$NextRoom = Room::findOrFail($request->room_id);
 
-		if (!$LastRoom->is_reachable($request->room_id))
+		// Just double check that the room is reachable from where the character is currently?
+		$CurrentRoom = Room::findOrFail($Character->last_rooms_id);
+		if (!$CurrentRoom->is_reachable($request->room_id))
 			{
 			// Don't move:
 			return $this->index($request);
+			}
+
+		// Is a Zone transition?
+		if ($CurrentRoom->zones_id != $NextRoom->zones_id)
+			{
+			// TODO: Area Restrictions? + Racial Mod
+			if ($Character->intelligence < $NextRoom->zone()->intelligence_req)
+				{
+				// Oops!
+				Session::flash('zone_travel', 'You cannot go that way yet, you must train some more.');
+				return $this->index($request);
+				}
+			}
+
+		// We made it
+		// TODO: Refactor
+		$QuestCriteria = QuestCriteria::where(['zone_target' => $NextRoom->zones_id])->first();
+		if ($QuestCriteria)
+			{
+			// This zone is used for a task... Does the character have it?
+			$CharacterQuestCriteria = CharacterQuestCriteria::where(['character_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
+			if ($CharacterQuestCriteria)
+				{
+				// Let's complete it!
+				$CharacterQuestCriteria->complete();
+				}
 			}
 
 		$Character->last_rooms_id = $request->room_id;
 		$Character->save();
 
 		// Clear up any combat logs?  Remove last_room?
-		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $LastRoom->id])->first();
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $CurrentRoom->id])->first();
 		if ($CombatLog)
 			{
 			// check room?  $CombatLog->room_id == $request->room_id ??
@@ -640,6 +687,8 @@ class GameController extends Controller
 			{
 			$request_params['is_admin'] = true;
 			}
+
+		$request_params['directions'] = $Room->generate_directions($Character);
 
 		if ($flat_character['health'] <= 0)
 			{
@@ -1550,6 +1599,19 @@ class GameController extends Controller
 		$Character->save();
 
 		return $this->index($request);
+		}
+
+	public function reward_character($CharacterQuest, $Character)
+		{
+		$reward = $CharacterQuest->quest()->reward();
+
+		$Character->xp = $Character->xp + $reward->xp_reward;
+		$Character->gold = $Character->gold + $reward->gold_reward;
+		$Character->quest_points = $Character->quest_points + $reward->quest_point_reward;
+		$Character->save();
+
+		$CharacterQuest->rewarded = true;
+		$CharacterQuest->save();
 		}
 
 	public function generate_combat_log($combat_history, $Character)

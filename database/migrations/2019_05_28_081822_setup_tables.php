@@ -461,6 +461,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('description')->nullable();
+			$table->string('completion_message')->nullable();
 			$table->boolean('optional')->default(false);
 			$table->integer('wisdom_req')->default(0);
 			$table->integer('intelligence_req')->default(0);
@@ -479,7 +480,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('quests_id');
 			$table->foreign('quests_id')->references('id')->on('quests');
-			$table->string('name');
+			$table->string('uid')->nullable();
+			$table->string('name')->nullable();
 			$table->string('description')->nullable();
 			$table->integer('seq')->nullable();
 			$table->timestamps();
@@ -499,43 +501,6 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('quest_criteria', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('quest_tasks_id');
-			$table->foreign('quest_tasks_id')->references('id')->on('quests');
-			$table->string('name')->nullable();
-			$table->string('description')->nullable();
-			$table->integer('npc_target')->nullable();
-			$table->foreign('npc_target')->references('id')->on('npcs');
-			$table->integer('zones_target')->nullable();
-			$table->foreign('zones_target')->references('id')->on('zones');
-			$table->integer('room_target')->nullable();
-			$table->foreign('room_target')->references('id')->on('rooms');
-			$table->integer('item_target')->nullable();
-			$table->foreign('item_target')->references('id')->on('items');
-			$table->integer('npc_target_alignment')->nullable();
-			$table->foreign('npc_target_alignment')->references('id')->on('alignments');
-			$table->integer('npc_target_amount')->nullable();
-			$table->timestamps();
-		});
-
-		// Schema::create('quest_criteria', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->string('name')->nullable();
-		// 	$table->string('description')->nullable();
-		// 	$table->timestamps();
-		// });
-
-		// Schema::create('quest_criteria_quests', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->integer('quest_criteria_id');
-		// 	$table->foreign('quest_criteria_id')->references('id')->on('quest_criteria');
-		// 	$table->integer('quests_id');
-		// 	$table->foreign('quests_id')->references('id')->on('quests');
-		// 	$table->string('value');
-		// 	$table->timestamps();
-		// });
-
 		Schema::create('character_quests', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('quests_id');
@@ -543,6 +508,7 @@ class SetupTables extends Migration
 			$table->integer('character_id');
 			$table->foreign('character_id')->references('id')->on('characters');
 			$table->boolean('complete')->default(false);
+			$table->boolean('rewarded')->default(false);
 			$table->timestamps();
 		});
 
@@ -588,6 +554,40 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('quest_criterias', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('quest_tasks_id');
+			$table->foreign('quest_tasks_id')->references('id')->on('quest_tasks');
+			$table->string('name')->nullable(); // ???
+			$table->string('description')->nullable(); // ???
+			$table->integer('npc_target')->nullable();
+			$table->foreign('npc_target')->references('id')->on('npcs');
+			$table->integer('zone_target')->nullable();
+			$table->foreign('zone_target')->references('id')->on('zones');
+			$table->integer('room_target')->nullable();
+			$table->foreign('room_target')->references('id')->on('rooms');
+			$table->integer('room_action_target')->nullable();
+			$table->foreign('room_action_target')->references('id')->on('room_actions');
+			$table->integer('item_target')->nullable();
+			$table->foreign('item_target')->references('id')->on('items');
+			$table->integer('alignment_target')->nullable();
+			$table->foreign('alignment_target')->references('id')->on('alignments');
+			$table->integer('npc_amount')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('character_quest_criterias', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('quest_criterias_id');
+			$table->foreign('quest_criterias_id')->references('id')->on('quest_criterias');
+			$table->integer('character_quests_id');
+			$table->foreign('character_quests_id')->references('id')->on('character_quests');
+			$table->integer('character_id');
+			$table->foreign('character_id')->references('id')->on('characters');
+			$table->integer('progress')->nullable();
+			$table->boolean('complete')->default(false);
+			$table->timestamps();
+		});
 
 		Schema::create('spells', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -635,6 +635,7 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		/*
 		Schema::create('item_properties', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
@@ -650,6 +651,7 @@ class SetupTables extends Migration
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->timestamps();
 		});
+		*/
 
 		Schema::create('racial_modifiers', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -664,6 +666,7 @@ class SetupTables extends Migration
 			$table->foreign('racial_modifier_id')->references('id')->on('racial_modifiers');
 			$table->integer('player_races_id');
 			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->float('value');
 			$table->timestamps();
 		});		
 
@@ -686,7 +689,7 @@ class SetupTables extends Migration
 			$table->foreign('characters_id')->references('id')->on('characters');
 			$table->integer('npcs_id');
 			$table->foreign('npcs_id')->references('id')->on('npcs');
-			$table->integer('count')->nullable();
+			$table->bigInteger('count')->nullable();
 			$table->timestamps();
 		});
 
@@ -756,8 +759,12 @@ class SetupTables extends Migration
 		Schema::dropIfExists('item_property_items');
 		Schema::dropIfExists('item_properties');
 		Schema::dropIfExists('quest_rewards');
-		Schema::dropIfExists('quest_criteria');
 		Schema::dropIfExists('character_room_actions');
+		Schema::dropIfExists('character_settings');
+		Schema::dropIfExists('character_quest_criterias');
+		Schema::dropIfExists('character_quests');
+		Schema::dropIfExists('quest_criterias');
+		// Schema::dropIfExists('quest_criteria');
 		Schema::dropIfExists('room_actions');
 		Schema::dropIfExists('items');
 		Schema::dropIfExists('item_types');
@@ -766,9 +773,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('npc_stats');
 		Schema::dropIfExists('damage_types');
 		Schema::dropIfExists('reward_tables');
-		Schema::dropIfExists('user_settings');
-		Schema::dropIfExists('character_settings');
-		Schema::dropIfExists('character_quests');
+		// Schema::dropIfExists('user_settings');
 		Schema::dropIfExists('character_spells');
 		Schema::dropIfExists('combat_logs');
 		Schema::dropIfExists('kill_counts');

@@ -80,6 +80,38 @@ class Room extends Model
 		return $arr;
 		}
 
+	public function generate_directions($Character)
+		{
+		$directions = [];
+		foreach ($this->directions() as $col => $room_id)
+			{
+			if ($room_id)
+				{
+				if ($this->room_actions())
+					{
+					if (in_array($col, array_keys($this->room_actions()->blocked_dirs())))
+						{
+						// better have character record:
+						$CharacterRoomAction = CharacterRoomAction::where(['characters_id' => $Character->id, 'room_actions_id' => $this->room_actions()->id])->first();
+						if ($CharacterRoomAction)
+							{
+							$directions[$col] = $room_id;
+							}
+						}
+					else
+						{
+						$directions[$col] = $room_id;
+						}
+					}
+				else
+					{
+					$directions[$col] = $room_id;
+					}
+				}
+			}
+		return $directions;
+		}
+
 	public function is_reachable($room_id)
 		{
 		// check every direction?

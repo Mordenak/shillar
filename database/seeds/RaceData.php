@@ -120,5 +120,9 @@ class RaceData extends Seeder
 			['name' => 'GROPE_POWER', 'description' => 'Percentile adjustment of unarmed damage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'FATIGUE_ADJUSTMENT', 'description' => 'Percentile adjustment of fatigue use.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
+
+		DB::table('racial_modifiers')->insert([
+			
+		]);
 	}
 }

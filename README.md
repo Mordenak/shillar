@@ -9,11 +9,11 @@ Game Todo:
 * ~~Proper combat attack differences~~
 * ~~Death functions~~
 * ~~Shops~~
-* Quests
+* ~~Quests~~ Basic quest is there -- working?
 * ~~Bank~~
 * ~~Forge~~
 * ~~Traders~~
-* Directional blocks, NPCs/locks -- Working?
+* ~~Directional blocks, NPCs/locks~~ -- Working?
 * ~~Kill tracking~~
 * Spells
 * ~~Wall score ranks~~
@@ -22,6 +22,7 @@ Game Todo:
 * Items on ground stack
 * ~~Add Consider feature~~
 * ~~Scramble Combat buttons~~
+* Support multiple layouts?
 * Light levels
 * Environmental Heat/Cold
 * Add Tutorial back in?
@@ -34,6 +35,9 @@ Info pool: http://www.shillatime.org/shillatime.html
 
 Code Todo:
 
+* Actually implement the racial modifers
+* ~~Fix broken combat after direction update!~~
+* Improve performance
 * ~~Fix npc spawn on item pickup~~
 * Move functions out of game controller
 * Route admin functions through admin route with auth middleware admin level check
@@ -47,3 +51,5 @@ Code Todo:
 * Fix inline JS/CSS
 * Fix Menu view usage, currently in main & partials.
 * Fix Character listings within rooms to be only online characters (currently is all characters)
+* For performance, possibly look into adding more flags to control when extra queries happen?
+* Example of above would be a Room->has_quest flag to determine if we should check for a quest targeting the room
