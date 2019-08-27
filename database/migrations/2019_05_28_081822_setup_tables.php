@@ -764,7 +764,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_quest_criterias');
 		Schema::dropIfExists('character_quests');
 		Schema::dropIfExists('quest_criterias');
-		// Schema::dropIfExists('quest_criteria');
+		// another legacy add:
+		Schema::dropIfExists('quest_criteria');
 		Schema::dropIfExists('room_actions');
 		Schema::dropIfExists('items');
 		Schema::dropIfExists('item_types');
