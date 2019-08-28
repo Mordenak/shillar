@@ -89,7 +89,7 @@ class BasicEntries extends Seeder
 		DB::table('spell_levels')->insert([
 			['spells_id' => 2, 'name' => 'The Fountain', 'level' => 1, 'value' => 0, 'wisdom_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Beach Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 10, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Middle of Beach', 'level' => 5, 'value' => null, 'wisdom_req' => 20, , 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Middle of Beach', 'level' => 5, 'value' => null, 'wisdom_req' => 20, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Far End of Beach', 'level' => 10, 'value' => null, 'wisdom_req' => 30, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Outskirts Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 40, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
