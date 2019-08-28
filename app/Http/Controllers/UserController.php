@@ -32,6 +32,12 @@ class UserController extends Controller
 
 	public function save(Request $request)
 		{
+		$User = User::findOrFail($request->id);
 
+		$User->admin_level = $request->admin_level;
+
+		$User->save();
+
+		return redirect()->action('UserController@edit', ['id' => $User->id]);
 		}
 }
