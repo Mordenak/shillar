@@ -66,6 +66,7 @@ Route::post('/trade/send', 'GameController@send');
 // Do this stuff better or different?
 
 Route::get('/admin/zone-editor', 'AdminController@zone_editor');
+Route::post('/admin/zone_builder', 'AdminController@zone_builder');
 
 // TODO: Route these all through /admin and include an Auth Middleware
 Route::get('room/all', 'RoomController@all');
@@ -135,4 +136,5 @@ Route::post('spell/delete', 'SpellController@delete');
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');
 Route::get('/room/lookup', 'RoomController@lookup');
+Route::get('/zone/lookup', 'ZoneController@lookup');
 Route::get('/room_property/lookup', 'RoomPropertyController@lookup');

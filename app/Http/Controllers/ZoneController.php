@@ -47,4 +47,49 @@ class ZoneController extends Controller
 		// return view('admin/main');
 		return redirect()->action('AdminController@index');
 		}
+
+	public function lookup(Request $request)
+		{
+		$Zones = Zone::where('name', 'ilike', "%$request->term%")->get();	
+
+		$arr = [];
+
+		if ($Zones)
+			{
+			foreach ($Zones as $Zone)
+				{
+				$label = "($Zone->id) ".$Zone->name;
+				$arr[] = [
+					'label' => $label,
+					'value' => $Zone->id,
+					];
+				}
+			}
+
+		// Also search IDs:
+		if (is_numeric($request->term))
+			{
+			$Zones = Zone::where('id', '=', $request->term)->get();
+
+			if ($Zones)
+				{
+				foreach ($Zones as $Zone)
+					{
+					$label = "($Zone->id) ".$Zone->name;
+					$arr[] = [
+						'label' => $label,
+						'value' => $Zone->id,
+						];
+					}
+				}
+			}
+
+		if (empty($arr))
+			{
+			$arr[] = ['label' => 'No Results', 'value' => $request->term];
+			}
+
+		echo (json_encode($arr));;
+		header('Content-type: application/json');
+		}
 }

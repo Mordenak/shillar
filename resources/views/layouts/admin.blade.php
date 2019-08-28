@@ -66,7 +66,53 @@
 		</p>
 
 		<script>
-		// autocompletes"
+		// autocompletes
+		$('body').on('focusin', '.auto-lookup', function(e, i) {
+			// determine lookup url:
+			var $target = $(e.target);
+			var url = null;
+			if ($target.hasClass('zone-lookup'))
+				{
+				url = '/zone/lookup';
+				}
+
+			if ($target.hasClass('room-lookup'))
+				{
+				url = '/room/lookup';
+				}
+
+			if ($target.hasClass('item-lookup'))
+				{
+				url = '/item/lookup';
+				}
+
+			if ($target.hasClass('room-property-lookup'))
+				{
+				url = '/room_property/lookup';
+				}
+
+			$(e.target).autocomplete({
+				source: function(request, response) {
+					console.log(request);
+					$.ajax({
+						url: url,
+						dataType: 'json',
+						data: {
+							term: request.term,
+							},
+						success: response,
+						timeout: 5000
+						});
+					},
+				delay: 200,
+				minLength: 1
+				});
+			if ($(e.target).val() != '')
+				{
+				$(e.target).autocomplete("search");
+				}
+			});
+
 		$('body').on('focusin', '.room-lookup', function(e, i) {
 			// add autocomplete:
 			$(e.target).autocomplete({

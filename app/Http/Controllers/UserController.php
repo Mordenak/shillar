@@ -27,7 +27,7 @@ class UserController extends Controller
 
 	public function edit($id)
 		{
-		return view('user.edit', ['character' => Character::findOrFail($id)]);
+		return view('user.edit', ['user' => User::findOrFail($id)]);
 		}
 
 	public function save(Request $request)
