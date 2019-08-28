@@ -591,6 +591,13 @@ class SetupTables extends Migration
 			$table->boolean('complete')->default(false);
 			$table->timestamps();
 		});
+		
+		Schema::create('spell_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('uid');
+			$table->string('description')->nullable();
+			$table->timestamps();
+		});
 
 		Schema::create('spells', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -613,13 +620,6 @@ class SetupTables extends Migration
 			$table->integer('level');
 			$table->string('value')->nullable();
 			$table->integer('wisdom_req');
-			$table->timestamps();
-		});
-
-		Schema::create('spell_properties', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->string('uid');
-			$table->string('description')->nullable();
 			$table->timestamps();
 		});
 
