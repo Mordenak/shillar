@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
-{
+	{
 	protected $fillable = ['name', 'item_types_id', 'value', 'weight', 'is_stackable'];
 
 	public function type()
@@ -15,37 +15,37 @@ class Item extends Model
 
 	public function actual_item()
 		{
-		if ($this->type()->name == 'Consumable')
-			{
-			return ItemConsumable::where(['items_id' => $this->id])->first();
-			}
-
-		if ($this->type()->name == 'Weapon')
+		if ($this->item_types_id == 1)
 			{
 			return ItemWeapon::where(['items_id' => $this->id])->first();
 			}
 
-		if ($this->type()->name == 'Armor')
+		if ($this->item_types_id == 2)
 			{
 			return ItemArmor::where(['items_id' => $this->id])->first();
 			}
 
-		if ($this->type()->name == 'Accessories')
+		if ($this->item_types_id == 3)
 			{
 			return ItemAccessory::where(['items_id' => $this->id])->first();
 			}
 
-		if ($this->type()->name == 'Jewel')
+		if ($this->item_types_id == 4)
 			{
 			return ItemJewel::where(['items_id' => $this->id])->first();
 			}
 
-		if ($this->type()->name == 'Dust')
+		if ($this->item_types_id == 5)
 			{
 			return ItemDust::where(['items_id' => $this->id])->first();
 			}
 
-		if ($this->type()->name == 'Other')
+		if ($this->item_types_id == 6)
+			{
+			return ItemFood::where(['items_id' => $this->id])->first();
+			}
+
+		if ($this->item_types_id == 7)
 			{
 			return ItemOthers::where(['items_id' => $this->id])->first();
 			}
@@ -56,7 +56,7 @@ class Item extends Model
 		$arr = [];
 
 		// Must be 2 (armor) or 3 (accessory)
-		if ($this->item_types_id == 2 || $this->items_types_id == 3)
+		if ($this->item_types_id == 2 || $this->item_types_id == 3)
 			{
 			$arr = [
 				'strength' => $this->actual_item()->strength_bonus,
@@ -70,4 +70,4 @@ class Item extends Model
 
 		return $arr;
 		}
-}
+	}

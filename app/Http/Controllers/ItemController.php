@@ -65,10 +65,14 @@ class ItemController extends Controller
 		// $ItemType->table_name
 		$ActualItem = new $ItemType->model_name;
 
+		if ($request->actual_id)
+			{
+			$ActualItem = $ItemType->model_name::findOrFail($request->actual_id);
+			}
+
 		// Baseline values:
 		$item_values = [
 			'items_id' => $Item->id,
-			'name' => $Item->name
 			];
 
 		// Maintain per type field list???
@@ -87,9 +91,17 @@ class ItemController extends Controller
 			$item_values['armor'] = $request->armor;
 			}
 
+		// die(print_r($ItemType->table_name));
 		if ($ItemType->table_name == 'item_accessories')
 			{
 			$item_values['equipment_slot'] = $request->equipment_slot;
+			$item_values['light_level'] = $request->light_level;
+			$item_values['strength_bonus'] = $request->strength_bonus;
+			$item_values['dexterity_bonus'] = $request->dexterity_bonus;
+			$item_values['constitution_bonus'] = $request->constitution_bonus;
+			$item_values['wisdom_bonus'] = $request->wisdom_bonus;
+			$item_values['intelligence_bonus'] = $request->intelligence_bonus;
+			$item_values['charisma_bonus'] = $request->charisma_bonus;
 			}
 
 		if ($ItemType->table_name == 'item_foods')
@@ -115,7 +127,7 @@ class ItemController extends Controller
 		$ActualItem->fill($item_values);
 		$ActualItem->save();
 
-
+		// die(print_r($ActualItem));
 		// TODO: May save all save calls until end?
 
 		// return view('admin/main');

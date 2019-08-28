@@ -5,7 +5,13 @@
 	It is the 200th cycle in<br>
 	the year of our lord 505?<br>
 	<br>
-	There is 1 active players online.
+	@if ($online_count > 1)
+	There are {{$online_count}} active players online.
+	@else
+	There is {{$online_count}} active player online.
+	<br>
+	Population: YOU
+	@endif
 	<br><br>
 	<span style="color: #00FFFF">
 		<strong>Menu:</strong>
@@ -33,7 +39,15 @@
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 		<label for="food">Food</label>
 		<input type="submit" id="food" style="display: none;">
+	</form>
+	@if ($character->spells())
+	<form method="post" action="/spells" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<label for="spells">Spells</label>
+		<input type="submit" id="spells" style="display: none;">
 	</form>	
+	@endif
 	<form method="post" action="/settings" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">
@@ -247,14 +261,16 @@
 	@if ($room->current_characters())
 		@foreach ($room->current_characters() as $entry)
 		@if ($entry->id != $character->id)
+		@if ($entry->user()->isOnline())
 		{!! $entry->display_name() !!} is here.<br>
+		@endif
 		@endif
 		@endforeach
 	@endif
 
 
 	<!-- Debug -->
-	@if ($is_admin)
+	@if (isset($is_admin) && $is_admin)
 	<div style="padding-left: 1rem;">
 		-- Admin --<br>
 		Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a>
@@ -264,11 +280,35 @@
 @endsection
 
 @section('footer')
-	A chat?
+	@if ($chat)
+	<div>
+		<h3>{{$chat->name}}</h3>
+		<table class="chat-room">
+			@if ($chat->messages()->count() > 0)
+			@foreach ($chat->messages() as $message)
+			<tr>
+				<td class="fit-width">{!! $message->character()->display_name() !!}</td>
+				<td>{{$message->message}}</td>
+				<td class="fit-width">{{$message->created_time()}} on {{$message->created_date()}}</td>
+			</tr>
+			@endforeach
+			@else
+			<h5>Looks like there are no messages here!</h5>
+			@endif
+		</table>
+	</div>
+	<form method="post" action="/chat/message" class="ajax">
+		<input type="text" name="message" placeholder="Type a message here!">
+		<input type="submit" value="Send">
+		<input type="hidden" name="chat_rooms_id" value="{{$chat->id}}">
+		<input type="hidden" name="characters_id" value="{{$character->id}}">
+		{{csrf_field()}}
+	</form>
+	@endif
 
 	<!-- Debug section -->
 
-	@if ($is_admin)
+	@if (isset($is_admin) && $is_admin)
 
 		@if (isset($combat))
 		{{$combat->id}} {{$combat->remaining_health}}

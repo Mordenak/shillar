@@ -12,8 +12,54 @@
 </div>
 
 <div class="form-group row">
-	<label class="col-md-2 col-form-label text-md-right">Armor Rating:</label>
+	<label class="col-md-2 col-form-label text-md-right">Light Level:</label>
 	<div class="col-md-3">
-		<input type="text" name="armor" value="{{isset($actual_item) ? $actual_item->armor : ''}}" class="form-control">
+		<input type="text" name="light_level" value="{{isset($actual_item) ? $actual_item->light_level : ''}}" class="form-control">
 	</div>
 </div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Strength:</label>
+	<div class="col-md-3">
+		<input type="text" name="strength_bonus" value="{{isset($actual_item) ? $actual_item->strength_bonus : ''}}" class="form-control">
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Dexterity:</label>
+	<div class="col-md-3">
+		<input type="text" name="dexterity_bonus" value="{{isset($actual_item) ? $actual_item->dexterity_bonus : ''}}" class="form-control">
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Constitution:</label>
+	<div class="col-md-3">
+		<input type="text" name="constitution_bonus" value="{{isset($actual_item) ? $actual_item->constitution_bonus : ''}}" class="form-control">
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Wisdom:</label>
+	<div class="col-md-3">
+		<input type="text" name="wisdom_bonus" value="{{isset($actual_item) ? $actual_item->wisdom_bonus : ''}}" class="form-control">
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Intelligence:</label>
+	<div class="col-md-3">
+		<input type="text" name="intelligence_bonus" value="{{isset($actual_item) ? $actual_item->intelligence_bonus : ''}}" class="form-control">
+	</div>
+</div>
+
+<div class="form-group row">
+	<label class="col-md-2 col-form-label text-md-right">Charisma:</label>
+	<div class="col-md-3">
+		<input type="text" name="charisma_bonus" value="{{isset($actual_item) ? $actual_item->charisma_bonus : ''}}" class="form-control">
+	</div>
+</div>
+
+@if ($actual_item)
+<input type="hidden" name="actual_id" id="actual-db-id" value="{{$actual_item->id}}">
+@endif

@@ -78,23 +78,24 @@ class BasicEntries extends Seeder
 		]);
 
 		DB::table('spells')->insert([
-			['name' => 'Teleport', 'description' => 'Teleport spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Town Portal', 'description' => 'Town Portal spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Bind Wounds', 'description' => 'Bind Wounds spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Rejuvinate', 'description' => 'Rejuvinate spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Bedazzle', 'description' => 'Bedazzle spell.', 'formula' => 'level', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Magic Shield', 'description' => 'Magic Shield spell.', 'formula' => 'level * 0.5', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Teleport', 'spell_properties_id' => 1, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Teleport spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Town Portal', 'spell_properties_id' => 1, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Town Portal spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Bind Wounds', 'spell_properties_id' => 5, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Bind Wounds spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Rejuvinate', 'spell_properties_id' => 6, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Rejuvinate spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Bedazzle', 'spell_properties_id' => 4, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Bedazzle spell.', 'formula' => 'level', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Magic Shield', 'spell_properties_id' => 3, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Magic Shield spell.', 'formula' => '[level] * 0.5', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('spell_levels')->insert([
-			['spells_id' => 1, 'name' => 'Beach Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 10, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Middle of Beach', 'level' => 5, 'value' => null, 'wisdom_req' => 20, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Far End of Beach', 'level' => 10, 'value' => null, 'wisdom_req' => 30, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Outskirts Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 40, 'value' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 2, 'name' => 'The Fountain', 'level' => 1, 'value' => 0, 'wisdom_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Beach Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 10, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Middle of Beach', 'level' => 5, 'value' => null, 'wisdom_req' => 20, , 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Far End of Beach', 'level' => 10, 'value' => null, 'wisdom_req' => 30, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Outskirts Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 40, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		DB::table('spell_property_spells')->insert([
-			['spells_id' => 1, 'spell_property_id' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		DB::table('chat_rooms')->insert([
+			['name' => 'Nostalgia Tavern', 'score_req' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		// Deprecate for now:

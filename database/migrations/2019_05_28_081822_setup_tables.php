@@ -234,7 +234,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('users_id');
 			$table->foreign('users_id')->references('id')->on('users');
-			$table->string('name');
+			$table->string('name')->unique();
 			$table->integer('player_races_id');
 			$table->foreign('player_races_id')->references('id')->on('player_races');
 			$table->integer('last_rooms_id');
@@ -369,6 +369,7 @@ class SetupTables extends Migration
 			$table->string('attack_text')->nullable();
 			$table->string('img_src')->nullable();
 			$table->boolean('is_hostile')->default(true);
+			$table->boolean('is_blocking')->default(false);
 			$table->integer('alignments_id')->nullable();
 			$table->foreign('alignments_id')->references('id')->on('alignments');
 			$table->integer('health');
@@ -460,7 +461,7 @@ class SetupTables extends Migration
 		Schema::create('quests', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
-			$table->string('description')->nullable();
+			$table->string('pickup_message')->nullable();
 			$table->string('completion_message')->nullable();
 			$table->boolean('optional')->default(false);
 			$table->integer('wisdom_req')->default(0);
@@ -482,7 +483,9 @@ class SetupTables extends Migration
 			$table->foreign('quests_id')->references('id')->on('quests');
 			$table->string('uid')->nullable();
 			$table->string('name')->nullable();
-			$table->string('description')->nullable();
+			$table->string('log_entry')->nullable();
+			$table->string('pickup_message')->nullable();
+			$table->string('completion_message')->nullable();
 			$table->integer('seq')->nullable();
 			$table->timestamps();
 		});
@@ -592,6 +595,10 @@ class SetupTables extends Migration
 		Schema::create('spells', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->integer('spell_properties_id');
+			$table->foreign('spell_properties_id')->references('id')->on('spell_properties');
+			$table->integer('mana_cost');
+			$table->bigInteger('training_cost');
 			$table->string('description')->nullable();
 			$table->string('formula')->nullable();
 			$table->integer('duration')->nullable();
@@ -616,14 +623,14 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('spell_property_spells', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('spells_id');
-			$table->foreign('spells_id')->references('id')->on('spells');
-			$table->integer('spell_property_id');
-			$table->foreign('spell_property_id')->references('id')->on('spell_properties');
-			$table->timestamps();
-		});
+		// Schema::create('spell_property_spells', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('spells_id');
+		// 	$table->foreign('spells_id')->references('id')->on('spells');
+		// 	$table->integer('spell_property_id');
+		// 	$table->foreign('spell_property_id')->references('id')->on('spell_properties');
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('character_spells', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -720,6 +727,23 @@ class SetupTables extends Migration
 			$table->boolean('park_ranger')->default(false);
 			$table->timestamps();
 		});
+
+		Schema::create('chat_rooms', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->integer('score_req')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('chat_room_messages', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('chat_rooms_id');
+			$table->foreign('chat_rooms_id')->references('id')->on('chat_rooms');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->string('message');
+			$table->timestamps();
+		});
 	}
 
 	/**
@@ -764,6 +788,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('character_quest_criterias');
 		Schema::dropIfExists('character_quests');
 		Schema::dropIfExists('quest_criterias');
+		Schema::dropIfExists('chat_room_messages');
+		Schema::dropIfExists('chat_rooms');
 		// another legacy add:
 		Schema::dropIfExists('quest_criteria');
 		Schema::dropIfExists('room_actions');

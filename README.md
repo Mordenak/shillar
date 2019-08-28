@@ -15,6 +15,7 @@ Game Todo:
 * ~~Traders~~
 * ~~Directional blocks, NPCs/locks~~ -- Working?
 * ~~Kill tracking~~
+* ~~Spell Training~~ [Partial]
 * Spells
 * ~~Wall score ranks~~
 * Online character listing
@@ -27,6 +28,8 @@ Game Todo:
 * Environmental Heat/Cold
 * Add Tutorial back in?
 * Encumbrance?  Probably not.
+* Guilds?  Ehhhh.
+* ~~Chat "Rooms" cause why not.~~
 
 
 Test bed: http://laravel-adventure.herokuapp.com/
@@ -35,9 +38,13 @@ Info pool: http://www.shillatime.org/shillatime.html
 
 Code Todo:
 
+* BIG TODO: Add error checking/handling for lots of actions to reduce game errors.
+* BIG TODO: Fix combat function so that it doesn't also manage the main view :/
+* BIG TODO: Refactor some views/partials and combine them -- DRY!
 * Actually implement the racial modifers
 * ~~Fix broken combat after direction update!~~
 * Improve performance
+* ~~Fix broken trading~~
 * ~~Fix npc spawn on item pickup~~
 * Move functions out of game controller
 * Route admin functions through admin route with auth middleware admin level check

@@ -12,10 +12,10 @@ This is a trader:<br>
 
 <form method="post" action="/trade/receive" class="ajax">
 	<select name="item_received">
-		<option>-- Select --</option>
+		<option value="null">-- Select --</option>
 		@if (count($trader_items) > 0)
 		@foreach ($trader_items as $item)
-		@if ($trader->will_trade($item->item()->item_types_id))
+		@if ($trader->will_trade($item['type']))
 		<option value="{{$item['id']}}">{{$item['label']}}</option>
 		@endif
 		@endforeach
@@ -37,7 +37,7 @@ This is a trader:<br>
 	Send To:
 	<input type="text" name="send_character">
 	<select name="item_send">
-		<option>-- Select --</option>
+		<option value="null">-- Select --</option>
 	@foreach ($character->inventory()->character_items() as $char_item)
 		@if ($trader->will_trade($char_item->item()->item_types_id))
 		<option value="{{$char_item->id}}">{{$char_item->item()->name}}</option>

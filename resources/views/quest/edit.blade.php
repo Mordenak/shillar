@@ -19,9 +19,9 @@ Creating a Quest:
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Description:</label>
+			<label class="col-md-2 col-form-label text-md-right">Pickup Message:</label>
 			<div class="col-md-3">
-				<textarea type="text" name="description" class="form-control">{{isset($quest) ? $quest->description : ''}}</textarea>
+				<textarea type="text" name="pickup_message" class="form-control">{{isset($quest) ? $quest->pickup_message : ''}}</textarea>
 			</div>
 		</div>
 
@@ -99,9 +99,17 @@ Creating a Quest:
 						<div class="col-md-2">
 							<input type="text" name="tasks[{{$quest_task->id}}][name]" value="{{$quest_task->name}}" class="form-control">
 						</div>
-						<label class="col-md-1 col-form-label text-md-right">Description:</label>
+						<label class="col-md-1 col-form-label text-md-right">Log Entry:</label>
 						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->id}}][description]" value="{{$quest_task->description}}" class="form-control">
+							<input type="text" name="tasks[{{$quest_task->id}}][log_entry]" value="{{$quest_task->log_entry}}" class="form-control">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">Pickup Message:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[{{$quest_task->id}}][pickup_message]" value="{{$quest_task->pickup_message}}" class="form-control">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">Completion Message:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[{{$quest_task->id}}][completion_message]" value="{{$quest_task->completion_message}}" class="form-control">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Seq:</label>
 						<div class="col-md-2">
@@ -155,9 +163,17 @@ Creating a Quest:
 						<div class="col-md-2">
 							<input type="text" name="tasks[0][name]" class="form-control">
 						</div>
-						<label class="col-md-1 col-form-label text-md-right">Description:</label>
+						<label class="col-md-1 col-form-label text-md-right">Log Entry:</label>
 						<div class="col-md-2">
-							<input type="text" name="tasks[0][description]" class="form-control">
+							<input type="text" name="tasks[0][log_entry]" class="form-control">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">Pickup Message:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[0][pickup_message]" class="form-control">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">Completion Message:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[0][completion_message]" class="form-control">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Seq:</label>
 						<div class="col-md-2">

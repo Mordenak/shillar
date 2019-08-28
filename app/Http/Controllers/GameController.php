@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Session;
 use Illuminate\Http\Request;
+use App\User;
 use App\Character;
 use App\Room;
 use App\SpawnRule;
@@ -26,6 +27,7 @@ use App\Shop;
 use App\ShopItem;
 use App\ForgeRecipe;
 use App\TraderItem;
+use App\CharacterSpell;
 use App\Spell;
 use App\Quest;
 use App\QuestTask;
@@ -35,6 +37,8 @@ use App\CharacterQuest;
 use App\CharacterQuestCriteria;
 use App\RoomAction;
 use App\CharacterRoomAction;
+use App\ChatRoom;
+use App\ChatRoomMessage;
 
 class GameController extends Controller
 	{
@@ -135,6 +139,22 @@ class GameController extends Controller
 			}
 
 		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
+
+		$ChatRoom = ChatRoom::findOrFail(1);
+		$request_params['chat'] = $ChatRoom;
+
+		// TODO: This could be BAD!
+		// users online?
+		$Users = User::all();
+		$online = 0;
+		foreach ($Users as $User)
+			{
+			if ($User->isOnline())
+				{
+				$online++;
+				}
+			}
+		$request_params['online_count'] = $online;
 
 		if ($request->death)
 			{
@@ -242,7 +262,7 @@ class GameController extends Controller
 						$CharacterQuestCriteria->fill(['character_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
 						$CharacterQuestCriteria->save();
 						}
-					$request_params['quest_text'] = $PickupQuest->description;
+					$request_params['quest_text'] = $PickupQuest->pickup_message;
 					}
 				}
 			}
@@ -291,6 +311,19 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 
 		$request_params = ['character' => $Character];
+
+		// TODO: This could be BAD!
+		// users online?
+		$Users = User::all();
+		$online = 0;
+		foreach ($Users as $User)
+			{
+			if ($User->isOnline())
+				{
+				$online++;
+				}
+			}
+		$request_params['online_count'] = $online;
 		// return $this->index($request);
 		if ($request->ajax())
 			{
@@ -389,8 +422,8 @@ class GameController extends Controller
 		// Calculate attacks:
 		$attack_count = (int)($Character->dexterity / 20) + 2;
 		$total_damage = 0;
-		$low_damage = $Character->constitution;
-		$high_damage = $Character->strength;
+		$low_damage = $Character->constitution();
+		$high_damage = $Character->strength();
 		// $current_fatigue = $Character->fatigue;
 		$flat_character = $Character->toArray();
 		$fatigue_use = 1;
@@ -688,6 +721,20 @@ class GameController extends Controller
 			$request_params['is_admin'] = true;
 			}
 
+		$Users = User::all();
+		$online = 0;
+		foreach ($Users as $User)
+			{
+			if ($User->isOnline())
+				{
+				$online++;
+				}
+			}
+		$request_params['online_count'] = $online;
+
+		$ChatRoom = ChatRoom::findOrFail(1);
+		$request_params['chat'] = $ChatRoom;
+
 		$request_params['directions'] = $Room->generate_directions($Character);
 
 		if ($flat_character['health'] <= 0)
@@ -823,6 +870,91 @@ class GameController extends Controller
 		return (int)$result;
 		}
 
+	public function spells(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+		
+
+		if ($request->action == 'cast')
+			{
+			$Spell = Spell::findOrFail($request->spell_id);
+			// cast spell:
+			// Well WTF do we do here!
+			if ($Spell->has_property('TELEPORT'))
+				{
+				// For teleport spells, the spell level can control where we go:
+				// if only 1 spell level (Town Portal), go straight there:
+				}
+
+			}
+
+		// TODO: Update for Spells if we want to remember what was selected:
+		// foreach ($allitems as $inv_item)
+		// 	{
+		// 	// die($inv_item);s
+		// 	$Item = Item::findOrFail($inv_item->items_id);
+
+		// 	if ($Item->item_types_id == 4)
+		// 		{
+		// 		$arr = $Item->toArray();
+		// 		$arr['quantity'] = $inv_item->quantity;
+		// 		$arr['selected'] = false;
+		// 		if (isset($request->item) && $Item->id == $request->item)
+		// 			{
+		// 			$arr['selected'] = true;
+		// 			}
+		// 		// $items[] = $Item;
+		// 		$items[] = $arr;
+		// 		}
+		// 	}
+
+		// $Character = Character::findOrFail($request->character_id);
+
+		return view('character.spells', ['character' => $Character->fresh()]);
+		}
+
+	public function train_spell(Request $request)
+		{
+		// die(print_r($request->characters_id));
+		// TODO: Don't trust client cost!!!
+		$Character = Character::findOrFail($request->character_id);
+		$Spell = Spell::findOrFail($request->spells_id);
+
+		$CharacterSpell = CharacterSpell::where(['character_id' => $request->character_id, 'spells_id' => $request->spells_id])->first();
+
+		if ($CharacterSpell)
+			{
+			// has the spell already?
+			$CharacterSpell->level++;
+			$CharacterSpell->save();
+			}
+		else
+			{
+			// Create it:
+			if ($Character->xp >= 5000)
+				{
+				$Character->xp = $Character->xp - 5000;
+				$Character->save();
+				$CharacterSpell = new CharacterSpell;
+
+				$CharacterSpell->fill([
+					'character_id' => $Character->id,
+					'spells_id' => $Spell->id,
+					'level' => 1
+					]);
+
+				$CharacterSpell->save();
+				}
+			else
+				{
+				Session::flash('training', 'You do not have enough experience to train that!');
+				}
+			}
+
+		return $this->index($request);
+		}
+
+	// Maybe??? YES.
 	public function calculate_spell_training_cost(Request $request)
 		{
 		// do some stuff:
@@ -1083,6 +1215,7 @@ class GameController extends Controller
 				}
 
 			$Equipment->save();
+			$Character->calc_quick_stats();
 			}
 
 		// Find all available item equipment:
@@ -1493,6 +1626,17 @@ class GameController extends Controller
 
 	public function send(Request $request)
 		{
+		if ($request->item_send === 'null')
+			{
+			Session::flash('receive', 'You must select an item to send.');
+			return $this->index($request);
+			}
+
+		if (!$request->send_character)
+			{
+			Session::flash('receive', 'You must enter a character name to send to.');
+			return $this->index($request);
+			}
 		$Character = Character::findOrFail($request->character_id);
 
 		// find send to:
@@ -1533,6 +1677,11 @@ class GameController extends Controller
 
 	public function receive(Request $request)
 		{
+		if ($request->item_received === 'null')
+			{
+			Session::flash('receive', 'You must select an item to receive.');
+			return $this->index($request);
+			}
 		$Character = Character::findOrFail($request->character_id);
 		$TraderItem = TraderItem::findOrFail($request->item_received);
 		// TODO: Refactor the price calculation
@@ -1599,6 +1748,40 @@ class GameController extends Controller
 		$Character->save();
 
 		return $this->index($request);
+		}
+
+	public function chat_message(Request $request)
+		{
+		$Character = Character::findOrFail($request->characters_id);
+		$ChatRoom = ChatRoom::findOrFail($request->chat_rooms_id);
+
+		$ChatRoomMessage = new ChatRoomMessage;
+		// TODO: Scrub these entries?
+		$ChatRoomMessage->fill([
+			'chat_rooms_id' => $request->chat_rooms_id,
+			'characters_id' => $request->characters_id,
+			'message' => filter_var($request->message, FILTER_SANITIZE_STRING),
+			]);
+
+		$ChatRoomMessage->save();
+
+		$request_params = ['character' => $Character, 'chat' => $ChatRoom];
+
+		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
+			{
+			$request_params['is_admin'] = true;
+			}
+		// return $this->index($request);
+		if ($request->ajax())
+			{
+			// $this->index($request)
+			// $view = \View::make('partials/footer', $request_params);
+			// $sections = $view->renderSections();
+			// return $sections['footer'];
+			}
+
+		return view("partials/footer", $request_params);
+		// return view('game/main', $request_params);
 		}
 
 	public function reward_character($CharacterQuest, $Character)

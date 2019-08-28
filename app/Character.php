@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Character extends Model
 {
-    protected $fillable = ['users_id', 'name', 'player_races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
+	protected $fillable = ['users_id', 'name', 'player_races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
+
+	public function user()
+		{
+		return $this->belongsto('App\User', 'users_id')->first();
+		}
 
 	public function playerrace()
 		{
@@ -38,9 +43,24 @@ class Character extends Model
 		return $this->hasOne('App\CharacterSetting', 'characters_id')->first();
 		}
 
-	public function stats()
+	public function kill_stats()
 		{
-		return true;
+		return $this->hasOne('App\KillCount', 'characters_id');
+		}
+
+	public function spells()
+		{
+		return $this->hasMany('App\CharacterSpell', 'character_id')->orderBy('spells_id','asc')->get();
+		}
+
+	public function spell_ids()
+		{
+		$arr = [];
+		foreach ($this->spells() as $spell)
+			{
+			$arr[] = $spell->id;
+			}
+		return $arr;
 		}
 
 	public function rank()
@@ -79,6 +99,60 @@ class Character extends Model
 		return true;
 		}
 
+	// Almost everything in the game will be checking against THESE stats:
+	// Raw stats mostly just for training/wall score.
+	public function stats()
+		{
+		$stats = [
+			'strength' => $this->strength,
+			'dexterity' => $this->dexterity,
+			'constitution' => $this->constitution,
+			'wisdom' => $this->wisdom,
+			'intelligence' => $this->intelligence,
+			'charisma' => $this->charisma,
+			];
+
+		$armor_stats = $this->equipment()->calculate_stats();
+		foreach ($armor_stats as $stat => $value)
+			{
+			$stats[$stat] = $stats[$stat] + $value;
+			}
+
+		return $stats;
+		}
+
+	// TODO: Performance check??
+	// helpers 
+	public function strength()
+		{
+		return $this->stats()['strength'];
+		}
+
+	public function dexterity()
+		{
+		return $this->stats()['dexterity'];
+		}
+
+	public function constitution()
+		{
+		return $this->stats()['constitution'];
+		}
+
+	public function wisdom()
+		{
+		return $this->stats()['wisdom'];
+		}
+
+	public function intelligence()
+		{
+		return $this->stats()['intelligence'];
+		}
+
+	public function charisma()
+		{
+		return $this->stats()['charisma'];
+		}
+
 	public function refresh_score()
 		{
 		$this->score = $this->strength + $this->dexterity + $this->constitution + $this->wisdom + $this->intelligence + $this->charisma + $this->quest_points;
@@ -89,12 +163,13 @@ class Character extends Model
 
 	public function calc_quick_stats()
 		{
-		$this->max_health = $this->strength + $this->constitution + $this->dexterity;
-		$this->max_mana = $this->wisdom + $this->intelligence + $this->charisma;
-		$this->max_fatigue = $this->dexterity + $this->constitution + $this->wisdom;
+		$stats = $this->stats();
+		$this->max_health = $stats['strength'] + $stats['constitution'] + $stats['dexterity'];
+		$this->max_mana = $stats['wisdom'] + $stats['intelligence'] + $stats['charisma'];
+		$this->max_fatigue = $stats['dexterity'] + $stats['constitution'] + $stats['wisdom'];
 		$this->save();
 
-		$this->inventory()->max_weight = $this->strength;
+		$this->inventory()->max_weight = $stats['strength'];
 		$this->inventory()->save();
 
 		return true;
@@ -176,7 +251,7 @@ class Character extends Model
 				{
 				// TODO: Refactor the price calculation
 				$price = round(($trader_item->item()->value * 0.66) / $this->charisma, 0);
-				$arr[] = ['id' => $trader_item->id, 'label' => $trader_item->item()->name." ($price) from ".$trader_item->from_character()->name];
+				$arr[] = ['id' => $trader_item->id, 'label' => $trader_item->item()->name." ($price) from ".$trader_item->from_character()->name, 'type' => $trader_item->item()->item_types_id];
 				}
 			}
 		return $arr;

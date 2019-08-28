@@ -53,7 +53,7 @@
 			grid-template-areas:
 				'menu main'
 				'footer footer';
-			grid-template-columns: 15rem auto;
+			grid-template-columns: 12.5rem auto;
 			grid-gap: .25rem;
 			}
 
@@ -70,6 +70,7 @@
 			grid-area: menu;
 			min-height: 500px;
 			/*text-align: center;*/
+			overflow-x: scroll;
 			}
 
 		.game-container .menu header
@@ -146,6 +147,24 @@
 		#combat-table td
 			{
 			padding: .5rem;
+			}
+
+		.chat-room
+			{
+			width: 100%;
+			border: 1px solid white;
+			}
+
+		.chat-room td
+			{
+			border: 1px solid #999;
+			padding: .1rem;
+			}
+
+		.chat-room td.fit-width
+			{
+			width: 1%;
+			white-space: nowrap;
 			}
 		</style>
 	</head>
@@ -275,15 +294,20 @@
 					var menu_inserts = [
 						'/equipment',
 						'/food',
+						'/spells',
 						'/show_stats',
 						'/menu',
 						'/settings',
 						'/character/update_settings'
 						];
+
+					var footer_inserts = [
+						'/chat/message',
+						];
 					// var replace = '.game-container';
 					// console.log(this['url']);
 					// if (main_inserts.includes(this['url']))
-					if (!main_exceptions.includes(this['url']) && !menu_inserts.includes(this['url']))
+					if (!main_exceptions.includes(this['url']) && !menu_inserts.includes(this['url']) && !footer_inserts.includes(this['url']))
 						{
 						// replace = '.main';
 						console.log('replace main');
@@ -301,6 +325,11 @@
 						// replace = '.menu';
 						console.log('replace menu');
 						$('.menu').html(resp);
+						}
+					if (footer_inserts.includes(this['url']))
+						{
+						console.log('replace footer');
+						$('.footer').html(resp);
 						}
 					// some type of full page reload:
 					// Probably a shit idea... REAL shit, whoops!

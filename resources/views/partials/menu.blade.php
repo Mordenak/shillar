@@ -3,7 +3,13 @@
 	It is the 200th cycle in<br>
 	the year of our lord 505?<br>
 	<br>
-	There is 1 active players online.
+	@if ($online_count > 1)
+	There are {{$online_count}} active players online.
+	@else
+	There is {{$online_count}} active player online.
+	<br>
+	Population: YOU
+	@endif
 	<br><br>
 	<span style="color: #00FFFF">
 		<strong>Menu:</strong>
@@ -31,7 +37,15 @@
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 		<label for="food">Food</label>
 		<input type="submit" id="food" style="display: none;">
+	</form>
+	@if ($character->spells())
+	<form method="post" action="/spells" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<label for="spells">Spells</label>
+		<input type="submit" id="spells" style="display: none;">
 	</form>	
+	@endif
 	<form method="post" action="/settings" class="ajax">
 		{{csrf_field()}}
 		<input type="hidden" name="character_id" value="{{$character->id}}">

@@ -14,16 +14,20 @@
 		<a href="quest/all">All Quests</a><br>
 		<a href="room_action/all">All RoomActions</a><br>
 		<a href="forge/all">All Forge Recipes</a><br>
+		<a href="admin/zone-editor">Zone Editor</a><br>
+		@if (auth()->user()->admin_level > 1)
 		<h3>Moderation Tools (Admin Level 2)</h3>
 		<form method="post" action="admin/give_item">
 			<label for="give-submit">Give Character Item</label>
 			<input type="submit" id="give-submit" style="display:none;">
 			{{ csrf_field() }}
 		</form>
-		<h3>Admin Tools (Admin Level 3)</h3>
-		<a href="user/all">All Users</a><br>
 		<a href="character/all">All Characters</a><br>
-		<a href="admin/zone-editor">Zone Editor</a><br>
+		<h3>Admin Tools (Admin Level 3)</h3>
+		@endif
+		@if (auth()->user()->admin_level > 2)
+		<a href="user/all">All Users</a><br>
+		@endif
 	</div>
 
 <br><br>

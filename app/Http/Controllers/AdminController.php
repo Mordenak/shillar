@@ -47,6 +47,7 @@ class AdminController extends Controller
 		return view('admin.zone-editor');
 		}
 
+	// TODO: Deprecated now?
 	public function process(Request $request)
 		{
 		if (!isset(auth()->user()->admin_level))
@@ -116,14 +117,11 @@ class AdminController extends Controller
 
 	public function zone_builder(Request $request)
 		{
-		// die(print_r($request->all()));
 		$Zone = Zone::findOrFail($request->zones_id);
-		// Get last room idea:
+		// Get last room id:
 		$Room = Room::orderBy('id', 'desc')->first();
-		// die(print_r($Room->id));
-		// $next_id = \DB::select("select nextval('rooms_id_seq')")[0]->nextval;
+
 		$next_id = $Room->id + 1;
-		// die(print_r($next_id));
 		foreach ($request->new_rooms as $room_obj)
 			{
 			$Room = new Room;
@@ -134,9 +132,6 @@ class AdminController extends Controller
 			{
 			$directions = json_decode($room_obj['dirs'], true);
 
-			// die(print_r($directions));
-			// $map_rooms[$room_obj['id']] = $room_obj['id'] + $next_id;
-			// die(print_r($room_obj));
 			$Room = Room::findOrFail($room_obj['id'] + $next_id);
 
 			$room_values = [
@@ -154,8 +149,14 @@ class AdminController extends Controller
 
 			if ($room_obj['id'] == 0)
 				{
-				$room_values['title'] = $Zone->name.' Entrance';
+				$room_values['title'] = 'Builder Starting Point';
 				}
+
+			if ($room_obj['id'] == (count($request->new_rooms) -1))
+				{
+				$room_values['title'] = 'Builder Ending Point';
+				}
+
 
 			$Room->fill($room_values);
 			$Room->save();

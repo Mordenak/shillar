@@ -33,6 +33,8 @@ Route::post('/combat', 'GameController@combat');
 Route::post('/show_stats', 'GameController@show_stats');
 
 Route::post('/train', 'GameController@train');
+Route::post('/spells/train', 'GameController@train_spell');
+Route::post('/spells', 'GameController@spells');
 Route::post('/shop', 'GameController@shop');
 Route::post('/shop/purchase', 'GameController@purchase');
 Route::post('/shop/sell', 'GameController@sell');
@@ -64,6 +66,8 @@ Route::post('/trade', 'GameController@trade');
 Route::post('/trade/receive', 'GameController@receive');
 Route::post('/trade/send', 'GameController@send');
 // Do this stuff better or different?
+
+Route::post('/chat/message', 'GameController@chat_message');
 
 Route::get('/admin/zone-editor', 'AdminController@zone_editor');
 Route::post('/admin/zone_builder', 'AdminController@zone_builder');

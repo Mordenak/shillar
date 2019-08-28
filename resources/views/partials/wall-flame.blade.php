@@ -13,6 +13,9 @@ Gaze upon the Wall of Flame.<br><br>
 			@endif
 			<td>{{$listing->playerrace()->gender}}</td>
 			<td>{{$listing->playerrace()->name}}</td>
+			@if ($listing->kill_stats()->orderBy('count', 'desc')->first())
+			<td>{{$listing->kill_stats()->orderBy('count', 'desc')->first()->npc()->name}} slayer.</td>
+			@endif
 		</tr>
 	@endforeach
 	</table>

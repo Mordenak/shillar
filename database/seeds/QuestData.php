@@ -13,11 +13,11 @@ class QuestData extends Seeder
 	{
 		// Starts @ id 5
 		DB::table('quests')->insert([
-			['name' => 'Clear the Beach', 'description' => null, 'optional' => false, 'wisdom_req' => 0, 'intelligence_req' => 0, 'score_req' => 0, 'progression_req' => null, 'quest_prereq' => null, 'pickup_rooms_id' => 30, 'turnin_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Clear the Beach', 'pickup_message' => 'WIP: Help me clear out the beach.', 'completion_message' => 'WIP: Thanks for clearing out those crabs!', 'optional' => false, 'wisdom_req' => 0, 'intelligence_req' => 0, 'score_req' => 0, 'progression_req' => null, 'quest_prereq' => null, 'pickup_rooms_id' => 30, 'turnin_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('quest_rewards')->insert([
-			['quests_id' => 1, 'xp_reward' => 0, 'gold_reward' => 0, 'quest_point_reward' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['quests_id' => 1, 'xp_reward' => 50000, 'gold_reward' => 100, 'quest_point_reward' => 5, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 	}
 }

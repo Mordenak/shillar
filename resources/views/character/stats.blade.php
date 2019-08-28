@@ -23,27 +23,27 @@
 	@endif
 	<tr>
 		<td>Strength</td>
-		<td>{{$character->strength}}</td>
+		<td>{{$character->strength()}}</td>
 	</tr>
 	<tr>
 		<td>Dexterity</td>
-		<td>{{$character->dexterity}}</td>
+		<td>{{$character->dexterity()}}</td>
 	</tr>
 	<tr>
 		<td>Constitution</td>
-		<td>{{$character->constitution}}</td>
+		<td>{{$character->constitution()}}</td>
 	</tr>
 	<tr>
 		<td>Wisdom</td>
-		<td>{{$character->wisdom}}</td>
+		<td>{{$character->wisdom()}}</td>
 	</tr>
 	<tr>
 		<td>Intelligence</td>
-		<td>{{$character->intelligence}}</td>
+		<td>{{$character->intelligence()}}</td>
 	</tr>
 	<tr>
 		<td>Charisma</td>
-		<td>{{$character->charisma}}</td>
+		<td>{{$character->charisma()}}</td>
 	</tr>
 	<tr>
 		<td>Class</td>
@@ -117,7 +117,15 @@
 	<input type="hidden" name="character_id" value="{{$character->id}}">
 	<label for="food">Food</label>
 	<input type="submit" id="food" style="display: none;">
+</form>
+@if ($character->spells())
+<form method="post" action="/spells" class="ajax">
+	{{csrf_field()}}
+	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<label for="spells">Spells</label>
+	<input type="submit" id="spells" style="display: none;">
 </form>	
+@endif
 <form method="post" action="/settings" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">

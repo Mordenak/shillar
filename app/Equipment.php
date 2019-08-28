@@ -77,66 +77,37 @@ class Equipment extends Model
 
 	public function calculate_stats()
 		{
-		$bonus_stats = [];
+		$bonus_stats = [
+			'strength' => 0,
+			'dexterity' => 0,
+			'constitution' => 0,
+			'wisdom' => 0,
+			'intelligence' => 0,
+			'charisma' => 0,
+			];
 
-		if ($this->shield)
+		$slots = ['shield', 'head', 'neck', 'chest', 'hands', 'legs', 'feet', 'amulet', 'left_ring', 'right_ring', 'bracelet'];
+
+		foreach ($slots as $slot)
 			{
-			$InventoryItem = InventoryItem::findOrFail($this->shield);
+			if ($this[$slot])
+				{
+				// die(print_r($this[$slot]));
+				$InventoryItem = InventoryItem::findOrFail($this[$slot]);
+				// die(print_r($InventoryItem->item()->get_bonus_stats()));
+				$bonus = $InventoryItem->item()->get_bonus_stats();
+				if ($bonus)
+					{
+					// die(print_r($bonus));
+					foreach ($bonus as $stat => $value)
+						{
+						$bonus_stats[$stat] = $bonus_stats[$stat] + $value;
+						}
+					}
+				}
 			}
 
-		if ($this->head)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->head);
-			}
-
-		if ($this->neck)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->neck);
-			}
-
-		if ($this->chest)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->chest);
-			}
-
-		if ($this->hands)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->hands);
-			}
-
-		if ($this->legs)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->legs);
-			}
-
-		if ($this->feet)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->feet);
-			}
-
-		if ($this->amulet)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->feet);
-			$InventoryItem->get_bonus_stats();
-			}
-
-		if ($this->left_ring)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->feet);
-			$InventoryItem->get_bonus_stats();
-			}
-
-		if ($this->right_ring)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->feet);
-			$InventoryItem->get_bonus_stats();
-			}
-
-		if ($this->bracelet)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->feet);
-			$InventoryItem->get_bonus_stats();
-			}
+		// die(print_r($bonus_stats));
 
 		return $bonus_stats;
 		}

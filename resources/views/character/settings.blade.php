@@ -90,7 +90,15 @@
 	<input type="hidden" name="character_id" value="{{$character->id}}">
 	<label for="food">Food</label>
 	<input type="submit" id="food" style="display: none;">
+</form>
+@if ($character->spells())
+<form method="post" action="/spells" class="ajax">
+	{{csrf_field()}}
+	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<label for="spells">Spells</label>
+	<input type="submit" id="spells" style="display: none;">
 </form>	
+@endif
 <form method="post" action="/settings" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">

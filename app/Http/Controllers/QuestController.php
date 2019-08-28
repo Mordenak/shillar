@@ -51,7 +51,7 @@ class QuestController extends Controller
 
 		$values = [
 			'name' => $request->name,
-			'description' => $request->description,
+			'pickup_message' => $request->pickup_message,
 			'completion_message' => $request->completion_message,
 			'optional' => $request->optional ? true : false,
 			'wisdom_req' => $request->wisdom_req,
@@ -95,7 +95,7 @@ class QuestController extends Controller
 				{
 				$QuestTask = QuestTask::findOrFail($task['id']);
 
-				if (!$task['uid'] && !$task['name'] && !$task['description'] && !$task['seq'])
+				if (!$task['uid'] && !$task['name'] && !$task['log_entry'] && !$task['seq'])
 					{
 					$QuestTask->delete();
 					continue;
@@ -103,7 +103,7 @@ class QuestController extends Controller
 				}
 
 			// skip:
-			if (!$task['uid'] && !$task['name'] && !$task['description'] && !$task['seq'])
+			if (!$task['uid'] && !$task['name'] && !$task['log_entry'] && !$task['seq'])
 				{
 				continue;
 				}
@@ -112,7 +112,9 @@ class QuestController extends Controller
 				'quests_id' => $Quest->id,
 				'uid' => $task['uid'],
 				'name' => $task['name'],
-				'description' => $task['description'],
+				'log_entry' => $task['log_entry'],
+				'pickup_message' => $task['pickup_message'],
+				'completion_message' => $task['completion_message'],
 				'seq' => $task['seq']
 				];
 

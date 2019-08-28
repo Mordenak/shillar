@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quest extends Model
 {
-	protected $fillable = ['name', 'description', 'completion_message', 'optional', 'wisdom_req', 'intelligence_req', 'score_req', 'quest_prereq', 'pickup_rooms_id', 'turnin_rooms_id'];
+	protected $fillable = ['name', 'pickup_message', 'completion_message', 'optional', 'wisdom_req', 'intelligence_req', 'score_req', 'quest_prereq', 'pickup_rooms_id', 'turnin_rooms_id'];
 
 	public function tasks()
 		{

@@ -1,19 +1,17 @@
 @if ($character)
-<form method="post" action="/food" class="ajax" id="consume">
-	Consumable:
-	<select name="item">
+<form method="post" action="/spells" class="ajax" id="cast">
+	Cast Spell:
+	<select name="spell_id">
 		<option disabled selected>-- None --</option>
-		@foreach ($items as $item)
-		<option value="{{$item['id']}}" {{ $item['selected'] ? 'selected' : '' }}>{{$item['name']}} ({{$item['quantity']}})</option>
+		@foreach ($character->spells() as $spell)
+		<option value="{{$spell->spell()->id}}">{{$spell->spell()->name}}</option>
 		@endforeach
 	</select><br>
 	<input type="hidden" name="character_id" value="{{$character->id}}">
-	<input type="hidden" name="action" value="consume">
+	<input type="hidden" name="action" value="cast">
 	{{csrf_field()}}
 
-	@if (count($items) > 0)
-	<input type="submit" value="Use">
-	@endif
+	<input type="submit" value="Cast">
 </form>
 
 <br>
@@ -52,17 +50,15 @@
 <form method="post" action="/food" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">
-	<label for="food" class="disabled" disabled>Food</label>
+	<label for="food">Food</label>
 	<input type="submit" id="food" style="display: none;">
 </form>
-@if ($character->spells())
 <form method="post" action="/spells" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">
-	<label for="spells">Spells</label>
+	<label for="spells" class="disabled" disabled>Spells</label>
 	<input type="submit" id="spells" style="display: none;">
 </form>	
-@endif
 <form method="post" action="/settings" class="ajax">
 	{{csrf_field()}}
 	<input type="hidden" name="character_id" value="{{$character->id}}">
