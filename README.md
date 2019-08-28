@@ -32,9 +32,11 @@ Game Todo:
 * ~~Chat "Rooms" cause why not.~~
 
 
-Test bed: http://laravel-adventure.herokuapp.com/
+Test bed: http://shillar.herokuapp.com/
 
-Info pool: http://www.shillatime.org/shillatime.html
+Trello (replace code todo): https://trello.com/b/L7DaKlgm/dev-log
+
+Resources: http://www.shillatime.org/shillatime.html
 
 Code Todo:
 
