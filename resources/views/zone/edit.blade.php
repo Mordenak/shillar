@@ -53,4 +53,39 @@ Creating a zone:
 		</div>
 	</form>
 </div>
+
+<!-- HAHAHAH HAVE FUN! -->
+
+@foreach ($zone->rooms_q()->orderBy('id', 'asc')->get() as $room)
+[
+@foreach ($room->toArray() as $key => $value)
+
+@if ($key != 'id')
+@if ($value)
+@if (is_numeric($value))
+'{{$key}}' => {{$value}}, 
+@else
+
+@if ($key == 'created_at' || $key == 'updated_at')
+'{{$key}}' => date("Y-m-d H:i:s"),
+@else
+
+@if ($key == 'spawns_enabled')
+'{{$key}}' => true,
+@else
+'{{$key}}' => '{{$value}}', 
+@endif
+@endif
+
+@endif
+
+@else
+'{{$key}}' => null, 
+@endif
+@endif
+
+@endforeach
+],<br>
+@endforeach
+
 @endsection
