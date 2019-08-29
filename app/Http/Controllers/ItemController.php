@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Session;
 use App\Item;
 use App\ItemType;
 use App\ItemFood;
@@ -13,6 +14,7 @@ use App\ItemDust;
 use App\ItemAccessories;
 use App\ItemOthers;
 use App\EquipmentSlot;
+use App\WeaponType;
 
 class ItemController extends Controller
 {
@@ -34,10 +36,11 @@ class ItemController extends Controller
 		$ItemType = ItemType::findOrFail($Item->item_types_id);
 
 		$item_types = ItemType::all();
+		$weapon_types = WeaponType::all();
 
 		$item_type_fields = $this->get_item_fields($Item->item_types_id, $Item->id);
 		
-		return view('item.edit', ['item' => Item::findOrFail($id), 'item_types' => $item_types, 'item_fields' => $item_type_fields]);
+		return view('item.edit', ['item' => Item::findOrFail($id), 'item_types' => $item_types, 'item_fields' => $item_type_fields, 'weapon_types' => $weapon_types]);
 		}
 
 	public function save(Request $request)
@@ -80,9 +83,14 @@ class ItemController extends Controller
 		if ($ItemType->table_name == 'item_weapons')
 			{
 			$item_values['equipment_slot'] = 1;
+			$item_values['weapon_types_id'] = $request->weapon_types_id;
 			$item_values['attack_text'] = $request->attack_text;
 			$item_values['damage_low'] = $request->damage_low;
 			$item_values['damage_high'] = $request->damage_high;
+			$item_values['fatigue_use'] = $request->fatigue_use;
+			$item_values['accuracy'] = $request->accuracy;
+			$item_values['required_stat'] = $request->required_stat;
+			$item_values['required_amount'] = $request->required_amount;
 			}
 
 		if ($ItemType->table_name == 'item_armors')
@@ -131,17 +139,21 @@ class ItemController extends Controller
 		// TODO: May save all save calls until end?
 
 		// return view('admin/main');
-		return redirect()->action('ItemController@all');
+		Session::flash('success', 'Item Updated!');
+		// return $this->edit($Quest->fresh()->id);
+		return redirect()->action('ItemController@edit', ['id' => $Item->id]);
 		}
 
 	public function get_item_fields($type_id, $item_id = null)
 		{
 		$partial_name = null;
 		$equip_slots = null;
+		$weapon_types = null;
 		switch ($type_id)
 			{
 			case 1:
 				$partial_name = 'weapons';
+				$weapon_types = WeaponType::all();
 				break;
 			case 2:
 				$equip_slots = EquipmentSlot::all();
@@ -155,12 +167,15 @@ class ItemController extends Controller
 				$partial_name = 'foods';
 				break;
 			case 5:
+				// Jewels
 				$partial_name = null;
 				break;
 			case 6:
+				// Dust
 				$partial_name = null;
 				break;
 			case 7:
+				// Others
 				$partial_name = null;
 				break;
 			}
@@ -173,14 +188,14 @@ class ItemController extends Controller
 				{
 				if ($partial_name)
 					{
-					return view("partials/$partial_name", ['actual_item' => $item_values, 'equip_slots' => $equip_slots]);
+					return view("partials/$partial_name", ['actual_item' => $item_values, 'equip_slots' => $equip_slots, 'weapon_types' => $weapon_types]);
 					}
 				}
 			}
 
 		if ($partial_name)
 			{
-			return view("partials/$partial_name", ['equip_slots' => $equip_slots]);
+			return view("partials/$partial_name", ['equip_slots' => $equip_slots, 'weapon_types' => $weapon_types]);
 			}
 		else
 			{

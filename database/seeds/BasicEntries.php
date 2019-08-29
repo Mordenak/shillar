@@ -65,6 +65,10 @@ class BasicEntries extends Seeder
 			['name' => 'HAS_FIRE_TEMPLE', 'custom_view' => 'partials/temple-fire', 'description' => 'This room has the Fire Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_WATER_TEMPLE', 'custom_view' => 'partials/temple-water', 'description' => 'This room has the Water Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'CAN_TRAIN_SPELLS', 'custom_view' => 'partials/train-spell', 'description' => 'This room will show the Spell training.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_QUEST_LOG', 'custom_view' => 'partials/quest-log', 'description' => 'This room has a quest log.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_GRAVEYARD', 'custom_view' => 'partials/graveyard', 'description' => 'This room has a graveyard.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_KILL_LOG', 'custom_view' => 'partials/kill-log', 'description' => 'This room has a graveyard.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HAS_INVENTORY', 'custom_view' => 'partials/inventory', 'description' => 'This room has shows the inventory.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('spell_properties')->insert([

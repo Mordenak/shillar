@@ -43,6 +43,11 @@ class Character extends Model
 		return $this->hasOne('App\CharacterSetting', 'characters_id')->first();
 		}
 
+	public function quests()
+		{
+		return $this->hasMany('App\CharacterQuest', 'character_id')->get();
+		}
+
 	public function kill_stats()
 		{
 		return $this->hasOne('App\KillCount', 'characters_id');
@@ -104,6 +109,7 @@ class Character extends Model
 	public function stats()
 		{
 		$stats = [
+			'light_level' => 0, // TODO: Racial modifier here:
 			'strength' => $this->strength,
 			'dexterity' => $this->dexterity,
 			'constitution' => $this->constitution,
@@ -122,7 +128,12 @@ class Character extends Model
 		}
 
 	// TODO: Performance check??
-	// helpers 
+	// helpers
+	public function light_level()
+		{
+		return $this->stats()['light_level'];
+		}
+
 	public function strength()
 		{
 		return $this->stats()['strength'];

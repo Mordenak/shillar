@@ -17,3 +17,7 @@
 		<input type="text" name="armor" value="{{isset($actual_item) ? $actual_item->armor : ''}}" class="form-control">
 	</div>
 </div>
+
+@if ($actual_item)
+<input type="hidden" name="actual_id" id="actual-db-id" value="{{$actual_item->id}}">
+@endif

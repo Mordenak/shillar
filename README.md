@@ -36,13 +36,17 @@ Test bed: http://shillar.herokuapp.com/
 
 Trello (replace code todo): https://trello.com/b/L7DaKlgm/dev-log
 
-Resources: http://www.shillatime.org/shillatime.html
+Resources: 
+http://www.shillatime.org/shillatime.html
+http://www.oocities.org/sotrin_gotr/shilla_index.html
+http://shillahelpsite.wikidot.com/
 
 Code Todo:
 
 * BIG TODO: Add error checking/handling for lots of actions to reduce game errors.
 * BIG TODO: Fix combat function so that it doesn't also manage the main view :/
 * BIG TODO: Refactor some views/partials and combine them -- DRY!
+* TODO: May consider refactoring all relation functions to return the builder, not the collection.
 * Creature armor -- % or Flat?
 * Actually implement the racial modifers
 * ~~Fix broken combat after direction update!~~

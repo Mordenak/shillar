@@ -40,11 +40,6 @@ class CharacterController extends Controller
 
 	public function save(Request $request)
 		{
-		// Do something
-		// die(print_r($request->all()));
-
-		// die(print_r(auth()->user()->id));
-
 		if ($request->id)
 			{
 			$Character = Character::findOrFail($request->id);
@@ -78,6 +73,17 @@ class CharacterController extends Controller
 			}
 		else
 			{
+			if (!$request->name)
+				{
+				Session::flash('create_failed', 'Please enter a character name...');
+				return $this->create();	
+				}
+			if (Character::where(['name' => $request->name])->count() > 0)
+				{
+				Session::flash('create_failed', 'This character name is already taken, please choose another.');
+				return $this->create();
+				}
+
 			$Character = new Character;
 
 			$selected_race = $request->selected_race;

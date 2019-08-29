@@ -74,6 +74,26 @@ Creating a Creature:
 				<input type="text" name="gold_variation" value="{{isset($creature) ? $creature->gold_variation : ''}}" placeholder="0.15" class="form-control">
 			</div>
 		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Alignment:</label>
+			<div class="col-md-3">
+				<input type="text" name="alignments_id" value="{{isset($creature) ? $creature->alignments_id : ''}}" class="form-control">
+			</div>
+			<label class="col-md-2 col-form-label text-md-right">Alignment Strength:</label>
+			<div class="col-md-3">
+				<input type="text" name="alignment_strength" value="{{isset($creature) ? $creature->alignment_strength : ''}}" class="form-control">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Hostile:</label>
+			<div class="col-md-3">
+				<input type="text" name="is_hostile" value="{{isset($creature) ? $creature->is_hostile : ''}}" class="form-control">
+			</div>
+			<label class="col-md-2 col-form-label text-md-right">Blocks Movement:</label>
+			<div class="col-md-3">
+				<input type="text" name="is_blocking" value="{{isset($creature) ? $creature->is_blocking : ''}}" class="form-control">
+			</div>
+		</div>
 
 		<h3>Spawn Rules:</h3>
 		<div class="spawn-rules">

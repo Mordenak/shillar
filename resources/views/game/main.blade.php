@@ -64,6 +64,12 @@
 @endsection
 
 @section('main')
+	@if( Session::has("flee") )
+	<br>
+	{{ Session::pull("flee") }}
+	<br>
+	@endif
+
 	@if (isset($combat_log))
 	<p style="color: red;display: inline;">
 	@foreach ($combat_log as $log_entry)
@@ -85,6 +91,11 @@
 	</p>
 	@endif
 
+	@if ($room->zone()->darkness_level > $character->light_level())
+	<p style="color: red;">
+		It is too dark, you cannot see anything!
+	</p>
+	@else
 
 	<br>
 	<div style="position: relative;">
@@ -174,8 +185,6 @@
 	</p>
 	@endif
 
-	
-
 	@if (isset($quest_text))
 	<p style="color:#3487D5">
 		{!! nl2br($quest_text) !!}
@@ -229,6 +238,8 @@
 	<p>
 		{{$room->zone()->description}}
 	</p>
+	@endif
+
 	@if( Session::has("zone_travel") )
 	<p style="color:red;">{{ Session::pull("zone_travel") }}</p>
 	@endif

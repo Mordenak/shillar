@@ -32,17 +32,17 @@ class Item extends Model
 
 		if ($this->item_types_id == 4)
 			{
-			return ItemJewel::where(['items_id' => $this->id])->first();
+			return ItemFood::where(['items_id' => $this->id])->first();
 			}
 
 		if ($this->item_types_id == 5)
 			{
-			return ItemDust::where(['items_id' => $this->id])->first();
+			return ItemJewel::where(['items_id' => $this->id])->first();
 			}
 
 		if ($this->item_types_id == 6)
 			{
-			return ItemFood::where(['items_id' => $this->id])->first();
+			return ItemDust::where(['items_id' => $this->id])->first();
 			}
 
 		if ($this->item_types_id == 7)
@@ -59,6 +59,7 @@ class Item extends Model
 		if ($this->item_types_id == 2 || $this->item_types_id == 3)
 			{
 			$arr = [
+				'light_level' => $this->actual_item()->light_level,
 				'strength' => $this->actual_item()->strength_bonus,
 				'dexterity' => $this->actual_item()->dexterity_bonus,
 				'constitution' => $this->actual_item()->constitution_bonus,

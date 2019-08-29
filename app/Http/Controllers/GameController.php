@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+// Lol, what is going on here:
 use Session;
 use Illuminate\Http\Request;
 use App\User;
@@ -39,6 +40,7 @@ use App\RoomAction;
 use App\CharacterRoomAction;
 use App\ChatRoom;
 use App\ChatRoomMessage;
+use App\Alignment;
 
 class GameController extends Controller
 	{
@@ -415,6 +417,21 @@ class GameController extends Controller
 			$flat_creature = $Creature->toArray();
 			}
 
+		if ($request->submit == 'flee')
+			{
+			if ($CombatLog)
+				{
+				$CombatLog->delete();
+				}
+			$cut_xp = $Creature->award_xp * 0.5;
+			$Character->xp = round($Character->xp - $cut_xp, 0);
+			Session::flash('flee',"You have fled!  You have forfeit $cut_xp xp.");
+			$Character->save();
+			$request->session()->pull('creature.'.$Room->id);
+			$request->no_spawn = true;
+			return $this->index($request);
+			}
+
 		$combat_log = [];
 		$reward_log = [];
 		// $flat_creature = $Creature->toArray();
@@ -441,15 +458,16 @@ class GameController extends Controller
 			$low_damage = $low_damage + $Character->equipment()->weapon()->damage_low;
 			$high_damage = $high_damage + $Character->equipment()->weapon()->damage_high;
 			$attack_text = $Character->equipment()->weapon()->attack_text;
+			$base_accuracy = $Character->equipment()->weapon()->accuracy;
 			// check weapon requirements:
-			$fatigue_use = 1.5;
+			$fatigue_use = $Character->equipment()->weapon()->fatigue_use;
 			$stat_check = $Character->equipment()->weapon()->required_stat;
-			if ($Character->$stat_check < $Character->equipment()->weapon()->required_amount)
+			// So that equipped items count:
+			if (call_user_func_array([$Character,$stat_check], []) < $Character->equipment()->weapon()->required_amount)
 				{
-				$fatigue_use = 3;
+				$fatigue_use = ($fatigue_use * 1.5);
 				}
 			}
-
 		// $combat_notes['attack_text'] = $attack_text;
 
 		while ($flat_creature['health'] > 0)
@@ -482,13 +500,39 @@ class GameController extends Controller
 					break;
 					}
 
+				// error_log('eating: '.$fatigue_use);
 				$flat_character['fatigue'] = $flat_character['fatigue'] - $fatigue_use;
 
 				$acc_check = rand() / getrandmax();
 				if ($acc_check <= $base_accuracy)
 					{
 					$calc_damage = rand($low_damage, $high_damage);
+					// Maybe not cast yet???
 					$actual_damage = (int)($calc_damage * (1.0 - $flat_creature['armor']));
+					// And now alignment:
+					if (isset($flat_creature['alignments_id']) && isset($flat_character['alignments_id']))
+						{
+						$good_align = $flat_character['alignments_id'] == 4 ? 1 : $flat_character['alignments_id'] + 1;
+						if ($good_align == $flat_creature['alignments_id'])
+							{
+							// We are +1 and deal more damage:
+							error_log('good match');
+							$actual_damage = round($actual_damage * (1.0 + $flat_creature['alignment_strength']), 0);
+							}
+						$bad_align = $flat_character['alignments_id'] == 1 ? 4 : $flat_character['alignments_id'] - 1;
+						if ($bad_align == $flat_creature['alignments_id'])
+							{
+							error_log('bad match');
+							// We are -1 and deal less damage:
+							$flip = 1.0 - $flat_creature['alignment_strength'];
+							if ($flip < 0.5)
+								{
+								// cap it at 50% damage reduction for now:
+								$flip = 0.5;
+								}
+							$actual_damage = round($actual_damage * $flip, 0);
+							}
+						}
 
 					$flat_creature['health'] = $flat_creature['health'] - $actual_damage;
 					$round_damage += $actual_damage;
@@ -1616,7 +1660,7 @@ class GameController extends Controller
 	public function choose_alignment(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		$Alignment = Character::findOrFail($request->alignments_id);
+		$Alignment = Alignment::findOrFail($request->alignments_id);
 
 		$Character->alignments_id = $Alignment->id;
 		$Character->save();

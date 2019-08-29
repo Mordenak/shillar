@@ -14,25 +14,29 @@
 						</div>
 					@endif
 
-					You are logged in!
 
-					<a href="/character/create">Create a character!</a>
+					@if ($characters)
+					<h3>Select a character:</h3>
+					<div style="padding-left: 1rem;">
+						<form method="post" action="/game">
+							{{csrf_field()}}
+							@foreach ($characters as $character)
+							<input type="submit" id="ch_{{$character->id}}" name="character_id" value="{{$character->id}}" style="display:none;">
+							<label for="ch_{{$character->id}}">{{ $character->name }} ({{$character->score}}), {{$character->playerrace()->gender}} {{ $character->playerrace()->name}} </label>
+							<br>
+							@endforeach
+						</form>
+					</div>
+					@endif
 
-					<br>
-					<br>
+					<br><br>
+					<p>
+						<a href="/character/create">Create a new character</a>
+					</p>
 
-					<form method="post" action="/game">
-						{{csrf_field()}}
-					@foreach ($characters as $character)
-						<input type="submit" id="ch_{{$character->id}}" name="character_id" value="{{$character->id}}" style="display:none;">
-						<label for="ch_{{$character->id}}">{{ $character->name }} ({{$character->score}})</label>
-						<br>
-					@endforeach
-					</form>
-
-						@if (isset($admin_level) && $admin_level >= 1)
-						<a href="/admin">Admin</a>
-						@endif
+					@if (isset($admin_level) && $admin_level >= 1)
+					<a href="/admin">Admin</a>
+					@endif
 
 				</div>
 			</div>
