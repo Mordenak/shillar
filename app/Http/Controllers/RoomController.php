@@ -128,10 +128,11 @@ class RoomController extends Controller
 
 		if ($request->northwest_room_link)
 			{
-			$LinkRoom = Room::findOrFail($Room->northwest_room_id);
+			$LinkRoom = Room::findOrFail($Room->northwest_rooms_id);
 			$LinkRoom->southeast_rooms_id = $Room->id;
 			$LinkRoom->save();
 			}
+
 
 
 		// return view('admin/main');

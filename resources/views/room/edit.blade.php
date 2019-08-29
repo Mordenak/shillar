@@ -146,7 +146,8 @@ Creating a new room:<br>
 				<input type="text" name="southeast_rooms_id" value="{{isset($room) ? $room->southeast_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
-				<input type="checkbox" name="southeast_room_link"> Link?
+				<input type="checkbox" id="southeast_room_link" name="southeast_room_link">
+				<label for="southeast_room_link">Link?</label>
 			</div>
 		</div>
 
@@ -156,7 +157,8 @@ Creating a new room:<br>
 				<input type="text" name="southwest_rooms_id" value="{{isset($room) ? $room->southwest_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
-				<input type="checkbox" name="southwest_room_link"> Link?
+				<input type="checkbox" id="southwest_room_link" name="southwest_room_link">
+				<label for="southwest_room_link">Link?</label>
 			</div>
 		</div>
 
@@ -166,7 +168,8 @@ Creating a new room:<br>
 				<input type="text" name="northwest_rooms_id" value="{{isset($room) ? $room->northwest_rooms_id : ''}}" class="form-control room-lookup">
 			</div>
 			<div class="offset-md">
-				<input type="checkbox" name="northwest_room_link"> Link?
+				<input type="checkbox" id="northwest_room_link" name="northwest_room_link"> 
+				<label for="northwest_room_link">Link?</label>
 			</div>
 		</div>
 

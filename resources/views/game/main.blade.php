@@ -288,8 +288,8 @@
 			@foreach ($chat->messages() as $message)
 			<tr>
 				<td class="fit-width">{!! $message->character()->display_name() !!}</td>
+				<td class="fit-width">{{$message->created_date()}} {{$message->created_time()}}</td>
 				<td>{{$message->message}}</td>
-				<td class="fit-width">{{$message->created_time()}} on {{$message->created_date()}}</td>
 			</tr>
 			@endforeach
 			@else

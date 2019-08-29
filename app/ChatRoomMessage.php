@@ -16,11 +16,11 @@ class ChatRoomMessage extends Model
 
 	public function created_time()
 		{
-		return Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->format('H:i:s');
+		return Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->format('H:i');
 		}
 
 	public function created_date()
 		{
-		return Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->format('Y-m-d');
+		return Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->format('n/d/Y');
 		}
 }

@@ -13,10 +13,15 @@ class CreateTown extends Seeder
 	public function run()
 		{
 		DB::table('zones')->insert([
-			['name' => 'Town', 'description' => 'You are standing on a street in Town.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Beach', 'description' => 'You are standing on the Beach.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => 'beach.gif', 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Outskirts', 'description' => 'You are standing in the Outskirts.', 'intelligence_req' => 40, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Sewers', 'description' => 'You are standing in the dismal sewers.', 'intelligence_req' => 0, 'darkness_level' => 1, 'img_src' => null, 'bg_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Town', 'description' => 'You are standing on a street in Town.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Beach', 'description' => 'You are standing on the Beach.', 'intelligence_req' => 0, 'darkness_level' => 0, 'img_src' => 'beach.gif', 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Outskirts', 'description' => 'You are standing in the Outskirts.', 'intelligence_req' => 40, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Sewers', 'description' => 'You are standing in the dismal sewers.', 'intelligence_req' => 0, 'darkness_level' => 1, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Vast Valley', 'description' => 'You are standing in the Vast Valley.', 'intelligence_req' => 60, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Druid Valley', 'description' => 'You are standing in the sacred valley of the Druids.', 'intelligence_req' => 80, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Cemetary', 'description' => 'The nightmarish void of terror and sorrow swallows you as you travel further into the cemetary.', 'intelligence_req' => 80, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Cemetary - Crypt', 'description' => 'The nightmarish void of terror and sorrow swallows you as you travel further into the cemetary.', 'intelligence_req' => 80, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Castle', 'description' => 'You are in the castle.', 'intelligence_req' => 100, 'darkness_level' => 0, 'img_src' => null, 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('rooms')->insert([
@@ -153,7 +158,7 @@ class CreateTown extends Seeder
 		]);
 
 		DB::table('traders')->insert([
-			['rooms_id' => 86, 'name' => 'Trader Jack', 'description' => 'Trader Jack', 'trades_weapons' => true, 'trades_armors' => true, 'trades_accessories' => false, 'trades_foods' => false, 'trades_jewels' => false, 'trades_dusts' => false, 'trades_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['rooms_id' => 86, 'name' => "Trader Jack's Exchange", 'description' => 'You walk in, and Trader Jack stands behind the counter, clothed in bear, deer and racoon skins.  He smiles at y ou with a big grin.  A gold tooth glimmers at you as he asks,<br>"What can I do for you today?"<br><br>"Oh I should warn you, I can only hold 5 items for a player at a time."', 'trades_weapons' => true, 'trades_armors' => true, 'trades_accessories' => false, 'trades_foods' => false, 'trades_jewels' => false, 'trades_dusts' => false, 'trades_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['rooms_id' => 62, 'name' => 'Trader Bob', 'description' => 'Trader Bob', 'trades_weapons' => false, 'trades_armors' => false, 'trades_accessories' => true, 'trades_foods' => true, 'trades_jewels' => false, 'trades_dusts' => false, 'trades_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 

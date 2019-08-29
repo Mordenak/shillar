@@ -22,6 +22,8 @@ class SetupTables extends Migration
 			$table->string('img_src')->nullable();
 			$table->string('bg_color')->nullable();
 			$table->string('bg_img')->nullable();
+			$table->string('font_color')->nullable();
+			$table->string('label_color')->nullable();
 			$table->timestamps();
 		});
 
@@ -147,6 +149,7 @@ class SetupTables extends Migration
 			$table->string('attack_text');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
+			$table->float('fatigue_use');
 			$table->float('accuracy')->default(0.8);
 			$table->string('required_stat')->nullable();
 			$table->integer('required_amount')->nullable();
@@ -248,7 +251,8 @@ class SetupTables extends Migration
 			$table->integer('max_health');
 			$table->integer('mana');
 			$table->integer('max_mana');
-			$table->integer('fatigue');
+			// I know this is strange:
+			$table->float('fatigue');
 			$table->integer('max_fatigue');
 			$table->integer('strength');
 			$table->integer('dexterity');
@@ -368,10 +372,11 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->string('attack_text')->nullable();
 			$table->string('img_src')->nullable();
-			$table->boolean('is_hostile')->default(true);
+			$table->boolean('is_hostile')->default(false);
 			$table->boolean('is_blocking')->default(false);
 			$table->integer('alignments_id')->nullable();
 			$table->foreign('alignments_id')->references('id')->on('alignments');
+			$table->float('alignment_strength');
 			$table->integer('health');
 			$table->float('armor');
 			$table->integer('damage_low');
@@ -381,14 +386,6 @@ class SetupTables extends Migration
 			$table->float('xp_variation')->default(0.15);
 			$table->integer('award_gold');
 			$table->float('gold_variation')->default(0.15);
-			$table->timestamps();
-		});
-
-		Schema::create('npc_kills', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('npcs_id');
-			$table->foreign('npcs_id')->references('id')->on('npcs');
-			$table->bigInteger('count');
 			$table->timestamps();
 		});
 
@@ -697,6 +694,25 @@ class SetupTables extends Migration
 			$table->integer('npcs_id');
 			$table->foreign('npcs_id')->references('id')->on('npcs');
 			$table->bigInteger('count')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('npc_kills', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->bigInteger('count');
+			$table->timestamps();
+		});
+
+		Schema::create('graveyard', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('npcs_id');
+			$table->foreign('npcs_id')->references('id')->on('npcs');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
 			$table->timestamps();
 		});
 
