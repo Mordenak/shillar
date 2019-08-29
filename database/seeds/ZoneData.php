@@ -50,6 +50,6 @@ class ZoneData extends Seeder
 			[ 'zones_id' => 2, 'uid' => 'mermaid_hunter', 'title' => 'Damp Cave', 'description' => null, 'darkness_level' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => null, 'east_rooms_id' => null, 'south_rooms_id' => null, 'west_rooms_id' => 125, 'up_rooms_id' => null, 'down_rooms_id' => null, 'northeast_rooms_id' => null, 'southeast_rooms_id' => null, 'southwest_rooms_id' => null, 'northwest_rooms_id' => null, 'room_properties_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s"), ],
 			]);
 
-		DB::table('rooms')->updateOrInsert(['id' => 19], ['south_rooims_id' => 93]);
+		DB::table('rooms')->updateOrInsert(['id' => 19], ['south_rooms_id' => 93]);
 		}
 	}
