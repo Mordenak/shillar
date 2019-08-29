@@ -100,14 +100,14 @@ class BasicEntries extends Seeder
 
 		// Deprecate for now:
 		// DB::table('quest_criteria')->insert([
-		// 	['name' => 'KILL_NPC', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'KILL_Creature', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// 	['name' => 'ENTER_ZONE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// 	['name' => 'ENTER_ROOM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// 	['name' => 'SUPPLY_ITEM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// 	['name' => 'KILL_AT_ROOM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// 	['name' => 'KILL_AT_ROOM_COUNT', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'KILL_NPCS_ALIGN', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		// 	['name' => 'KILL_NPCS_ALIGN_COUNT', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'KILL_CreatureS_ALIGN', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		// 	['name' => 'KILL_CreatureS_ALIGN_COUNT', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		// ]);
 
 		DB::table('item_types')->insert([

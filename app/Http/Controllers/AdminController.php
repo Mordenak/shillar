@@ -75,9 +75,9 @@ class AdminController extends Controller
 				return redirect()->action('ItemController@create');
 				}
 
-			if ($request->create == 'npc')
+			if ($request->create == 'creature')
 				{
-				return redirect()->action('NpcController@create');
+				return redirect()->action('CreatureController@create');
 				}
 			}
 

@@ -88,17 +88,17 @@
 
 	<br>
 	<div style="position: relative;">
-	@if (isset($npc))
+	@if (isset($creature))
 		<div style="display: inline-block;">
-			@if ($npc->img_src)
-			<img src="{{asset('img/'.$npc->img_src)}}">
+			@if ($creature->img_src)
+			<img src="{{asset('img/'.$creature->img_src)}}">
 			@else
 			<img src="{{asset('img/unknown.jpg')}}">
 			@endif
 			<form method="post" action="/combat" class="ajax">
 				{{csrf_field()}}
 				<input type="hidden" name="room_id" value="{{$room->id}}">
-				<input type="hidden" name="npc_id" value="{{$npc->id}}">
+				<input type="hidden" name="creature_id" value="{{$creature->id}}">
 				<input type="hidden" name="character_id" value="{{$character->id}}">
 				@if (!$no_attack)
 				<table id="combat-table">
@@ -106,7 +106,7 @@
 					</tr>
 				</table>
 				<script>
-					combat_shuffle('{{$npc->name}}');
+					combat_shuffle('{{$creature->name}}');
 				</script>
 				@else
 				<span style="color:red;">You are too tired to attack</span>
@@ -126,7 +126,7 @@
 				<form method="get" action="/game/consider" class="ajax">
 					{{csrf_field()}}
 					<input type="hidden" name="room_id" value="{{$room->id}}">
-					<input type="hidden" name="npc_id" value="{{$npc->id}}">
+					<input type="hidden" name="creature_id" value="{{$creature->id}}">
 					<input type="hidden" name="character_id" value="{{$character->id}}">
 					<label for="consider">Consider</label>
 					<input type="submit" id="consider" style="display:none;">
@@ -162,7 +162,7 @@
 	{!! $room_custom !!}
 	@endif
 
-	@if (!$npc && ($room->title || $room->description))
+	@if (!$creature && ($room->title || $room->description))
 	<p>
 		@if ($room->title)
 		{{$room->title}}

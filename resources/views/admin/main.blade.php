@@ -9,7 +9,7 @@
 		<a href="zone/all">All Zones</a><br>
 		<a href="room/all">All Rooms</a><br>
 		<a href="item/all">All Items</a><br>
-		<a href="npc/all">All NPCs</a><br>
+		<a href="creature/all">All Creatures</a><br>
 		<a href="shop/all">All Shops</a><br>
 		<a href="quest/all">All Quests</a><br>
 		<a href="room_action/all">All RoomActions</a><br>

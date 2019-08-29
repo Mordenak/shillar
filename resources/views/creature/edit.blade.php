@@ -3,82 +3,82 @@
 @section('content')
 
 <h2>
-@if (isset($npc))
-Editing a NPC:
+@if (isset($creature))
+Editing a Creature:
 @else
-Creating a NPC:
+Creating a Creature:
 @endif
 </h2>
 	
 <div>
-	<form action="/npc/save" method="POST" class="form-horizontal">
+	<form action="/creature/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Name:</label>
 			<div class="col-md-3">
-				<input type="text" name="name" value="{{isset($npc) ? $npc->name : ''}}" class="form-control">
+				<input type="text" name="name" value="{{isset($creature) ? $creature->name : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Img Src:</label>
 			<div class="col-md-3">
-				<input type="text" name="img_src" value="{{isset($npc) ? $npc->img_src : ''}}" class="form-control">
+				<input type="text" name="img_src" value="{{isset($creature) ? $creature->img_src : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Health:</label>
 			<div class="col-md-3">
-				<input type="text" name="health" value="{{isset($npc) ? $npc->health : ''}}" class="form-control">
+				<input type="text" name="health" value="{{isset($creature) ? $creature->health : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Attack Text:</label>
 			<div class="col-md-3">
-				<input type="text" name="attack_text" value="{{isset($npc) ? $npc->attack_text : ''}}" class="form-control">
+				<input type="text" name="attack_text" value="{{isset($creature) ? $creature->attack_text : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Armor:</label>
 			<div class="col-md-3">
-				<input type="text" name="armor" value="{{isset($npc) ? $npc->armor : ''}}" class="form-control">
+				<input type="text" name="armor" value="{{isset($creature) ? $creature->armor : ''}}" class="form-control">
 			</div>
 
 			<label class="col-md-2 col-form-label text-md-right">Award XP:</label>
 			<div class="col-md-3">
-				<input type="text" name="award_xp" value="{{isset($npc) ? $npc->award_xp : ''}}" class="form-control">
+				<input type="text" name="award_xp" value="{{isset($creature) ? $creature->award_xp : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Damage Min:</label>
 			<div class="col-md-3">
-				<input type="text" name="damage_low" value="{{isset($npc) ? $npc->damage_low : ''}}" class="form-control">
+				<input type="text" name="damage_low" value="{{isset($creature) ? $creature->damage_low : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">XP Variation:</label>
 			<div class="col-md-3">
-				<input type="text" name="xp_variation" value="{{isset($npc) ? $npc->xp_variation : ''}}" placeholder="0.15" class="form-control">
+				<input type="text" name="xp_variation" value="{{isset($creature) ? $creature->xp_variation : ''}}" placeholder="0.15" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Damage Max:</label>
 			<div class="col-md-3">
-				<input type="text" name="damage_high" value="{{isset($npc) ? $npc->damage_high : ''}}" class="form-control">
+				<input type="text" name="damage_high" value="{{isset($creature) ? $creature->damage_high : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Award Gold:</label>
 			<div class="col-md-3">
-				<input type="text" name="award_gold" value="{{isset($npc) ? $npc->award_gold : ''}}" class="form-control">
+				<input type="text" name="award_gold" value="{{isset($creature) ? $creature->award_gold : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Attacks:</label>
 			<div class="col-md-3">
-				<input type="text" name="attacks_per_round" value="{{isset($npc) ? $npc->attacks_per_round : ''}}" class="form-control">
+				<input type="text" name="attacks_per_round" value="{{isset($creature) ? $creature->attacks_per_round : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Gold Variation:</label>
 			<div class="col-md-3">
-				<input type="text" name="gold_variation" value="{{isset($npc) ? $npc->gold_variation : ''}}" placeholder="0.15" class="form-control">
+				<input type="text" name="gold_variation" value="{{isset($creature) ? $creature->gold_variation : ''}}" placeholder="0.15" class="form-control">
 			</div>
 		</div>
 
 		<h3>Spawn Rules:</h3>
 		<div class="spawn-rules">
 			<div class="spawn-forms">
-			@if (isset($npc) && $spawn_rules->count() > 0)
+			@if (isset($creature) && $spawn_rules->count() > 0)
 				@foreach ($spawn_rules as $spawn_rule)
 				<input type="hidden" name="spawns[{{$spawn_rule->id}}][id]" value="{{$spawn_rule->id}}">
 				<div class="form-group row">
@@ -141,7 +141,7 @@ Creating a NPC:
 
 		<div class="loot-tables">
 			<div class="loot-forms">
-			@if (isset($npc) && $loot_tables->count() > 0)
+			@if (isset($creature) && $loot_tables->count() > 0)
 				@foreach ($loot_tables as $loot_table)
 				<input type="hidden" name="loot_tables[{{$loot_table->id}}][id]" value="{{$loot_table->id}}">
 				<div class="form-group row">
@@ -187,13 +187,13 @@ Creating a NPC:
 		<a class="fa fa-plus" onclick="addLootTable(this);">Add Loot Table</a>
 		<br><br>
 
-		@if (isset($npc))
-		<input type="hidden" name="id" value="{{$npc->id}}">
+		@if (isset($creature))
+		<input type="hidden" name="id" value="{{$creature->id}}">
 		@endif
 
 		<div class="form-group row mb-0 fixed-top">
 			<div class="col-md-1 offset-md-4">
-				<a href="/npc/all" class="btn btn-primary">Cancel</a>
+				<a href="/creature/all" class="btn btn-primary">Cancel</a>
 			</div>
 			<div class="col-md-2 offset-md-1">
 				<input type="submit" value="Save" class="btn btn-primary">
@@ -205,7 +205,7 @@ Creating a NPC:
 
 </div>
 
-<a href="/npc/all">Back</a>
+<a href="/creature/all">Back</a>
 <br><br>
 
 <script>

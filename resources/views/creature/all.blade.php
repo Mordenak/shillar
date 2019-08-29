@@ -7,21 +7,21 @@
 <br><br>
 
 <div>
-	<form method="get" action="/npc/create">
+	<form method="get" action="/creature/create">
 		<div class="form-group row">
 			<div class="col-md-3">
-				<input type="submit" value="Add NPC" class="form-control">
+				<input type="submit" value="Add Creature" class="form-control">
 			</div>
 		</div>
 	</form>
 </div>
 
-@foreach ($npcs as $npc)
+@foreach ($creatures as $creature)
 	
 @endforeach
 
-@if ($npcs)
-<table id="all-npcs">
+@if ($creatures)
+<table id="all-creatures">
 	<thead>
 		<th>ID</th>
 		<th>Name</th>
@@ -29,15 +29,15 @@
 		<th>Spawn Room</th>
 	</thead>
 	<tbody>
-		@foreach ($npcs as $npc)
+		@foreach ($creatures as $creature)
 		<tr>
-			<td>{{$npc->id}}</td>
+			<td>{{$creature->id}}</td>
 			<td>
-				<a href="/npc/edit/{{$npc->id}}">{{$npc->name}}</a>
+				<a href="/creature/edit/{{$creature->id}}">{{$creature->name}}</a>
 			</td>
 			<td>
-				@if ($npc->spawn_rules()->count() > 0)
-				@foreach ($npc->spawn_rules() as $spawn_rule)
+				@if ($creature->spawn_rules()->count() > 0)
+				@foreach ($creature->spawn_rules() as $spawn_rule)
 				@if ($spawn_rule->zone())
 				{{$spawn_rule->zone()->name}},
 				@endif
@@ -45,8 +45,8 @@
 				@endif
 			</td>
 			<td>
-				@if ($npc->spawn_rules()->count() > 0)
-				@foreach ($npc->spawn_rules() as $spawn_rule)
+				@if ($creature->spawn_rules()->count() > 0)
+				@foreach ($creature->spawn_rules() as $spawn_rule)
 				@if ($spawn_rule->room())
 				{{$spawn_rule->room()->title}},
 				@endif
@@ -59,7 +59,7 @@
 </table>
 
 <script>
-$('#all-npcs').dataTable();
+$('#all-creatures').dataTable();
 </script>
 @endif
 

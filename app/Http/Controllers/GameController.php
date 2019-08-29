@@ -8,7 +8,7 @@ use App\User;
 use App\Character;
 use App\Room;
 use App\SpawnRule;
-use App\Npc;
+use App\Creature;
 use App\RewardTable;
 use App\LootTable;
 use App\StatCost;
@@ -70,15 +70,15 @@ class GameController extends Controller
 
 		$Room = Room::findOrFail($Character->last_rooms_id);
 
-		$Npc = null;
+		$Creature = null;
 		// Block spawn in certain events:
-		if ($request->session()->has('npc.'.$Room->id))
+		if ($request->session()->has('creature.'.$Room->id))
 			{
-			$Npc = Npc::where(['id' => $request->session()->get('npc.'.$Room->id)])->first();
-			$request->session()->pull('npc.'.$Room->id);
+			$Creature = Creature::where(['id' => $request->session()->get('creature.'.$Room->id)])->first();
+			$request->session()->pull('creature.'.$Room->id);
 			}
 
-		if (isset($request->no_spawn) || $Npc)
+		if (isset($request->no_spawn) || $Creature)
 			{
 			// ignore
 			}
@@ -89,13 +89,13 @@ class GameController extends Controller
 
 			if ($SpawnRule && $Room->spawns_enabled)
 				{
-				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+				$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
 				$prob = rand() / getrandmax();
 				if ($prob <= $SpawnRule->chance)
 					{
 					// then we spawn:
-					$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-					$request->session()->put('npc.'.$Room->id, $Npc->id);
+					$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
+					$request->session()->put('creature.'.$Room->id, $Creature->id);
 					// break;
 					}
 				}
@@ -114,8 +114,8 @@ class GameController extends Controller
 							if ($prob <= $SpawnRule->chance)
 								{
 								// then we spawn:
-								$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-								$request->session()->put('npc.'.$Room->id, $Npc->id);
+								$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
+								$request->session()->put('creature.'.$Room->id, $Creature->id);
 								break;
 								}
 							}
@@ -138,7 +138,7 @@ class GameController extends Controller
 			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
-		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
+		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => $Creature, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
 
 		$ChatRoom = ChatRoom::findOrFail(1);
 		$request_params['chat'] = $ChatRoom;
@@ -381,7 +381,7 @@ class GameController extends Controller
 		$Character->save();
 
 		// Clear up any combat logs?  Remove last_room?
-		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $CurrentRoom->id])->first();
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'creatures_id' => $request->creature_id, 'rooms_id' => $CurrentRoom->id])->first();
 		if ($CombatLog)
 			{
 			// check room?  $CombatLog->room_id == $request->room_id ??
@@ -401,23 +401,23 @@ class GameController extends Controller
 			return $this->death($request);
 			}
 
-		$flat_npc = null;
-		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $request->room_id])->first();
+		$flat_creature = null;
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'creatures_id' => $request->creature_id, 'rooms_id' => $request->room_id])->first();
 		if ($CombatLog)
 			{
-			$Npc = Npc::findOrFail($request->npc_id);
-			$flat_npc = $Npc->toArray();
-			$flat_npc['health'] = $CombatLog->remaining_health;
+			$Creature = Creature::findOrFail($request->creature_id);
+			$flat_creature = $Creature->toArray();
+			$flat_creature['health'] = $CombatLog->remaining_health;
 			}
 		else
 			{
-			$Npc = Npc::findOrFail($request->npc_id);
-			$flat_npc = $Npc->toArray();
+			$Creature = Creature::findOrFail($request->creature_id);
+			$flat_creature = $Creature->toArray();
 			}
 
 		$combat_log = [];
 		$reward_log = [];
-		// $flat_npc = $Npc->toArray();
+		// $flat_creature = $Creature->toArray();
 		// $Equipment = Equipment::where(['characters_id' => $Character->id])->first();
 		// Calculate attacks:
 		$attack_count = (int)($Character->dexterity / 20) + 2;
@@ -452,10 +452,10 @@ class GameController extends Controller
 
 		// $combat_notes['attack_text'] = $attack_text;
 
-		while ($flat_npc['health'] > 0)
+		while ($flat_creature['health'] > 0)
 			{
 			$start_time = time();
-			if ($flat_character['health'] <= 0 || $flat_npc['health'] <= 0)
+			if ($flat_character['health'] <= 0 || $flat_creature['health'] <= 0)
 				{
 				break;
 				}				
@@ -463,15 +463,15 @@ class GameController extends Controller
 			$round_damage = 0;
 			$round_damages = [];
 			$miss_count = 0;
-			// npc
-			$npc_damages = [];
-			$npc_round_damage = 0;
-			$npc_absorbs = 0;
+			// creature
+			$creature_damages = [];
+			$creature_round_damage = 0;
+			$creature_absorbs = 0;
 			$no_fatigue = false;
 			// We attack first:
 			foreach (range(1, $attack_count) as $i)
 				{
-				if ($flat_npc['health'] <= 0)
+				if ($flat_creature['health'] <= 0)
 					{
 					break;
 					}
@@ -488,9 +488,9 @@ class GameController extends Controller
 				if ($acc_check <= $base_accuracy)
 					{
 					$calc_damage = rand($low_damage, $high_damage);
-					$actual_damage = (int)($calc_damage * (1.0 - $flat_npc['armor']));
+					$actual_damage = (int)($calc_damage * (1.0 - $flat_creature['armor']));
 
-					$flat_npc['health'] = $flat_npc['health'] - $actual_damage;
+					$flat_creature['health'] = $flat_creature['health'] - $actual_damage;
 					$round_damage += $actual_damage;
 					$round_damages[] = $actual_damage;
 					}
@@ -501,24 +501,24 @@ class GameController extends Controller
 					}
 				}
 
-			if ($flat_npc['health'] > 0)
+			if ($flat_creature['health'] > 0)
 				{
-				// Then npc:
-				foreach (range(1, $flat_npc['attacks_per_round']) as $i)
+				// Then creature:
+				foreach (range(1, $flat_creature['attacks_per_round']) as $i)
 					{
-					$calc_damage = rand($flat_npc['damage_low'], $flat_npc['damage_high']);
-					$npc_damage = $calc_damage - $Character->equipment()->calculate_armor();
-					if ($npc_damage <= 0)
+					$calc_damage = rand($flat_creature['damage_low'], $flat_creature['damage_high']);
+					$creature_damage = $calc_damage - $Character->equipment()->calculate_armor();
+					if ($creature_damage <= 0)
 						{
 						// No damage:
-						$npc_damages[] = 0;
-						$npc_absorbs++;
+						$creature_damages[] = 0;
+						$creature_absorbs++;
 						}
 					else
 						{
-						$flat_character['health'] = $flat_character['health'] - $npc_damage;
-						$npc_damages[] = $npc_damage;
-						$npc_round_damage += $npc_damage;
+						$flat_character['health'] = $flat_character['health'] - $creature_damage;
+						$creature_damages[] = $creature_damage;
+						$creature_round_damage += $creature_damage;
 
 						if ($flat_character['health'] <= 0)
 							{
@@ -535,10 +535,10 @@ class GameController extends Controller
 				'miss_count' => $miss_count,
 				'attacks' => $round_damages,
 				'round_damage' => $round_damage,
-				'npc_text' => $flat_npc['attack_text'],
-				'npc_att_count' => $flat_npc['attacks_per_round'],
-				'npc_round' => $npc_round_damage,
-				'npc_attacks' => $npc_damages,
+				'creature_text' => $flat_creature['attack_text'],
+				'creature_att_count' => $flat_creature['attacks_per_round'],
+				'creature_round' => $creature_round_damage,
+				'creature_attacks' => $creature_damages,
 				'no_fatigue' => $no_fatigue,
 				];
 
@@ -559,8 +559,8 @@ class GameController extends Controller
 				break;
 				}
 
-			// If the npc died:
-			if ($flat_npc['health'] <= 0)
+			// If the creature died:
+			if ($flat_creature['health'] <= 0)
 				{
 				break;
 				}
@@ -581,33 +581,33 @@ class GameController extends Controller
 		$reward_log = [];
 
 		// Out of the loop, who died?
-		if ($flat_npc['health'] > 0 && $flat_character['health'] > 0)
+		if ($flat_creature['health'] > 0 && $flat_character['health'] > 0)
 			{
-			// $request->session()->put('combat.'.$Character->id, $flat_npc);
+			// $request->session()->put('combat.'.$Character->id, $flat_creature);
 			if ($CombatLog)
 				{
-				$CombatLog->remaining_health = $flat_npc['health'];
+				$CombatLog->remaining_health = $flat_creature['health'];
 				}
 			else
 				{
 				$CombatLog = new CombatLog;
 				$CombatLog->fill([
 					'characters_id' => $Character->id,
-					'npcs_id' => $Npc->id,
+					'creatures_id' => $Creature->id,
 					'rooms_id' => $request->room_id,
-					'remaining_health' => $flat_npc['health'],
+					'remaining_health' => $flat_creature['health'],
 					'expires_on' => time() + 1800
 					]);
 				}
 			$CombatLog->save();
 			}
-		elseif ($flat_npc['health'] <= 0)
+		elseif ($flat_creature['health'] <= 0)
 			{
 			// Clean up session?
-			$request->session()->pull('npc.'.$Room->id);
-			// npc died
-			// $combat_log[] = "$Npc->name is dead!!!";
-			// $combat_log['npc_killed'] = true;
+			$request->session()->pull('creature.'.$Room->id);
+			// creature died
+			// $combat_log[] = "$Creature->name is dead!!!";
+			// $combat_log['creature_killed'] = true;
 			$reward_log[] = "You beat the poor creature down to a bloody pulp.  With a last breath it dies.";
 			// clean session:
 			// $request->session()->pull('combat.'.$Character->id);
@@ -618,7 +618,7 @@ class GameController extends Controller
 				}
 
 			// Record the kill:
-			$KillCount = KillCount::where(['characters_id' => $Character->id, 'npcs_id' => $Npc->id])->first();
+			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
 			if ($KillCount)
 				{
 				$KillCount->count = $KillCount->count + 1;
@@ -628,19 +628,19 @@ class GameController extends Controller
 				$KillCount = new KillCount;
 				$KillCount->fill([
 					'characters_id' => $Character->id,
-					'npcs_id' => $Npc->id,
+					'creatures_id' => $Creature->id,
 					'count' => 1
 					]);
 				}
 
 			$KillCount->save();
 
-			$xp_variation = rand()/getrandmax()*($Npc->xp_variation*2)-$Npc->xp_variation;
-			$actual_xp = (int)($Npc->award_xp * (1.0 + $xp_variation));
+			$xp_variation = rand()/getrandmax()*($Creature->xp_variation*2)-$Creature->xp_variation;
+			$actual_xp = (int)($Creature->award_xp * (1.0 + $xp_variation));
 
-			$gold_variation = rand()/getrandmax()*($Npc->gold_variation*2)-$Npc->gold_variation;
+			$gold_variation = rand()/getrandmax()*($Creature->gold_variation*2)-$Creature->gold_variation;
 
-			$actual_gold = (int)($Npc->award_gold * (1.0 + $gold_variation));
+			$actual_gold = (int)($Creature->award_gold * (1.0 + $gold_variation));
 			if ($actual_gold == 0)
 				{
 				$actual_gold = 1;
@@ -654,7 +654,7 @@ class GameController extends Controller
 			$reward_log[] = "You received $actual_gold gold.";
 			$reward_log[] = '';
 
-			$LootTables = LootTable::where(['npcs_id' => $request->npc_id])->get();
+			$LootTables = LootTable::where(['creatures_id' => $request->creature_id])->get();
 
 			if (count($LootTables) > 0)
 				{
@@ -714,7 +714,7 @@ class GameController extends Controller
 		$new_combat = $this->generate_combat_log($combat_history, $Character);
 		// die(print_r($result));
 
-		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $new_combat, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
+		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => null, 'combat_log' => $new_combat, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
 
 		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
 			{
@@ -755,7 +755,7 @@ class GameController extends Controller
 			// debug:
 			$request_params['combat'] = $CombatLog->fresh();
 			$request_params['timer'] = true;
-			$request_params['npc'] = $Npc;
+			$request_params['creature'] = $Creature;
 			}
 
 		if ($request->ajax())
@@ -1571,17 +1571,17 @@ class GameController extends Controller
 	public function consider(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		$Npc = Npc::findOrFail($request->npc_id);
+		$Creature = Creature::findOrFail($request->creature_id);
 
-		$request->session()->put('npc.'.$request->room_id, $Npc->id);
+		$request->session()->put('creature.'.$request->room_id, $Creature->id);
 
-		if ($Npc->attacks_per_round > 1)
+		if ($Creature->attacks_per_round > 1)
 			{
-			if ($Character->health >= $Npc->damage_high * $Npc->attacks_per_round)
+			if ($Character->health >= $Creature->damage_high * $Creature->attacks_per_round)
 				{
 				Session::flash('consider', 'You will probably survive all attacks');
 				}
-			elseif ($Character->health >= $Npc->damage_high)
+			elseif ($Character->health >= $Creature->damage_high)
 				{
 				Session::flash('consider', 'You will probably survive a few hits...');
 				}
@@ -1592,7 +1592,7 @@ class GameController extends Controller
 			}
 		else
 			{
-			if ($Character->health >= $Npc->damage_high)
+			if ($Character->health >= $Creature->damage_high)
 				{
 				Session::flash('consider', 'You will probably survive the first hit');
 				}
@@ -1815,9 +1815,9 @@ class GameController extends Controller
 					$condensed[] = 'You did '.$log_entry['round_damage'].' damage.<br>';
 					}
 
-				if ($log_entry['npc_round'] > 0)
+				if ($log_entry['creature_round'] > 0)
 					{
-					$condensed[] = $log_entry['npc_text'].', doing '.$log_entry['npc_round'].' damage.<br>';
+					$condensed[] = $log_entry['creature_text'].', doing '.$log_entry['creature_round'].' damage.<br>';
 					}
 
 				if (isset($log_entry['pc_died']))
@@ -1847,11 +1847,11 @@ class GameController extends Controller
 						}
 					}
 
-				foreach ($log_entry['npc_attacks'] as $npc_attack)
+				foreach ($log_entry['creature_attacks'] as $creature_attack)
 					{
-					if ($npc_attack > 0)
+					if ($creature_attack > 0)
 						{
-						$condensed[] = $log_entry['npc_text'].", doing $npc_attack damage.<br>";
+						$condensed[] = $log_entry['creature_text'].", doing $creature_attack damage.<br>";
 						}
 					else
 						{

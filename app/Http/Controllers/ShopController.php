@@ -27,15 +27,15 @@ class ShopController extends Controller
 	public function edit($id)
 		{
 		// $zones = Zone::all();
-		// $Npc = Npc::findOrFail($id);
+		// $Creature = Creature::findOrFail($id);
 		// Remove?
 		$rooms = Room::all();
 		$items = Item::all();
 
-		// $SpawnRules = SpawnRule::where(['npcs_id' => $Npc->id])->get();
-		// $LootTables = LootTable::where(['npcs_id' => $Npc->id])->get();
+		// $SpawnRules = SpawnRule::where(['creatures_id' => $Creature->id])->get();
+		// $LootTables = LootTable::where(['creatures_id' => $Creature->id])->get();
 
-		// return view('npc.edit', ['npc' => $Npc, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
+		// return view('creature.edit', ['creature' => $Creature, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
 		return view('shop.edit', ['shop' => Shop::findOrFail($id), 'items' => $items, 'rooms' => $rooms]);
 		}
 

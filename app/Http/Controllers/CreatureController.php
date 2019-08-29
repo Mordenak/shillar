@@ -5,53 +5,52 @@ namespace App\Http\Controllers;
 use Session;
 use View;
 use Illuminate\Http\Request;
-use App\Npc;
-use App\NpcStat;
+use App\Creature;
 use App\RewardTable;
 use App\SpawnRule;
 use App\LootTable;
 use App\Zone;
 use App\Item;
 
-class NpcController extends Controller
+class CreatureController extends Controller
 	{
 	public function create()
 		{
 		// TODO: Fix this repeat:
 		$zones = Zone::all();
 		$items = Item::all();
-		return view('npc.edit', ['zones' => $zones, 'items' => $items]);
+		return view('creature.edit', ['zones' => $zones, 'items' => $items]);
 		}
 
 	public function all(Request $request)
 		{
-		$npcs = Npc::all();
-		return view('npc.all', ['npcs' => $npcs]);
+		$creatures = Creature::all();
+		return view('creature.all', ['creatures' => $creatures]);
 		}
 
 	public function edit($id)
 		{
 		// $zones = Zone::all();
-		$Npc = Npc::findOrFail($id);
+		$Creature = Creature::findOrFail($id);
 		// Remove?
 		$zones = Zone::all();
 		$items = Item::all();
 
-		$SpawnRules = SpawnRule::where(['npcs_id' => $Npc->id])->get();
-		$LootTables = LootTable::where(['npcs_id' => $Npc->id])->get();
+		$SpawnRules = SpawnRule::where(['creatures_id' => $Creature->id])->get();
+		$LootTables = LootTable::where(['creatures_id' => $Creature->id])->get();
 
-		return view('npc.edit', ['npc' => $Npc, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
+		return view('creature.edit', ['creature' => $Creature, 'spawn_rules' => $SpawnRules, 'loot_tables' => $LootTables, 'zones' => $zones, 'items' => $items]);
 		}
 
 	public function save(Request $request)
 		{
-		$Npc = new Npc;
+		$Creature = new Creature;
 
 		// die(print_r($request->all()));
 
 		if ($request->id)
 			{
-			$Npc = Npc::findOrFail($request->id);
+			$Creature = Creature::findOrFail($request->id);
 			}
 
 		$values = [
@@ -69,8 +68,8 @@ class NpcController extends Controller
 			'gold_variation' => $request->gold_variation,
 			];
 
-		$Npc->fill($values);
-		$Npc->save();
+		$Creature->fill($values);
+		$Creature->save();
 
 		// die(print_r($request->all()));
 		// die(print_r($request->spawns));
@@ -111,7 +110,7 @@ class NpcController extends Controller
 			$values = [
 				'zones_id' => $zone,
 				'rooms_id' => $room,
-				'npcs_id' => $Npc->id,
+				'creatures_id' => $Creature->id,
 				'chance' => $spawn['chance'],
 				];
 
@@ -138,7 +137,7 @@ class NpcController extends Controller
 				}
 
 			$values = [
-				'npcs_id' => $Npc->id,
+				'creatures_id' => $Creature->id,
 				'items_id' => $loot_table['item_id'],
 				'chance' => $loot_table['chance'],
 				];
@@ -147,8 +146,8 @@ class NpcController extends Controller
 			$LootTable->save();
 			}
 
-		Session::flash('success', 'NPC Updated!');
+		Session::flash('success', 'Creature Updated!');
 
-		return $this->edit($Npc->fresh()->id);
+		return $this->edit($Creature->fresh()->id);
 		}
 	}

@@ -13,7 +13,7 @@ Game Todo:
 * ~~Bank~~
 * ~~Forge~~
 * ~~Traders~~
-* ~~Directional blocks, NPCs/locks~~ -- Working?
+* ~~Directional blocks, Creatures/locks~~ -- Working?
 * ~~Kill tracking~~
 * ~~Spell Training~~ [Partial]
 * Spells
@@ -43,11 +43,12 @@ Code Todo:
 * BIG TODO: Add error checking/handling for lots of actions to reduce game errors.
 * BIG TODO: Fix combat function so that it doesn't also manage the main view :/
 * BIG TODO: Refactor some views/partials and combine them -- DRY!
+* Creature armor -- % or Flat?
 * Actually implement the racial modifers
 * ~~Fix broken combat after direction update!~~
 * Improve performance
 * ~~Fix broken trading~~
-* ~~Fix npc spawn on item pickup~~
+* ~~Fix creature spawn on item pickup~~
 * Move functions out of game controller
 * Route admin functions through admin route with auth middleware admin level check
 * ~~Fix Menu CSS/sizing~~

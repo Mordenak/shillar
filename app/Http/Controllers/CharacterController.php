@@ -66,7 +66,7 @@ class CharacterController extends Controller
 				'intelligence' => $request->intelligence,
 				'charisma' => $request->charisma
 				];
-			// $NpcStat->fill($stat_values);
+			// $CreatureStat->fill($stat_values);
 			$Character->fill($values);
 			$Character->save();
 

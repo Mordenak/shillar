@@ -119,9 +119,9 @@ Creating a Quest:
 					<h5>Criteria</h5>
 					<div class="form-group row" style="padding-left: 3rem;">
 						<input type="hidden" name="tasks[{{$quest_task->criteria()->id}}][criteria_id]" value="{{$quest_task->criteria()->id}}">
-						<label class="col-md-1 col-form-label text-md-right">NPC:</label>
+						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
 						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->id}}][npc_target]" value="{{$quest_task->criteria()->npc_target}}" class="form-control npc-lookup">
+							<input type="text" name="tasks[{{$quest_task->id}}][creature_target]" value="{{$quest_task->criteria()->creature_target}}" class="form-control creature-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Zone:</label>
 						<div class="col-md-2">
@@ -145,7 +145,7 @@ Creating a Quest:
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Amount:</label>
 						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][npc_amount]" value="{{$quest_task->criteria()->npc_amount}}" class="form-control">
+							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][creature_amount]" value="{{$quest_task->criteria()->creature_amount}}" class="form-control">
 						</div>
 					</div>
 
@@ -184,9 +184,9 @@ Creating a Quest:
 					<h5>Criteria</h5>
 					<div class="form-group row" style="padding-left: 3rem;">
 						
-						<label class="col-md-1 col-form-label text-md-right">NPC:</label>
+						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
 						<div class="col-md-2">
-							<input type="text" name="tasks[0][npc_target]" class="form-control npc-lookup">
+							<input type="text" name="tasks[0][creature_target]" class="form-control creature-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Zone:</label>
 						<div class="col-md-2">
@@ -210,7 +210,7 @@ Creating a Quest:
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Amount:</label>
 						<div class="col-md-2">
-							<input type="text" name="tasks[0][npc_amount]" class="form-control">
+							<input type="text" name="tasks[0][creature_amount]" class="form-control">
 						</div>
 					</div>
 

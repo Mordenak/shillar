@@ -91,10 +91,10 @@ Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');
 Route::post('item/save', 'ItemController@save');
 Route::get('item/get_item_type', 'ItemController@get_item_fields_ajax');
 
-Route::get('npc/all', 'NpcController@all');
-Route::get('npc/create', 'NpcController@create');
-Route::get('npc/edit/{id}', 'NpcController@edit')->where('id', '[0-9]+');
-Route::post('npc/save', 'NpcController@save');
+Route::get('creature/all', 'CreatureController@all');
+Route::get('creature/create', 'CreatureController@create');
+Route::get('creature/edit/{id}', 'CreatureController@edit')->where('id', '[0-9]+');
+Route::post('creature/save', 'CreatureController@save');
 
 Route::get('character/all', 'CharacterController@all');
 Route::get('character/edit/{id}', 'CharacterController@edit')->where('id', '[0-9]+');
