@@ -15,6 +15,7 @@ class SetupTables extends Migration
 	{
 		Schema::create('zones', function (Blueprint $table) {
 			$table->bigIncrements('id');
+			$table->string('uid')->unique()->nullable();
 			$table->string('name');
 			$table->text('description')->nullable();
 			$table->integer('intelligence_req')->default(0);
@@ -36,6 +37,7 @@ class SetupTables extends Migration
 
 		Schema::create('zone_areas', function (Blueprint $table) {
 			$table->bigIncrements('id');
+			$table->string('uid')->unique()->nullable();
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
 			$table->string('name')->nullable();
@@ -583,7 +585,7 @@ class SetupTables extends Migration
 			$table->string('directions_blocked')->nullable();
 			$table->boolean('show_on_req')->default(false);
 			$table->boolean('remember')->default(false);
-			$table->integer('expires_on')->nullable();
+			$table->integer('expires_after')->nullable();
 			$table->integer('has_item')->nullable();
 			$table->foreign('has_item')->references('id')->on('items');
 			$table->integer('completed_quest')->nullable();
@@ -600,13 +602,13 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// A record here means a character performed a room action that is set to remember
 		Schema::create('character_room_actions', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('room_actions_id');
 			$table->foreign('room_actions_id')->references('id')->on('room_actions');
 			$table->integer('characters_id');
 			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('expires_after')->nullable();
 			$table->timestamps();
 		});
 

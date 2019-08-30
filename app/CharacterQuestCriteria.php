@@ -19,10 +19,11 @@ class CharacterQuestCriteria extends Model
 		return $this->belongsTo('App\QuestCriteria', 'quest_criterias_id')->first();
 		}
 
-	public function task()
-		{
-		return $this->hasOneThrough('App\QuestTask', 'App\QuestCriteria', 'quest_criterias_id')->first();
-		}
+	// Why does this not want to work??
+	// public function task()
+	// 	{
+	// 	return $this->hasOneThrough('App\QuestTask', 'App\QuestCriteria', 'quest_tasks_id')->first();
+	// 	}
 
 	public function complete()
 		{
@@ -31,9 +32,9 @@ class CharacterQuestCriteria extends Model
 
 		$this->quest()->check_completes();
 
-		if ($this->task()->completion_message)
+		if ($this->criteria()->task()->completion_message)
 			{
-			Session::put('quest_text', $this->task()->completion_message);
+			Session::put('quest_text', $this->criteria()->task()->completion_message);
 			}
 
 		return true;

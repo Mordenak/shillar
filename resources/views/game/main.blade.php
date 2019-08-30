@@ -194,7 +194,9 @@
 	@endif
 
 	@if (Session::has('quest_text'))
+	<p style="color:#3487D5">
 		{!! nl2br(Session::pull('quest_text')) !!}
+	</p>
 	@endif
 
 	@if ($room->has_property('CAN_SLEEP'))

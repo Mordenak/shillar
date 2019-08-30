@@ -239,53 +239,62 @@ class GameController extends Controller
 		// Quest Stuff?
 		// TODO: A room could have multiples, but only 1 ever should be "available" per requirements:
 		$PickupQuests = Quest::where(['pickup_rooms_id' => $Room->id])->get();
-		foreach ($PickupQuests as $PickupQuest)
+		if ($PickupQuests->count() > 0)
 			{
-			// Character already has it?
-			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
-
-			if (!$CharacterQuest)
+			foreach ($PickupQuests as $PickupQuest)
 				{
-				// Don't already have it -- can we get it?
-				if ($PickupQuest->eligible($Character))
+				// Character already has it?
+				$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
+
+				if (!$CharacterQuest)
 					{
-					// Get it!
-					$CharacterQuest = new CharacterQuest;
-					$CharacterQuest->fill(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id]);
-					$CharacterQuest->save();
-					// Also the criterias?
-					foreach ($PickupQuest->criterias() as $criteria)
+					// Don't already have it -- can we get it?
+					if ($PickupQuest->eligible($Character))
 						{
-						$CharacterQuestCriteria = new CharacterQuestCriteria;
-						$CharacterQuestCriteria->fill(['character_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
-						$CharacterQuestCriteria->save();
+						// Get it!
+						$CharacterQuest = new CharacterQuest;
+						$CharacterQuest->fill(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id]);
+						$CharacterQuest->save();
+						// Also the criterias?
+						foreach ($PickupQuest->criterias() as $criteria)
+							{
+							$CharacterQuestCriteria = new CharacterQuestCriteria;
+							$CharacterQuestCriteria->fill(['character_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
+							$CharacterQuestCriteria->save();
+							}
+						$request_params['quest_text'] = $PickupQuest->pickup_message;
+						// One quest at time please!
+						break;
 						}
-					$request_params['quest_text'] = $PickupQuest->pickup_message;
-					// One quest at time please!
-					break;
 					}
 				}
 			}
 
-		// Is room part of a quest task?
+		// Is room a target for a quest task?
 		// TODO: Refactor
-		$QuestCriteria = QuestCriteria::where(['room_target' => $Room->id])->first();
-		if ($QuestCriteria)
+		$QuestCriterias = QuestCriteria::where(['room_target' => $Room->id])->get();
+		if ($QuestCriterias->count() > 0)
 			{
-			// This room is used for a task... Does the character have it?
-			$CharacterQuestCriteria = CharacterQuestCriteria::where(['character_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
-			if ($CharacterQuestCriteria)
+			// die('found it');
+			foreach ($QuestCriterias as $QuestCriteria)
 				{
-				// Unless...
-				if ($Npc && $Npc->is_blocking)
+				// This room is used for a task... Does the character have it?
+				$CharacterQuestCriteria = CharacterQuestCriteria::where(['character_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
+
+				if ($CharacterQuestCriteria)
 					{
-					// Wait...
-					}
-				else
-					{
-					// Let's complete it!
-					// die('yes');
-					$CharacterQuestCriteria->complete();
+					// die(print_r($CharacterQuestCriteria->criteria()->task()->all()));
+					// Unless...
+					if ($Creature && $Creature->is_blocking)
+						{
+						// Wait...
+						}
+					else
+						{
+						// Let's complete it!
+						// die('yes');
+						$CharacterQuestCriteria->complete();
+						}
 					}
 				}
 			}
@@ -293,7 +302,7 @@ class GameController extends Controller
 		$TurninQuest = Quest::where(['turnin_rooms_id' => $Room->id])->first();
 		if ($TurninQuest)
 			{
-			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
+			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $TurninQuest->id])->first();
 
 			if ($CharacterQuest)
 				{
@@ -303,7 +312,7 @@ class GameController extends Controller
 				if ($CharacterQuest->complete && !$CharacterQuest->rewarded)
 					{
 					$this->reward_character($CharacterQuest, $Character);
-					$request_params['quest_text'] = $TurninQuest->completion_message;
+					// $request_params['quest_text'] = $TurninQuest->completion_message;
 					// Hand out reward... *IF* we haven't already!
 					}
 				}
@@ -1822,6 +1831,10 @@ class GameController extends Controller
 		$Character->gold = $Character->gold + $reward->gold_reward;
 		$Character->quest_points = $Character->quest_points + $reward->quest_point_reward;
 		$Character->save();
+
+		$message = "$CharacterQuest->completion_message<br><br>You receive $reward->gold_reward gold and $reward->xp_reward experience.<br>You gain $reward->quest_point_reward Quest Points.<br>";
+
+		Session::set('quest_text', $message);
 
 		$CharacterQuest->rewarded = true;
 		$CharacterQuest->save();
