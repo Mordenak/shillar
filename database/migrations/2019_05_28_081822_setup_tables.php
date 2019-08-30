@@ -784,6 +784,20 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('kill_ranks', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->integer('min_count');
+			$table->timestamps();
+		});
+
+		Schema::create('spell_ranks', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->integer('min_count');
+			$table->timestamps();
+		});
+
 		// Deprecate 8/24: Rooms will only have 1 special property each:
 		// Schema::create('room_property_rooms', function (Blueprint $table) {
 		// 	$table->bigIncrements('id');
@@ -830,6 +844,8 @@ class SetupTables extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('wall_score_ranks');
+		Schema::dropIfExists('kill_ranks');
+		Schema::dropIfExists('spell_ranks');
 		Schema::dropIfExists('racial_modifier_races');
 		Schema::dropIfExists('racial_modifiers');
 		Schema::dropIfExists('character_stats');

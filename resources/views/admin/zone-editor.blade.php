@@ -35,6 +35,11 @@
 	background-color: #DDD;
 	}
 
+.map td.start
+	{
+	background-color: #4D6;
+	}
+
 .map td.highlight
 	{
 	background-color: yellow;
@@ -43,6 +48,11 @@
 .map td[data-north] .n-blip, .map td[data-northeast] .ne-blip, .map td[data-northwest] .nw-blip, .map td[data-east] .e-blip, .map td[data-south] .s-blip, .map td[data-southeast] .se-blip, .map td[data-southwest] .sw-blip, .map td[data-west] .w-blip
 	{
 	display: block;
+	}
+
+.map td[data-title]
+	{
+	color: #000;
 	}
 
 .blip
@@ -103,6 +113,40 @@
 	}
 </style>
 
+<form method="post" action="/admin/zone_select">
+	<select id="zone-select" name="zones_id">
+		@foreach (App\Zone::all() as $zone)
+			<option value="{{$zone->id}}">{{$zone->name}}</option>
+		@endforeach
+	</select>
+	{{csrf_field()}}
+</form>
+
+<script>
+$('body').on('change', '#zone-select', function(e) {
+	$target = $(e.target);
+	var formData = new FormData($target.closest('form')[0]);
+
+	for (var pair of formData.entries())
+		{
+		console.log(pair[0] +':' + pair[1]);
+		}
+
+	clear();
+
+	$.ajax({
+		type: 'POST',
+		url: '/admin/zone_select',
+		contentType: false,
+		processData: false,
+		data: formData,
+		success: function(resp) {
+			process_rooms(resp);
+			}
+		});
+	});
+</script>
+
 <div id="room-info" style="display:none;">
 </div>
 <div class="map-wrapper">
@@ -127,6 +171,333 @@
 
 <script>
 var $new_ids = 0;
+
+// Here comes the fun part lol.
+function process_rooms(room_list)
+	{
+	var curr_row = 0;
+	var curr_col = 0;
+	var tmp_list = room_list.slice(0);
+	// for(i=0;i<room_list.length;i++)
+	// var index = 0;
+	console.log('Processing...');
+	while (tmp_list.length > 0)
+		{
+		var unk_room = false;
+		// console.log('loopy @ '+ tmp_list.length);
+		// Each room:
+		$current_room = null;
+		// console.log(room_list[i]);
+		var room = tmp_list.pop();
+		// console.log('pop one off? @ '+ tmp_list.length);
+		// console.log('tmp:'+tmp_list.length+' v '+room_list.length);
+		console.log(' -- Room '+room.id+' --');
+		// Start at 0,0:
+		if ($('.map').find('td#'+room.id).length > 0 )
+			{
+			var $original_room = $('.map').find('td#'+room.id).first();
+			var $current_room = $('.map').find('td#'+room.id).first();
+			curr_col = $current_room.index();
+			curr_row = $current_room.parent().index();
+			}
+		else if (tmp_list.length == (room_list.length - 1))
+			{
+			// TODO: Doesn't exist yet but shouldn't be at 0,0?
+			// console.log('time here?');
+			var $original_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
+			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
+			$current_room.append(room.id);
+			$current_room.attr('id', room.id)
+			$current_room.addClass('room');
+			$current_room.addClass('start');
+			$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+			// Add a room do this:
+			// $current.attr('data-south', $target.attr('id'));
+			// $target.attr('data-north', $current.attr('id'));
+			// updateLinks($current, 'south', $target.attr('id'));
+			// updateLinks($target, 'north', $current.attr('id'));
+			}
+		else
+			{
+			console.log("We don't know what to do with this room.");
+			unk_room = true;
+			// continue;
+			// break;
+			}
+
+		console.log('Looking at: ['+curr_col+','+curr_row+']');
+		
+		if (room.northwest_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.northwest_rooms_id).length == 0 )
+				{
+				if (curr_row - 1 <= 0)
+					{
+					addRow(true);
+					curr_row++;
+					}
+				if (curr_col - 1 <= 0)
+					{
+					addCol(true);
+					curr_col++;
+					}
+				console.log('Adding a NW room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
+				$current_room.append(room.northwest_rooms_id);
+				$current_room.attr('id', room.northwest_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.northwest_rooms_id).first();
+				$original_room.attr('data-northwest', room.northwest_rooms_id);
+				$target.attr('data-southeast', room.id);
+				updateLinks($original_room, 'southeast', room.northwest_rooms_id);
+				updateLinks($target, 'northwest', room.id);
+				}
+			}
+
+		if (room.north_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.north_rooms_id).length == 0 )
+				{
+				if (curr_row - 1 <= 0)
+					{
+					addRow(true);
+					curr_row++;
+					}
+				console.log('Adding a N ['+room.north_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
+				$current_room.append(room.north_rooms_id);
+				$current_room.attr('id', room.north_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.north_rooms_id).first();
+				$original_room.attr('data-north', room.north_rooms_id);
+				$target.attr('data-south', room.id);
+				updateLinks($original_room, 'south', room.north_rooms_id);
+				updateLinks($target, 'north', room.id);
+				}
+			}
+
+
+		if (room.northeast_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.northeast_rooms_id).length == 0 )
+				{
+				if (curr_row - 1 <= 0)
+					{
+					addRow(true);
+					curr_row++;
+					}
+				if (curr_col + 1 >= $('.map').find('tr').first().find('td').length)
+					{
+					addCol();
+					curr_col++;
+					}
+				console.log('Adding a NE room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
+				$current_room.append(room.northeast_rooms_id);
+				$current_room.attr('id', room.northeast_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.northeast_rooms_id).first();
+				$original_room.attr('data-northeast', room.northeast_rooms_id);
+				$target.attr('data-southwest', room.id);
+				updateLinks($original_room, 'southwest', room.northeast_rooms_id);
+				updateLinks($target, 'northeast', room.id);
+				}
+			}
+
+		if (room.west_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.west_rooms_id).length == 0 )
+				{
+				if (curr_col - 1 <= 0)
+					{
+					addCol(true);
+					curr_col++;
+					}
+				console.log('Adding a W ['+room.west_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
+				$current_room.append(room.west_rooms_id);
+				$current_room.attr('id', room.west_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.west_rooms_id).first();
+				$original_room.attr('data-west', room.west_rooms_id);
+				$target.attr('data-east', room.id);
+				updateLinks($original_room, 'east', room.west_rooms_id);
+				updateLinks($target, 'west', room.id);
+				}
+			}
+
+		if (room.east_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.east_rooms_id).length == 0 )
+				{
+				if (curr_col + 1 >= $('.map').find('tr').first().find('td').length)
+					{
+					addCol();
+					// curr_col++;
+					}
+				console.log('Adding a E ['+room.east_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
+				$current_room.append(room.east_rooms_id);
+				$current_room.attr('id', room.east_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.east_rooms_id).first();
+				$original_room.attr('data-east', room.east_rooms_id);
+				$target.attr('data-west', room.id);
+				updateLinks($original_room, 'west', room.east_rooms_id);
+				updateLinks($target, 'east', room.id);
+				}
+			}
+
+		if (room.southwest_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.southwest_rooms_id).length == 0 )
+				{
+				if (curr_row + 1 >= $('.map').find('tr').length)
+					{
+					addRow();
+					// curr_row++;
+					}
+				if (curr_col - 1 <= 0)
+					{
+					addCol(true);
+					// curr_col++;
+					}
+				console.log('Adding a SW room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
+				$current_room.append(room.southwest_rooms_id);
+				$current_room.attr('id', room.southwest_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.southwest_rooms_id).first();
+				$original_room.attr('data-southwest', room.southwest_rooms_id);
+				$target.attr('data-northeast', room.id);
+				updateLinks($original_room, 'northeast', room.southwest_rooms_id);
+				updateLinks($target, 'southwest', room.id);
+				}
+			}
+
+		if (room.south_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.south_rooms_id).length == 0 )
+				{
+				if (curr_row + 1 >= $('.map').find('tr').length)
+					{
+					addRow();
+					// curr_row++;
+					}
+				console.log('Adding a S ['+room.south_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
+				$current_room.append(room.south_rooms_id);
+				$current_room.attr('id', room.south_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.south_rooms_id).first();
+				$original_room.attr('data-south', room.south_rooms_id);
+				$target.attr('data-north', room.id);
+				updateLinks($original_room, 'north', room.south_rooms_id);
+				updateLinks($target, 'south', room.id);
+				}
+			}
+
+		if (room.southeast_rooms_id != null)
+			{
+			// Room already exists?
+			if ($('.map').find('td#'+room.southeast_rooms_id).length == 0 )
+				{
+				if (curr_row + 1 >= $('.map').find('tr').length)
+					{
+					addRow();
+					// curr_row++;
+					}
+				if (curr_col + 1 >= $('.map').find('tr').first().find('td').length)
+					{
+					addCol();
+					// curr_col++;
+					}
+				console.log('Adding a SE room at: ['+curr_row+','+curr_col+']');
+				// Now we can add the room:
+				var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col + 1);
+				$current_room.append(room.southeast_rooms_id);
+				$current_room.attr('id', room.southeast_rooms_id);
+				$current_room.addClass('room');
+				$current_room.append($('<input/>', {type: 'hidden', name: 'existing['+room.id+'][id]', value: room.id}));
+				performLink($current_room, $original_room);
+				}
+			else
+				{
+				unk_room = false;
+				$target = $('.map').find('td#'+room.southeast_rooms_id).first();
+				$original_room.attr('data-southeast', room.southeast_rooms_id);
+				$target.attr('data-northwest', room.id);
+				updateLinks($original_room, 'northwest', room.southeast_rooms_id);
+				updateLinks($target, 'southeast', room.id);
+				}
+			}
+
+		if (unk_room)
+			{
+			console.log('moving this to front: ' + room.id);
+			tmp_list.unshift(room);
+			}
+
+		// break;
+
+		}
+	}
   
 function start()
 	{
@@ -157,6 +528,9 @@ function show_room($td)
 	var $insert = $('<div/>', {"class": 'insert', 'data-id': $td.attr('id')});
 	$insert.append($('<label/>').append('Room '+$td.attr('id')));
 	$insert.append('<br>');
+	$insert.append('Title:');
+	$insert.append($('<input/>', {id: 'title', name: 'title', value: $td.attr('data-title')}));
+	$insert.append('<br>');
 	$insert.append('N:');
 	$insert.append($('<input/>', {id: 'north', name: 'north', value: $td.attr('data-north')}));
 	$insert.append('<br>');
@@ -185,10 +559,15 @@ function show_room($td)
 	}
   
 $('body').on('click', '.clear-map', function(e) {
+	clear();
+	});
+
+function clear()
+	{
 	$('.map tbody').html('');
 	$('.map').css({width: ''});
 	start();
-	});
+	}
 
 $('body').on('click', '.add-row', function(e) {
 	var $new = $('.map').find('tr').last().clone();
@@ -202,6 +581,28 @@ $('body').on('click', '.add-row', function(e) {
 		}
 	$('.map tbody').append($tr);
 	});
+
+function addRow(before = false)
+	{
+	var $new = $('.map').find('tr').last().clone();
+	$cols = $('.map').find('tr').last().find('td').length;
+	$tr = $('<tr/>');
+	for(i=0;i<$cols;i++)
+		{
+		$cell = $('<td/>');
+		$cell.append('<div class="blip nw-blip"></div><div class="blip n-blip"></div><div class="blip ne-blip"></div><div class="blip e-blip"></div><div class="blip w-blip"></div><div class="blip se-blip"></div><div class="blip s-blip"></div><div class="blip sw-blip"></div>');
+		$tr.append($cell);
+		}
+	if (before)
+		{
+		$('.map tbody').prepend($tr);
+		}
+	else
+		{
+		$('.map tbody').append($tr);
+		}
+	return true;
+	}
   
 $('body').on('click', '.add-column', function(e) { 
 	$('.map tbody tr').each(function(i,e) {
@@ -216,6 +617,29 @@ $('body').on('click', '.add-column', function(e) {
 		$('.map').css({width: '100%'});
 		}
 	});
+
+function addCol(before = false)
+	{
+	$('.map tbody tr').each(function(i,e) {
+		$cell = $('<td/>');
+		$cell.append('<div class="blip nw-blip"></div><div class="blip n-blip"></div><div class="blip ne-blip"></div><div class="blip e-blip"></div><div class="blip w-blip"></div><div class="blip se-blip"></div><div class="blip s-blip"></div><div class="blip sw-blip"></div>');
+
+		if (before)
+			{
+			$(e).prepend($cell);
+			}
+		else
+			{
+			$(e).append($cell);
+			}
+		});
+
+	// map width doesn't work if the float is displaying???
+	if ($('.map').width() > 1000)
+		{
+		$('.map').css({width: '100%'});
+		}
+	}
   
 $('body').on('click', '.link-adjacents', function(e) {
 	$('.room').each(function(i,e) {

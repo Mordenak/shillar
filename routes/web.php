@@ -71,6 +71,7 @@ Route::post('/trade/send', 'GameController@send');
 Route::post('/chat/message', 'GameController@chat_message');
 
 Route::get('/admin/zone-editor', 'AdminController@zone_editor');
+Route::post('/admin/zone_select', 'AdminController@zone_select');
 Route::post('/admin/zone_builder', 'AdminController@zone_builder');
 
 // TODO: Route these all through /admin and include an Auth Middleware

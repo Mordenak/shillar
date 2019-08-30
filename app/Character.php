@@ -50,7 +50,7 @@ class Character extends Model
 
 	public function kill_stats()
 		{
-		return $this->hasOne('App\KillCount', 'characters_id');
+		return $this->hasMany('App\KillCount', 'characters_id');
 		}
 
 	public function spells()
@@ -90,6 +90,13 @@ class Character extends Model
 			}
 
 		return true;
+		}
+
+	public function kill_rank()
+		{
+		$top_kill = $this->kill_stats()->orderBy('count', 'desc')->first();
+		$KillRank = KillRank::where('min_count', '<=', $top_kill->count)->orderBy('min_count', 'desc')->first();
+		return $top_kill->creature()->name." $KillRank->name";
 		}
 
 	public function display_name()

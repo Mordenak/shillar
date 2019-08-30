@@ -47,6 +47,13 @@ class AdminController extends Controller
 		return view('admin.zone-editor');
 		}
 
+	public function zone_select(Request $request)
+		{
+		$Zone = Zone::findOrFail($request->zones_id);
+
+		return $Zone->rooms_q()->orderBy('id', 'desc')->get();
+		}
+
 	// TODO: Deprecated now?
 	public function process(Request $request)
 		{

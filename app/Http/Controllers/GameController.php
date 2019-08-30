@@ -3,44 +3,10 @@
 namespace App\Http\Controllers;
 
 // Lol, what is going on here:
+// Refactor to use App\{User, Character, etc.}?
 use Session;
 use Illuminate\Http\Request;
-use App\User;
-use App\Character;
-use App\Room;
-use App\SpawnRule;
-use App\Creature;
-use App\RewardTable;
-use App\LootTable;
-use App\StatCost;
-use App\RaceStatAffinity;
-use App\Equipment;
-use App\Item;
-use App\ItemWeapon;
-use App\ItemArmor;
-use App\CharacterSetting;
-use App\ItemFood;
-use App\ItemAccessory;
-use App\CombatLog;
-use App\KillCount;
-use App\InventoryItem;
-use App\Shop;
-use App\ShopItem;
-use App\ForgeRecipe;
-use App\TraderItem;
-use App\CharacterSpell;
-use App\Spell;
-use App\Quest;
-use App\QuestTask;
-use App\QuestCriteria;
-use App\QuestReward;
-use App\CharacterQuest;
-use App\CharacterQuestCriteria;
-use App\RoomAction;
-use App\CharacterRoomAction;
-use App\ChatRoom;
-use App\ChatRoomMessage;
-use App\Alignment;
+use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment};
 
 class GameController extends Controller
 	{
@@ -726,6 +692,11 @@ class GameController extends Controller
 				$CombatLog = null;
 				}
 
+			// TODO: CHEATER BIT
+			$total_xp = 0;
+			$total_gold = 0;
+			for ($i = 0;$i < 500;++$i)
+			{
 			// Record the kill:
 			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
 			if ($KillCount)
@@ -754,9 +725,11 @@ class GameController extends Controller
 				{
 				$actual_gold = 1;
 				}
-
-			$Character->xp += $actual_xp;
-			$Character->gold += $actual_gold;
+			$total_xp += $actual_xp;
+			$total_gold += $actual_gold;
+			}
+			$Character->xp += $total_xp;
+			$Character->gold += $total_gold;
 			$Character->save();
 			$reward_log[] = "You found $actual_gold gold and gained $actual_xp experience.";
 			// $reward_log[] = "You received $actual_xp xp.";
@@ -1832,9 +1805,9 @@ class GameController extends Controller
 		$Character->quest_points = $Character->quest_points + $reward->quest_point_reward;
 		$Character->save();
 
-		$message = "$CharacterQuest->completion_message<br><br>You receive $reward->gold_reward gold and $reward->xp_reward experience.<br>You gain $reward->quest_point_reward Quest Points.<br>";
+		$message = $CharacterQuest->quest()->completion_message."<br><br>You receive $reward->gold_reward gold and $reward->xp_reward experience.<br>You gain $reward->quest_point_reward Quest Points.<br>";
 
-		Session::set('quest_text', $message);
+		Session::put('quest_text', $message);
 
 		$CharacterQuest->rewarded = true;
 		$CharacterQuest->save();
