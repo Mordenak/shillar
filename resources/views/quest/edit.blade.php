@@ -119,10 +119,6 @@ Creating a Quest:
 					<h5>Criteria</h5>
 					<div class="form-group row" style="padding-left: 3rem;">
 						<input type="hidden" name="tasks[{{$quest_task->criteria()->id}}][criteria_id]" value="{{$quest_task->criteria()->id}}">
-						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->id}}][creature_target]" value="{{$quest_task->criteria()->creature_target}}" class="form-control creature-lookup">
-						</div>
 						<label class="col-md-1 col-form-label text-md-right">Zone:</label>
 						<div class="col-md-2">
 							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][zone_target]" value="{{$quest_task->criteria()->zone_target}}" class="form-control zone-lookup">
@@ -139,9 +135,17 @@ Creating a Quest:
 						<div class="col-md-2">
 							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][item_target]" value="{{$quest_task->criteria()->item_target}}" class="form-control item-lookup">
 						</div>
-						<label class="col-md-1 col-form-label text-md-right">Alignment:</label>
+						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[{{$quest_task->id}}][creature_target]" value="{{$quest_task->criteria()->creature_target}}" class="form-control creature-lookup">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">Of Alignment:</label>
 						<div class="col-md-2">
 							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][alignment_target]" value="{{$quest_task->criteria()->alignment_target}}" class="form-control alignment-lookup">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">In Room:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[{{$quest_task->id}}][creature_room_target]" value="{{$quest_task->criteria()->creature_room_target}}" class="form-control room-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Amount:</label>
 						<div class="col-md-2">
@@ -183,11 +187,6 @@ Creating a Quest:
 
 					<h5>Criteria</h5>
 					<div class="form-group row" style="padding-left: 3rem;">
-						
-						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[0][creature_target]" class="form-control creature-lookup">
-						</div>
 						<label class="col-md-1 col-form-label text-md-right">Zone:</label>
 						<div class="col-md-2">
 							<input type="text" name="tasks[0][zone_target]" class="form-control zone-lookup">
@@ -204,9 +203,17 @@ Creating a Quest:
 						<div class="col-md-2">
 							<input type="text" name="tasks[0][item_target]" class="form-control item-lookup">
 						</div>
-						<label class="col-md-1 col-form-label text-md-right">Alignment:</label>
+						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[0][creature_target]" class="form-control creature-lookup">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">Of Alignment:</label>
 						<div class="col-md-2">
 							<input type="text" name="tasks[0][alignment_target]" class="form-control alignment-lookup">
+						</div>
+						<label class="col-md-1 col-form-label text-md-right">In Room:</label>
+						<div class="col-md-2">
+							<input type="text" name="tasks[0][creature_room_target]" class="form-control room-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Amount:</label>
 						<div class="col-md-2">

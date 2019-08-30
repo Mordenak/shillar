@@ -87,11 +87,11 @@ Creating a Creature:
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Hostile:</label>
 			<div class="col-md-3">
-				<input type="text" name="is_hostile" value="{{isset($creature) ? $creature->is_hostile : ''}}" class="form-control">
+				<input type="checkbox" name="is_hostile" class="form-control" {{isset($creature) && $creature->is_hostile ? 'checked' : ''}}>
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Blocks Movement:</label>
 			<div class="col-md-3">
-				<input type="text" name="is_blocking" value="{{isset($creature) ? $creature->is_blocking : ''}}" class="form-control">
+				<input type="checkbox" name="is_blocking" class="form-control" {{isset($creature) && $creature->is_blocking ? 'checked' : ''}}>
 			</div>
 		</div>
 

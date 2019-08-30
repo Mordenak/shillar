@@ -2,15 +2,17 @@
 
 @section('menu')
 <div style="text-align: left;">
-	It is the 200th cycle in<br>
-	the year of our lord 505?<br>
+	<div style="color:#12a1df;">
+	It is the <span style="color:#33ffee">200th</span> cycle in<br>
+	the year of our lord <span style="color:#33ffee">505</span><br>
 	<br>
 	@if ($online_count > 1)
-	There are {{$online_count}} active players online.
+	There are <span style="color:#33ffee">{{$online_count}}</span> active players online.
 	@else
-	There is {{$online_count}} active player online.
+	There is <span style="color:#33ffee">{{$online_count}}</span> active player online.
 	<br>
 	Population: YOU
+	</div>
 	@endif
 	<br><br>
 	<span style="color: #00FFFF">
@@ -70,16 +72,16 @@
 	<br>
 	@endif
 
-	@if (isset($combat_log))
+	@if (Session::has('combat_log'))
 	<p style="color: red;display: inline;">
-	@foreach ($combat_log as $log_entry)
+	@foreach (Session::pull('combat_log') as $log_entry)
 		{!! $log_entry !!}
 	@endforeach
 	</p>
 	@endif
-	@if (isset($reward_log))
-	<p style="display: inline;">
-	@foreach ($reward_log as $log_entry)
+	@if (Session::has('reward_log'))
+	<p style="color:red;display: inline;">
+	@foreach (Session::pull('reward_log') as $log_entry)
 		{{$log_entry}}<br>
 	@endforeach
 	</p>
@@ -144,7 +146,7 @@
 				</form>
 				@if( Session::has("consider") )
 				<br>
-				{{ Session::get("consider") }}
+				{{ Session::pull("consider") }}
 				@endif
 			</div>
 		</div>
@@ -191,6 +193,10 @@
 	</p>
 	@endif
 
+	@if (Session::has('quest_text'))
+		{!! nl2br(Session::pull('quest_text')) !!}
+	@endif
+
 	@if ($room->has_property('CAN_SLEEP'))
 	<form method="post" action="/rest" class="ajax">
 		{{csrf_field()}}
@@ -200,10 +206,10 @@
 	</form>
 	@endif
 
-	<!-- Do the loot: -->
-	@if (isset($no_carry))
-	<span style="color:red;">You cannot carry anymore!</span><br>
+	@if( Session::has("no_carry") )
+	<span style="color:red;">{{Session::pull("no_carry")}}</span><br>
 	@endif
+
 	@if (isset($ground_items))
 	@foreach ($ground_items as $ground_item)
 	<form method="post" action="/item_pickup" class="ajax">
@@ -219,10 +225,10 @@
 
 	<!-- Special actions? -->
 	@if( Session::has("action_failed") )
-	<p style="color:red;">{{ Session::get("action_failed") }}</p>
+	<p style="color:red;">{{ Session::pull("action_failed") }}</p>
 	@endif
 	@if( Session::has("action_success") )
-	<p style="color:#55ff8b;">{{ Session::get("action_success") }}</p>
+	<p style="color:#55ff8b;">{{ Session::pull("action_success") }}</p>
 	@endif
 	@if (isset($special_actions))
 	<form method="post" action="/room_action/attempt" class="ajax">
@@ -243,6 +249,10 @@
 	@if( Session::has("zone_travel") )
 	<p style="color:red;">{{ Session::pull("zone_travel") }}</p>
 	@endif
+
+	@if ($creature && $creature->is_blocking)
+	<p style="color:orange;">You must fight your way through this enemy to move again!</p>
+	@else
 	<p>
 		@foreach ($directions as $col => $room_id)
 		<form method="post" action="/move" class="ajax">
@@ -254,6 +264,7 @@
 		</form>
 		@endforeach
 	</p>
+	@endif
 
 	@if ($room->has_property('WALL_SCORE'))
 		<table>
@@ -293,14 +304,21 @@
 @section('footer')
 	@if ($chat)
 	<div>
-		<h3>{{$chat->name}}</h3>
+		<h3 style="display: inline-block;">{{$chat->name}}</h3>
+		<form method="post" action="/footer" class="ajax" style="display: inline-block;">
+			<label for="refresh-chat" class="fas fa-sync"> Refresh</label>
+			<input type="submit" id="refresh-chat" value="Refresh" style="display:none;">
+			<input type="hidden" name="chat_rooms_id" value="{{$chat->id}}">
+			<input type="hidden" name="characters_id" value="{{$character->id}}">
+			{{csrf_field()}}
+		</form><br>
 		<table class="chat-room">
 			@if ($chat->messages()->count() > 0)
 			@foreach ($chat->messages() as $message)
 			<tr>
 				<td class="fit-width">{!! $message->character()->display_name() !!}</td>
 				<td class="fit-width">{{$message->created_date()}} {{$message->created_time()}}</td>
-				<td>{{$message->message}}</td>
+				<td>{!! $message->message !!}</td>
 			</tr>
 			@endforeach
 			@else
@@ -319,7 +337,7 @@
 
 	<!-- Debug section -->
 
-	@if (isset($is_admin) && $is_admin)
+	@if (auth()->user()->admin_level > 0)
 
 		@if (isset($combat))
 		{{$combat->id}} {{$combat->remaining_health}}

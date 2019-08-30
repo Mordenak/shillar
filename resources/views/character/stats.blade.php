@@ -146,6 +146,7 @@
 	}
 </style>
 
+@if ($character->settings()->refresh_rate > 0)
 <script>
 var refresh_rate = parseInt('{{$character->settings()->refresh_rate * 1000}}');
 setTimeout(function(e) {
@@ -163,3 +164,4 @@ setTimeout(function(e) {
 		});
 	}, refresh_rate);
 </script>
+@endif

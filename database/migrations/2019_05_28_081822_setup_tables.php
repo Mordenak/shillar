@@ -24,6 +24,44 @@ class SetupTables extends Migration
 			$table->string('bg_img')->nullable();
 			$table->string('font_color')->nullable();
 			$table->string('label_color')->nullable();
+			// TODO: Eventually move these things out onto properties -- SPAGHET:
+			$table->integer('heat_damage')->nullable();
+			$table->integer('heat_damage_start')->nullable();
+			$table->integer('heat_damage_end')->nullable();
+			$table->integer('cold_damage')->nullable();
+			$table->integer('cold_damage_start')->nullable();
+			$table->integer('cold_damage_end')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('zone_areas', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->string('name')->nullable();
+			$table->text('description')->nullable();
+			$table->integer('darkness_level')->default(0);
+			$table->string('img_src')->nullable();
+			$table->string('bg_color')->nullable();
+			$table->string('bg_img')->nullable();
+			$table->string('font_color')->nullable();
+			$table->string('label_color')->nullable();
+			// TODO: Eventually move these things out onto properties -- SPAGHET:
+			$table->integer('heat_damage')->nullable();
+			$table->integer('heat_damage_start')->nullable();
+			$table->integer('heat_damage_end')->nullable();
+			$table->integer('cold_damage')->nullable();
+			$table->integer('cold_damage_start')->nullable();
+			$table->integer('cold_damage_end')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('zone_rotations', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->integer('seq');
+			$table->string('rooms_array')->nullable();
 			$table->timestamps();
 		});
 
@@ -127,6 +165,7 @@ class SetupTables extends Migration
 			$table->bigInteger('value')->nullable();
 			$table->float('weight')->nullable();
 			$table->float('is_stackable')->default(false);
+			$table->float('drops_on_death')->default(true);
 			$table->integer('score_req')->nullable();
 			$table->timestamps();
 		});
@@ -151,6 +190,7 @@ class SetupTables extends Migration
 			$table->integer('damage_high');
 			$table->float('fatigue_use');
 			$table->float('accuracy')->default(0.8);
+			$table->float('crit_chance')->nullable();
 			$table->string('required_stat')->nullable();
 			$table->integer('required_amount')->nullable();
 			$table->timestamps();
@@ -266,6 +306,19 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		// TODO: Neat idea that may not become relevant?
+		// Will need to track 'RoomActions' in here somehow:
+		Schema::create('zone_instances', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			// Maybe throw some sort of UID on this?
+			$table->integer('expires_on')->nullable();
+			$table->timestamps();
+		});
+
 		// Redo this?
 		Schema::create('inventories', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -378,7 +431,7 @@ class SetupTables extends Migration
 			$table->foreign('alignments_id')->references('id')->on('alignments');
 			$table->float('alignment_strength')->nullable();
 			$table->integer('health');
-			$table->float('armor');
+			$table->integer('armor');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
 			$table->integer('attacks_per_round');
@@ -398,6 +451,7 @@ class SetupTables extends Migration
 			$table->integer('creatures_id');
 			$table->foreign('creatures_id')->references('id')->on('creatures');
 			$table->float('chance');
+			$table->integer('score_req')->nullable();
 			$table->timestamps();
 		});
 
@@ -527,7 +581,9 @@ class SetupTables extends Migration
 			$table->string('display')->nullable();
 			// comma seperated list of blocked directions until the action is performed?
 			$table->string('directions_blocked')->nullable();
+			$table->boolean('show_on_req')->default(false);
 			$table->boolean('remember')->default(false);
+			$table->integer('expires_on')->nullable();
 			$table->integer('has_item')->nullable();
 			$table->foreign('has_item')->references('id')->on('items');
 			$table->integer('completed_quest')->nullable();
@@ -560,8 +616,6 @@ class SetupTables extends Migration
 			$table->foreign('quest_tasks_id')->references('id')->on('quest_tasks');
 			$table->string('name')->nullable(); // ???
 			$table->text('description')->nullable(); // ???
-			$table->integer('creature_target')->nullable();
-			$table->foreign('creature_target')->references('id')->on('creatures');
 			$table->integer('zone_target')->nullable();
 			$table->foreign('zone_target')->references('id')->on('zones');
 			$table->integer('room_target')->nullable();
@@ -570,6 +624,10 @@ class SetupTables extends Migration
 			$table->foreign('room_action_target')->references('id')->on('room_actions');
 			$table->integer('item_target')->nullable();
 			$table->foreign('item_target')->references('id')->on('items');
+			$table->integer('creature_target')->nullable();
+			$table->foreign('creature_target')->references('id')->on('creatures');
+			$table->integer('creature_room_target')->nullable();
+			$table->foreign('creature_room_target')->references('id')->on('rooms');
 			$table->integer('alignment_target')->nullable();
 			$table->foreign('alignment_target')->references('id')->on('alignments');
 			$table->integer('creature_amount')->nullable();
@@ -823,6 +881,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('creature_kills');
 		Schema::dropIfExists('graveyard');
 		Schema::dropIfExists('creatures');
+		Schema::dropIfExists('zone_instances');
 		Schema::dropIfExists('game_progression');
 		Schema::dropIfExists('characters');
 		Schema::dropIfExists('alignments');
@@ -837,6 +896,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('room_property_rooms');
 		Schema::dropIfExists('rooms');
 		Schema::dropIfExists('room_properties');
+		Schema::dropIfExists('zone_areas');
+		Schema::dropIfExists('zone_rotations');
 		Schema::dropIfExists('zones');
 		Schema::dropIfExists('player_races');
 	}

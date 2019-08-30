@@ -25,6 +25,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('/game', 'GameController@index');
 Route::post('/menu', 'GameController@menu');
+Route::post('/footer', 'GameController@footer');
 
 Route::post('/move', 'GameController@move');
 
