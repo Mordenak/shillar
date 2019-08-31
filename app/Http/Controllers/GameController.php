@@ -470,8 +470,8 @@ class GameController extends Controller
 		// Calculate attacks:
 		$attack_count = (int)($Character->dexterity / 20) + 2;
 		$total_damage = 0;
-		$grope_low = $Character->constitution() + 1;
-		$grope_high = $Character->strength() + 6;
+		$grope_low = $Character->constitution() + (rand(1,10));
+		$grope_high = $Character->constitution() + $Character->strength() + rand(1,10);
 		// Multiply $grope_low & $grope_high if they ahve the extra grope racial mod!!!
 		$weapon_low = 0;
 		$weapon_high = 0;

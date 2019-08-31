@@ -128,40 +128,89 @@ class AdminController extends Controller
 		// Get last room id:
 		$Room = Room::orderBy('id', 'desc')->first();
 
+		$existing_records = [];
 		$next_id = $Room->id + 1;
 		foreach ($request->new_rooms as $room_obj)
 			{
-			$Room = new Room;
-			$Room->zones_id = $request->zones_id;
-			$Room->save(); 
+			if (!isset($room_obj['in_db']))
+				{
+				$Room = new Room;
+				$Room->zones_id = $request->zones_id;
+				$Room->save(); 
+				error_log('Created '.$Room->id);
+				}
+			else
+				{
+				$existing_records[] = $room_obj['in_db'];
+				}
 			}
 		foreach ($request->new_rooms as $room_obj)
 			{
+			if (!isset($room_obj['dirs']))
+				{
+				// wtf was submitted?
+				error_log('What happened here?');
+				error_log(print_r($room_obj));
+				continue;
+				}
 			$directions = json_decode($room_obj['dirs'], true);
 
-			$Room = Room::findOrFail($room_obj['id'] + $next_id);
-
-			$room_values = [
-				'north_rooms_id' => isset($directions['north']) ? $directions['north'] + $next_id : null,
-				'east_rooms_id' => isset($directions['east']) ? $directions['east'] + $next_id : null,
-				'south_rooms_id' => isset($directions['south']) ? $directions['south'] + $next_id : null,
-				'west_rooms_id' => isset($directions['west']) ? $directions['west'] + $next_id : null,
-				'northeast_rooms_id' => isset($directions['northeast']) ? $directions['northeast'] + $next_id : null,
-				'southeast_rooms_id' => isset($directions['southeast']) ? $directions['southeast'] + $next_id : null,
-				'southwest_rooms_id' => isset($directions['southwest']) ? $directions['southwest'] + $next_id : null,
-				'northwest_rooms_id' => isset($directions['northwest']) ? $directions['northwest'] + $next_id : null,
-				'up_rooms_id' => isset($directions['up']) ? $directions['up'] + $next_id : null,
-				'down_rooms_id' => isset($directions['down']) ? $directions['down'] + $next_id : null,
-				];
-
-			if ($room_obj['id'] == 0)
+			$insert_id = $next_id;
+			if (isset($room_obj['in_db']))
 				{
-				$room_values['title'] = 'Builder Starting Point';
+				$Room = Room::findOrFail($room_obj['in_db']);
+				// $next_id = 0;
+				}
+			else
+				{
+				$cap = $room_obj['id'] + $next_id;
+				error_log('Loking for: '.$cap);
+				$Room = Room::findOrFail($room_obj['id'] + $next_id);
 				}
 
-			if ($room_obj['id'] == (count($request->new_rooms) -1))
+			$dir_list = ['north', 'east', 'south', 'west', 'northeast', 'southeast', 'southwest', 'northwest', 'up', 'down'];
+
+			$room_values = [];
+
+			foreach ($directions as $key => $dir)
 				{
-				$room_values['title'] = 'Builder Ending Point';
+				// die(print_r($request->new_rooms));
+				if (in_array($key, $dir_list))
+					{
+					if (isset($key))
+						{
+						if (in_array($dir, $existing_records))
+							{
+							$room_values[$key.'_rooms_id'] = $directions[$key];
+							}
+						else
+							{
+							$room_values[$key.'_rooms_id'] = $directions[$key] + $next_id;
+							}
+						}
+					else
+						{
+						$room_values[$key.'_rooms_id'] = null;
+						}
+					}
+				else
+					{
+					// Else it's a normal param???
+					$room_values[$key] = $dir;
+					}
+				}
+
+			if (!isset($room_obj['in_db']))
+				{
+				if ($room_obj['id'] == 0)
+					{
+					$room_values['title'] = 'Builder Starting Point';
+					}
+
+				if ($room_obj['id'] == (count($request->new_rooms) -1))
+					{
+					$room_values['title'] = 'Builder Ending Point';
+					}
 				}
 
 

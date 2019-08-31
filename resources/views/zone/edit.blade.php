@@ -56,6 +56,7 @@ Creating a zone:
 
 <!-- HAHAHAH HAVE FUN! -->
 
+@if (isset($zone))
 @foreach ($zone->rooms_q()->orderBy('id', 'asc')->get() as $room)
 [
 @foreach ($room->toArray() as $key => $value)
@@ -87,5 +88,5 @@ Creating a zone:
 @endforeach
 ],<br>
 @endforeach
-
+@endif
 @endsection
