@@ -217,12 +217,6 @@
 					<option value="{{$zone->id}}">{{$zone->name}}</option>
 				@endforeach
 			</select>
-			<select id="level-select" name="zone_levels_id">
-					<option value="null">-- Select --</option>
-				@foreach (App\ZoneLevel::all() as $zone)
-					<option value="{{$zone->id}}">{{$zone->level}}</option>
-				@endforeach
-			</select>
 			{{csrf_field()}}
 		</form>
 	</div>
