@@ -427,17 +427,18 @@ function process_rooms(room_list)
 				var $target = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
 				if ($target.hasClass('room'))
 					{
-					var $peek = $('.map').find('tr').eq(curr_row - 2).find('td').eq(curr_col - 2);
-					if ($peek.hasClass('room'))
-						{
-						$target.append('<br>'+room.northwest_rooms_id);
-						$target.addClass('multiple-rooms');
-						}
-					else
-						{
-						$new_room = create_room($peek, room.northwest_rooms_id, true);
-						$new_room.addClass('dislocated');
-						}
+					// TODO: Not ready yet!
+					// var $peek = $('.map').find('tr').eq(curr_row - 2).find('td').eq(curr_col - 2);
+					// if ($peek.hasClass('room'))
+					// 	{
+					// 	$target.append('<br>'+room.northwest_rooms_id);
+					// 	$target.addClass('multiple-rooms');
+					// 	}
+					// else
+					// 	{
+					// 	$new_room = create_room($peek, room.northwest_rooms_id, true);
+					// 	$new_room.addClass('dislocated');
+					// 	}
 					}
 				else
 					{
