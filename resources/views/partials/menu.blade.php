@@ -1,14 +1,16 @@
 @section('menu')
 <div style="text-align: left;">
-	It is the 200th cycle in<br>
-	the year of our lord 505?<br>
+	<div style="color:#12a1df;">
+	It is the <span style="color:#33ffee">{{App\World::cycle()}}</span> cycle in<br>
+	the year of our lord <span style="color:#33ffee">{{App\World::year()}}</span><br>
 	<br>
 	@if ($online_count > 1)
-	There are {{$online_count}} active players online.
+	There are <span style="color:#33ffee">{{$online_count}}</span> active players online.
 	@else
-	There is {{$online_count}} active player online.
+	There is <span style="color:#33ffee">{{$online_count}}</span> active player online.
 	<br>
 	Population: YOU
+	</div>
 	@endif
 	<br><br>
 	<span style="color: #00FFFF">

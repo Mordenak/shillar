@@ -50,6 +50,7 @@ class AdminController extends Controller
 	public function zone_select(Request $request)
 		{
 		$Zone = Zone::findOrFail($request->zones_id);
+		// $ZoneLevels = ZoneLevel::where(['zones_id' => $Zone->id])->get();
 
 		return $Zone->rooms_q()->orderBy('id', 'desc')->get();
 		}
@@ -127,96 +128,92 @@ class AdminController extends Controller
 		$Zone = Zone::findOrFail($request->zones_id);
 		// Get last room id:
 		$Room = Room::orderBy('id', 'desc')->first();
+		// $next_id = $Room->id + 1;
+		$Room = null;
 
-		$existing_records = [];
-		$next_id = $Room->id + 1;
-		foreach ($request->new_rooms as $room_obj)
+		$new_rooms = [];
+		if (isset($request->new_rooms))
 			{
-			if (!isset($room_obj['in_db']))
+			// TODO: Hmm, perhaps we don't need to pre-create these rooms?
+			foreach ($request->new_rooms as $room_obj)
 				{
 				$Room = new Room;
-				$Room->zones_id = $request->zones_id;
-				$Room->save(); 
-				error_log('Created '.$Room->id);
+				$Room->zones_id = $Zone->id;
+				$Room->save();
+				$json = json_decode($room_obj['data'], true);
+				$new_rooms[$json['id']] = $Room->id;
 				}
-			else
+			
+			foreach ($request->new_rooms as $room_obj)
 				{
-				$existing_records[] = $room_obj['in_db'];
+				if (!isset($room_obj['data']))
+					{
+					// wtf was submitted?
+					return $this->error('No Data provided.');
+					}
+
+				$json = json_decode($room_obj['data'], true);
+				$Room = Room::findOrFail($new_rooms[$json['id']]);
+
+				$room_values = [];
+				foreach ($json as $field => $value)
+					{
+					// Sanitize?
+					if ($field != 'id' && $field != 'zones_id')
+						{
+						$room_values[$field] = $value;
+						}
+
+					if (is_numeric($value) && in_array($value, array_keys($new_rooms)))
+						{
+						$room_values[$field] = $new_rooms[$value];
+						}
+					}
+
+				$Room->fill($room_values);
+				$Room->save();
 				}
 			}
-		foreach ($request->new_rooms as $room_obj)
+
+		if (isset($request->existing_rooms))
 			{
-			if (!isset($room_obj['dirs']))
+			foreach ($request->existing_rooms as $room_obj)
 				{
-				// wtf was submitted?
-				error_log('What happened here?');
-				error_log(print_r($room_obj));
-				continue;
-				}
-			$directions = json_decode($room_obj['dirs'], true);
-
-			$insert_id = $next_id;
-			if (isset($room_obj['in_db']))
-				{
-				$Room = Room::findOrFail($room_obj['in_db']);
-				// $next_id = 0;
-				}
-			else
-				{
-				$cap = $room_obj['id'] + $next_id;
-				error_log('Loking for: '.$cap);
-				$Room = Room::findOrFail($room_obj['id'] + $next_id);
-				}
-
-			$dir_list = ['north', 'east', 'south', 'west', 'northeast', 'southeast', 'southwest', 'northwest', 'up', 'down'];
-
-			$room_values = [];
-
-			foreach ($directions as $key => $dir)
-				{
-				// die(print_r($request->new_rooms));
-				if (in_array($key, $dir_list))
+				if (!isset($room_obj['data']))
 					{
-					if (isset($key))
+					// wtf was submitted?
+					return $this->error('No Data provided.');
+					}
+
+				$json = json_decode($room_obj['data'], true);
+				$Room = Room::findOrFail($json['id']);
+
+				$room_values = [];
+				foreach ($json as $field => $value)
+					{
+					// Sanitize?
+					if ($field != 'id' && $field != 'zones_id')
 						{
-						if (in_array($dir, $existing_records))
-							{
-							$room_values[$key.'_rooms_id'] = $directions[$key];
-							}
-						else
-							{
-							$room_values[$key.'_rooms_id'] = $directions[$key] + $next_id;
-							}
+						$room_values[$field] = $value;
 						}
-					else
+
+					if (is_numeric($value) && in_array($value, array_keys($new_rooms)))
 						{
-						$room_values[$key.'_rooms_id'] = null;
+						$room_values[$field] = $new_rooms[$value];
 						}
 					}
-				else
-					{
-					// Else it's a normal param???
-					$room_values[$key] = $dir;
-					}
+
+				$Room->fill($room_values);
+
+				$Room->zones_id = $Zone->id;
+
+				$Room->save();
 				}
-
-			if (!isset($room_obj['in_db']))
-				{
-				if ($room_obj['id'] == 0)
-					{
-					$room_values['title'] = 'Builder Starting Point';
-					}
-
-				if ($room_obj['id'] == (count($request->new_rooms) -1))
-					{
-					$room_values['title'] = 'Builder Ending Point';
-					}
-				}
-
-
-			$Room->fill($room_values);
-			$Room->save();
 			}
-		return view('admin.zone-editor');
+
+		// return view('admin.zone-editor');
+		// return $this->redirect()->action(zone_editor);
+		return redirect()->action('AdminController@zone_editor');
+		// return $this->zone_editor();
 		}
 }

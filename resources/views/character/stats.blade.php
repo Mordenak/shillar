@@ -9,11 +9,11 @@
 	</tr>
 	<tr>
 		<td>Race</td>
-		<td>{{$character->playerrace()->name}}</td>
+		<td>{{$character->race()->name}}</td>
 	</tr>
 	<tr>
 		<td>Sex</td>
-		<td>{{$character->playerrace()->gender}}</td>
+		<td>{{$character->race()->gender}}</td>
 	</tr>
 	@if ($character->alignment())
 	<tr>

@@ -121,7 +121,7 @@
 		.stat-bar-health::-webkit-progress-value
 			{
 			/*background: #33d433;*/
-			background: #d43333;s
+			background: #d43333;
 			}
 
 		.stat-bar-health.__low::-webkit-progress-value

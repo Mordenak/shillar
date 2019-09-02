@@ -6,13 +6,14 @@ namespace App\Http\Controllers;
 // Refactor to use App\{User, Character, etc.}?
 use Session;
 use Illuminate\Http\Request;
-use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment};
+use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World};
 
 class GameController extends Controller
 	{
 	//
 	public function index(Request $request)
 		{
+		World::tick();
 		// TODO: This should be unreachable?
 		if (!auth()->user())
 			{
@@ -20,6 +21,11 @@ class GameController extends Controller
 			}
 
 		$Character = Character::findOrFail($request->character_id);
+
+		if ($Character->health <= 0)
+			{
+			return $this->death($request);
+			}
 
 		// die(print_r(Equipment::all()->toArray()));
 			// ->select('character_stats.id as character_stats_id, *');
@@ -37,7 +43,8 @@ class GameController extends Controller
 			}
 
 		$Room = Room::findOrFail($Character->last_rooms_id);
-
+		$Zone = $Room->zone();
+		
 		$Creature = null;
 		// Block spawn in certain events:
 		if (Session::has('creature.'.$Room->id))
@@ -91,6 +98,16 @@ class GameController extends Controller
 						}
 					}
 				}
+			}
+
+		$check_aggro = $Zone->get_property('HOSTILE_PER_CREATURE_KILL');
+		if ($check_aggro)
+			{
+			$check = $check_aggro->decode();
+
+			// Check Character kill counts?
+			$Character->kill_count($check['creature_id']);
+
 			}
 
 		// Does the room have loot?
@@ -370,7 +387,6 @@ class GameController extends Controller
 	public function move(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-
 		$NextRoom = Room::findOrFail($request->room_id);
 
 		// Just double check that the room is reachable from where the character is currently?
@@ -384,12 +400,65 @@ class GameController extends Controller
 		// Is a Zone transition?
 		if ($CurrentRoom->zones_id != $NextRoom->zones_id)
 			{
-			// TODO: Area Restrictions? + Racial Mod
-			if ($Character->intelligence < $NextRoom->zone()->intelligence_req)
+			// TODO: Tweak has_restriction()
+			if ($NextRoom->zone()->get_stat_restriction())
 				{
-				// Oops!
-				Session::flash('zone_travel', 'You cannot go that way yet, you must train some more.');
-				return $this->index($request);
+				// die('yes');
+				if (!$Character->can_access($NextRoom->zone()))
+					{
+					Session::flash('zone_travel', 'You cannot go that way yet, you must train some more.');
+					return $this->index($request);
+					}
+				}
+			$item_restriction = $NextRoom->zone()->get_item_restriction();
+			if ($item_restriction)
+				{
+				$res = $item_restriction->decode();
+				$item_id = key($res);
+				if (!$Character->inventory()->has_item($item_id))
+					{
+					$Item = Item::findOrFail($item_id);
+					Session::flash('zone_travel', 'You must possess a '.$Item->name.' to enter this area!');
+					return $this->index($request);
+					}
+				}
+			}
+
+		// Heat damage?
+		if ($NextRoom->zone()->has_property('HEAT_DAMAGE'))
+			{
+			$prop = $NextRoom->zone()->get_property('HEAT_DAMAGE')->decode();
+			if ($prop['begin'] == 0 && $prop['end'] == 0)
+				{
+				// Always take damage:
+				$damage_taken = $Character->receive_heat_damage($prop['damage']);
+				if ($damage_taken > 0)
+					{
+					Session::flash('zone_travel', "The heat saps away your life for $damage_taken points.");
+					}
+				}
+			else
+				{
+				// Figure out the times:
+				}
+			}
+
+		// Cold damage?
+		if ($NextRoom->zone()->has_property('COLD_DAMAGE'))
+			{
+			$prop = $NextRoom->zone()->get_property('COLD_DAMAGE')->decode();
+			if ($prop['begin'] == 0 && $prop['end'] == 0)
+				{
+				// Always take damage:
+				$damage_taken = $Character->receive_heat_damage($prop['damage']);
+				if ($damage_taken > 0)
+					{
+					Session::flash('zone_travel', "The cold freezes you to the bone for $damage_taken life points.");
+					}
+				}
+			else
+				{
+				// Figure out the times:
 				}
 			}
 
@@ -468,7 +537,7 @@ class GameController extends Controller
 		// $flat_creature = $Creature->toArray();
 		// $Equipment = Equipment::where(['characters_id' => $Character->id])->first();
 		// Calculate attacks:
-		$attack_count = (int)($Character->dexterity / 20) + 2;
+		$attack_count = floor(($Character->dexterity() - 10) / 20) + 2;
 		$total_damage = 0;
 		$grope_low = $Character->constitution() + (rand(1,10));
 		$grope_high = $Character->constitution() + $Character->strength() + rand(1,10);
@@ -478,6 +547,7 @@ class GameController extends Controller
 
 		$flat_character = $Character->toArray();
 		$fatigue_use = 1;
+		$fatigue_stat = 'fatigue';
 		$attack_text = 'You grope with your fists';
 		$combat_history = [];
 
@@ -488,14 +558,23 @@ class GameController extends Controller
 		// $crit_multipler_high = 4.0;
 		if ($Character->equipment()->weapon)
 			{
-			// die(print_r($Character->equipment()->weapon()->toArray()));
-			$weapon_low = $Character->equipment()->weapon()->damage_low;
-			$weapon_high = $Character->equipment()->weapon()->damage_high;
+			// Mana weapon?
+			if ($Character->equipment()->weapon()->weapon_types_id == 7)
+				{
+				// re-calc:
+				$grope_low = $Character->charisma() + (rand(1,10));
+				$grope_high = $Character->charisma() + $Character->wisdom() + rand(1,10);
+				$attack_count = floor(($Character->intelligence() - 10) / 20) + 2;
+				$fatigue_stat = 'mana';
+				}
+			else
+				{
+				$weapon_low = $Character->equipment()->weapon()->damage_low;
+				$weapon_high = $Character->equipment()->weapon()->damage_high;
+				}
 			$attack_text = $Character->equipment()->weapon()->attack_text;
 			$base_accuracy = $Character->equipment()->weapon()->accuracy;
-			// check weapon requirements:
 			$fatigue_use = $Character->equipment()->weapon()->fatigue_use;
-			$stat_check = $Character->equipment()->weapon()->required_stat;
 			// So that equipped items count:
 			// TODO: All required_amount values are null at this time.  Uncomment when that's back in.
 			// if (call_user_func_array([$Character,$stat_check], []) < $Character->equipment()->weapon()->required_amount)
@@ -546,14 +625,14 @@ class GameController extends Controller
 					break;
 					}
 
-				if ($flat_character['fatigue'] < $fatigue_use)
+				if ($flat_character[$fatigue_stat] < $fatigue_use)
 					{
 					$no_fatigue = true;
 					break;
 					}
 
 				// error_log('eating: '.$fatigue_use);
-				$flat_character['fatigue'] = $flat_character['fatigue'] - $fatigue_use;
+				$flat_character[$fatigue_stat] = $flat_character[$fatigue_stat] - $fatigue_use;
 
 				$acc_check = rand() / getrandmax();
 				if ($acc_check <= $base_accuracy)
@@ -567,6 +646,10 @@ class GameController extends Controller
 
 					// Maybe not cast yet???
 					$actual_damage = (int)($calc_damage - $flat_creature['armor']);
+					if ($actual_damage <= 0)
+						{
+						$actual_damage = 1;
+						}
 
 					$flat_creature['health'] = $flat_creature['health'] - $actual_damage;
 					$round_damage += $actual_damage;
@@ -588,22 +671,19 @@ class GameController extends Controller
 					$creature_damage = $calc_damage - $Character->equipment()->calculate_armor();
 					if ($creature_damage <= 0)
 						{
-						// No damage:
-						// $creature_damages[] = 1;
-						// $creature_absorbs++;
 						$creature_damage = 1;
 						}
 					else
-						{
-						$flat_character['health'] = $flat_character['health'] - $creature_damage;
-						$creature_damages[] = $creature_damage;
-						$creature_round_damage += $creature_damage;
+						
+					$flat_character['health'] = $flat_character['health'] - $creature_damage;
+					$creature_damages[] = $creature_damage;
+					$creature_round_damage += $creature_damage;
 
-						if ($flat_character['health'] <= 0)
-							{
-							break;
-							}	
-						}
+					if ($flat_character['health'] <= 0)
+						{
+						break;
+						}	
+						
 					}
 				}
 
@@ -625,11 +705,16 @@ class GameController extends Controller
 			if ($flat_character['health'] <= 0)
 				{
 				$arr['pc_died'] = true;
+				if ($CombatLog)
+					{
+					$CombatLog->delete();
+					$CombatLog = null;
+					}
 				}
 
 			$combat_history[] = $arr;
 			// We ran out of fatigue:
-			if ((int)$flat_character['fatigue'] < $fatigue_use)
+			if ((int)$flat_character[$fatigue_stat] < $fatigue_use)
 				{
 				break;
 				}
@@ -647,7 +732,7 @@ class GameController extends Controller
 			}
 
 		// Int fatigue first:
-		$flat_character['fatigue'] = round($flat_character['fatigue'], 0);
+		// $flat_character[$fatigue_stat] = round($flat_character[$fatigue_stat], 0);
 		// Save the character record based on the $flat_character:
 		$Character->fill($flat_character);
 		$Character->save();
@@ -695,7 +780,7 @@ class GameController extends Controller
 			// TODO: CHEATER BIT
 			$total_xp = 0;
 			$total_gold = 0;
-			for ($i = 0;$i < 500;++$i)
+			for ($i = 0;$i < 100;++$i)
 			{
 			// Record the kill:
 			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
@@ -776,6 +861,7 @@ class GameController extends Controller
 		$no_attack = $Character->fatigue > 0 ? false : true;
 		if ($CombatLog)
 			{
+			Session::put('combat_timer', true);
 			$no_attack = false;
 			}
 
@@ -990,7 +1076,7 @@ class GameController extends Controller
 		// $Character = Character::where(['characters.id' => $request->character_id])->first();
 
 		// $StatCost = StatCost::first();
-		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
+		$StatCost = StatCost::where(['races_id' => $Character->races_id])->first();
 
 		// $request->train_multi;
 		$base_stats = [
@@ -1047,7 +1133,7 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 
 		// $StatCost = StatCost::first();
-		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
+		$StatCost = StatCost::where(['races_id' => $Character->races_id])->first();
 
 		$costs = $this->calculate_training_cost($request);
 
@@ -1833,7 +1919,7 @@ class GameController extends Controller
 
 				if ($log_entry['creature_round'] > 0)
 					{
-					$condensed[] = $log_entry['creature_text'].', doing '.$log_entry['creature_round'].' damage.<br>';
+					$condensed[] = $log_entry['creature_text'].' doing '.$log_entry['creature_round'].' damage.<br>';
 					}
 
 				if (isset($log_entry['pc_died']))
@@ -1865,14 +1951,8 @@ class GameController extends Controller
 
 				foreach ($log_entry['creature_attacks'] as $creature_attack)
 					{
-					if ($creature_attack > 0)
-						{
-						$condensed[] = $log_entry['creature_text'].", doing $creature_attack damage.<br>";
-						}
-					else
-						{
-						$condensed[] = 'The enemy could not get through your armor!<br>';
-						}
+					$condensed[] = $log_entry['creature_text']." doing $creature_attack damage.<br>";
+						
 					}
 
 				if (isset($log_entry['pc_died']))

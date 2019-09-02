@@ -14,7 +14,7 @@
 
 .map
 	{
-	background-color: gray;
+	background-color: #555;
 	text-align: center;
 	table-layout: fixed;
 	}
@@ -32,7 +32,12 @@
 
 .map td.room
 	{
-	background-color: #DDD;
+	background-color: #999;
+	}
+
+.map td.room.existing-room:not([data-zones_id])
+	{
+	background-color: #33b;
 	}
 
 .map td.start
@@ -40,14 +45,60 @@
 	background-color: #4D6;
 	}
 
-.map td.highlight
+.map td.multiple-rooms
 	{
-	background-color: yellow;
+	background-color: #d33;
 	}
 
-.map td[data-north] .n-blip, .map td[data-northeast] .ne-blip, .map td[data-northwest] .nw-blip, .map td[data-east] .e-blip, .map td[data-south] .s-blip, .map td[data-southeast] .se-blip, .map td[data-southwest] .sw-blip, .map td[data-west] .w-blip
+.map td.dislocated
+	{
+	background-color: #d33;
+	}
+
+.map td.highlight
+	{
+	background-color: #d3d339;
+	animation-name: highlight;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
+	color: brown;
+	}
+
+@keyframes highlight {
+	0% {
+		background-color: #c3c339;
+		}
+	50% {
+		background-color: #ffff39;
+		}
+	100% {
+		background-color: #c3c339;
+		}
+	}
+
+.map td[data-north_rooms_id] .n-blip, .map td[data-northeast_rooms_id] .ne-blip, .map td[data-northwest_rooms_id] .nw-blip, .map td[data-east_rooms_id] .e-blip, .map td[data-south_rooms_id] .s-blip, .map td[data-southeast_rooms_id] .se-blip, .map td[data-southwest_rooms_id] .sw-blip, .map td[data-west_rooms_id] .w-blip
 	{
 	display: block;
+	}
+
+.map td[data-down_rooms_id]:after
+	{
+	font-family: 'Font Awesome 5 Free';
+	content: '\f13a';
+	color: #33ffee;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	}
+
+.map td[data-up_rooms_id]:before
+	{
+	font-family: 'Font Awesome 5 Free';
+	content: '\f139';
+	color: #33ffee;
+	position: absolute;
+	top: 0;
+	right: 0;
 	}
 
 .map td[data-title]
@@ -144,7 +195,7 @@
 	grid-area: map;
 	}
 
-#unlinked-rooms
+#unlinked-list
 	{
 	grid-area: listing;
 	}
@@ -164,6 +215,12 @@
 					<option value="null">-- Select --</option>
 				@foreach (App\Zone::all() as $zone)
 					<option value="{{$zone->id}}">{{$zone->name}}</option>
+				@endforeach
+			</select>
+			<select id="level-select" name="zone_levels_id">
+					<option value="null">-- Select --</option>
+				@foreach (App\ZoneLevel::all() as $zone)
+					<option value="{{$zone->id}}">{{$zone->level}}</option>
 				@endforeach
 			</select>
 			{{csrf_field()}}
@@ -190,8 +247,10 @@
 			{{csrf_field()}}
 		</form>
 	</div>
-	<div id="unlinked-rooms">
+	<div id="unlinked-list">
 		Unlinked List:<br>
+		<div id="unlinked-rooms">
+		</div>
 	</div>
 </div>
 
@@ -229,10 +288,17 @@ function process_rooms(room_list)
 	{
 	var curr_row = 0;
 	var curr_col = 0;
+	// console.log('Found '+room_list.length);
+	var initial_count = room_list.length;
+	console.log('Found:'+initial_count);
 	var tmp_list = room_list.slice(0);
+	var unlinks = [];
+	var room_checks = {};
+	// Number of times to try to find a room:
+	var max_attempts = 5;
 	// for(i=0;i<room_list.length;i++)
 	// var index = 0;
-	console.log('Processing...');
+	// console.log('Processing...');
 	while (tmp_list.length > 0)
 		{
 		var unk_room = false;
@@ -241,47 +307,10 @@ function process_rooms(room_list)
 		var room = null;
 		// console.log(room_list[i]);
 		var room = tmp_list.pop();
-		// console.log('pop one off? @ '+ tmp_list.length);
-		// console.log('tmp:'+tmp_list.length+' v '+room_list.length);
-		console.log(' -- Room '+room.id+' --');
-		// Start at 0,0:
-		if ($('.map').find('td#'+room.id).length > 0 )
-			{
-			console.log('Found a room.');
-			var $original_room = $('.map').find('td#'+room.id).first();
-			var $current_room = $('.map').find('td#'+room.id).first();
-			curr_col = $current_room.index();
-			curr_row = $current_room.parent().index();
-			}
-		else if (tmp_list.length == (room_list.length - 1))
-			{
-			// TODO: Doesn't exist yet but shouldn't be at 0,0?
-			console.log('Initial room');
-			var $original_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
-			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
-			$current_room.append(room.id);
-			$current_room.attr('id', room.id)
-			$current_room.addClass('room');
-			$current_room.addClass('start');
-			$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.id+'][in_db]', value: room.id}));
-			// Add a room do this:
-			// $current.attr('data-south', $target.attr('id'));
-			// $target.attr('data-north', $current.attr('id'));
-			// updateLinks($current, 'south', $target.attr('id'));
-			// updateLinks($target, 'north', $current.attr('id'));
-			}
-		else
-			{
-			console.log("We don't know what to do with this room.");
-			$('#unlinked-rooms').append('Room: '+room.id+'<br>');
-			room = null;
-			unk_room = true;
-			// continue;
-			// break;
-			}
 
 		// If a room is completely unlinked...???
-		if (room.northwest_rooms_id == null && 
+		if (room && 
+			 room.northwest_rooms_id == null && 
 			 room.northeast_rooms_id == null &&
 			 room.north_rooms_id == null &&
 			 room.east_rooms_id == null &&
@@ -291,16 +320,99 @@ function process_rooms(room_list)
 			 room.south_rooms_id == null)
 			{
 			console.log(room);
-			console.log('Room is unlinked.');
+			// console.log('Room is unlinked.');
 			$('#unlinked-rooms').append('Room: '+room.id+'<br>');
-			unk_room = false;
+			// console.log('Appended '+room.id);
+			// unlinks.unshift(room);
+			// Skip
+			continue;
 			// continue;
 			}
+		// console.log('pop one off? @ '+ tmp_list.length);
+		// console.log('tmp:'+tmp_list.length+' v '+room_list.length);
+		console.log(' -- Room '+room.id+' --');
+		// Start at 0,0:
+		if (room.title == 'entrance')
+			{
+			console.log('Initial room');
+			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
+			$new_room = create_room($current_room, room.id, true);
+			// $new_room.addClass('start');
+			}
+		if ($('.map').find('td#'+room.id).length > 0 )
+			{
+			console.log('Found a room.');
+			// var $original_room = $('.map').find('td#'+room.id).first();
+			var $current_room = $('.map').find('td#'+room.id).first();
+			curr_col = $current_room.index();
+			curr_row = $current_room.parent().index();
+			}
+		else if (tmp_list.length == (initial_count-1))
+			{
+			// TODO: Doesn't exist yet but shouldn't be at 0,0?
+			console.log('Initial room');
+			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
+			$new_room = create_room($current_room, room.id, true);
+			// $new_room.addClass('start');
+			}
+		else
+			{
+			console.log("We don't know what to do with this room.");
+			possible_match = checkLinks(room.id);
+			if (possible_match)
+				{
+				console.log('Apparently this room ['+room.id+'] is linked somewhere?')
+				// Maybe reset checks here too?
+				// This room does link to something on the map, proceed.
+				// var $current_room = $('.map').find('td#'+possible_match);
+				// maybe????????
+				// $new_room = create_room($current_room, room.id, true);
+				}
+			else
+				{
+				if (room_checks[room.id])
+					{
+					room_checks[room.id]++;
+					}
+				else
+					{
+					room_checks[room.id] = 1;	
+					}
+
+				if (room_checks[room.id] > max_attempts)
+					{
+					console.log(room);
+					console.log('We tried to link Room ['+room.id+'] '+max_attempts+' times, but could not.  Discarding.');
+					unlinks.unshift(room.id);
+					continue;
+					}
+				else
+					{
+					console.log('This room does not link to anything on the map yet.');
+					// tmp_list.unshift(room);
+					tmp_list.unshift(room);
+					continue;
+					}
+				}
+			}
+
+		// Add values:
+		Object.keys(room).forEach(function(key) {
+			// Skip these:
+			if (key == 'created_at' || key == 'updated_at')
+				{
+				// do nothing
+				}
+			else
+				{
+				addOrUpdateValue($current_room, key, room[key]);
+				}
+			});
 
 		console.log(room);
 		console.log('Looking at: ['+curr_col+','+curr_row+']');
 		
-		if (room.northwest_rooms_id != null)
+		if (room && room.northwest_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.northwest_rooms_id).length == 0 )
@@ -317,30 +429,35 @@ function process_rooms(room_list)
 					}
 				console.log('Adding a NW ['+room.northwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
-				$current_room.append(room.northwest_rooms_id);
-				$current_room.attr('id', room.northwest_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.northwest_rooms_id+'][in_db]', value: room.northwest_rooms_id}));
-				// performLink($current_room, $original_room);
-
-				// $current_room.attr('data-northwest', room.northwest_rooms_id);
-				// $original_room.attr('data-southeast', room.id);
-				updateLinks($current_room, 'northwest', room.northwest_rooms_id);
-				updateLinks($original_room, 'southeast', room.id);
+				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
+				var $target = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
+				if ($target.hasClass('room'))
+					{
+					var $peek = $('.map').find('tr').eq(curr_row - 2).find('td').eq(curr_col - 2);
+					if ($peek.hasClass('room'))
+						{
+						$target.append('<br>'+room.northwest_rooms_id);
+						$target.addClass('multiple-rooms');
+						}
+					else
+						{
+						$new_room = create_room($peek, room.northwest_rooms_id, true);
+						$new_room.addClass('dislocated');
+						}
+					}
+				else
+					{
+					$new_room = create_room($target, room.northwest_rooms_id, true);
+					}
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.northwest_rooms_id).first();
-				// $original_room.attr('data-northwest', room.northwest_rooms_id);
-				// $target.attr('data-southeast', room.id);
-				updateLinks($original_room, 'northwest', room.northwest_rooms_id);
-				updateLinks($target, 'southeast', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'northwest_rooms_id', room.northwest_rooms_id);
 			}
 
-		if (room.north_rooms_id != null)
+		if (room && room.north_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.north_rooms_id).length == 0 )
@@ -352,31 +469,18 @@ function process_rooms(room_list)
 					}
 				console.log('Adding a N ['+room.north_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
-				$current_room.append(room.north_rooms_id);
-				$current_room.attr('id', room.north_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.north_rooms_id+'][in_db]', value: room.north_rooms_id}));
-				// performLink($current_room, $original_room);
-
-				// $current_room.attr('data-north', room.north_rooms_id);
-				// $original_room.attr('data-south', room.id);
-				updateLinks($original_room, 'north', room.north_rooms_id);
-				updateLinks($current_room, 'south', room.id);
+				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
+				var $target = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
+				$new_room = create_room($target, room.north_rooms_id, true);
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.north_rooms_id).first();
-				// $original_room.attr('data-north', room.north_rooms_id);
-				// $target.attr('data-south', room.id);
-				updateLinks($original_room, 'north', room.north_rooms_id);
-				updateLinks($target, 'south', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'north_rooms_id', room.north_rooms_id);
 			}
 
-
-		if (room.northeast_rooms_id != null)
+		if (room && room.northeast_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.northeast_rooms_id).length == 0 )
@@ -393,30 +497,18 @@ function process_rooms(room_list)
 					}
 				console.log('Adding a NE ['+room.northeast_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
-				console.log('Added NE ['+room.northeast_rooms_id+'] at: ['+(curr_col)+','+(curr_row-1)+']');
-				$current_room.append(room.northeast_rooms_id);
-				$current_room.attr('id', room.northeast_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.northeast_rooms_id+'][in_db]', value: room.northeast_rooms_id}));
-				// performLink($current_room, $original_room);
-				// $current_room.attr('data-northeast', room.northeast_rooms_id);
-				// $original_room.attr('data-southwest', room.id);
-				updateLinks($original_room, 'northeast', room.northeast_rooms_id);
-				updateLinks($current_room, 'southwest', room.id);
+				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
+				var $target = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
+				$new_room = create_room($target, room.northeast_rooms_id, true);
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.northeast_rooms_id).first();
-				// $original_room.attr('data-northeast', room.northeast_rooms_id);
-				// $target.attr('data-southwest', room.id);
-				updateLinks($original_room, 'northeast', room.northeast_rooms_id);
-				updateLinks($target, 'southwest', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'northeast_rooms_id', room.northeast_rooms_id);
 			}
 
-		if (room.west_rooms_id != null)
+		if (room && room.west_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.west_rooms_id).length == 0 )
@@ -428,29 +520,18 @@ function process_rooms(room_list)
 					}
 				console.log('Adding a W ['+room.west_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
-				$current_room.append(room.west_rooms_id);
-				$current_room.attr('id', room.west_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.west_rooms_id+'][in_db]', value: room.west_rooms_id}));
-				// performLink($current_room, $original_room);
-				// $current_room.attr('data-west', room.west_rooms_id);
-				// $original_room.attr('data-east', room.id);
-				updateLinks($original_room, 'west', room.west_rooms_id);
-				updateLinks($current_room, 'east', room.id);
+				// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
+				var $target = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
+				$new_room = create_room($target, room.west_rooms_id, true);
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.west_rooms_id).first();
-				// $original_room.attr('data-west', room.west_rooms_id);
-				// $target.attr('data-east', room.id);
-				updateLinks($original_room, 'west', room.west_rooms_id);
-				updateLinks($target, 'east', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'west_rooms_id', room.west_rooms_id);
 			}
 
-		if (room.east_rooms_id != null)
+		if (room && room.east_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.east_rooms_id).length == 0 )
@@ -462,31 +543,18 @@ function process_rooms(room_list)
 					}
 				console.log('Adding a E ['+room.east_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
-				$current_room.append(room.east_rooms_id);
-				$current_room.attr('id', room.east_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.east_rooms_id+'][in_db]', value: room.east_rooms_id}));
-				// performLink($current_room, $original_room);
-				// $current_room.attr('data-east', room.east_rooms_id);
-				// $original_room.attr('data-west', room.id);
-				// console.log('First link');
-				updateLinks($original_room, 'east', room.east_rooms_id);
-				// console.log('Second link');
-				updateLinks($current_room, 'west', room.id);
+				// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
+				var $target = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
+				$new_room = create_room($target, room.east_rooms_id, true);
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.east_rooms_id).first();
-				// $original_room.attr('data-east', room.east_rooms_id);
-				// $target.attr('data-west', room.id);
-				updateLinks($original_room, 'east', room.east_rooms_id);
-				updateLinks($target, 'west', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'east_rooms_id', room.east_rooms_id);
 			}
 
-		if (room.southwest_rooms_id != null)
+		if (room && room.southwest_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.southwest_rooms_id).length == 0 )
@@ -503,29 +571,18 @@ function process_rooms(room_list)
 					}
 				console.log('Adding a SW ['+room.southwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
-				$current_room.append(room.southwest_rooms_id);
-				$current_room.attr('id', room.southwest_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.southwest_rooms_id+'][in_db]', value: room.southwest_rooms_id}));
-				// performLink($current_room, $original_room);
-				// $current_room.attr('data-southwest', room.southwest_rooms_id);
-				// $original_room.attr('data-northeast', room.id);
-				updateLinks($original_room, 'southwest', room.southwest_rooms_id);
-				updateLinks($current_room, 'northeast', room.id);
+				// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
+				var $target = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
+				$new_room = create_room($target, room.southwest_rooms_id, true);
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.southwest_rooms_id).first();
-				// $original_room.attr('data-southwest', room.southwest_rooms_id);
-				// $target.attr('data-northeast', room.id);
-				updateLinks($original_room, 'southwest', room.southwest_rooms_id);
-				updateLinks($target, 'northeast', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'southwest_rooms_id', room.southwest_rooms_id);
 			}
 
-		if (room.south_rooms_id != null)
+		if (room && room.south_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.south_rooms_id).length == 0 )
@@ -537,29 +594,18 @@ function process_rooms(room_list)
 					}
 				console.log('Adding a S ['+room.south_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
-				$current_room.append(room.south_rooms_id);
-				$current_room.attr('id', room.south_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.south_rooms_id+'][in_db]', value: room.south_rooms_id}));
-				// performLink($current_room, $original_room);
-				// $current_room.attr('data-south', room.south_rooms_id);
-				// $original_room.attr('data-north', room.id);
-				updateLinks($original_room, 'south', room.south_rooms_id);
-				updateLinks($current_room, 'north', room.id);
+				// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
+				var $target = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
+				$new_room = create_room($target, room.south_rooms_id, true);
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.south_rooms_id).first();
-				// $original_room.attr('data-south', room.south_rooms_id);
-				// $target.attr('data-north', room.id);
-				updateLinks($original_room, 'south', room.south_rooms_id);
-				updateLinks($target, 'north', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'south_rooms_id', room.south_rooms_id);
 			}
 
-		if (room.southeast_rooms_id != null)
+		if (room && room.southeast_rooms_id != null)
 			{
 			// Room already exists?
 			if ($('.map').find('td#'+room.southeast_rooms_id).length == 0 )
@@ -574,47 +620,192 @@ function process_rooms(room_list)
 					addCol();
 					// curr_col++;
 					}
-				console.log('Adding a SE ['+room.southeast_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+				console.log('Adding a SE ['+room.southeast_rooms_id+'] room at: ['+(curr_row+1)+','+(curr_col+1)+']');
 				// Now we can add the room:
-				var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col + 1);
-				$current_room.append(room.southeast_rooms_id);
-				$current_room.attr('id', room.southeast_rooms_id);
-				$current_room.addClass('room');
-				$current_room.append($('<input/>', {type: 'hidden', name: 'new_rooms['+room.southeast_rooms_id+'][in_db]', value: room.southeast_rooms_id}));
-				// performLink($current_room, $original_room);
-				// $current_room.attr('data-southeast', room.southeast_rooms_id);
-				// $original_room.attr('data-northwest', room.id);
-				updateLinks($original_room, 'southeast', room.southeast_rooms_id);
-				updateLinks($current_room, 'northwest', room.id);
-				console.log($('#hidden_'+room.southeast_rooms_id).val());
+				var $target = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col + 1);
+				$new_room = create_room($target, room.southeast_rooms_id, true);
 				}
 			else
 				{
-				unk_room = false;
-				$target = $('.map').find('td#'+room.southeast_rooms_id).first();
-				// $original_room.attr('data-southeast', room.southeast_rooms_id);
-				// $target.attr('data-northwest', room.id);
-				updateLinks($original_room, 'southeast', room.southeast_rooms_id);
-				updateLinks($target, 'northwest', room.id);
+				// unk_room = false;
 				}
+			createLink($current_room, 'southeast_rooms_id', room.southeast_rooms_id);
 			}
-
-		if (unk_room)
-			{
-			console.log('moving this to front: ' + room.id);
-			tmp_list.unshift(room);
-			}
-		else
-			{
-			if (room.title)
-				{
-				addOrUpdateValue($current_room, 'title', room.title);
-				}
-			}
-
-		// break;
-
+		// If we've linked something, reset the stalemate check:
+		console.log('Reset checks?');
+		room_checks = {};
 		}
+
+	for(x=0;x<unlinks.length;x++)
+		{
+		$('#unlinked-rooms').append('Room: '+unlinks[x]+'<br>');
+		result = checkLinks(unlinks[x]);
+		if (result)
+			{
+			console.log('Room ['+unlinks[x]+'] does link somewhere!');
+			}
+		}
+
+	// TODO: Just do this for now:
+	console.log('Nuking these:')
+	$('.map td.room:not([data-zones_id]) input').remove();
+	}
+
+var BASE_OBJECT = {
+	'id': null,
+	'zones_id': null,
+	'uid': null,
+	'title': null,
+	'north_rooms_id': null,
+	'south_rooms_id': null,
+	'east_rooms_id': null,
+	'west_rooms_id': null,
+	'northeast_rooms_id': null,
+	'southeast_rooms_id': null,
+	'southwest_rooms_id': null,
+	'northwest_rooms_id': null,
+	'up_rooms_id': null,
+	'down_rooms_id': null,
+	};
+
+// Realistically, I could shorten this because you could just flip whether you look at the key or value.
+var DIRECTION_MAP = {
+	'north_rooms_id': 'south_rooms_id',	
+	'east_rooms_id': 'west_rooms_id',
+	'south_rooms_id': 'north_rooms_id',
+	'west_rooms_id': 'east_rooms_id',
+	'northeast_rooms_id': 'southwest_rooms_id',
+	'southeast_rooms_id': 'northwest_rooms_id',
+	'southwest_rooms_id': 'northeast_rooms_id',
+	'northwest_rooms_id': 'southeast_rooms_id',
+	'up_rooms_id': 'down_rooms_id',
+	'down_rooms_id': 'up_rooms_id',
+	};
+
+function checkLinks(id)
+	{
+	$found_at = null;
+	$('.map').find('td[id]').each(function(i,e)	{
+		Object.keys(DIRECTION_MAP).forEach(function(key) {
+			if ($(e).attr('data-'+key) == id)
+				{
+				$found_at = $(e).attr('id');
+				}
+			});
+		});
+	return $found_at;
+	}
+
+function findNearestOpen($room)
+	{
+	return true;
+	}
+
+// TODO: Data necessary?
+function create_room($room, id, in_database = false)
+	{
+	// var $room = $('.map').find('tr').eq(row).find('td').eq(col);
+	if (!$room.hasClass('room'))
+		{
+		$room.addClass('room');
+		// TODO: Detect that it's already in the DB:
+		if (in_database)
+			{
+			$room.addClass('existing-room');
+			}
+		$room.append(id);
+		$room.attr('id', id);
+		// Set up the hidden values tracker:
+		addOrUpdateValue($room, 'id', id);
+		}
+	// Return false if something breaks?
+	return $room;
+	}
+
+function createLink($room, direction, value)
+	{
+	if (!$room)
+		{
+		return true;
+		}
+	addOrUpdateValue($room, direction, value);
+
+	// Value should be another room's id, but may not be created yet:
+	if ($('.map td#'+value).length > 0)
+		{
+		// It has been created, update it's link as well:
+		$target = $('.map td#'+value);
+		addOrUpdateValue($target, DIRECTION_MAP[direction], $room.attr('id'));
+		}
+
+	return true;
+	}
+
+function removeLink($room, direction)
+	{
+	if (!$room)
+		{
+		return true;
+		}
+	$target = $('.map td#'+getValue($room, direction));
+	addOrUpdateValue($room, direction, null);
+	addOrUpdateValue($target, DIRECTION_MAP[direction], null);
+	}
+
+function getValue($room, field)
+	{
+	var id = $room.attr('id');
+	if ($room.find('input.hidden-vals').length > 0)
+		{
+		var val_str = $('input.hidden-vals#hidden_'+id).val();
+		var hash = JSON.parse(val_str);
+		return hash[field];
+		}
+	return false
+	}
+
+// function removeValue($room, field)
+// 	{
+// 	if (!$room)
+// 		{
+// 		return true;
+// 		}
+// 	$room.removeAttr('data-'+field);
+// 	addOrUpdateValue($room, field, null);
+// 	return true;
+// 	}
+
+function addOrUpdateValue($room, field, value)
+	{
+	if (!$room)
+		{
+		return true;
+		}
+	// Always give the room the data attrib:
+	$room.attr('data-'+field, value);
+	var id = $room.attr('id');
+	var submit_name = 'new_rooms';
+	if ($room.hasClass('existing-room'))
+		{
+		submit_name = 'existing_rooms';
+		}
+	
+	if ($room.find('input.hidden-vals#hidden_'+id).length > 0)
+		{
+		// Get the matching hidden:
+		var val_str = $('input.hidden-vals#hidden_'+id).val();
+		var hash = JSON.parse(val_str);
+		hash[field] = value;
+		$('input.hidden-vals#hidden_'+id).val(JSON.stringify(hash));
+		}
+	else
+		{
+		// We haven't added a value before for this element & set:
+		var hash = $.extend({}, BASE_OBJECT);
+		hash[field] = value;
+		$('<input/>', {type: 'hidden', id: 'hidden_'+id, name: submit_name+'['+id+'][data]', "class": 'hidden-vals', value: JSON.stringify(hash)}).appendTo($room);
+		}
+	return true;
 	}
   
 function start()
@@ -644,34 +835,29 @@ start();
 function show_room($td)
 	{
 	var $insert = $('<div/>', {"class": 'insert', 'data-id': $td.attr('id')});
-	$insert.append($('<label/>').append('Room '+$td.attr('id')));
-	$insert.append('<br>');
-	$insert.append('Title:');
-	$insert.append($('<input/>', {id: 'title', name: 'title', value: $td.attr('data-title')}));
-	$insert.append('<br>');
-	$insert.append('N:');
-	$insert.append($('<input/>', {id: 'north', name: 'north', value: $td.attr('data-north')}));
-	$insert.append('<br>');
-	$insert.append('E:');
-	$insert.append($('<input/>', {id: 'east', name: 'east', value: $td.attr('data-east')}));
-	$insert.append('<br>');
-	$insert.append('S:');
-	$insert.append($('<input/>', {id: 'south', name: 'south', value: $td.attr('data-south')}));
-	$insert.append('<br>');
-	$insert.append('W:');
-	$insert.append($('<input/>', {id: 'west', name: 'west', value: $td.attr('data-west')}));
-	$insert.append('<br>');
-	$insert.append('NE:');
-	$insert.append($('<input/>', {id: 'northeast', name: 'northeast', value: $td.attr('data-northeast')}));
-	$insert.append('<br>');
-	$insert.append('SE:');
-	$insert.append($('<input/>', {id: 'southeast', name: 'southeast', value: $td.attr('data-southeast')}));
-	$insert.append('<br>');
-	$insert.append('SW:');
-	$insert.append($('<input/>', {id: 'southwest', name: 'southwest', value: $td.attr('data-southwest')}));
-	$insert.append('<br>');
-	$insert.append('NW:');
-	$insert.append($('<input/>', {id: 'northwest', name: 'northwest', value: $td.attr('data-northwest')}));
+	if ($td.hasClass('dislocated'))
+		{
+		$insert.append('<br>This room is NOT displayed on the map correctly due to room overlap!<br>');
+		}
+
+	if ($('input#hidden_'+$td.attr('id')).length > 0)
+		{
+		$insert.append($('<label/>').append('Room '+$td.attr('id')));
+		$insert.append('<br>');
+		Object.keys(BASE_OBJECT).forEach(function(key) {
+			if (key != 'id' && key != 'zones_id')
+				{
+				$insert.append(key);
+				// $td.attr('data-'+key)
+				$insert.append($('<input/>', {id: key, name: key, value: getValue($td, key)}));
+				$insert.append('<br>');
+				}
+			});
+		}
+	else
+		{
+		$insert.append('This Room is from another zone.');
+		}
 	$('#room-info').html($insert);
 	}
   
@@ -772,6 +958,8 @@ function getAdjacents($el)
 
 	indexes = [-1, 0, 1];
 
+	// console.log('searching Adjacents');
+
 	for(i=0;i<indexes.length;i++)
 		{
 		if (parent_start + indexes[i] < 0)
@@ -828,23 +1016,24 @@ function select_room($room)
 }); */
 
 $('body').on('contextmenu', '.map td', function(e) { 
-	/* $('.container').append($('<div/>', {"class": 'child'})); */
-	if ($(e.target).hasClass('room'))
+	$target = $(e.target);
+	if ($target.hasClass('room'))
 		{
-   	// var result = do we care?
-		var result = performLink($('.map td.highlight'), $(e.target), true);
-    if (result)
-    	{
-      select_room($(e.target));
-      }
-    return false;
+		$selection = $('.map td.highlight');
+		var result = performLink($selection, $target, true);
+		if (result)
+			{
+			select_room($target);
+			}
+		return false;
 		}
 
-	$('.map td').removeClass('highlight');
-	$(e.target).addClass('room');
-	$(e.target).attr('id', $new_ids);
-	$(e.target).append($new_ids);
-	$(e.target).append($('<input/>', {type: 'hidden', name: 'new_rooms['+$new_ids+'][id]', value: $new_ids}));
+	create_room($target, $new_ids);
+	if ($('.room').length == 1)
+		{
+		addOrUpdateValue($target, 'title', 'entrance');
+		}
+
 	$new_ids++;
 	return false;
 	});
@@ -860,10 +1049,12 @@ function performLink($selected, $target, $reverse = false)
 		$current = $selected;
 		//$target = $el;
 
+		console.log('Perfoming Link');
+
 		if ($current.attr('id') == $target.attr('id'))
-		{
-		return false;
-		}
+			{
+			return false;
+			}
 
 		//otherwise link:
 		// unless too far:
@@ -885,34 +1076,24 @@ function performLink($selected, $target, $reverse = false)
 			// north or south:
 			if ($target.parent().index() > $current.parent().index())
 				{
-				// south
-				if ($reverse && $current.attr('data-south') && $target.attr('data-north'))
+				if (getValue($current, 'south_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'south');
-					removeLinks($target, 'north');
+					removeLink($current, 'south_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-south', $target.attr('id'));
-					$target.attr('data-north', $current.attr('id'));
-					updateLinks($current, 'south', $target.attr('id'));
-					updateLinks($target, 'north', $current.attr('id'));
+					createLink($current, 'south_rooms_id', $target.attr('id'));
 					}
 				}
 			else
 				{
-				// north
-				if ($reverse && $current.attr('data-north') && $target.attr('data-south'))
+				if (getValue($current, 'north_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'north');
-					removeLinks($target, 'south');
+					removeLink($current, 'north_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-north', $target.attr('id'));
-					$target.attr('data-south', $current.attr('id'));
-					updateLinks($current, 'north', $target.attr('id'));
-					updateLinks($target, 'south', $current.attr('id'));
+					createLink($current, 'north_rooms_id', $target.attr('id'));
 					}
 				}
 			}
@@ -921,50 +1102,35 @@ function performLink($selected, $target, $reverse = false)
 			// west
 			if ($target.parent().index() == $current.parent().index())
 				{
-				// due west
-				if ($reverse && $current.attr('data-west') && $target.attr('data-east'))
+				if (getValue($current, 'west_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'west');
-					removeLinks($target, 'east');
+					removeLink($current, 'west_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-west', $target.attr('id'));
-					$target.attr('data-east', $current.attr('id'));
-					updateLinks($current, 'west', $target.attr('id'));
-					updateLinks($target, 'east', $current.attr('id'));
+					createLink($current, 'west_rooms_id', $target.attr('id'));
 					}
 				}
 			else if ($target.parent().index() > $current.parent().index())
 				{
-				// sw
-				if ($reverse && $current.attr('data-southwest') && $target.attr('data-northeast'))
+				if (getValue($current, 'southwest_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'southwest');
-					removeLinks($target, 'northeast');
+					removeLink($current, 'southwest_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-southwest', $target.attr('id'));
-					$target.attr('data-northeast', $current.attr('id'));
-					updateLinks($current, 'southwest', $target.attr('id'));
-					updateLinks($target, 'northeast', $current.attr('id'));
+					createLink($current, 'southwest_rooms_id', $target.attr('id'));
 					}
 				}
 			else
 				{
-				// nw
-				if ($reverse && $current.attr('data-northwest') && $target.attr('data-southeast'))
+				if (getValue($current, 'northwest_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'northwest');
-					removeLinks($target, 'southeast');
+					removeLink($current, 'northwest_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-northwest', $target.attr('id'));
-					$target.attr('data-southeast', $current.attr('id'));
-					updateLinks($current, 'northwest', $target.attr('id'));
-					updateLinks($target, 'southeast', $current.attr('id'));
+					createLink($current, 'northwest_rooms_id', $target.attr('id'));
 					}
 				}
 			}
@@ -973,50 +1139,35 @@ function performLink($selected, $target, $reverse = false)
 			// east
 			if ($target.parent().index() == $current.parent().index())
 				{
-				// due east
-				if ($reverse && $current.attr('data-east') && $target.attr('data-west'))
+				if (getValue($current, 'east_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'east');
-					removeLinks($target, 'west');
+					removeLink($current, 'east_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-east', $target.attr('id'));
-					$target.attr('data-west', $current.attr('id'));
-					updateLinks($current, 'east', $target.attr('id'));
-					updateLinks($target, 'west', $current.attr('id'));
+					createLink($current, 'east_rooms_id', $target.attr('id'));
 					}
 				}
 			else if ($target.parent().index() > $current.parent().index())
 				{
-				// se
-				if ($reverse && $current.attr('data-southeast') && $target.attr('data-northwest'))
+				if (getValue($current, 'southeast_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'southeast');
-					removeLinks($target, 'northwest');
+					removeLink($current, 'southeast_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-southeast', $target.attr('id'));
-					$target.attr('data-northwest', $current.attr('id'));
-					updateLinks($current, 'southeast', $target.attr('id'));
-					updateLinks($target, 'northwest', $current.attr('id'));
+					createLink($current, 'southeast_rooms_id', $target.attr('id'));
 					}
 				}
 			else
 				{
-				// ne
-				if ($reverse && $current.attr('data-northeast') && $target.attr('data-southwest'))
+				if (getValue($current, 'northeast_rooms_id') && $reverse)
 					{
-					removeLinks($current, 'northeast');
-					removeLinks($target, 'southwest');
+					removeLink($current, 'northeast_rooms_id');
 					}
 				else
 					{
-					$current.attr('data-northeast', $target.attr('id'));
-					$target.attr('data-southwest', $current.attr('id'));
-					updateLinks($current, 'northeast', $target.attr('id'));
-					updateLinks($target, 'southwest', $current.attr('id'));
+					createLink($current, 'northeast_rooms_id', $target.attr('id'));
 					}
 				} 
 			}
@@ -1024,93 +1175,19 @@ function performLink($selected, $target, $reverse = false)
 		return true;
 		}
 	}
-  
-function removeLinks($current_room, direction)
-	{
-	var id = $current_room.attr('id');
-	$('td#'+id).removeAttr('data-'+direction);
-	var val_str = $('input.hidden-vals#hidden_'+id).val();
-	var hash = JSON.parse(val_str);
-	// insert
-	delete hash[direction];
-	$('input.hidden-vals#hidden_'+id).val(JSON.stringify(hash));
-	return true;
-	}
-
-function updateLinks($current_room, direction, new_link)
-	{
-	if ($('#room-info div').data('id') == $current_room.attr('id'))
-		{
-		$('input#'+direction).val(new_link);
-		}
-	var id = $current_room.attr('id');
-	if ($current_room.find('input.hidden-vals').length > 0)
-		{
-		console.log('exists: ' + $current_room.find('input.hidden-vals').attr('id'));
-		console.log($current_room.find('input.hidden-vals').first().val());
-		// if it exists, decode it:
-		var val_str = $('input.hidden-vals#hidden_'+id).val();
-		var hash = JSON.parse(val_str);
-		// insert
-		hash[direction] = new_link;
-		$('input.hidden-vals#hidden_'+id).val(JSON.stringify(hash));
-		$current_room.attr('data-'+direction, new_link);
-		console.log($current_room.find('input.hidden-vals').first().val());
-		}
-	else
-		{
-		console.log('new!')
-		var obj = {};
-		obj[direction] = new_link;
-		$('<input/>', {type: 'hidden', id: 'hidden_'+id, name: 'new_rooms['+id+'][dirs]', "class": 'hidden-vals', value: JSON.stringify(obj)}).appendTo($current_room);
-		$current_room.attr('data-'+direction, new_link);
-		console.log('exists: ' + $current_room.find('input.hidden-vals').attr('id'));
-		console.log($current_room.find('input.hidden-vals').first().val());
-		}
-	}
-
-function addOrUpdateValue($current_room, name, value)
-	{
-	if ($current_room.find('input.hidden-vals').length > 0)
-		{
-		$current_room.attr('data-'+name, value);
-		var id = $current_room.attr('id');
-		// Get the matching hidden:
-		var val_str = $('input.hidden-vals#hidden_'+id).val();
-		var hash = JSON.parse(val_str);
-		hash[name] = value;
-		$('input.hidden-vals#hidden_'+id).val(JSON.stringify(hash));
-		}
-	else
-		{
-		$current_room.attr('data-'+name, value);
-		var obj = {};
-		obj[name] = value;
-		$('<input/>', {type: 'hidden', id: 'hidden_'+id, name: 'new_rooms['+id+'][dirs]', "class": 'hidden-vals', value: JSON.stringify(obj)}).appendTo($current_room);
-		$current_room.attr('data-'+name, value);
-		}
-	return true;
-	}
 
 $('#room-info').on('change', 'input', function(e) {
-	$newdir = $(e.target).attr('name');
-	$newval = $(e.target).val();
+	field = $(e.target).attr('name');
+	value = $(e.target).val();
 	room = $(e.target).parent().data('id');
-	if ($newval)
+	if (value == '')
 		{
-		$('td#'+room).attr('data-'+$newdir, $newval);
-		addOrUpdateValue($('td#'+room), $newdir, $newval);
+		addOrUpdateValue($('.map td#'+room), field, null);
 		}
 	else
 		{
-		$('td#'+room).removeAttr('data-'+$newdir);
-		var val_str = $('input.hidden-vals#hidden_'+room).val();
-		var hash = JSON.parse(val_str);
-		// insert
-		delete hash[$newdir];
-		$('input.hidden-vals#hidden_'+room).val(JSON.stringify(hash));
+		addOrUpdateValue($('.map td#'+room), field, value);
 		}
-	// flip it?
 	});
 </script>
 @endsection

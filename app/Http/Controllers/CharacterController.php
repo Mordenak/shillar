@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Character;
 use App\CharacterSetting;
-use App\PlayerClass;
-use App\PlayerRace;
+use App\Race;
 use App\Wallet;
 use App\Equipment;
 use App\Inventory;
@@ -22,7 +21,7 @@ class CharacterController extends Controller
 
 	public function create()
 		{	
-		return view('character.create', ['races' => PlayerRace::where('gender', '=', 'Male')->orderby('name')->get()]);
+		return view('character.create', ['races' => Race::where('gender', '=', 'Male')->orderby('name')->get()]);
 		}
 
 	public function all()
@@ -45,7 +44,7 @@ class CharacterController extends Controller
 			$Character = Character::findOrFail($request->id);
 			$values = [
 				'name' => $request->name,
-				'player_races_id' => $request->player_races_id,
+				'races_id' => $request->races_id,
 				'alignments_id' => $request->alignments_id,
 				'last_rooms_id' => $request->last_rooms_id,
 				'health' => $request->health,
@@ -94,7 +93,7 @@ class CharacterController extends Controller
 
 			$values = [
 				'users_id' => auth()->user()->id,
-				'player_races_id' => $selected_race,
+				'races_id' => $selected_race,
 				'name' => $request->name,
 				'last_rooms_id' => 1,
 				'xp' => 0,
@@ -108,7 +107,7 @@ class CharacterController extends Controller
 				'max_fatigue' => 0,
 				];
 
-			$StartingStat = StartingStat::where(['player_races_id' => $request->selected_race])->first();
+			$StartingStat = StartingStat::where(['races_id' => $request->selected_race])->first();
 
 			if ($StartingStat)
 				{

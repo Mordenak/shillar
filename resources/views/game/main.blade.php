@@ -3,8 +3,8 @@
 @section('menu')
 <div style="text-align: left;">
 	<div style="color:#12a1df;">
-	It is the <span style="color:#33ffee">200th</span> cycle in<br>
-	the year of our lord <span style="color:#33ffee">505</span><br>
+	It is the <span style="color:#33ffee">{{App\World::cycle()}}</span> cycle in<br>
+	the year of our lord <span style="color:#33ffee">{{App\World::year()}}</span><br>
 	<br>
 	@if ($online_count > 1)
 	There are <span style="color:#33ffee">{{$online_count}}</span> active players online.
@@ -161,8 +161,10 @@
 	@endif
 	</div>
 
-	@if (isset($timer))
+	<!-- Watch out for bugs caused from the Session::pull call down below...  -->
+	@if (Session::has('combat_timer'))
 	<script>
+		{{Session::pull('combat_timer')}}
 		console.log('Adding timer');
 		// $combatTimer = true;
 		$timers.combat = setTimeout(function(e) {
@@ -244,7 +246,7 @@
 	@endif
 	
 	<p>
-		{{$room->zone()->description}}
+		{{$room->zone()->travel_text}}
 	</p>
 	@endif
 
@@ -275,8 +277,8 @@
 				<td>{!! $listing->display_name() !!}</td>
 				<td>{{$listing->score}}</td>
 				<td>{{ $listing->rank() }}</td>
-				<td>{{$listing->playerrace()->gender}}</td>
-				<td>{{$listing->playerrace()->name}}</td>
+				<td>{{$listing->race()->gender}}</td>
+				<td>{{$listing->race()->name}}</td>
 			</tr>
 		@endforeach
 		</table>

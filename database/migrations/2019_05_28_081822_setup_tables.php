@@ -13,52 +13,111 @@ class SetupTables extends Migration
 	 */
 	public function up()
 	{
+		// Schema::create('operations', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->string('name');
+		// 	$table->string('type')->nullable();
+		// 	$table->string('shortcut')->nullable();
+		// 	$table->text('description')->nullable();
+		// 	$table->timestamps();
+		// });
+
+		Schema::create('world', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('cycle');
+			$table->integer('year');
+			$table->timestamps();
+			});
+
 		Schema::create('zones', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('uid')->unique()->nullable();
 			$table->string('name');
+			$table->text('travel_text');
 			$table->text('description')->nullable();
-			$table->integer('intelligence_req')->default(0);
-			$table->integer('darkness_level')->default(0);
-			$table->string('img_src')->nullable();
 			$table->string('bg_color')->nullable();
 			$table->string('bg_img')->nullable();
 			$table->string('font_color')->nullable();
 			$table->string('label_color')->nullable();
-			// TODO: Eventually move these things out onto properties -- SPAGHET:
-			$table->integer('heat_damage')->nullable();
-			$table->integer('heat_damage_start')->nullable();
-			$table->integer('heat_damage_end')->nullable();
-			$table->integer('cold_damage')->nullable();
-			$table->integer('cold_damage_start')->nullable();
-			$table->integer('cold_damage_end')->nullable();
+			$table->string('custom_view')->nullable();
 			$table->timestamps();
 		});
+
+		Schema::create('zone_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->text('description')->nullable();
+			$table->string('custom_view')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('zone_to_zone_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->integer('zone_properties_id');
+			$table->foreign('zone_properties_id')->references('id')->on('zone_properties');
+			$table->jsonb('data');
+			$table->timestamps();
+		});
+
+		// Schema::create('zone_levels', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('zones_id');
+		// 	$table->foreign('zones_id')->references('id')->on('zones');
+		// 	$table->integer('level');
+		// 	$table->string('uid')->unique()->nullable();
+		// 	$table->string('name')->nullable();
+		// 	$table->text('travel_text')->nullable();
+		// 	$table->boolean('inherit_creatures')->default(true);
+		// 	$table->boolean('inherit_properties')->default(true);
+		// 	$table->text('description')->nullable();
+		// 	$table->string('bg_color')->nullable();
+		// 	$table->string('bg_img')->nullable();
+		// 	$table->string('font_color')->nullable();
+		// 	$table->string('label_color')->nullable();
+		// 	$table->string('custom_view')->nullable();
+		// 	$table->timestamps();
+		// });
+
+		// Schema::create('zone_level_properties', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('zone_levels_id');
+		// 	$table->foreign('zone_levels_id')->references('id')->on('zone_levels');
+		// 	$table->integer('zone_properties_id');
+		// 	$table->foreign('zone_properties_id')->references('id')->on('properties');
+		// 	$table->jsonb('data');
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('zone_areas', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->string('uid')->unique()->nullable();
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
-			$table->string('name')->nullable();
+			$table->string('uid')->unique()->nullable();
+			$table->string('name');
+			$table->boolean('inherit_creatures')->default(true);
+			$table->boolean('inherit_properties')->default(true);
 			$table->text('description')->nullable();
-			$table->integer('darkness_level')->default(0);
-			$table->string('img_src')->nullable();
 			$table->string('bg_color')->nullable();
 			$table->string('bg_img')->nullable();
 			$table->string('font_color')->nullable();
 			$table->string('label_color')->nullable();
-			// TODO: Eventually move these things out onto properties -- SPAGHET:
-			$table->integer('heat_damage')->nullable();
-			$table->integer('heat_damage_start')->nullable();
-			$table->integer('heat_damage_end')->nullable();
-			$table->integer('cold_damage')->nullable();
-			$table->integer('cold_damage_start')->nullable();
-			$table->integer('cold_damage_end')->nullable();
+			$table->string('custom_view')->nullable();
 			$table->timestamps();
 		});
 
-		Schema::create('zone_rotations', function (Blueprint $table) {
+		Schema::create('zone_area_to_zone_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zone_areas_id');
+			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+			$table->integer('zone_properties_id');
+			$table->foreign('zone_properties_id')->references('id')->on('zone_properties');
+			$table->jsonb('data');
+			$table->timestamps();
+		});
+
+		Schema::create('zone_layouts', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
@@ -79,12 +138,16 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
-			$table->string('uid')->nullable();
+			$table->integer('zone_areas_id')->nullable();
+			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+			$table->string('uid')->unique()->nullable();
 			$table->string('title')->nullable();
 			$table->text('description')->nullable();
 			$table->integer('darkness_level')->nullable();
 			$table->string('img_src')->nullable();
 			$table->boolean('spawns_enabled')->default(true);
+			$table->boolean('inherit_creatures')->default(true);
+			$table->boolean('inherit_properties')->default(true);
 			$table->integer('north_rooms_id')->nullable();
 			$table->foreign('north_rooms_id')->references('id')->on('rooms');
 			$table->integer('east_rooms_id')->nullable();
@@ -110,7 +173,7 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('player_races', function (Blueprint $table) {
+		Schema::create('races', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
 			$table->string('gender');
@@ -127,8 +190,8 @@ class SetupTables extends Migration
 
 		Schema::create('stat_costs', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('player_races_id');
-			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->integer('races_id');
+			$table->foreign('races_id')->references('id')->on('races');
 			$table->float('strength_cost')->default(1.0);
 			$table->float('dexterity_cost')->default(1.0);
 			$table->float('constitution_cost')->default(1.0);
@@ -140,8 +203,8 @@ class SetupTables extends Migration
 
 		Schema::create('starting_stats', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('player_races_id');
-			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->integer('races_id');
+			$table->foreign('races_id')->references('id')->on('races');
 			$table->integer('strength')->default(20);
 			$table->integer('dexterity')->default(20);
 			$table->integer('constitution')->default(20);
@@ -169,6 +232,23 @@ class SetupTables extends Migration
 			$table->float('is_stackable')->default(false);
 			$table->float('drops_on_death')->default(true);
 			$table->integer('score_req')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('item_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->text('description')->nullable();
+			$table->timestamps();
+		});
+
+		Schema::create('item_to_item_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('item_properties_id');
+			$table->foreign('item_properties_id')->references('id')->on('item_properties');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->jsonb('data');
 			$table->timestamps();
 		});
 
@@ -275,23 +355,36 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('guilds', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->integer('rooms_id')->nullable();
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->text('description')->nullable();
+			$table->string('custom_view')->nullable();
+			$table->timestamps();
+		});
+
 		Schema::create('characters', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('users_id');
 			$table->foreign('users_id')->references('id')->on('users');
 			$table->string('name')->unique();
-			$table->integer('player_races_id');
-			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->integer('races_id');
+			$table->foreign('races_id')->references('id')->on('races');
 			$table->integer('last_rooms_id');
 			$table->foreign('last_rooms_id')->references('id')->on('rooms');
 			$table->integer('alignments_id')->nullable();
 			$table->foreign('alignments_id')->references('id')->on('alignments');
+			$table->integer('guilds_id')->nullable();
+			$table->foreign('guilds_id')->references('id')->on('guilds');
+			$table->integer('guild_rank')->nullable();
 			$table->bigInteger('xp');
 			$table->bigInteger('gold');
 			$table->bigInteger('bank');
 			$table->integer('health');
 			$table->integer('max_health');
-			$table->integer('mana');
+			$table->float('mana');
 			$table->integer('max_mana');
 			// I know this is strange:
 			$table->float('fatigue');
@@ -344,6 +437,16 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('inventory_item_to_item_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('item_properties_id');
+			$table->foreign('item_properties_id')->references('id')->on('item_properties');
+			$table->integer('inventory_items_id');
+			$table->foreign('inventory_items_id')->references('id')->on('inventory_items');
+			$table->jsonb('data');
+			$table->timestamps();
+		});
+
 		Schema::create('equipment', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('characters_id');
@@ -375,8 +478,20 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		Schema::create('forges', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('rooms_id');
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->string('name');
+			$table->text('description')->nullable();
+			$table->string('custom_view')->nullable();
+			$table->timestamps();
+		});
+
 		Schema::create('forge_recipes', function (Blueprint $table) {
 			$table->bigIncrements('id');
+			$table->integer('forges_id')->nullable();
+			$table->foreign('forges_id')->references('id')->on('forges');
 			$table->integer('item_weapons_id');
 			$table->foreign('item_weapons_id')->references('id')->on('items');
 			$table->integer('item_armors_id');
@@ -387,6 +502,10 @@ class SetupTables extends Migration
 			$table->foreign('item_jewels_id')->references('id')->on('items');
 			$table->integer('item_dusts_id');
 			$table->foreign('item_dusts_id')->references('id')->on('items');
+			$table->integer('alignments_id')->nullable();
+			$table->foreign('alignments_id')->references('id')->on('alignments');
+			$table->integer('guilds_id')->nullable();
+			$table->foreign('guilds_id')->references('id')->on('guilds');
 			$table->string('name');
 			$table->integer('result_items_id');
 			$table->foreign('result_items_id')->references('id')->on('items');
@@ -434,6 +553,8 @@ class SetupTables extends Migration
 			$table->float('alignment_strength')->nullable();
 			$table->integer('health');
 			$table->integer('armor');
+			$table->float('magic_resistance');
+			$table->float('scroll_resistance');
 			$table->integer('damage_low');
 			$table->integer('damage_high');
 			$table->integer('attacks_per_round');
@@ -448,6 +569,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('zones_id')->nullable();
 			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->integer('zone_areas_id')->nullable();
+			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
 			$table->integer('rooms_id')->nullable();
 			$table->foreign('rooms_id')->references('id')->on('rooms');
 			$table->integer('creatures_id');
@@ -724,12 +847,12 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('racial_modifier_races', function (Blueprint $table) {
+		Schema::create('race_racial_modifiers', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('racial_modifier_id');
 			$table->foreign('racial_modifier_id')->references('id')->on('racial_modifiers');
-			$table->integer('player_races_id');
-			$table->foreign('player_races_id')->references('id')->on('player_races');
+			$table->integer('races_id');
+			$table->foreign('races_id')->references('id')->on('races');
 			$table->float('value');
 			$table->timestamps();
 		});		
@@ -809,14 +932,14 @@ class SetupTables extends Migration
 		// });
 
 		// This is a cheat until I can do something better::
-		Schema::create('game_progression', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->integer('characters_id');
-			$table->foreign('characters_id')->references('id')->on('characters');
-			$table->boolean('sewer_lifted')->default(false);
-			$table->boolean('park_ranger')->default(false);
-			$table->timestamps();
-		});
+		// Schema::create('game_progression', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('characters_id');
+		// 	$table->foreign('characters_id')->references('id')->on('characters');
+		// 	$table->boolean('sewer_lifted')->default(false);
+		// 	$table->boolean('park_ranger')->default(false);
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('chat_rooms', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -846,20 +969,18 @@ class SetupTables extends Migration
 		Schema::dropIfExists('wall_score_ranks');
 		Schema::dropIfExists('kill_ranks');
 		Schema::dropIfExists('spell_ranks');
-		Schema::dropIfExists('racial_modifier_races');
+		Schema::dropIfExists('race_racial_modifiers');
 		Schema::dropIfExists('racial_modifiers');
 		Schema::dropIfExists('character_stats');
 		Schema::dropIfExists('stat_costs');
 		Schema::dropIfExists('starting_stats');
 		Schema::dropIfExists('equipment');
-		Schema::dropIfExists('inventory_items');
-		Schema::dropIfExists('inventories');
 		Schema::dropIfExists('spawn_rules');
 		Schema::dropIfExists('loot_tables');
 		Schema::dropIfExists('shop_items');
 		Schema::dropIfExists('shops');
-		Schema::dropIfExists('players');
 		Schema::dropIfExists('forge_recipes');
+		Schema::dropIfExists('forges');
 		Schema::dropIfExists('trader_items');
 		Schema::dropIfExists('traders');
 		Schema::dropIfExists('item_weapons');
@@ -873,7 +994,13 @@ class SetupTables extends Migration
 		Schema::dropIfExists('item_dusts');
 		Schema::dropIfExists('item_others');
 		Schema::dropIfExists('item_property_items');
+		Schema::dropIfExists('item_to_item_properties');
+		Schema::dropIfExists('inventory_item_to_item_properties');
 		Schema::dropIfExists('item_properties');
+		
+		Schema::dropIfExists('inventory_items');
+		Schema::dropIfExists('inventories');
+		
 		Schema::dropIfExists('quest_rewards');
 		Schema::dropIfExists('character_room_actions');
 		Schema::dropIfExists('character_settings');
@@ -912,11 +1039,25 @@ class SetupTables extends Migration
 		Schema::dropIfExists('spells');
 		Schema::dropIfExists('spell_properties');
 		Schema::dropIfExists('room_property_rooms');
+		Schema::dropIfExists('guilds');
 		Schema::dropIfExists('rooms');
 		Schema::dropIfExists('room_properties');
+		Schema::dropIfExists('zone_level_properties');
+		Schema::dropIfExists('zone_levels');
+		Schema::dropIfExists('zone_layouts');
+		Schema::dropIfExists('zone_area_to_zone_properties');
 		Schema::dropIfExists('zone_areas');
 		Schema::dropIfExists('zone_rotations');
+		Schema::dropIfExists('zone_property_zone_levels');
+		Schema::dropIfExists('zone_property_zones');
+		Schema::dropIfExists('zone_to_zone_properties');
+		Schema::dropIfExists('zone_properties');
+		Schema::dropIfExists('properties');
+		Schema::dropIfExists('world');
+		Schema::dropIfExists('zone_layouts');
 		Schema::dropIfExists('zones');
+		// legacy
 		Schema::dropIfExists('player_races');
+		Schema::dropIfExists('races');
 	}
 }

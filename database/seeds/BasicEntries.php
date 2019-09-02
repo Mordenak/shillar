@@ -12,6 +12,10 @@ class BasicEntries extends Seeder
 	 */
 	public function run()
 	{
+		DB::table('world')->insert([
+			['cycle' => 1, 'year' => 100, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+
 		DB::table('equipment_slots')->insert([
 			['name' => 'weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'shield', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -37,21 +41,64 @@ class BasicEntries extends Seeder
 			['name' => 'Other', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		// Deprecate this idea:
+		// Deprecate These ideas:
 		/*
-		DB::table('item_properties')->insert([
-			['name' => 'ADJUST_STRENGTH', 'description' => 'Adjusts strength by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADJUST_DEXTERITY', 'description' => 'Adjusts dexterity by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADJUST_CONSTITUTION', 'description' => 'Adjusts constitution by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADJUST_WISDOM', 'description' => 'Adjusts wisdom by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADJUST_INTELLIGENCE', 'description' => 'Adjusts intelligence by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADJUST_CHARISMA', 'description' => 'Adjusts charisma by a flat amount.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HAS_HEALING', 'description' => 'This flag will represent the item will heal the character', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADD_LIGHT_LEVEL', 'description' => 'Add an amount of light level', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'IGNORE_ACCURACY', 'description' => 'Accuracy will always be 100%.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ADJUST_ACCURACY', 'description' => 'Adjust accuracy by a percentage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		DB::table('operations')->insert([
+			['name' => 'EQUAL_TO', 'type' => 'comparator', 'shortcut' => '==', 'description' => 'Values must be equal', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'LESS_THAN', 'type' => 'comparator', 'shortcut' => '<', 'description' => 'Values must be equal', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GREATER_THAN', 'type' => 'comparator', 'shortcut' => '>', 'description' => 'Values must be equal', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'LESS_THAN_OR_EQUAL_TO', 'type' => 'comparator', 'shortcut' => '<=', 'description' => 'Values must be equal', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GREATER_THAN_OR_EQUAL_TO', 'type' => 'comparator', 'shortcut' => '>=', 'description' => 'Values must be equal', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'AND', 'type' => 'joiner', 'shortcut' => '&&', 'description' => 'Values must be equal', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'OR', 'type' => 'joiner', 'shortcut' => '||', 'description' => 'Values must be equal', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 		*/
+
+		/*
+		DB::table('item_properties')->insert([
+			['name' => 'STRENGTH_BONUS', 'description' => 'Adds a flat amount of strength.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DEXTERITY_BONUS', 'description' => 'Adds a flat amount of dexterity.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'CONSTITUTION_BONUS', 'description' => 'Adds a flat amount of constitution.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'WISDOM_BONUS', 'description' => 'Adds a flat amount of wisdom.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'INTELLIGENCE_BONUS', 'description' => 'Adds a flat amount of intelligence.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'CHARISMA_BONUS', 'description' => 'Adds a flat amount of charisma.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'LIGHT_LEVEL_BONUS', 'description' => 'Add an amount of light level.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HEAT_PROTECTION', 'description' => 'Add a percentage of heat damage protection', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'COLD_PROTECTION', 'description' => 'Add a percentage of cold damage protection', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_EARTH_GUARDIAN', 'description' => 'This weapon can damage the Earth Elemental.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_AIR_GUARDIAN', 'description' => 'This weapon can damage the Air Elemental.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_FIRE_GUARDIAN', 'description' => 'This weapon can damage the Fire Elementa.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_WATER_GUARDIAN', 'description' => 'This weapon can damage the Water Elementa.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// ['name' => 'IGNORE_ACCURACY', 'description' => 'Accuracy will always be 100%.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// ['name' => 'ADJUST_ACCURACY', 'description' => 'Adjust accuracy by a percentage.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// ['name' => 'HAS_HEALING', 'description' => 'This flag will represent the item will heal the character', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		]);
+		*/
+
+		DB::table('zone_properties')->insert([
+			['name' => 'STAT_RESTRICTION', 'description' => 'Flat amount of a given stat [stat|amount] required to enter a zone.', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ITEM_RESTRICTION', 'description' => 'Specific item [item_id|amount] required to enter a zone.', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_PER_CREATURE_KILL', 'description' => 'All creatures will be hostile in this zone if you do not meet the criteria [creature_id|stat|multiplier] based on creature kills.', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_SPELL_COUNT_RESTRICTION', 'description' => 'Restriction based on spell count [amount]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'FOOD_COUNT_RESTRICTION','description' => 'Restriction based on amount of food types [amount]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// End 5
+			['name' => 'HEAT_DAMAGE', 'description' => 'Moving in this zone deals heat damage, optional hourly begin and end times [amount|begin|end]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'COLD_DAMAGE', 'description' => 'Moving in this zone deals cold damage, optional hourly begin and end times [amount|begin|end]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DARKNESS', 'description' => 'This zone has a certain darkness level in order to see things [amount]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_RECENT_DEATH', 'description' => 'Must have a recent death as defined in minutes, otherwise creatures are hostile. [minutes]. ', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DEATH_WITHOUT_ITEM', 'description' => 'Travelling into this zone without the specified item will result in death [item_id]. ', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			]);
+
+		DB::table('item_properties')->insert([
+			['name' => 'STAT_BONUS', 'description' => 'Adds a flat amount of a stat [stat|amount].', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'LIGHT_LEVEL_BONUS', 'description' => 'Add an amount of light level.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HEAT_PROTECTION', 'description' => 'Add a percentage of heat damage protection', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'COLD_PROTECTION', 'description' => 'Add a percentage of cold damage protection', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_EARTH_GUARDIAN', 'description' => 'This weapon can damage the Earth Elemental.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_AIR_GUARDIAN', 'description' => 'This weapon can damage the Air Elemental.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_FIRE_GUARDIAN', 'description' => 'This weapon can damage the Fire Elementa.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_WATER_GUARDIAN', 'description' => 'This weapon can damage the Water Elementa.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			]);
 
 		DB::table('room_properties')->insert([
 			['name' => 'CAN_SLEEP', 'custom_view' => null, 'description' => 'Characters can sleep in this room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],

@@ -11,8 +11,8 @@ Gaze upon the Wall of Flame.<br><br>
 			@else
 			<td></td>
 			@endif
-			<td>{{$listing->playerrace()->gender}}</td>
-			<td>{{$listing->playerrace()->name}}</td>
+			<td>{{$listing->race()->gender}}</td>
+			<td>{{$listing->race()->name}}</td>
 			@if ($listing->kill_stats()->first())
 			<td>{{$listing->kill_rank()}}</td>
 			@endif

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\PlayerRace;
+use App\Race;
 use Illuminate\Http\Request;
 
-class PlayerRaceController extends Controller
+class RaceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class PlayerRaceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\PlayerRace  $playerRace
+     * @param  \App\Race  $playerRace
      * @return \Illuminate\Http\Response
      */
-    public function show(PlayerRace $playerRace)
+    public function show(Race $playerRace)
     {
         //
     }
@@ -52,10 +52,10 @@ class PlayerRaceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\PlayerRace  $playerRace
+     * @param  \App\Race  $playerRace
      * @return \Illuminate\Http\Response
      */
-    public function edit(PlayerRace $playerRace)
+    public function edit(Race $playerRace)
     {
         //
     }
@@ -64,10 +64,10 @@ class PlayerRaceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\PlayerRace  $playerRace
+     * @param  \App\Race  $playerRace
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PlayerRace $playerRace)
+    public function update(Request $request, Race $playerRace)
     {
         //
     }
@@ -75,10 +75,10 @@ class PlayerRaceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\PlayerRace  $playerRace
+     * @param  \App\Race  $playerRace
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PlayerRace $playerRace)
+    public function destroy(Race $playerRace)
     {
         //
     }

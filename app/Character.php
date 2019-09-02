@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Character extends Model
 {
-	protected $fillable = ['users_id', 'name', 'player_races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
+	protected $fillable = ['users_id', 'name', 'races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
 
 	public function user()
 		{
 		return $this->belongsto('App\User', 'users_id')->first();
 		}
 
-	public function playerrace()
+	public function race()
 		{
-		return $this->belongsTo('App\PlayerRace', 'player_races_id')->first();
+		return $this->belongsTo('App\Race', 'races_id')->first();
 		}
 
 	public function inventory()
@@ -90,6 +90,11 @@ class Character extends Model
 			}
 
 		return true;
+		}
+
+	public function kill_count($creature_id)
+		{
+		$this->kill_stats()->where(['creatures_id' => $creature_id])->first();
 		}
 
 	public function kill_rank()
@@ -187,8 +192,14 @@ class Character extends Model
 		$this->max_fatigue = $stats['dexterity'] + $stats['constitution'] + $stats['wisdom'];
 		$this->save();
 
-		$this->inventory()->max_weight = $stats['strength'];
-		$this->inventory()->save();
+		$inventory_size = $stats['strength'];
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 1])->first();
+		if ($racial_modifier)
+			{
+			$inventory_size = floor($stats['strength'] * $racial_modifier->value);
+			}
+
+		$this->inventory()->set_weight($inventory_size);
 
 		return true;
 		}
@@ -199,6 +210,11 @@ class Character extends Model
 		if ($this->health > $this->max_health)
 			{
 			$this->health = $this->max_health;
+			}
+		$this->mana = $this->mana + $amount;
+		if ($this->mana > $this->max_mana)
+			{
+			$this->mana = $this->max_mana;
 			}
 		$this->fatigue = $this->fatigue + $amount;
 		if ($this->fatigue > $this->max_fatigue)
@@ -274,4 +290,78 @@ class Character extends Model
 			}
 		return $arr;
 		}
-}
+
+	// TODO: Maybe change this function name???
+	public function can_access($zone)
+		{
+		// Given a zone, can the character access it?
+		$reqs = $zone->get_stat_restriction()->decode();
+		// die(print_r($reqs));
+		$current_stat = call_user_func_array([$this, key($reqs)], []);
+
+		// We know the modifier we want is ID 3:
+		$modifier = 1.0;
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 3])->first();
+		if ($racial_modifier)
+			{
+			$modifier = $racial_modifier->value;
+			}
+
+		// Racial check:
+		if ($current_stat >= floor(reset($reqs) * $modifier))
+			{
+			return true;
+			}
+		return false;
+		}
+
+	public function receive_heat_damage($damage)
+		{
+		// Ok, first find out if we take modified heat damage due to racial:
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 7])->first();
+		if ($racial_modifier)
+			{
+			// TODO: floor or round?
+			$damage = floor($damage * $racial_modifier->value);
+			}
+
+		// Then if you have any protection from equipment:
+		if (isset($this->stats()['heat_protection']))
+			{
+			$damage = $damage * (1.0 - $this->stats()['heat_protection']);
+			}
+
+		if ($damage > 0)
+			{
+			$this->health = $this->health - $damage;
+			$this->save();
+			}
+		
+		return $damage;
+		}
+
+	public function receive_cold_damage($damage)
+		{
+		// Ok, first find out if we take modified heat damage due to racial:
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 8])->first();
+		if ($racial_modifier)
+			{
+			// TODO: floor or round?
+			$damage = floor($damage * $racial_modifier->value);
+			}
+
+		// Then if you have any protection from equipment:
+		if (isset($this->stats()['cold_protection']))
+			{
+			$damage = $damage * (1.0 - $this->stats()['cold_protection']);
+			}
+
+		if ($damage > 0)
+			{
+			$this->health = $this->health - $damage;
+			$this->save();
+			}
+		
+		return $damage;
+		}
+	}

@@ -38,7 +38,6 @@
 
 		@if (auth()->user()->admin_level >= 1)
 		@section('sidebar')
-			This is the master sidebar.
 		@show
 
 

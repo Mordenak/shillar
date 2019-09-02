@@ -19,25 +19,23 @@ Creating a zone:
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Travel Text:</label>
+			<div class="col-md-3">
+				<input type="text" name="travel_text" value="{{isset($zone) ? $zone->travel_text : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Description:</label>
 			<div class="col-md-3">
 				<input type="text" name="description" value="{{isset($zone) ? $zone->description : ''}}" class="form-control">
 			</div>
 		</div>
 
-		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Darkness Level:</label>
-			<div class="col-md-3">
-				<input type="text" name="darkness_level" value="{{isset($zone) ? $zone->darkness_level : ''}}" class="form-control">
-			</div>
-		</div>
-
-		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Img Src:</label>
-			<div class="col-md-3">
-				<input type="text" name="img_src" value="{{isset($zone) ? $zone->img_src : ''}}" class="form-control">
-			</div>
-		</div>
+		<h3>Properties</h3>
+		@foreach ($zone->properties()->get() as $prop)
+		{{$prop->property()->first()->name}}: {{$prop->data}}<br>
+		@endforeach
 
 		@if (isset($zone))
 		<input type="hidden" name="id" id="db-id" value="{{$zone->id}}">
@@ -56,6 +54,7 @@ Creating a zone:
 
 <!-- HAHAHAH HAVE FUN! -->
 
+<div style="display:none;">
 @if (isset($zone))
 @foreach ($zone->rooms_q()->orderBy('id', 'asc')->get() as $room)
 [
@@ -89,4 +88,5 @@ Creating a zone:
 ],<br>
 @endforeach
 @endif
+</div>
 @endsection

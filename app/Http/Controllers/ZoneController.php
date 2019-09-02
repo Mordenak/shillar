@@ -37,15 +37,14 @@ class ZoneController extends Controller
 		$values = [
 			'name' => $request->name,
 			'description' => $request->description,
-			'darkness_level' => $request->darkness_level,
-			'img_src' => $request->img_src,
+			'travel_text' => $request->travel_text,
 			];
 
 		$Zone->fill($values);
 		$Zone->save();
 
 		// return view('admin/main');
-		return redirect()->action('AdminController@index');
+		return redirect()->action('ZoneController@all');
 		}
 
 	public function lookup(Request $request)
