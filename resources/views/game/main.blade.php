@@ -114,7 +114,6 @@
 				<input type="hidden" name="room_id" value="{{$room->id}}">
 				<input type="hidden" name="creature_id" value="{{$creature->id}}">
 				<input type="hidden" name="character_id" value="{{$character->id}}">
-				@if (!$no_attack)
 				<table id="combat-table">
 					<tr>
 					</tr>
@@ -122,9 +121,6 @@
 				<script>
 					combat_shuffle('{{$creature->name}}');
 				</script>
-				@else
-				<span style="color:red;">You are too tired to attack</span>
-				@endif
 			</form>
 		</div>
 		<div style="display: inline-grid;position:absolute;top:50%;transform: translateY(-50%);margin-left: .5rem;grid-template-columns: 1fr 1fr;">
@@ -169,7 +165,7 @@
 		console.log('Adding timer');
 		// $combatTimer = true;
 		$timers.combat = setTimeout(function(e) {
-			$('#single').click();
+			$('#single').closest('form').submit();
 			}, 4000);
 	</script>
 	@endif

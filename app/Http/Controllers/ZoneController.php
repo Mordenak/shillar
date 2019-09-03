@@ -12,8 +12,8 @@ class ZoneController extends Controller
 {
 	public function create()
 		{
-		// $zones = Zone::all();
-		return view('zone.edit');
+		$ZoneProperties = ZoneProperty::all();
+		return view('zone.edit', ['properties' => $ZoneProperties]);
 		}
 
 	public function all(Request $request)
@@ -25,8 +25,8 @@ class ZoneController extends Controller
 	public function edit($id)
 		{
 		$Zone = Zone::findOrFail($id);
-		$ZoneProperty = ZoneProperty::all();
-		return view('zone.edit', ['zone' => $Zone, 'zone_properties' => $Zone->properties()->get(), 'properties' => $ZoneProperty]);
+		$ZoneProperties = ZoneProperty::all();
+		return view('zone.edit', ['zone' => $Zone, 'zone_properties' => $Zone->properties()->get(), 'properties' => $ZoneProperties]);
 		}
 
 	public function save(Request $request)

@@ -36,11 +36,11 @@ class GameController extends Controller
 			return redirect('/home');
 			}
 
-		$no_attack = $Character->fatigue > 0 ? false : true;
+		// $no_attack = $Character->fatigue > 0 ? false : true;
 		$CombatLog = CombatLog::where(['characters_id' => $Character->id])->first();
 		if ($CombatLog)
 			{
-			$no_attack = false;
+			// $no_attack = false;
 			}
 
 		$Room = Room::findOrFail($Character->last_rooms_id);
@@ -139,7 +139,8 @@ class GameController extends Controller
 			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
-		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => $Creature, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
+		// 'no_attack' => $no_attack
+		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => $Creature, 'ground_items' => $ground_items];
 
 		$ChatRoom = ChatRoom::findOrFail(1);
 		$request_params['chat'] = $ChatRoom;
@@ -654,7 +655,7 @@ class GameController extends Controller
 			$creature_damages = [];
 			$creature_round_damage = 0;
 			$creature_absorbs = 0;
-			$no_fatigue = false;
+			// $no_fatigue = false;
 			// We attack first:
 			foreach (range(1, $attack_count) as $i)
 				{
@@ -665,7 +666,8 @@ class GameController extends Controller
 
 				if ($flat_character[$fatigue_stat] < $fatigue_use)
 					{
-					$no_fatigue = true;
+					// $arr['no_fatigue'] = true;
+					$combat_history[] = ['no_fatigue' => true];
 					break;
 					}
 
@@ -735,7 +737,6 @@ class GameController extends Controller
 				'creature_att_count' => $flat_creature['attacks_per_round'],
 				'creature_round' => $creature_round_damage,
 				'creature_attacks' => $creature_damages,
-				'no_fatigue' => $no_fatigue,
 				];
 
 			// player died:
@@ -895,11 +896,11 @@ class GameController extends Controller
 			// ??
 			}
 
-		$no_attack = $Character->fatigue > 0 ? false : true;
+		// $no_attack = $Character->fatigue > 0 ? false : true;
 		if ($CombatLog)
 			{
 			Session::put('combat_timer', true);
-			$no_attack = false;
+			// $no_attack = false;
 			}
 
 		// Test:
@@ -2044,27 +2045,32 @@ class GameController extends Controller
 			{
 			foreach ($combat_history as $log_entry)
 				{
-				foreach ($log_entry['attacks'] as $attack)
+				if (isset($log_entry['attacks']))
 					{
-					if ($attack > 0)
+					foreach ($log_entry['attacks'] as $attack)
 						{
-						$condensed[] = $log_entry['attack_text'].", for $attack damage!<br>";
-						}
-					else
-						{
-						$condensed[] = 'You missed!<br>';
-						}
-
-					if ($log_entry['no_fatigue'])
-						{
-						$condensed[] = 'You are too tired to attack.<br>';
+						if ($attack > 0)
+							{
+							$condensed[] = $log_entry['attack_text'].", for $attack damage!<br>";
+							}
+						else
+							{
+							$condensed[] = 'You missed!<br>';
+							}
 						}
 					}
 
-				foreach ($log_entry['creature_attacks'] as $creature_attack)
+				if (isset($log_entry['no_fatigue']))
 					{
-					$condensed[] = $log_entry['creature_text']." doing $creature_attack damage.<br>";
-						
+					$condensed[] = 'You are too tired to attack.<br>';
+					}
+
+				if (isset($log_entry['creature_attacks']))
+					{
+					foreach ($log_entry['creature_attacks'] as $creature_attack)
+						{
+						$condensed[] = $log_entry['creature_text']." doing $creature_attack damage.<br>";
+						}
 					}
 
 				if (isset($log_entry['pc_died']))

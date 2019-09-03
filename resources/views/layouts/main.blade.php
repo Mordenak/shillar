@@ -174,6 +174,7 @@
 			width: 1%;
 			white-space: nowrap;
 			}
+
 		</style>
 	</head>
 	<body>
@@ -259,6 +260,25 @@
 		<script>
 		$('body').on('submit', 'form.ajax', function(e, i) {
 			e.preventDefault();
+
+			var main_exceptions = [
+				'/teleport',
+				];
+
+			var menu_inserts = [
+				'/equipment',
+				'/food',
+				'/show_stats',
+				'/menu',
+				'/settings',
+				'/character/update_settings'
+				];
+
+			var footer_inserts = [
+				'/chat/message',
+				'/footer'
+				];
+
 			var formData = new FormData(e.target);
 
 			if ($(document.activeElement).hasClass('submit-val'))
@@ -271,18 +291,20 @@
 				formData.append('submit', $(document.activeElement).attr('id'));
 				}
 
-			$(document.activeElement).attr('disabled', 'disabled');
+			$(e.target).find('input,select').attr('disabled', 'disabled');
 
-			for (var pair of formData.entries())
+			if (!main_exceptions.includes($(e.target).attr('action')) && 
+				 !menu_inserts.includes($(e.target).attr('action')) &&
+				 !footer_inserts.includes($(e.target).attr('action'))
+				 )
 				{
-				// console.log(pair[0] +':' + pair[1]);
+				if ($timers.combat)
+					{
+					console.log('clearing');
+					clearTimeout($timers.combat);
+					}
 				}
 
-			if ($timers.combat)
-				{
-				console.log('clearing');
-				clearTimeout($timers.combat);
-				}
 			// Direct submit:
 			// $combatTimer = false;
 
@@ -293,23 +315,8 @@
 				processData: false,
 				data: formData,
 				success: function(resp) {
-					var main_exceptions = [
-						'/teleport',
-						];
 
-					var menu_inserts = [
-						'/equipment',
-						'/food',
-						'/show_stats',
-						'/menu',
-						'/settings',
-						'/character/update_settings'
-						];
-
-					var footer_inserts = [
-						'/chat/message',
-						'/footer'
-						];
+					$('input:disabled,select:disabled').removeAttr('disabled');
 
 					if (this['url'] == '/spells')
 						{
