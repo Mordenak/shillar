@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
 			SpawnData::class,
 			LootData::class,
 			QuestData::class,
+			TeleportTargets::class,
 		]);
 	}
 }
