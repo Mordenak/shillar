@@ -66,10 +66,17 @@
 @endsection
 
 @section('main')
+
+	@if( Session::has("errors") )
+	<p style="color: red;display: inline;">
+	{{ Session::pull("errors") }}
+	<p>
+	@endif
+
 	@if( Session::has("flee") )
-	<br>
+	<p>
 	{{ Session::pull("flee") }}
-	<br>
+	<p>
 	@endif
 
 	@if (Session::has('combat_log'))
@@ -87,13 +94,7 @@
 	</p>
 	@endif
 
-	@if (isset($death))
-	<p style="color: red;display: inline;">
-		You have died.
-	</p>
-	@endif
-
-	@if ($room->zone()->darkness_level > $character->light_level())
+	@if ($room->zone()->darkness_level() > $character->light_level())
 	<p style="color: red;">
 		It is too dark, you cannot see anything!
 	</p>

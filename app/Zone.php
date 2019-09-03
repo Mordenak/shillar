@@ -8,6 +8,8 @@ class Zone extends Model
 	{
 	protected $fillable = ['name', 'description', 'travel_text'];
 
+	private $property_list = [];
+
 	public function rooms_q()
 		{
 		return $this->hasMany('App\Room', 'zones_id');
@@ -21,6 +23,16 @@ class Zone extends Model
 	public function properties()
 		{
 		return $this->hasMany('App\ZoneToZoneProperty', 'zones_id');
+		}
+
+	public function darkness_level()
+		{
+		$is_dark = $this->get_property('DARKNESS');
+		if ($is_dark)
+			{
+			return $is_dark->decode()['level'];
+			}
+		return 0;
 		}
 
 	public function get_property(string $property_name = null)

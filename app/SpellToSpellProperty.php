@@ -4,20 +4,20 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ZoneToZoneProperty extends Model
+class SpellToSpellProperty extends Model
 	{
 	// protected $table = 'zone_properties';
 
-	protected $fillable = ['zone_properties_id', 'zones_id', 'data'];
+	protected $fillable = ['spell_properties_id', 'spells_id', 'data'];
 
-	public function zone()
+	public function spell()
 		{
-		return $this->belongsTo('App\Zone');
+		return $this->belongsTo('App\Spell');
 		}
 
 	public function property()
 		{
-		return $this->belongsTo('App\ZoneProperty', 'zone_properties_id');
+		return $this->belongsTo('App\SpellProperty', 'spell_properties_id');
 		}
 
 	public function get_data()

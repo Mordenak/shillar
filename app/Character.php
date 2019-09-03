@@ -55,7 +55,26 @@ class Character extends Model
 
 	public function spells()
 		{
-		return $this->hasMany('App\CharacterSpell', 'character_id')->orderBy('spells_id','asc')->get();
+		return $this->hasMany('App\CharacterSpell', 'character_id')->orderBy('spells_id','asc');
+		}
+
+	public function has_spell($id)
+		{
+		return $this->spells()->where(['spells_id' => $id])->first();
+		}
+
+	public function get_modifier(string $modifier_name)
+		{
+		$RacialModifier = RacialModifier::where(['name' => $modifier_name])->first();
+		if (!$RacialModifier)
+			{
+			return false;
+			}
+		if ($this->race()->modifiers()->get())
+			{
+			return $this->race()->modifiers()->where(['racial_modifier_id' => $RacialModifier->id])->first();
+			}
+		return false;
 		}
 
 	public function spell_ids()
@@ -94,7 +113,7 @@ class Character extends Model
 
 	public function kill_count($creature_id)
 		{
-		$this->kill_stats()->where(['creatures_id' => $creature_id])->first();
+		return $this->kill_stats()->where(['creatures_id' => $creature_id])->first();
 		}
 
 	public function kill_rank()
@@ -129,6 +148,13 @@ class Character extends Model
 			'intelligence' => $this->intelligence,
 			'charisma' => $this->charisma,
 			];
+
+		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 2])->first();
+		$racial_modifier = $this->get_modifier('HAS_NIGHTVISION');
+		if ($racial_modifier)
+			{
+			$stats['light_level'] = 1;
+			}
 
 		$armor_stats = $this->equipment()->calculate_stats();
 		foreach ($armor_stats as $stat => $value)
@@ -174,6 +200,11 @@ class Character extends Model
 	public function charisma()
 		{
 		return $this->stats()['charisma'];
+		}
+
+	public function get_stat($stat)
+		{
+		return call_user_func_array([$this, $stat], []);
 		}
 
 	public function refresh_score()
@@ -222,6 +253,17 @@ class Character extends Model
 			$this->fatigue = $this->max_fatigue;
 			}
 		$this->save();
+		return true;
+		}
+
+	// TODO: Unused atm
+	public function deal_damage($damage)
+		{
+		$this->health = $this->health - $damage;
+		if ($this->health <= 0)
+			{
+			$this->death();
+			}
 		return true;
 		}
 
@@ -294,6 +336,10 @@ class Character extends Model
 	// TODO: Maybe change this function name???
 	public function can_access($zone)
 		{
+		if (!$zone->has_restriction())
+			{
+			return true;
+			}
 		// Given a zone, can the character access it?
 		$reqs = $zone->get_stat_restriction()->decode();
 		// die(print_r($reqs));
@@ -313,6 +359,22 @@ class Character extends Model
 			return true;
 			}
 		return false;
+		}
+
+	public function teleport($rooms_id)
+		{
+		$Room = Room::findOrFail($rooms_id);
+
+		if (!$this->can_access($Room->zone()))
+			{
+			// error
+			return false;
+			}
+
+		// Else, go ahead!
+		$this->last_rooms_id = $Room->id;
+		$this->save();
+		return true;
 		}
 
 	public function receive_heat_damage($damage)

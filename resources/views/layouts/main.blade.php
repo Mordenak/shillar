@@ -300,7 +300,6 @@
 					var menu_inserts = [
 						'/equipment',
 						'/food',
-						'/spells',
 						'/show_stats',
 						'/menu',
 						'/settings',
@@ -311,6 +310,14 @@
 						'/chat/message',
 						'/footer'
 						];
+
+					if (this['url'] == '/spells')
+						{
+						$('.main').html(resp.main);
+						$('.menu').html(resp.menu);
+						return true;
+						}
+
 					// var replace = '.game-container';
 					// console.log(this['url']);
 					// if (main_inserts.includes(this['url']))

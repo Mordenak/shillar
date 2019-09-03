@@ -20,6 +20,7 @@ class ZoneData extends Seeder
 
 		DB::table('zone_to_zone_properties')->insert([
 			['zones_id' => 3, 'zone_properties_id' => 1, 'data' => '{"intelligence":40}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['zones_id' => 4, 'zone_properties_id' => 8, 'data' => '{"level":1}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		//Beach
@@ -103,7 +104,7 @@ class ZoneData extends Seeder
 		// Link Town:
 		DB::table('rooms')->updateOrInsert(['id' => 14], ['north_rooms_id' => 153]);
 
-		Sewers:
+		// Sewers:
 		DB::table('rooms')->insert([
 			[ 'zones_id' => 4, 'uid' => null, 'title' => null, 'description' => null, 'darkness_level' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => null, 'east_rooms_id' => 155, 'south_rooms_id' => 159, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'northeast_rooms_id' => null, 'southeast_rooms_id' => null, 'southwest_rooms_id' => null, 'northwest_rooms_id' => null, 'room_properties_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s"), ],
 			[ 'zones_id' => 4, 'uid' => null, 'title' => null, 'description' => null, 'darkness_level' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => null, 'east_rooms_id' => 156, 'south_rooms_id' => 160, 'west_rooms_id' => 154, 'up_rooms_id' => null, 'down_rooms_id' => null, 'northeast_rooms_id' => null, 'southeast_rooms_id' => null, 'southwest_rooms_id' => null, 'northwest_rooms_id' => null, 'room_properties_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s"), ],
@@ -133,6 +134,6 @@ class ZoneData extends Seeder
 			[ 'zones_id' => 4, 'uid' => null, 'title' => null, 'description' => null, 'darkness_level' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => 174, 'east_rooms_id' => null, 'south_rooms_id' => null, 'west_rooms_id' => 178, 'up_rooms_id' => null, 'down_rooms_id' => null, 'northeast_rooms_id' => null, 'southeast_rooms_id' => null, 'southwest_rooms_id' => null, 'northwest_rooms_id' => null, 'room_properties_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s"), ],
 			]);
 		// Link Town:
-		DB::table('rooms')->updateOrInsert(['id' => 41], ['northwest_rooms_id' => 166]);
+		DB::table('rooms')->updateOrInsert(['id' => 41], ['down_rooms_id' => 166]);
 		}
 	}

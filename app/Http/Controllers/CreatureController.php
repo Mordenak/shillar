@@ -131,6 +131,7 @@ class CreatureController extends Controller
 				if ($loot_table['item_id'] == 'null' && !$loot_table['chance'])
 					{
 					$LootTable->delete();
+					continue;
 					}
 				}
 

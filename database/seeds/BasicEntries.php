@@ -76,28 +76,34 @@ class BasicEntries extends Seeder
 		*/
 
 		DB::table('zone_properties')->insert([
-			['name' => 'STAT_RESTRICTION', 'description' => 'Flat amount of a given stat [stat|amount] required to enter a zone.', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'ITEM_RESTRICTION', 'description' => 'Specific item [item_id|amount] required to enter a zone.', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HOSTILE_PER_CREATURE_KILL', 'description' => 'All creatures will be hostile in this zone if you do not meet the criteria [creature_id|stat|multiplier] based on creature kills.', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HOSTILE_SPELL_COUNT_RESTRICTION', 'description' => 'Restriction based on spell count [amount]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'FOOD_COUNT_RESTRICTION','description' => 'Restriction based on amount of food types [amount]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'STAT_RESTRICTION', 'description' => 'Flat amount of a given stat required to enter a zone.', 'format' => '{"intelligence":40}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'ITEM_RESTRICTION', 'description' => 'Specific item required to enter a zone.', 'format' => '{"item_id":1}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HEAT_DAMAGE', 'description' => 'Moving in this zone deals heat damage, optional hourly begin and end times', 'format' => '{"amount":10,"begin":12,"end":18}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'COLD_DAMAGE', 'description' => 'Moving in this zone deals cold damage, optional hourly begin and end times', 'format' => '{"amount":10,"begin":0,"end":6}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DARKNESS', 'description' => 'This zone has a certain darkness level in order to see things', 'format' => '{"level":1}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			// End 5
-			['name' => 'HEAT_DAMAGE', 'description' => 'Moving in this zone deals heat damage, optional hourly begin and end times [amount|begin|end]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'COLD_DAMAGE', 'description' => 'Moving in this zone deals cold damage, optional hourly begin and end times [amount|begin|end]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'DARKNESS', 'description' => 'This zone has a certain darkness level in order to see things [amount]', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HOSTILE_RECENT_DEATH', 'description' => 'Must have a recent death as defined in minutes, otherwise creatures are hostile. [minutes]. ', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'DEATH_WITHOUT_ITEM', 'description' => 'Travelling into this zone without the specified item will result in death [item_id]. ', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'REQUIRES_SWIMMING', 'description' => 'Travelling into or in this zone without the swimming ability will result in death.', 'format' => '{}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'REQUIRES_FLYING', 'description' => 'Travelling into or in this zone without the flying ability will result in death. ', 'format' => '{}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_PER_CREATURE_KILL', 'description' => 'All creatures will be hostile in this zone if you do not meet the criteria based on creature kills.', 'format' => '{"creature_id":1,"stat":"charisma","multipler":1}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_ON_GOLD_PER_SPELL', 'description' => 'All creatures will be hostile in this zone if the criteria are not met.  Per total spell levels a character has, requires specified gold in hand.', 'format' => '{"gold":1250}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_ON_FOOD_TYPES','description' => 'All creatures will be hostile if the specified amount of food types in a character inventory are not met.', 'format' => '{"amount":12}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// End 10
+			['name' => 'HOSTILE_RECENT_DEATH', 'description' => 'Must have a recent death as defined in minutes, otherwise creatures are hostile.', 'format' => '{"minutes":30}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'SCRAMBLE_DIRECTIONS', 'description' => "Every room in this zone will have it's directions scrambled, enabling treasure hunting.  Bypassed by COMPASS item property.", 'format' => '{}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		DB::table('item_properties')->insert([
-			['name' => 'STAT_BONUS', 'description' => 'Adds a flat amount of a stat [stat|amount].', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'LIGHT_LEVEL_BONUS', 'description' => 'Add an amount of light level.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'HEAT_PROTECTION', 'description' => 'Add a percentage of heat damage protection', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'COLD_PROTECTION', 'description' => 'Add a percentage of cold damage protection', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'DAMAGE_EARTH_GUARDIAN', 'description' => 'This weapon can damage the Earth Elemental.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'DAMAGE_AIR_GUARDIAN', 'description' => 'This weapon can damage the Air Elemental.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'DAMAGE_FIRE_GUARDIAN', 'description' => 'This weapon can damage the Fire Elementa.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'DAMAGE_WATER_GUARDIAN', 'description' => 'This weapon can damage the Water Elementa.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'STAT_BONUS', 'description' => 'Adds a flat amount of each specified stat.', 'format' => '{"strength":10,"dexterity":10}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'LIGHT_LEVEL_BONUS', 'description' => 'Add an amount of light level.', 'format' => '{"amount":1}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HEAT_PROTECTION', 'description' => 'Add a percentage of heat damage protection, use 1.0 for immunity.', 'format' => '{"amount":0.5}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'COLD_PROTECTION', 'description' => 'Add a percentage of cold damage protection, use 1.0 for immunity.', 'format' => '{"amount":0.5}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GRANTS_SWIMMING', 'description' => 'When equipped, grants the swimming ability.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GRANTS_FLYING', 'description' => 'Carrying this item grants the flying ability.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_EARTH_GUARDIAN', 'description' => 'This weapon can damage the Earth Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_AIR_GUARDIAN', 'description' => 'This weapon can damage the Air Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_FIRE_GUARDIAN', 'description' => 'This weapon can damage the Fire Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_WATER_GUARDIAN', 'description' => 'This weapon can damage the Water Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'COMPASS', 'description' => 'This item bypasses zone property SCRAMBLE_DIRECTIONS.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		DB::table('room_properties')->insert([
@@ -105,6 +111,7 @@ class BasicEntries extends Seeder
 			['name' => 'CAN_TRAIN', 'custom_view' => 'partials/train', 'description' => 'This room will show the training form.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'WALL_OF_FLAME', 'custom_view' => 'partials/wall-flame', 'description' => 'This room will show the Wall of Flame.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_BANK', 'custom_view' => 'partials/bank', 'description' => 'This room has a bank.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// TODO: Deprecate:
 			['name' => 'HAS_FORGE', 'custom_view' => 'partials/forge', 'description' => 'This room has a forge.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_AIR_TEMPLE', 'custom_view' => 'partials/temple-air', 'description' => 'This room has the Air Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_EARTH_TEMPLE', 'custom_view' => 'partials/temple-earth', 'description' => 'This room has the Earth Temple.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -117,32 +124,33 @@ class BasicEntries extends Seeder
 			['name' => 'HAS_INVENTORY', 'custom_view' => 'partials/inventory', 'description' => 'This room has shows the inventory.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		DB::table('spell_properties')->insert([
-			['uid' => 'TELEPORT_ROOM', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['uid' => 'MAGIC_DAMAGE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['uid' => 'DAMAGE_ABSORB', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['uid' => 'AVOIDANCE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['uid' => 'RESTORE_HEALTH', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['uid' => 'RESTORE_FATIGUE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['uid' => 'EXTRA_ARMOR', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		DB::table('spell_types')->insert([
+			['name' => 'TELEPORT_ROOM', 'description' => 'Used to move a character to another room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'MAGIC_DAMAGE', 'description' => 'Used to deal basic magic damage to a creature.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DAMAGE_ABSORB', 'description' => 'Absorbs damage at the expensive of...', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'AVOIDANCE', 'description' => 'Grants an additional chance to dodge', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'EXTRA_ARMOR', 'description' => 'Grants additional armor', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'RESTORE_HEALTH', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'RESTORE_FATIGUE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('spells')->insert([
-			['name' => 'Teleport', 'spell_properties_id' => 1, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Teleport spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Town Portal', 'spell_properties_id' => 1, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Town Portal spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Bind Wounds', 'spell_properties_id' => 5, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Bind Wounds spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Rejuvinate', 'spell_properties_id' => 6, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Rejuvinate spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Bedazzle', 'spell_properties_id' => 4, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Bedazzle spell.', 'formula' => 'level', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Magic Shield', 'spell_properties_id' => 3, 'mana_cost' => 3, 'training_cost' => 5, 'description' => 'Magic Shield spell.', 'formula' => '[level] * 0.5', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Teleport', 'spell_types_id' => 1, 'description' => 'Teleport spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Town Portal', 'spell_types_id' => 1, 'description' => 'Town Portal spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Bind Wounds', 'spell_types_id' => 6, 'description' => 'Bind Wounds spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Rejuvinate', 'spell_types_id' => 7, 'description' => 'Rejuvinate spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Bedazzle', 'spell_types_id' => 4, 'description' => 'Bedazzle spell.', 'formula' => 'level', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Magic Shield', 'spell_types_id' => 5, 'description' => 'Magic Shield spell.', 'formula' => '[level] * 0.5', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
-		DB::table('spell_levels')->insert([
-			['spells_id' => 2, 'name' => 'The Fountain', 'level' => 1, 'value' => 0, 'wisdom_req' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Beach Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 10, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Middle of Beach', 'level' => 5, 'value' => null, 'wisdom_req' => 20, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Far End of Beach', 'level' => 10, 'value' => null, 'wisdom_req' => 30, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Outskirts Entrance', 'level' => 1, 'value' => null, 'wisdom_req' => 40, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+		DB::statement("SET session_replication_role = 'replica';");
+		DB::table('teleport_targets')->insert([
+			['spells_id' => 2, 'name' => 'The Fountain', 'rooms_id' => 1, 'level_req' => null, 'wisdom_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Beach Entrance', 'rooms_id' => 87, 'level_req' => 1, 'wisdom_req' => 10, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Middle of Beach', 'rooms_id' => 115, 'level_req' => 5, 'wisdom_req' => 20, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Far End of Beach', 'rooms_id' => 91, 'level_req' => 10, 'wisdom_req' => 30, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
+		DB::statement("SET session_replication_role = 'origin';");
 
 		DB::table('chat_rooms')->insert([
 			['name' => 'Nostalgia Tavern', 'score_req' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
