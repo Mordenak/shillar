@@ -1037,50 +1037,58 @@ class GameController extends Controller
 			$Spell = Spell::findOrFail($request->spell_id);
 			// Make sure the Character has the spell:
 			$CharacterSpell = CharacterSpell::where(['spells_id' => $Spell->id])->first();
-			$random_float = rand()/getrandmax();
-			$random_multiplier = $random_float * rand(1,3);
-			$mana_cost = round($CharacterSpell->level * $random_multiplier);
 
-			$Character->mana = $Character->mana - $mana_cost;
-			if ($Character->mana <= 0)
+			if ($Character->mana < $CharacterSpell->level)
 				{
-				$Character->mana = 0;
+				Session::flash('errors', 'Not enough mana to cast that!');
 				}
-			$Character->save();
-			// cast spell:
-			// Well WTF do we do here!
-			if ($Spell->is_type('TELEPORT_ROOM'))
+			else
 				{
-				// TODO: Adjust this later?
+				$random_float = rand()/getrandmax();
+				$random_multiplier = $random_float * rand(1,3);
+				$mana_cost = round($CharacterSpell->level * $random_multiplier);
 
-				// die(print_r('We town portal?'));
-				$TeleportTargets = TeleportTarget::where(['spells_id' => $Spell->id])->get();
-				// Town Portal
-				if ($TeleportTargets->count() == 1)
+				$Character->mana = $Character->mana - $mana_cost;
+				if ($Character->mana <= 0)
 					{
-					$success = $CharacterSpell->level + $Character->wisdom();
-					error_log("Chance for success? $success");
-					if ($success >= rand(1,100))
+					$Character->mana = 0;
+					}
+				$Character->save();
+				// cast spell:
+				// Well WTF do we do here!
+				if ($Spell->is_type('TELEPORT_ROOM'))
+					{
+					// TODO: Adjust this later?
+
+					// die(print_r('We town portal?'));
+					$TeleportTargets = TeleportTarget::where(['spells_id' => $Spell->id])->get();
+					// Town Portal
+					if ($TeleportTargets->count() == 1)
 						{
-						if (!$Character->teleport($TeleportTargets->first()->rooms_id))
+						$success = $CharacterSpell->level + $Character->wisdom();
+						error_log("Chance for success? $success");
+						if ($success >= rand(1,100))
 							{
-							Session::flash('errors', 'You cannot access that zone currently.');
+							if (!$Character->teleport($TeleportTargets->first()->rooms_id))
+								{
+								Session::flash('errors', 'You cannot access that zone currently.');
+								}
+							else
+								{
+								$request->full_reload = true;
+								return $this->index($request);
+								// return action('GameController@index');
+								}
 							}
 						else
 							{
-							$request->full_reload = true;
-							return $this->index($request);
-							// return action('GameController@index');
+							Session::flash('errors', 'Your spell fizzled.');
 							}
 						}
-					else
-						{
-						Session::flash('errors', 'Your spell fizzled.');
-						}
-					}
 
-				// For teleport spells, the spell level can control where we go:
-				// if only 1 spell level (Town Portal), go straight there:
+					// For teleport spells, the spell level can control where we go:
+					// if only 1 spell level (Town Portal), go straight there:
+					}
 				}
 
 			}
