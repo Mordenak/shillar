@@ -815,10 +815,10 @@ class GameController extends Controller
 				}
 
 			// TODO: CHEATER BIT
-			$total_xp = 0;
-			$total_gold = 0;
-			for ($i = 0;$i < 100;++$i)
-			{
+			// $total_xp = 0;
+			// $total_gold = 0;
+			// for ($i = 0;$i < 100;++$i)
+			// {
 			// Record the kill:
 			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
 			if ($KillCount)
@@ -847,11 +847,11 @@ class GameController extends Controller
 				{
 				$actual_gold = 1;
 				}
-			$total_xp += $actual_xp;
-			$total_gold += $actual_gold;
-			}
-			$Character->xp += $total_xp;
-			$Character->gold += $total_gold;
+			// $total_xp += $actual_xp;
+			// $total_gold += $actual_gold;
+			// }
+			$Character->xp += $actual_xp;
+			$Character->gold += $actual_gold;
 			$Character->save();
 			$reward_log[] = "You found $actual_gold gold and gained $actual_xp experience.";
 			// $reward_log[] = "You received $actual_xp xp.";
