@@ -28,9 +28,31 @@
 			color: #55ff8b;
 			}
 
+		.link-label
+			{
+			color: #55ff8b;
+			margin: 0;	
+			}
+
 		table.dataTable tbody tr
 			{
 			background-color: #333;
+			}
+
+		.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate
+			{
+			color: #fff;
+			}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button
+			{
+			color: #aaa !important;
+			}
+
+		.dt-container
+			{
+			padding-left: 2rem;
+			padding-right: 2rem;
 			}
 		</style>
 	</head>
@@ -41,6 +63,7 @@
 		@show
 
 
+		<br><br><br>
 		@if (Session::has("success"))
 		<div class="alert alert-success alert-block" role="alert">
 			<button class="close" data-dismiss="alert"></button>
@@ -57,16 +80,9 @@
 
 		<div class="flash-message"></div>
 
-		<div class="container">
+		<div>
 			@yield('content')
 		</div>
-
-		<p style="margin-left: 2rem;">
-			<br><br>
-			<a href="/admin">Admin home</a>
-			<br><br>
-			<a href="/home">Back to Game</a>
-		</p>
 
 		<script>
 		// autocompletes

@@ -248,6 +248,23 @@
 	</div>
 </div>
 
+<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
+	<div class="col-md-1">
+		<a href="/admin" class="btn btn-info">Admin Home</a>
+	</div>
+	<div class="col-md-3 offset-md-1">
+		<h3>
+			Zone Editor
+		</h3>
+	</div>
+	<div class="col-md-1">
+		<a href="/room/all" class="btn btn-secondary">Cancel</a>
+	</div>
+	<div class="col-md-1">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</div>
+
 <script>
 $('body').on('change', '#zone-select', function(e) {
 	$target = $(e.target);

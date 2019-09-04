@@ -325,6 +325,8 @@
 						return true;
 						}
 
+					console.log(menu_inserts);
+
 					// var replace = '.game-container';
 					// console.log(this['url']);
 					// if (main_inserts.includes(this['url']))

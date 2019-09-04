@@ -29,6 +29,15 @@ class ZoneController extends Controller
 		return view('zone.edit', ['zone' => $Zone, 'zone_properties' => $Zone->properties()->get(), 'properties' => $ZoneProperties]);
 		}
 
+	public function delete(Request $request)
+		{
+		// clear out shop items:
+		$Zone = Zone::findOrFail($request->id);
+		$Zone->delete();
+		Session::flash('success', 'Zone Deleted!');
+		return redirect()->action('ZoneController@all');
+		}
+
 	public function save(Request $request)
 		{
 		$Zone = new Zone;
@@ -40,8 +49,12 @@ class ZoneController extends Controller
 
 		$values = [
 			'name' => $request->name,
-			'description' => $request->description,
 			'travel_text' => $request->travel_text,
+			'img_src' => $request->img_src,
+			'bg_color' => $request->bg_color,
+			'font_color' => $request->font_color,
+			'label_color' => $request->label_color,
+			'description' => $request->description,
 			];
 
 		$Zone->fill($values);

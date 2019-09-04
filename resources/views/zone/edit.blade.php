@@ -2,36 +2,63 @@
 
 @section('content')
 
-@if (isset($zone))
-Editing a zone:
-@else
-Creating a zone:
-@endif
-<br>
 <div>
 	<form action="/zone/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Name:</label>
 			<div class="col-md-3">
-				<input type="text" name="name" value="{{isset($zone) ? $zone->name : ''}}" class="form-control">
+				<input type="text" name="name" value="{{isset($zone) ? $zone->name : ''}}" class="form-control" required>
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Travel Text:</label>
 			<div class="col-md-3">
-				<input type="text" name="travel_text" value="{{isset($zone) ? $zone->travel_text : ''}}" class="form-control">
+				<input type="text" name="travel_text" value="{{isset($zone) ? $zone->travel_text : ''}}" class="form-control" required>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Image:</label>
+			<div class="col-md-3">
+				<input type="text" name="img_src" value="{{isset($zone) ? $zone->img_src : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Background Color [NYI]:</label>
+			<div class="col-md-3">
+				<input type="text" name="bg_color" value="{{isset($zone) ? $zone->bg_color : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Text Color [NYI]:</label>
+			<div class="col-md-3">
+				<input type="text" name="font_color" value="{{isset($zone) ? $zone->font_color : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Link Color [NYI]:</label>
+			<div class="col-md-3">
+				<input type="text" name="label_color" value="{{isset($zone) ? $zone->label_color : ''}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Description:</label>
-			<div class="col-md-3">
-				<input type="text" name="description" value="{{isset($zone) ? $zone->description : ''}}" class="form-control">
+			<div class="col-md-6">
+				<textarea class="form-control" name="description">{{isset($zone) ? $zone->description : ''}}</textarea>
 			</div>
 		</div>
 
+		@if (isset($zone))
+		<input type="hidden" name="id" id="db-id" value="{{$zone->id}}">
+		@endif
+
+		<div style="margin-left:1rem;">
 		<h3>Properties:</h3>
 		<div class="zone-properties">
 			<div class="properties-forms">
@@ -75,21 +102,42 @@ Creating a zone:
 
 		<br>
 		<a class="fa fa-plus" onclick="addZoneProperty(this);">Add Property</a>
+		<br><br>
+		</div>
 
-		@if (isset($zone))
-		<input type="hidden" name="id" id="db-id" value="{{$zone->id}}">
-		@endif
-
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-1">
-				<a href="/zone/all" class="btn btn-primary">Cancel</a>
+		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
+			<div class="col-md-1">
+				<a href="/admin" class="btn btn-info">Admin Home</a>
 			</div>
-			<div class="col-md-2 offset-md-2">
+			<div class="col-md-3 offset-md-1">
+				<h3>
+				@if (isset($zone))
+				Editing a Zone:
+				@else
+				Creating a Zone:
+				@endif
+				</h3>
+			</div>
+			<div class="col-md-1">
+				<a href="/zone/all" class="btn btn-secondary">Cancel</a>
+			</div>
+			<div class="col-md-1">
 				<input type="submit" value="Save" class="btn btn-primary">
 			</div>
 		</div>
 	</form>
 </div>
+
+<br><br>
+@if (isset($zone))
+<div class="col-md-1">
+	<form method="post" action="/zone/delete">
+		{{csrf_field()}}
+		<input type="hidden" name="id" value="{{$zone->id}}">
+		<input type="submit" value="Delete This Zone" class="btn btn-danger">
+	</form>
+</div>
+@endif
 
 <!-- HAHAHAH HAVE FUN! -->
 <script>
@@ -118,6 +166,7 @@ function addZoneProperty($btn)
 	$tmp.find('.form-control').each(function(i) {
 		var name = $(this).attr('name').replace(/zone_properties\[\d*\]/, 'zone_properties['+new_id+']');
 		$(this).attr('name', name);
+		$(this).removeAttr('placeholder');
 		});
 
 	$('.properties-forms').append($tmp);

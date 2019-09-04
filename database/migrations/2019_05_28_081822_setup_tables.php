@@ -35,8 +35,8 @@ class SetupTables extends Migration
 			$table->string('name');
 			$table->text('travel_text');
 			$table->text('description')->nullable();
+			$table->string('img_src')->nullable();
 			$table->string('bg_color')->nullable();
-			$table->string('bg_img')->nullable();
 			$table->string('font_color')->nullable();
 			$table->string('label_color')->nullable();
 			$table->string('custom_view')->nullable();

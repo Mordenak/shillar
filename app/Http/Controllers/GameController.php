@@ -23,26 +23,17 @@ class GameController extends Controller
 
 		$Character = Character::findOrFail($request->character_id);
 
-		if ($Character->health <= 0)
-			{
-			return $this->death($request);
-			}
-
-		// die(print_r(Equipment::all()->toArray()));
-			// ->select('character_stats.id as character_stats_id, *');
-
 		if (!$Character)
 			{
 			return redirect('/home');
 			}
 
-		// $no_attack = $Character->fatigue > 0 ? false : true;
-		$CombatLog = CombatLog::where(['characters_id' => $Character->id])->first();
-		if ($CombatLog)
+		if ($Character->health <= 0)
 			{
-			// $no_attack = false;
+			return $this->death($request);
 			}
-
+		
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id])->first();
 		$Room = Room::findOrFail($Character->last_rooms_id);
 		$Zone = $Room->zone();
 		
@@ -333,6 +324,7 @@ class GameController extends Controller
 			return $sections;
 			}
 
+		error_log('dropping in');
 		return view('game/main', $request_params);
 		}
 
@@ -578,8 +570,8 @@ class GameController extends Controller
 		// Calculate attacks:
 		$attack_count = floor(($Character->dexterity() - 10) / 20) + 2;
 		$total_damage = 0;
-		$grope_low = $Character->constitution() + (rand(1,10));
-		$grope_high = $Character->constitution() + $Character->strength() + rand(1,10);
+		$grope_low = $Character->constitution();
+		$grope_high = $Character->constitution() + $Character->strength();
 		// Multiply $grope_low & $grope_high if they ahve the extra grope racial mod!!!
 		$weapon_low = 0;
 		$weapon_high = 0;

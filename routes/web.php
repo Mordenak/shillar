@@ -87,6 +87,7 @@ Route::get('zone/all', 'ZoneController@all');
 Route::get('zone/create', 'ZoneController@create');
 Route::get('zone/edit/{id}', 'ZoneController@edit')->where('id', '[0-9]+');
 Route::post('zone/save', 'ZoneController@save');
+Route::post('zone/delete', 'ZoneController@delete');
 
 Route::get('item/all', 'ItemController@all');
 Route::get('item/create', 'ItemController@create');

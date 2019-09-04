@@ -1,16 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-
-<h2>
-@if (isset($creature))
-Editing a Creature:
-@else
-Creating a Creature:
-@endif
-</h2>
-	
-<div>
+<div style="margin-top:5rem;">
 	<form action="/creature/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
 		<div class="form-group row">
@@ -212,10 +203,17 @@ Creating a Creature:
 		@endif
 
 		<div class="form-group row mb-0 fixed-top">
-			<div class="col-md-1 offset-md-4">
+			<div class="col-md-1">
+				@if (isset($creature))
+				Editing a Creature:
+				@else
+				Creating a Creature:
+				@endif
+			</div>
+			<div class="col-md-1">
 				<a href="/creature/all" class="btn btn-primary">Cancel</a>
 			</div>
-			<div class="col-md-2 offset-md-1">
+			<div class="col-md-2">
 				<input type="submit" value="Save" class="btn btn-primary">
 			</div>
 		</div>
