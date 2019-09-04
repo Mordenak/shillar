@@ -210,26 +210,28 @@
 
 <div class="zone-builder">
 	<div id="zone-header">
-		<form method="post" action="/admin/zone_select">
-			<select id="zone-select" name="zones_id">
-					<option value="null">-- Select --</option>
-				@foreach (App\Zone::all() as $zone)
-					<option value="{{$zone->id}}">{{$zone->name}}</option>
-				@endforeach
-			</select>
-			{{csrf_field()}}
-		</form>
+		
 	</div>
 	<div id="room-info">
 		-- Select a Room --
 	</div>
 	<div class="map-wrapper">
+		<div style="float:left;">
+			-- Options --<br>
+			<a href="#" onclick="addRow(true);">Add Row Top</a><br>
+			<a href="#" onclick="addRow();">Add Row Bottom</a><br>
+			<a href="#" onclick="addCol(true);">Add Column Left</a><br>
+			<a href="#" onclick="addCol();">Add Column Right</a><br>
+			<a href="#" onclick="addZLevel(1);">Add Floor Up</a><br>
+			<a href="#" onclick="addZLevel(-1);">Add Floor Down</a><br>
+			<a href="#" onclick="switchZLevel(1);">Switch Level Up</a><br>
+			<a href="#" onclick="switchZLevel(-1);">Switch Level Down</a><br>
+			<a href="#" class="link-adjacents">Link All Adjacents</a><br>
+			<a href="#" class="clear-map">Clear Map</a><br>
+		</div>
+		<div class="level-view"></div>
 		<form method="post" id="builder" action="/admin/zone_builder">
-			<a href="#" class="add-row">Add Row</a>
-			<a href="#" class="add-column">Add Column</a>
-			<a href="#" class="link-adjacents">Link All Adjacents</a>
-			<a href="#" class="clear-map">Clear Map</a>
-			<table id="map" class="map">
+			<table id="map_100" class="map" data-level="100">
 				<thead>
 				</thead>
 				<tbody>
@@ -237,7 +239,7 @@
 			</table>
 
 			<input type="hidden" id="zone-id" name="zones_id">
-			<input type="submit" value="Save">
+			<input type="submit" id="save-zone" value="Save" style="display:none;">
 			{{csrf_field()}}
 		</form>
 	</div>
@@ -252,16 +254,24 @@
 	<div class="col-md-1">
 		<a href="/admin" class="btn btn-info">Admin Home</a>
 	</div>
-	<div class="col-md-3 offset-md-1">
-		<h3>
+	<div class="col-md-2">
+		<h3 style="display:inline-block;">
 			Zone Editor
 		</h3>
 	</div>
 	<div class="col-md-1">
-		<a href="/room/all" class="btn btn-secondary">Cancel</a>
+		<form method="post" action="/admin/zone_select" style="display:inline-block;">
+			<select id="zone-select" name="zones_id">
+				<option value="null">-- Select --</option>
+				@foreach (App\Zone::all() as $zone)
+				<option value="{{$zone->id}}">{{$zone->name}}</option>
+				@endforeach
+			</select>
+			{{csrf_field()}}
+		</form>
 	</div>
-	<div class="col-md-1">
-		<input type="submit" value="Save" class="btn btn-primary">
+	<div class="offset-md-1">
+		<button onclick="$('#builder').submit();" class="btn btn-primary">Save</button>
 	</div>
 </div>
 
@@ -291,9 +301,13 @@ $('body').on('change', '#zone-select', function(e) {
 		});
 	});
 
-
+var $z_levels = 100;
+var $last_up = 100;
+var $last_down = 100;
 var $new_ids = 0;
 
+// PLAN FOR LEVELS:
+// Have the PHP sort the rooms and give us a list by levels :)
 // Here comes the fun part lol.
 function process_rooms(room_list)
 	{
@@ -312,6 +326,8 @@ function process_rooms(room_list)
 	// console.log('Processing...');
 	while (tmp_list.length > 0)
 		{
+		var current_map = 100;
+		var selector = '#map_'+current_map;
 		var unk_room = false;
 		$current_room = null;
 		$original_room = null;
@@ -350,7 +366,7 @@ function process_rooms(room_list)
 			$new_room = create_room($current_room, room.id, true);
 			// $new_room.addClass('start');
 			}
-		if ($('.map').find('td#'+room.id).length > 0 )
+		if ($(selector).find('td#'+room.id).length > 0 )
 			{
 			console.log('Found a room.');
 			// var $original_room = $('.map').find('td#'+room.id).first();
@@ -426,7 +442,7 @@ function process_rooms(room_list)
 		if (room && room.northwest_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.northwest_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.northwest_rooms_id).length == 0 )
 				{
 				if (curr_row - 1 <= 0)
 					{
@@ -441,7 +457,7 @@ function process_rooms(room_list)
 				console.log('Adding a NW ['+room.northwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
 				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
-				var $target = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
+				var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
 				if ($target.hasClass('room'))
 					{
 					// TODO: Not ready yet!
@@ -472,7 +488,7 @@ function process_rooms(room_list)
 		if (room && room.north_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.north_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.north_rooms_id).length == 0 )
 				{
 				if (curr_row - 1 <= 0)
 					{
@@ -482,7 +498,7 @@ function process_rooms(room_list)
 				console.log('Adding a N ['+room.north_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
 				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
-				var $target = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
+				var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col);
 				$new_room = create_room($target, room.north_rooms_id, true);
 				}
 			else
@@ -495,14 +511,14 @@ function process_rooms(room_list)
 		if (room && room.northeast_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.northeast_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.northeast_rooms_id).length == 0 )
 				{
 				if (curr_row - 1 <= 0)
 					{
 					addRow(true);
 					curr_row++;
 					}
-				if (curr_col + 1 >= $('.map').find('tr').first().find('td').length)
+				if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
 					{
 					addCol();
 					// curr_col++;
@@ -510,7 +526,7 @@ function process_rooms(room_list)
 				console.log('Adding a NE ['+room.northeast_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
 				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
-				var $target = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
+				var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
 				$new_room = create_room($target, room.northeast_rooms_id, true);
 				}
 			else
@@ -523,7 +539,7 @@ function process_rooms(room_list)
 		if (room && room.west_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.west_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.west_rooms_id).length == 0 )
 				{
 				if (curr_col - 1 <= 0)
 					{
@@ -533,7 +549,7 @@ function process_rooms(room_list)
 				console.log('Adding a W ['+room.west_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
 				// Now we can add the room:
 				// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
-				var $target = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
+				var $target = $(selector).find('tr').eq(curr_row).find('td').eq(curr_col - 1);
 				$new_room = create_room($target, room.west_rooms_id, true);
 				}
 			else
@@ -546,9 +562,9 @@ function process_rooms(room_list)
 		if (room && room.east_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.east_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.east_rooms_id).length == 0 )
 				{
-				if (curr_col + 1 >= $('.map').find('tr').first().find('td').length)
+				if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
 					{
 					addCol();
 					// curr_col++;
@@ -556,7 +572,7 @@ function process_rooms(room_list)
 				console.log('Adding a E ['+room.east_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
 				// Now we can add the room:
 				// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
-				var $target = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
+				var $target = $(selector).find('tr').eq(curr_row).find('td').eq(curr_col + 1);
 				$new_room = create_room($target, room.east_rooms_id, true);
 				}
 			else
@@ -569,9 +585,9 @@ function process_rooms(room_list)
 		if (room && room.southwest_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.southwest_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.southwest_rooms_id).length == 0 )
 				{
-				if (curr_row + 1 >= $('.map').find('tr').length)
+				if (curr_row + 1 >= $(selector).find('tr').length)
 					{
 					addRow();
 					// curr_row++;
@@ -584,7 +600,7 @@ function process_rooms(room_list)
 				console.log('Adding a SW ['+room.southwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
 				// Now we can add the room:
 				// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
-				var $target = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
+				var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
 				$new_room = create_room($target, room.southwest_rooms_id, true);
 				}
 			else
@@ -597,9 +613,9 @@ function process_rooms(room_list)
 		if (room && room.south_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.south_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.south_rooms_id).length == 0 )
 				{
-				if (curr_row + 1 >= $('.map').find('tr').length)
+				if (curr_row + 1 >= $(selector).find('tr').length)
 					{
 					addRow();
 					// curr_row++;
@@ -607,7 +623,7 @@ function process_rooms(room_list)
 				console.log('Adding a S ['+room.south_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
 				// Now we can add the room:
 				// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
-				var $target = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
+				var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col);
 				$new_room = create_room($target, room.south_rooms_id, true);
 				}
 			else
@@ -620,21 +636,21 @@ function process_rooms(room_list)
 		if (room && room.southeast_rooms_id != null)
 			{
 			// Room already exists?
-			if ($('.map').find('td#'+room.southeast_rooms_id).length == 0 )
+			if ($(selector).find('td#'+room.southeast_rooms_id).length == 0 )
 				{
-				if (curr_row + 1 >= $('.map').find('tr').length)
+				if (curr_row + 1 >= $(selector).find('tr').length)
 					{
 					addRow();
 					// curr_row++;
 					}
-				if (curr_col + 1 >= $('.map').find('tr').first().find('td').length)
+				if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
 					{
 					addCol();
 					// curr_col++;
 					}
 				console.log('Adding a SE ['+room.southeast_rooms_id+'] room at: ['+(curr_row+1)+','+(curr_col+1)+']');
 				// Now we can add the room:
-				var $target = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col + 1);
+				var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col + 1);
 				$new_room = create_room($target, room.southeast_rooms_id, true);
 				}
 			else
@@ -643,6 +659,17 @@ function process_rooms(room_list)
 				}
 			createLink($current_room, 'southeast_rooms_id', room.southeast_rooms_id);
 			}
+
+		// Grand finale of directions:
+		if (room && room.up_rooms_id != null)
+			{
+			added_level = addZLevel(1);
+			var $target = $('#map_'+added_level).find('tr').eq(curr_row).find('td').eq(curr_col);
+			$new_room = create_room($target, room.up_rooms_id, true);
+			}
+
+
+		// END OF CHECKS:
 		// If we've linked something, reset the stalemate check:
 		console.log('Reset checks?');
 		room_checks = {};
@@ -837,9 +864,9 @@ function start()
 			}
 		$('.map tbody').append($tr);
 		}
-  $('.map td').each(function(i,e) {
-    $(e).append('<div class="blip nw-blip"></div><div class="blip n-blip"></div><div class="blip ne-blip"></div><div class="blip e-blip"></div><div class="blip w-blip"></div><div class="blip se-blip"></div><div class="blip s-blip"></div><div class="blip sw-blip"></div>');
-  	});
+	$('.map td').each(function(i,e) {
+		$(e).append('<div class="blip nw-blip"></div><div class="blip n-blip"></div><div class="blip ne-blip"></div><div class="blip e-blip"></div><div class="blip w-blip"></div><div class="blip se-blip"></div><div class="blip s-blip"></div><div class="blip sw-blip"></div>');
+		});
 	}
 
 start();
@@ -879,9 +906,14 @@ $('body').on('click', '.clear-map', function(e) {
 
 function clear()
 	{
+	$('table:not([id="map_100"])').remove();
+	$('#map_100').show();
 	$('.map tbody').html('');
 	$('#unlinked-rooms').html('');
 	$('.map').css({width: ''});
+	$z_levels = 100;
+	$last_up = 100;
+	$last_down = 100;
 	start();
 	}
 
@@ -978,7 +1010,7 @@ function getAdjacents($el)
 			{
 			continue;
 			}
-		$parent = $($('.map').find('tr')[parent_start + indexes[i]]);
+		$parent = $($('.map:visible').find('tr')[parent_start + indexes[i]]);
 		for (x=0;x<indexes.length;x++)
 			{
 			if (parent_start + indexes[x] < 0)
@@ -1014,18 +1046,81 @@ function select_room($room)
 		}
 	}
 
+function switchZLevel($int)
+	{
+	console.log("let's switch levels!");
+	$current_map = $('.map:visible');
+	console.log($current_map);
+	$current_level = $current_map.attr('data-level');
+	var search = parseInt($current_level) + $int;
+	console.log('looking for: '+ search);
+	if ($('#map_'+search).length > 0)
+		{
+		console.log("it existed, let's go?");
+		$current_map.hide();
+		$('#map_'+search).show();
+		$('.level-view').html('Viewing level: '+ (search - $z_levels) );
+		}
+	return true;
+	}
+
+function addZLevel($int)
+	{
+	var new_level = null;
+	if ($int > 0)
+		{
+		$last_up++;
+		// Careful of assignment here:
+		new_level = $last_up;
+		}
+	else
+		{
+		$last_down--;
+		new_level = $last_down;
+		}
+	console.log('gogo gadget!');
+	$new_map = $('#map_100').clone();
+	$new_map.removeAttr('id');
+	$new_map.removeAttr('data-level');
+	$new_map.attr('id', 'map_'+new_level);
+	$new_map.attr('data-level', new_level);
+	// Blast the current data:
+	var height = $new_map.find('tr').length;
+	var width = $new_map.find('tr').first().find('td').length;
+	$new_map.find('tbody').html('');
+	for(i=0;i<height;i++)
+		{
+		$tr = $('<tr/>');
+		for(x=0;x<width;x++)
+			{
+			$td = $('<td/>');
+			$tr.append($td);
+			}
+		$new_map.find('tbody').append($tr);
+		}
+		$new_map.find('td').each(function(i,e) {
+			$(e).append('<div class="blip nw-blip"></div><div class="blip n-blip"></div><div class="blip ne-blip"></div><div class="blip e-blip"></div><div class="blip w-blip"></div><div class="blip se-blip"></div><div class="blip s-blip"></div><div class="blip sw-blip"></div>');
+		});
+	// $('map-wrapper').append($('.map').clone());
+	// $('#map_100').hide();
+	// $('.level-view').html('Viewing level: '+ (new_level - $z_levels) );
+	$('.map-wrapper form').prepend($new_map);
+	$new_map.hide();
+	return new_level;
+	}
+
 // Not needed yet:
-/* document.getElementById('map').addEventListener("wheel", event => {
+ document.getElementById('map_100').addEventListener("wheel", event => {
 	 const delta = Math.sign(event.deltaY);
 	 if (delta == -1)
 		{
-		$('.map').animate({ 'zoom': 2 }, {'queue': false});
+		$('.map').animate({ 'zoom': 1 }, {'queue': false});
 		}
 	 else
 		{
-		$('.map').animate({ 'zoom': 1 }, {'queue': false});
+		$('.map').animate({ 'zoom': .65 }, {'queue': false});
 		}
-}); */
+}); 
 
 $('body').on('contextmenu', '.map td', function(e) { 
 	$target = $(e.target);

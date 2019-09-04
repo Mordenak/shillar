@@ -323,8 +323,6 @@ class GameController extends Controller
 			$sections = $view->renderSections();
 			return $sections;
 			}
-
-		error_log('dropping in');
 		return view('game/main', $request_params);
 		}
 
