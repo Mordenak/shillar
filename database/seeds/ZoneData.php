@@ -13,9 +13,9 @@ class ZoneData extends Seeder
 		{
 		// Zones
 		DB::table('zones')->insert([
-			['name' => 'Beach', 'description' => '', 'travel_text' => 'You are standing on a sandy beach.', 'bg_color' => null, 'bg_img' => 'beach.gif', 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Outskirts', 'description' => '', 'travel_text' => 'You are standing in the Outskirts.', 'bg_color' => null, 'bg_img' => 'beach.gif', 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Sewers', 'description' => '', 'travel_text' => 'You are standing in the dismal sewers.', 'bg_color' => null, 'bg_img' => 'beach.gif', 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Beach', 'description' => '', 'travel_text' => 'You are standing on a sandy beach.', 'img_src' => 'beach.gif', 'bg_color' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Outskirts', 'description' => '', 'travel_text' => 'You are standing in the Outskirts.', 'img_src' => null, 'bg_color' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Sewers', 'description' => '', 'travel_text' => 'You are standing in the dismal sewers.', 'img_src' => null, 'bg_color' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		DB::table('zone_to_zone_properties')->insert([

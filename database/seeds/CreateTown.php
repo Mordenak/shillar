@@ -13,7 +13,7 @@ class CreateTown extends Seeder
 	public function run()
 		{
 		DB::table('zones')->insert([
-			['name' => 'Town', 'description' => '', 'travel_text' => 'You are standing on a street in Town.', 'bg_color' => null, 'bg_img' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Town', 'description' => '', 'travel_text' => 'You are standing on a street in Town.', 'img_src' => null, 'bg_color' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		// DB::statement("SET session_replication_role = 'replica';");
