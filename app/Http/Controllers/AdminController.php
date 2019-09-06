@@ -50,9 +50,10 @@ class AdminController extends Controller
 	public function zone_select(Request $request)
 		{
 		$Zone = Zone::findOrFail($request->zones_id);
-		// $ZoneLevels = ZoneLevel::where(['zones_id' => $Zone->id])->get();
 
-		return $Zone->rooms_q()->orderBy('id', 'desc')->get();
+		$Rooms = $Zone->rooms_q()->orderBy('id', 'desc')->get();
+
+		return $Rooms;
 		}
 
 	// TODO: Deprecated now?

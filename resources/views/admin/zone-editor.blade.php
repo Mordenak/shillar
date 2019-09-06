@@ -347,26 +347,18 @@ function process_rooms(room_list)
 			 room.south_rooms_id == null)
 			{
 			console.log(room);
-			// console.log('Room is unlinked.');
 			$('#unlinked-rooms').append('Room: '+room.id+'<br>');
-			// console.log('Appended '+room.id);
-			// unlinks.unshift(room);
-			// Skip
 			continue;
-			// continue;
 			}
-		// console.log('pop one off? @ '+ tmp_list.length);
-		// console.log('tmp:'+tmp_list.length+' v '+room_list.length);
 		console.log(' -- Room '+room.id+' --');
-		// Start at 0,0:
-		if (room.title == 'entrance')
+		if (room.title == 'base_room')
 			{
 			console.log('Initial room');
 			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
 			$new_room = create_room($current_room, room.id, true);
-			// $new_room.addClass('start');
+			$new_room.addClass('start');
 			}
-		if ($(selector).find('td#'+room.id).length > 0 )
+		else if ($(selector).find('td#'+room.id).length > 0 )
 			{
 			console.log('Found a room.');
 			// var $original_room = $('.map').find('td#'+room.id).first();
@@ -754,6 +746,7 @@ function create_room($room, id, in_database = false)
 			}
 		$room.append(id);
 		$room.attr('id', id);
+		$room.attr('data-level', $room.closest('.map').attr('data-level'));
 		// Set up the hidden values tracker:
 		addOrUpdateValue($room, 'id', id);
 		}
@@ -1155,6 +1148,12 @@ function performLink($selected, $target, $reverse = false)
 		{
 		$current = $selected;
 		//$target = $el;
+
+		if ($selected.attr('data-level') != $target.attr('data-level'))
+			{
+			// Don't link across z-levels
+			return false;
+			}
 
 		console.log('Perfoming Link');
 

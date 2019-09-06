@@ -62,32 +62,60 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('zone_areas', function (Blueprint $table) {
+		Schema::create('zone_levels', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
-			$table->string('uid')->unique()->nullable();
-			$table->string('name');
+			$table->integer('level');
+			$table->string('name')->nullable();
 			$table->boolean('inherit_creatures')->default(true);
 			$table->boolean('inherit_properties')->default(true);
 			$table->text('description')->nullable();
+			$table->string('img_src')->nullable();
 			$table->string('bg_color')->nullable();
-			$table->string('bg_img')->nullable();
 			$table->string('font_color')->nullable();
 			$table->string('label_color')->nullable();
 			$table->string('custom_view')->nullable();
 			$table->timestamps();
 		});
 
-		Schema::create('zone_area_to_zone_properties', function (Blueprint $table) {
+		Schema::create('zone_level_to_zone_properties', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('zone_areas_id');
-			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->integer('level');
 			$table->integer('zone_properties_id');
 			$table->foreign('zone_properties_id')->references('id')->on('zone_properties');
 			$table->jsonb('data');
 			$table->timestamps();
 		});
+
+		// Schema::create('zone_areas', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('zones_id');
+		// 	$table->foreign('zones_id')->references('id')->on('zones');
+		// 	$table->string('uid')->unique()->nullable();
+		// 	$table->string('name');
+		// 	$table->boolean('inherit_creatures')->default(true);
+		// 	$table->boolean('inherit_properties')->default(true);
+		// 	$table->text('description')->nullable();
+		// 	$table->string('bg_color')->nullable();
+		// 	$table->string('bg_img')->nullable();
+		// 	$table->string('font_color')->nullable();
+		// 	$table->string('label_color')->nullable();
+		// 	$table->string('custom_view')->nullable();
+		// 	$table->timestamps();
+		// });
+
+		// Schema::create('zone_area_to_zone_properties', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('zone_areas_id');
+		// 	$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+		// 	$table->integer('zone_properties_id');
+		// 	$table->foreign('zone_properties_id')->references('id')->on('zone_properties');
+		// 	$table->jsonb('data');
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('zone_layouts', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -111,8 +139,7 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
-			$table->integer('zone_areas_id')->nullable();
-			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+			$table->integer('zone_level')->default(0);
 			$table->string('uid')->unique()->nullable();
 			$table->string('title')->nullable();
 			$table->text('description')->nullable();
@@ -564,8 +591,7 @@ class SetupTables extends Migration
 			$table->foreign('creatures_id')->references('id')->on('creatures');
 			$table->integer('zones_id')->nullable();
 			$table->foreign('zones_id')->references('id')->on('zones');
-			$table->integer('zone_areas_id')->nullable();
-			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+			$table->integer('zone_level')->nullable();
 			$table->integer('rooms_id')->nullable();
 			$table->foreign('rooms_id')->references('id')->on('rooms');
 			$table->float('chance');
@@ -1023,7 +1049,7 @@ class SetupTables extends Migration
 		Schema::dropIfExists('guilds');
 		Schema::dropIfExists('rooms');
 		Schema::dropIfExists('room_properties');
-		Schema::dropIfExists('zone_level_properties');
+		Schema::dropIfExists('zone_level_to_zone_properties');
 		Schema::dropIfExists('zone_levels');
 		Schema::dropIfExists('zone_layouts');
 		Schema::dropIfExists('zone_area_to_zone_properties');
