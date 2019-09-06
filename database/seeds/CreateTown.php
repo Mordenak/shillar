@@ -13,15 +13,11 @@ class CreateTown extends Seeder
 	public function run()
 		{
 		DB::table('zones')->insert([
-<<<<<<< HEAD
 			['name' => 'Town', 'description' => '', 'travel_text' => 'You are standing on a street in Town.', 'bg_color' => null, 'img_src' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('zone_levels')->insert([
 			['zones_id' => 1, 'level' => 0, 'name' => null, 'inherit_creatures' => true, 'inherit_properties' => true, 'description' => '', 'img_src' => null, 'bg_color' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-=======
-			['name' => 'Town', 'description' => '', 'travel_text' => 'You are standing on a street in Town.', 'img_src' => null, 'bg_color' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
->>>>>>> 7734c044c96ea8ad305109a118d71b47da9a873a
 		]);
 
 		// DB::statement("SET session_replication_role = 'replica';");
