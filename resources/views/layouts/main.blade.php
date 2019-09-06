@@ -325,7 +325,23 @@
 						return true;
 						}
 
-					console.log(menu_inserts);
+					var main_exceptions = [
+						'/teleport',
+						];
+
+					var menu_inserts = [
+						'/equipment',
+						'/food',
+						'/show_stats',
+						'/menu',
+						'/settings',
+						'/character/update_settings'
+						];
+
+					var footer_inserts = [
+						'/chat/message',
+						'/footer'
+						];
 
 					// var replace = '.game-container';
 					// console.log(this['url']);
