@@ -9,11 +9,11 @@
 	</tr>
 	<tr>
 		<td>Race</td>
-		<td>{{$character->playerrace()->name}}</td>
+		<td>{{$character->race()->name}}</td>
 	</tr>
 	<tr>
 		<td>Sex</td>
-		<td>{{$character->playerrace()->gender}}</td>
+		<td>{{$character->race()->gender}}</td>
 	</tr>
 	@if ($character->alignment())
 	<tr>
@@ -146,6 +146,7 @@
 	}
 </style>
 
+@if ($character->settings()->refresh_rate > 0)
 <script>
 var refresh_rate = parseInt('{{$character->settings()->refresh_rate * 1000}}');
 setTimeout(function(e) {
@@ -163,3 +164,4 @@ setTimeout(function(e) {
 		});
 	}, refresh_rate);
 </script>
+@endif

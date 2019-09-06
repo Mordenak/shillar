@@ -11,10 +11,10 @@ Gaze upon the Wall of Flame.<br><br>
 			@else
 			<td></td>
 			@endif
-			<td>{{$listing->playerrace()->gender}}</td>
-			<td>{{$listing->playerrace()->name}}</td>
-			@if ($listing->kill_stats()->orderBy('count', 'desc')->first())
-			<td>{{$listing->kill_stats()->orderBy('count', 'desc')->first()->npc()->name}} slayer.</td>
+			<td>{{$listing->race()->gender}}</td>
+			<td>{{$listing->race()->name}}</td>
+			@if ($listing->kill_stats()->first())
+			<td>{{$listing->kill_rank()}}</td>
 			@endif
 		</tr>
 	@endforeach

@@ -4,9 +4,17 @@
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
-		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		<!-- jQuery -->
+		<script src="{{asset('js/jquery-3.4.1.min.js')}}"></script>
 
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+		<!-- jQuery ui -->
+		<link rel="stylesheet" href="{{asset('jquery-ui-1.12.1/jquery-ui.min.css')}}">
+		<script src="{{asset('jquery-ui-1.12.1/jquery-ui.min.js')}}"></script>
+		
+		<!-- FontAwesome -->
+		<link rel="stylesheet" href="{{asset('fontawesome-free-5.10.2-web/css/fontawesome.min.css')}}">
+		<link rel="stylesheet" href="{{asset('fontawesome-free-5.10.2-web/css/solid.min.css')}}">
+		<script src="{{asset('fontawesome-free-5.10.2-web/js/fontawesome.min.js')}}"></script>
 
 		<script>
 		$.ajaxSetup({
@@ -113,7 +121,7 @@
 		.stat-bar-health::-webkit-progress-value
 			{
 			/*background: #33d433;*/
-			background: #d43333;s
+			background: #d43333;
 			}
 
 		.stat-bar-health.__low::-webkit-progress-value
@@ -166,6 +174,7 @@
 			width: 1%;
 			white-space: nowrap;
 			}
+
 		</style>
 	</head>
 	<body>
@@ -204,7 +213,7 @@
 				return array;
 				}
 
-			function combat_shuffle(npc)
+			function combat_shuffle(creature)
 				{
 				var $options = {
 					all_out: 'All Out Attack',
@@ -220,13 +229,13 @@
 						{
 						var $cell = $('<td/>', {"class": key});
 						$cell.append($new_options[key]+'<br>');
-						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
+						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: creature}));
 						$('#combat-table tr').append($cell);
 						}
 					else
 						{
 						var $cell = $('<td/>', {"class": key});
-						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: npc}));
+						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: creature}));
 						$cell.append('<br>'+$new_options[key]);
 						$('#combat-table tr').append($cell);
 						}
@@ -251,32 +260,51 @@
 		<script>
 		$('body').on('submit', 'form.ajax', function(e, i) {
 			e.preventDefault();
+
+			var main_exceptions = [
+				'/teleport',
+				];
+
+			var menu_inserts = [
+				'/equipment',
+				'/food',
+				'/show_stats',
+				'/menu',
+				'/settings',
+				'/character/update_settings'
+				];
+
+			var footer_inserts = [
+				'/chat/message',
+				'/footer'
+				];
+
 			var formData = new FormData(e.target);
 
 			if ($(document.activeElement).hasClass('submit-val'))
 				{
-				console.log('Submitting val ' + $(document.activeElement).val());
 				formData.append('submit', $(document.activeElement).val());
 				}
 
 			if ($(document.activeElement).hasClass('submit-id'))
 				{
-				console.log('Submitting id ' + $(document.activeElement).attr('id'));
 				formData.append('submit', $(document.activeElement).attr('id'));
 				}
 
-			$(document.activeElement).attr('disabled', 'disabled');
+			$(e.target).find('input,select').attr('disabled', 'disabled');
 
-			for (var pair of formData.entries())
+			if (!main_exceptions.includes($(e.target).attr('action')) && 
+				 !menu_inserts.includes($(e.target).attr('action')) &&
+				 !footer_inserts.includes($(e.target).attr('action'))
+				 )
 				{
-				// console.log(pair[0] +':' + pair[1]);
+				if ($timers.combat)
+					{
+					console.log('clearing');
+					clearTimeout($timers.combat);
+					}
 				}
 
-			if ($timers.combat)
-				{
-				console.log('clearing');
-				clearTimeout($timers.combat);
-				}
 			// Direct submit:
 			// $combatTimer = false;
 
@@ -287,23 +315,18 @@
 				processData: false,
 				data: formData,
 				success: function(resp) {
-					var main_exceptions = [
-						'/teleport',
-						];
 
-					var menu_inserts = [
-						'/equipment',
-						'/food',
-						'/spells',
-						'/show_stats',
-						'/menu',
-						'/settings',
-						'/character/update_settings'
-						];
+					$('input:disabled,select:disabled').removeAttr('disabled');
 
-					var footer_inserts = [
-						'/chat/message',
-						];
+					if (this['url'] == '/spells')
+						{
+						$('.main').html(resp.main);
+						$('.menu').html(resp.menu);
+						return true;
+						}
+
+					console.log(menu_inserts);
+
 					// var replace = '.game-container';
 					// console.log(this['url']);
 					// if (main_inserts.includes(this['url']))

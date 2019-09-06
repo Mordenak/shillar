@@ -21,7 +21,7 @@ Creating a character:
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Race:</label>
 			<div class="col-md-3">
-				<input type="text" name="player_races_id" value="{{isset($character) ? $character->player_races_id : ''}}" class="form-control">
+				<input type="text" name="races_id" value="{{isset($character) ? $character->races_id : ''}}" class="form-control">
 			</div>
 		</div>
 

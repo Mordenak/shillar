@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Character;
 use App\CharacterSetting;
-use App\PlayerClass;
-use App\PlayerRace;
+use App\Race;
 use App\Wallet;
 use App\Equipment;
 use App\Inventory;
@@ -22,7 +21,7 @@ class CharacterController extends Controller
 
 	public function create()
 		{	
-		return view('character.create', ['races' => PlayerRace::where('gender', '=', 'Male')->orderby('name')->get()]);
+		return view('character.create', ['races' => Race::where('gender', '=', 'Male')->orderby('name')->get()]);
 		}
 
 	public function all()
@@ -40,17 +39,12 @@ class CharacterController extends Controller
 
 	public function save(Request $request)
 		{
-		// Do something
-		// die(print_r($request->all()));
-
-		// die(print_r(auth()->user()->id));
-
 		if ($request->id)
 			{
 			$Character = Character::findOrFail($request->id);
 			$values = [
 				'name' => $request->name,
-				'player_races_id' => $request->player_races_id,
+				'races_id' => $request->races_id,
 				'alignments_id' => $request->alignments_id,
 				'last_rooms_id' => $request->last_rooms_id,
 				'health' => $request->health,
@@ -66,7 +60,7 @@ class CharacterController extends Controller
 				'intelligence' => $request->intelligence,
 				'charisma' => $request->charisma
 				];
-			// $NpcStat->fill($stat_values);
+			// $CreatureStat->fill($stat_values);
 			$Character->fill($values);
 			$Character->save();
 
@@ -78,6 +72,17 @@ class CharacterController extends Controller
 			}
 		else
 			{
+			if (!$request->name)
+				{
+				Session::flash('create_failed', 'Please enter a character name...');
+				return $this->create();	
+				}
+			if (Character::where(['name' => $request->name])->count() > 0)
+				{
+				Session::flash('create_failed', 'This character name is already taken, please choose another.');
+				return $this->create();
+				}
+
 			$Character = new Character;
 
 			$selected_race = $request->selected_race;
@@ -88,7 +93,7 @@ class CharacterController extends Controller
 
 			$values = [
 				'users_id' => auth()->user()->id,
-				'player_races_id' => $selected_race,
+				'races_id' => $selected_race,
 				'name' => $request->name,
 				'last_rooms_id' => 1,
 				'xp' => 0,
@@ -102,7 +107,7 @@ class CharacterController extends Controller
 				'max_fatigue' => 0,
 				];
 
-			$StartingStat = StartingStat::where(['player_races_id' => $request->selected_race])->first();
+			$StartingStat = StartingStat::where(['races_id' => $request->selected_race])->first();
 
 			if ($StartingStat)
 				{

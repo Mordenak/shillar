@@ -1,9 +1,15 @@
+@if( Session::has("errors") )
+<p style="color: red;display: inline;">
+{{ Session::pull("errors") }}
+<p>
+@endif
+
 @if ($character)
 <form method="post" action="/spells" class="ajax" id="cast">
 	Cast Spell:
 	<select name="spell_id">
 		<option disabled selected>-- None --</option>
-		@foreach ($character->spells() as $spell)
+		@foreach ($character->spells()->get() as $spell)
 		<option value="{{$spell->spell()->id}}">{{$spell->spell()->name}}</option>
 		@endforeach
 	</select><br>

@@ -133,13 +133,13 @@ class QuestController extends Controller
 
 			$criteria_values = [
 				'quest_tasks_id' => $QuestTask->id,
-				'npc_target' => $task['npc_target'],
+				'creature_target' => $task['creature_target'],
 				'zone_target' => $task['zone_target'],
 				'room_target' => $task['room_target'],
 				'room_action_target' => $task['room_action_target'],
 				'item_target' => $task['item_target'],
 				'alignment_target' => $task['alignment_target'],
-				'npc_amount' => $task['npc_amount'],
+				'creature_amount' => $task['creature_amount'],
 				];
 
 			$QuestCriteria->fill($criteria_values);

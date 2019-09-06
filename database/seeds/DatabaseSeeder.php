@@ -15,13 +15,14 @@ class DatabaseSeeder extends Seeder
 		$this->call([
 			BasicEntries::class,
 			RaceData::class,
-			ZoneData::class,
 			CreatureData::class,
 			ItemsData::class,
 			CreateTown::class,
+			ZoneData::class,
 			SpawnData::class,
 			LootData::class,
 			QuestData::class,
+			TeleportTargets::class,
 		]);
 	}
 }

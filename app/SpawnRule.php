@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SpawnRule extends Model
 {
-	protected $fillable = ['zones_id', 'rooms_id', 'npcs_id', 'chance'];
+	protected $fillable = ['zones_id', 'rooms_id', 'creatures_id', 'chance'];
 
 	public function zone()
 		{
@@ -18,8 +18,8 @@ class SpawnRule extends Model
 		return $this->belongsTo('App\Room', 'rooms_id')->first();
 		}
 
-	public function npc()
+	public function creature()
 		{
-		return $this->belongsTo('App\Npc', 'npcs_id')->first();
+		return $this->belongsTo('App\Creature', 'creatures_id')->first();
 		}
 }

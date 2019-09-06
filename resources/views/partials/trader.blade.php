@@ -2,7 +2,7 @@
 This is a trader:<br>
 
 <p>
-{{$trader->description}}
+{!! $trader->description !!}
 </p>
 
 

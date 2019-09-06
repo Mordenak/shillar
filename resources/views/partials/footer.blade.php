@@ -1,13 +1,19 @@
 	@if ($chat)
 	<div>
-		<h3>{{$chat->name}}</h3>
+		<h3 style="display: inline-block;">{{$chat->name}}</h3>
+		<form method="post" action="/footer" class="ajax" style="display: inline-block;">
+			<label for="refresh-chat" class="fas fa-sync"> Refresh</label>
+			<input type="submit" id="refresh-chat" value="Refresh" style="display:none;">
+			<input type="hidden" name="characters_id" value="{{$character->id}}">
+			{{csrf_field()}}
+		</form><br>
 		<table class="chat-room">
 			@if ($chat->messages()->count() > 0)
 			@foreach ($chat->messages() as $message)
 			<tr>
 				<td class="fit-width">{!! $message->character()->display_name() !!}</td>
+				<td class="fit-width">{{$message->created_date()}} {{$message->created_time()}}</td>
 				<td>{{$message->message}}</td>
-				<td class="fit-width">{{$message->created_time()}} on {{$message->created_date()}}</td>
 			</tr>
 			@endforeach
 			@else
@@ -26,7 +32,7 @@
 
 	<!-- Debug section -->
 
-	@if ($is_admin)
+	@if (auth()->user()->admin_level > 0)
 
 		@if (isset($combat))
 		{{$combat->id}} {{$combat->remaining_health}}

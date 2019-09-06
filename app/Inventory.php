@@ -26,6 +26,12 @@ class Inventory extends Model
 		return $this->hasMany('App\InventoryItems')->get();
 		}
 
+	public function set_weight(int $weight)
+		{
+		$this->max_weight = $weight;
+		$this->save();
+		}
+
 	public function remove_item($item_id)
 		{
 		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
@@ -48,6 +54,11 @@ class Inventory extends Model
 			}
 
 		return true;
+		}
+
+	public function has_item($item_id)
+		{
+		return $this->inventory_items()->where(['items_id' => $item_id])->first() ? true : false;
 		}
 
 	public function current_weight()

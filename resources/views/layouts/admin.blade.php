@@ -4,19 +4,23 @@
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
-		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-
-		<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-
-		<!-- jquery ui -->
-		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-
+		<!-- Base CSS -->
 		<link href="{{ asset('css/app.css') }}" rel="stylesheet">
+		<!-- jQuery -->
+		<script src="{{asset('js/jquery-3.4.1.min.js')}}"></script>
+
+		<!-- jQuery ui -->
+		<link rel="stylesheet" href="{{asset('jquery-ui-1.12.1/jquery-ui.min.css')}}">
+		<script src="{{asset('jquery-ui-1.12.1/jquery-ui.min.js')}}"></script>
+
+		<!-- DataTables -->
+		<link rel="stylesheet" href="{{asset('DataTables/datatables.min.css')}}">
+		<script src="{{asset('DataTables/datatables.min.js')}}"></script>
+		
+		<!-- FontAwesome -->
+		<link rel="stylesheet" href="{{asset('fontawesome-free-5.10.2-web/css/fontawesome.min.css')}}">
+		<link rel="stylesheet" href="{{asset('fontawesome-free-5.10.2-web/css/solid.min.css')}}">
+		<script src="{{asset('fontawesome-free-5.10.2-web/js/fontawesome.min.js')}}"></script>
 
 		<style>
 		body a
@@ -24,9 +28,31 @@
 			color: #55ff8b;
 			}
 
+		.link-label
+			{
+			color: #55ff8b;
+			margin: 0;	
+			}
+
 		table.dataTable tbody tr
 			{
 			background-color: #333;
+			}
+
+		.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate
+			{
+			color: #fff;
+			}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button
+			{
+			color: #aaa !important;
+			}
+
+		.dt-container
+			{
+			padding-left: 2rem;
+			padding-right: 2rem;
 			}
 		</style>
 	</head>
@@ -34,36 +60,29 @@
 
 		@if (auth()->user()->admin_level >= 1)
 		@section('sidebar')
-			This is the master sidebar.
 		@show
 
-        
-        @if (Session::has("success"))
-        <div class="alert alert-success alert-block" role="alert">
-            <button class="close" data-dismiss="alert"></button>
-            {{ Session::get("success") }}
-        </div>
-        <script>
-        window.scrollTo(0,0);
-        setTimeout(function() {
-            $('.alert').fadeOut();
-        }, 2000);
-        </script>
-        @endif
-        
+
+		<br><br><br>
+		@if (Session::has("success"))
+		<div class="alert alert-success alert-block" role="alert">
+			<button class="close" data-dismiss="alert"></button>
+			{{ Session::get("success") }}
+		</div>
+		<script>
+			window.scrollTo(0,0);
+			setTimeout(function() {
+			$('.alert').fadeOut();
+			}, 2000);
+		</script>
+		@endif
+
 
 		<div class="flash-message"></div>
 
-		<div class="container">
+		<div>
 			@yield('content')
 		</div>
-
-		<p style="margin-left: 2rem;">
-			<br><br>
-			<a href="/admin">Admin home</a>
-			<br><br>
-			<a href="/home">Back to Game</a>
-		</p>
 
 		<script>
 		// autocompletes

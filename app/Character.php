@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Character extends Model
 {
-	protected $fillable = ['users_id', 'name', 'player_races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
+	protected $fillable = ['users_id', 'name', 'races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
 
 	public function user()
 		{
 		return $this->belongsto('App\User', 'users_id')->first();
 		}
 
-	public function playerrace()
+	public function race()
 		{
-		return $this->belongsTo('App\PlayerRace', 'player_races_id')->first();
+		return $this->belongsTo('App\Race', 'races_id')->first();
 		}
 
 	public function inventory()
@@ -43,14 +43,38 @@ class Character extends Model
 		return $this->hasOne('App\CharacterSetting', 'characters_id')->first();
 		}
 
+	public function quests()
+		{
+		return $this->hasMany('App\CharacterQuest', 'character_id')->get();
+		}
+
 	public function kill_stats()
 		{
-		return $this->hasOne('App\KillCount', 'characters_id');
+		return $this->hasMany('App\KillCount', 'characters_id');
 		}
 
 	public function spells()
 		{
-		return $this->hasMany('App\CharacterSpell', 'character_id')->orderBy('spells_id','asc')->get();
+		return $this->hasMany('App\CharacterSpell', 'character_id')->orderBy('spells_id','asc');
+		}
+
+	public function has_spell($id)
+		{
+		return $this->spells()->where(['spells_id' => $id])->first();
+		}
+
+	public function get_modifier(string $modifier_name)
+		{
+		$RacialModifier = RacialModifier::where(['name' => $modifier_name])->first();
+		if (!$RacialModifier)
+			{
+			return false;
+			}
+		if ($this->race()->modifiers()->get())
+			{
+			return $this->race()->modifiers()->where(['racial_modifier_id' => $RacialModifier->id])->first();
+			}
+		return false;
 		}
 
 	public function spell_ids()
@@ -87,6 +111,18 @@ class Character extends Model
 		return true;
 		}
 
+	public function kill_count($creature_id)
+		{
+		return $this->kill_stats()->where(['creatures_id' => $creature_id])->first();
+		}
+
+	public function kill_rank()
+		{
+		$top_kill = $this->kill_stats()->orderBy('count', 'desc')->first();
+		$KillRank = KillRank::where('min_count', '<=', $top_kill->count)->orderBy('min_count', 'desc')->first();
+		return $top_kill->creature()->name." $KillRank->name";
+		}
+
 	public function display_name()
 		{
 		// Get rank:
@@ -104,6 +140,7 @@ class Character extends Model
 	public function stats()
 		{
 		$stats = [
+			'light_level' => 0, // TODO: Racial modifier here:
 			'strength' => $this->strength,
 			'dexterity' => $this->dexterity,
 			'constitution' => $this->constitution,
@@ -111,6 +148,13 @@ class Character extends Model
 			'intelligence' => $this->intelligence,
 			'charisma' => $this->charisma,
 			];
+
+		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 2])->first();
+		$racial_modifier = $this->get_modifier('HAS_NIGHTVISION');
+		if ($racial_modifier)
+			{
+			$stats['light_level'] = 1;
+			}
 
 		$armor_stats = $this->equipment()->calculate_stats();
 		foreach ($armor_stats as $stat => $value)
@@ -122,7 +166,12 @@ class Character extends Model
 		}
 
 	// TODO: Performance check??
-	// helpers 
+	// helpers
+	public function light_level()
+		{
+		return $this->stats()['light_level'];
+		}
+
 	public function strength()
 		{
 		return $this->stats()['strength'];
@@ -153,6 +202,11 @@ class Character extends Model
 		return $this->stats()['charisma'];
 		}
 
+	public function get_stat($stat)
+		{
+		return call_user_func_array([$this, $stat], []);
+		}
+
 	public function refresh_score()
 		{
 		$this->score = $this->strength + $this->dexterity + $this->constitution + $this->wisdom + $this->intelligence + $this->charisma + $this->quest_points;
@@ -169,8 +223,14 @@ class Character extends Model
 		$this->max_fatigue = $stats['dexterity'] + $stats['constitution'] + $stats['wisdom'];
 		$this->save();
 
-		$this->inventory()->max_weight = $stats['strength'];
-		$this->inventory()->save();
+		$inventory_size = $stats['strength'];
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 1])->first();
+		if ($racial_modifier)
+			{
+			$inventory_size = floor($stats['strength'] * $racial_modifier->value);
+			}
+
+		$this->inventory()->set_weight($inventory_size);
 
 		return true;
 		}
@@ -182,12 +242,28 @@ class Character extends Model
 			{
 			$this->health = $this->max_health;
 			}
+		$this->mana = $this->mana + $amount;
+		if ($this->mana > $this->max_mana)
+			{
+			$this->mana = $this->max_mana;
+			}
 		$this->fatigue = $this->fatigue + $amount;
 		if ($this->fatigue > $this->max_fatigue)
 			{
 			$this->fatigue = $this->max_fatigue;
 			}
 		$this->save();
+		return true;
+		}
+
+	// TODO: Unused atm
+	public function deal_damage($damage)
+		{
+		$this->health = $this->health - $damage;
+		if ($this->health <= 0)
+			{
+			$this->death();
+			}
 		return true;
 		}
 
@@ -256,4 +332,98 @@ class Character extends Model
 			}
 		return $arr;
 		}
-}
+
+	// TODO: Maybe change this function name???
+	public function can_access($zone)
+		{
+		if (!$zone->has_restriction())
+			{
+			return true;
+			}
+		// Given a zone, can the character access it?
+		$reqs = $zone->get_stat_restriction()->decode();
+		// die(print_r($reqs));
+		$current_stat = call_user_func_array([$this, key($reqs)], []);
+
+		// We know the modifier we want is ID 3:
+		$modifier = 1.0;
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 3])->first();
+		if ($racial_modifier)
+			{
+			$modifier = $racial_modifier->value;
+			}
+
+		// Racial check:
+		if ($current_stat >= floor(reset($reqs) * $modifier))
+			{
+			return true;
+			}
+		return false;
+		}
+
+	public function teleport($rooms_id)
+		{
+		$Room = Room::findOrFail($rooms_id);
+
+		if (!$this->can_access($Room->zone()))
+			{
+			// error
+			return false;
+			}
+
+		// Else, go ahead!
+		$this->last_rooms_id = $Room->id;
+		$this->save();
+		return true;
+		}
+
+	public function receive_heat_damage($damage)
+		{
+		// Ok, first find out if we take modified heat damage due to racial:
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 7])->first();
+		if ($racial_modifier)
+			{
+			// TODO: floor or round?
+			$damage = floor($damage * $racial_modifier->value);
+			}
+
+		// Then if you have any protection from equipment:
+		if (isset($this->stats()['heat_protection']))
+			{
+			$damage = $damage * (1.0 - $this->stats()['heat_protection']);
+			}
+
+		if ($damage > 0)
+			{
+			$this->health = $this->health - $damage;
+			$this->save();
+			}
+		
+		return $damage;
+		}
+
+	public function receive_cold_damage($damage)
+		{
+		// Ok, first find out if we take modified heat damage due to racial:
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 8])->first();
+		if ($racial_modifier)
+			{
+			// TODO: floor or round?
+			$damage = floor($damage * $racial_modifier->value);
+			}
+
+		// Then if you have any protection from equipment:
+		if (isset($this->stats()['cold_protection']))
+			{
+			$damage = $damage * (1.0 - $this->stats()['cold_protection']);
+			}
+
+		if ($damage > 0)
+			{
+			$this->health = $this->health - $damage;
+			$this->save();
+			}
+		
+		return $damage;
+		}
+	}

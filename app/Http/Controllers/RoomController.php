@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Session;
 use App\Zone;
 use App\Room;
 
@@ -11,7 +12,7 @@ class RoomController extends Controller
 	public function create()
 		{
 		$zones = Zone::all();
-		return view('room.create', ['zones' => $zones]);
+		return view('room.edit', ['zones' => $zones]);
 		}
 
 	public function all(Request $request)
@@ -26,10 +27,14 @@ class RoomController extends Controller
 		return view('room.edit', ['room' => Room::findOrFail($id), 'zones' => $zones]);
 		}
 
-	public function delete($id)
+	public function delete(Request $request)
 		{
-		Room::delete($id);
-		return $this->action('RoomController@all');
+		// clear out shop items:
+		$Room = Room::findOrFail($request->id);
+		$Room->delete();
+		Session::flash('success', 'Room Deleted!');
+		// return $this->all($request);
+		return redirect()->action('RoomController@all');
 		}
 
 	public function save(Request $request)
@@ -128,10 +133,11 @@ class RoomController extends Controller
 
 		if ($request->northwest_room_link)
 			{
-			$LinkRoom = Room::findOrFail($Room->northwest_room_id);
+			$LinkRoom = Room::findOrFail($Room->northwest_rooms_id);
 			$LinkRoom->southeast_rooms_id = $Room->id;
 			$LinkRoom->save();
 			}
+
 
 
 		// return view('admin/main');

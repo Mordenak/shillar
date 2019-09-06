@@ -78,6 +78,7 @@ class Equipment extends Model
 	public function calculate_stats()
 		{
 		$bonus_stats = [
+			'light_level' => 0,
 			'strength' => 0,
 			'dexterity' => 0,
 			'constitution' => 0,

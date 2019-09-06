@@ -5,8 +5,9 @@
 @endif
 
 <form method="post" action="/character/update_settings" class="ajax">
-	Stats Refresh:
+	Menu Refresh:
 	<select name="refresh_rate">
+		<option value="0" {{isset($settings) && $settings->refresh_rate == 0 ? 'selected' : ''}}>Off</option>
 		<option value="10" {{isset($settings) && $settings->refresh_rate == 10 ? 'selected' : ''}}>10</option>
 		<option value="30" {{isset($settings) && $settings->refresh_rate == 30 ? 'selected' : ''}}>30</option>
 		<option value="60" {{isset($settings) && $settings->refresh_rate == 60 ? 'selected' : ''}}>60</option>

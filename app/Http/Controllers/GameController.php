@@ -2,49 +2,19 @@
 
 namespace App\Http\Controllers;
 
+// Lol, what is going on here:
+// Refactor to use App\{User, Character, etc.}?
 use Session;
 use Illuminate\Http\Request;
-use App\User;
-use App\Character;
-use App\Room;
-use App\SpawnRule;
-use App\Npc;
-use App\RewardTable;
-use App\LootTable;
-use App\StatCost;
-use App\RaceStatAffinity;
-use App\Equipment;
-use App\Item;
-use App\ItemWeapon;
-use App\ItemArmor;
-use App\CharacterSetting;
-use App\ItemFood;
-use App\ItemAccessory;
-use App\CombatLog;
-use App\KillCount;
-use App\InventoryItem;
-use App\Shop;
-use App\ShopItem;
-use App\ForgeRecipe;
-use App\TraderItem;
-use App\CharacterSpell;
-use App\Spell;
-use App\Quest;
-use App\QuestTask;
-use App\QuestCriteria;
-use App\QuestReward;
-use App\CharacterQuest;
-use App\CharacterQuestCriteria;
-use App\RoomAction;
-use App\CharacterRoomAction;
-use App\ChatRoom;
-use App\ChatRoomMessage;
+use Carbon\Carbon;
+use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget};
 
 class GameController extends Controller
 	{
 	//
 	public function index(Request $request)
 		{
+		World::tick();
 		// TODO: This should be unreachable?
 		if (!auth()->user())
 			{
@@ -53,34 +23,32 @@ class GameController extends Controller
 
 		$Character = Character::findOrFail($request->character_id);
 
-		// die(print_r(Equipment::all()->toArray()));
-			// ->select('character_stats.id as character_stats_id, *');
-
 		if (!$Character)
 			{
 			return redirect('/home');
 			}
 
-		$no_attack = $Character->fatigue > 0 ? false : true;
+		if ($Character->health <= 0)
+			{
+			return $this->death($request);
+			}
+		
 		$CombatLog = CombatLog::where(['characters_id' => $Character->id])->first();
-		if ($CombatLog)
-			{
-			$no_attack = false;
-			}
-
 		$Room = Room::findOrFail($Character->last_rooms_id);
-
-		$Npc = null;
+		$Zone = $Room->zone();
+		
+		$Creature = null;
 		// Block spawn in certain events:
-		if ($request->session()->has('npc.'.$Room->id))
+		if (Session::has('creature.'.$Room->id))
 			{
-			$Npc = Npc::where(['id' => $request->session()->get('npc.'.$Room->id)])->first();
-			$request->session()->pull('npc.'.$Room->id);
+			$Creature = Creature::where(['id' => Session::get('creature.'.$Room->id)])->first();
+			Session::get('creature.'.$Room->id);
 			}
 
-		if (isset($request->no_spawn) || $Npc)
+		if ($Creature || Session::has('block_spawn'))
 			{
-			// ignore
+			// Clear it:
+			Session::pull('block_spawn');
 			}
 		else
 			{
@@ -89,13 +57,13 @@ class GameController extends Controller
 
 			if ($SpawnRule && $Room->spawns_enabled)
 				{
-				$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
+				$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
 				$prob = rand() / getrandmax();
 				if ($prob <= $SpawnRule->chance)
 					{
 					// then we spawn:
-					$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-					$request->session()->put('npc.'.$Room->id, $Npc->id);
+					$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
+					Session::put('creature.'.$Room->id, $Creature->id);
 					// break;
 					}
 				}
@@ -114,8 +82,8 @@ class GameController extends Controller
 							if ($prob <= $SpawnRule->chance)
 								{
 								// then we spawn:
-								$Npc = Npc::where(['id'=> $SpawnRule->npcs_id])->first();
-								$request->session()->put('npc.'.$Room->id, $Npc->id);
+								$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
+								Session::put('creature.'.$Room->id, $Creature->id);
 								break;
 								}
 							}
@@ -124,9 +92,33 @@ class GameController extends Controller
 				}
 			}
 
+		$check_aggro = $Zone->get_property('HOSTILE_PER_CREATURE_KILL');
+		if ($check_aggro)
+			{
+			$check = $check_aggro->decode();
+			// Check Character kill counts?
+			if ($Character->kill_count($check['creature_id']))
+				{
+				$current_count = $Character->kill_count($check['creature_id'])->count;
+				$required_stat = floor($current_count * $check['multiplier']);
+				if ($Character->get_stat($check['stat']) < $required_stat)
+					{
+					if ($Creature && !$CombatLog)
+						{
+						// Everything is aggro:
+						$request->character_id = $Character->id;
+						$request->room_id = $Room->id;
+						$request->creature_id = $Creature->id;
+						$request->submit = "single_attack";
+						return $this->combat($request);
+						}
+					}
+				}
+			}
+
 		// Does the room have loot?
 		$ground_items = [];
-		$loot_items = $request->session()->get('loot.'.$Room->id);
+		$loot_items = Session::get('loot.'.$Room->id);
 		if (isset($loot_items))
 			{
 			$item_ids = [];
@@ -138,7 +130,8 @@ class GameController extends Controller
 			$ground_items = Item::whereIn('id', $item_ids)->get();
 			}
 
-		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => $Npc, 'no_attack' => $no_attack, 'ground_items' => $ground_items];
+		// 'no_attack' => $no_attack
+		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => $Creature, 'ground_items' => $ground_items];
 
 		$ChatRoom = ChatRoom::findOrFail(1);
 		$request_params['chat'] = $ChatRoom;
@@ -156,14 +149,10 @@ class GameController extends Controller
 			}
 		$request_params['online_count'] = $online;
 
+		// TODO: Can we get rid of this yet???
 		if ($request->death)
 			{
 			$request_params['death'] = true;
-			}
-
-		if ($request->no_carry)
-			{
-			$request_params['no_carry'] = true;
 			}
 
 		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
@@ -239,39 +228,71 @@ class GameController extends Controller
 
 		// Quest Stuff?
 		// TODO: A room could have multiples, but only 1 ever should be "available" per requirements:
-		$PickupQuest = Quest::where(['pickup_rooms_id' => $Room->id])->first();
-
-		if ($PickupQuest)
+		$PickupQuests = Quest::where(['pickup_rooms_id' => $Room->id])->get();
+		if ($PickupQuests->count() > 0)
 			{
-			// Character already has it?
-			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
-
-			if (!$CharacterQuest)
+			foreach ($PickupQuests as $PickupQuest)
 				{
-				// Don't already have it -- can we get it?
-				if ($PickupQuest->eligible($Character))
+				// Character already has it?
+				$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
+
+				if (!$CharacterQuest)
 					{
-					// Get it!
-					$CharacterQuest = new CharacterQuest;
-					$CharacterQuest->fill(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id]);
-					$CharacterQuest->save();
-					// Also the criterias?
-					foreach ($PickupQuest->criterias() as $criteria)
+					// Don't already have it -- can we get it?
+					if ($PickupQuest->eligible($Character))
 						{
-						$CharacterQuestCriteria = new CharacterQuestCriteria;
-						$CharacterQuestCriteria->fill(['character_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
-						$CharacterQuestCriteria->save();
+						// Get it!
+						$CharacterQuest = new CharacterQuest;
+						$CharacterQuest->fill(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id]);
+						$CharacterQuest->save();
+						// Also the criterias?
+						foreach ($PickupQuest->criterias() as $criteria)
+							{
+							$CharacterQuestCriteria = new CharacterQuestCriteria;
+							$CharacterQuestCriteria->fill(['character_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
+							$CharacterQuestCriteria->save();
+							}
+						$request_params['quest_text'] = $PickupQuest->pickup_message;
+						// One quest at time please!
+						break;
 						}
-					$request_params['quest_text'] = $PickupQuest->pickup_message;
+					}
+				}
+			}
+
+		// Is room a target for a quest task?
+		// TODO: Refactor
+		$QuestCriterias = QuestCriteria::where(['room_target' => $Room->id])->get();
+		if ($QuestCriterias->count() > 0)
+			{
+			// die('found it');
+			foreach ($QuestCriterias as $QuestCriteria)
+				{
+				// This room is used for a task... Does the character have it?
+				$CharacterQuestCriteria = CharacterQuestCriteria::where(['character_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
+
+				if ($CharacterQuestCriteria)
+					{
+					// die(print_r($CharacterQuestCriteria->criteria()->task()->all()));
+					// Unless...
+					if ($Creature && $Creature->is_blocking)
+						{
+						// Wait...
+						}
+					else
+						{
+						// Let's complete it!
+						// die('yes');
+						$CharacterQuestCriteria->complete();
+						}
 					}
 				}
 			}
 
 		$TurninQuest = Quest::where(['turnin_rooms_id' => $Room->id])->first();
-
 		if ($TurninQuest)
 			{
-			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
+			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $TurninQuest->id])->first();
 
 			if ($CharacterQuest)
 				{
@@ -281,7 +302,7 @@ class GameController extends Controller
 				if ($CharacterQuest->complete && !$CharacterQuest->rewarded)
 					{
 					$this->reward_character($CharacterQuest, $Character);
-					$request_params['quest_text'] = $TurninQuest->completion_message;
+					// $request_params['quest_text'] = $TurninQuest->completion_message;
 					// Hand out reward... *IF* we haven't already!
 					}
 				}
@@ -302,7 +323,6 @@ class GameController extends Controller
 			$sections = $view->renderSections();
 			return $sections;
 			}
-
 		return view('game/main', $request_params);
 		}
 
@@ -337,10 +357,42 @@ class GameController extends Controller
 		// return view('game/main', $request_params);
 		}
 
+	public function footer(Request $request)
+		{
+		$Character = Character::findOrFail($request->characters_id);
+
+		$request_params = ['character' => $Character];
+		$ChatRoom = ChatRoom::findOrFail(1);
+		$request_params['chat'] = $ChatRoom;
+
+		// TODO: This could be BAD!
+		// users online?
+		$Users = User::all();
+		$online = 0;
+		foreach ($Users as $User)
+			{
+			if ($User->isOnline())
+				{
+				$online++;
+				}
+			}
+		$request_params['online_count'] = $online;
+		// return $this->index($request);
+		if ($request->ajax())
+			{
+			// $this->index($request)
+			$view = \View::make('partials/footer', $request_params);
+			return $view->render();
+			}
+
+		return view("partials/footer", $request_params);
+		// return view('game/main', $request_params);
+		}
+
+
 	public function move(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-
 		$NextRoom = Room::findOrFail($request->room_id);
 
 		// Just double check that the room is reachable from where the character is currently?
@@ -354,12 +406,87 @@ class GameController extends Controller
 		// Is a Zone transition?
 		if ($CurrentRoom->zones_id != $NextRoom->zones_id)
 			{
-			// TODO: Area Restrictions? + Racial Mod
-			if ($Character->intelligence < $NextRoom->zone()->intelligence_req)
+			// TODO: Tweak has_restriction()
+			if ($NextRoom->zone()->get_stat_restriction())
 				{
-				// Oops!
-				Session::flash('zone_travel', 'You cannot go that way yet, you must train some more.');
-				return $this->index($request);
+				// die('yes');
+				if (!$Character->can_access($NextRoom->zone()))
+					{
+					Session::flash('zone_travel', 'You cannot go that way yet, you must train some more.');
+					return $this->index($request);
+					}
+				}
+			$item_restriction = $NextRoom->zone()->get_item_restriction();
+			if ($item_restriction)
+				{
+				$res = $item_restriction->decode();
+				$item_id = key($res);
+				if (!$Character->inventory()->has_item($item_id))
+					{
+					$Item = Item::findOrFail($item_id);
+					Session::flash('zone_travel', 'You must possess a '.$Item->name.' to enter this area!');
+					return $this->index($request);
+					}
+				}
+			}
+
+		// SWIM / FLY Check?
+
+		// Heat damage?
+		if ($NextRoom->zone()->has_property('HEAT_DAMAGE'))
+			{
+			$prop = $NextRoom->zone()->get_property('HEAT_DAMAGE')->decode();
+			if ($prop['begin'] == 0 && $prop['end'] == 0)
+				{
+				// Always take damage:
+				$damage_taken = $Character->receive_heat_damage($prop['amount']);
+				if ($damage_taken > 0)
+					{
+					Session::flash('zone_travel', "The heat saps away your life for $damage_taken points.");
+					}
+				}
+			else
+				{
+				// Figure out the times:
+				$current_hour = Carbon::now()->format("H");
+				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['begin'])
+					{
+					// Take damage:
+					$damage_taken = $Character->receive_heat_damage($prop['amount']);
+					if ($damage_taken > 0)
+						{
+						Session::flash('zone_travel', "The heat saps away your life for $damage_taken points.");
+						}
+					}
+				}
+			}
+
+		// Cold damage?
+		if ($NextRoom->zone()->has_property('COLD_DAMAGE'))
+			{
+			$prop = $NextRoom->zone()->get_property('COLD_DAMAGE')->decode();
+			if ($prop['begin'] == 0 && $prop['end'] == 0)
+				{
+				// Always take damage:
+				$damage_taken = $Character->receive_cold_damage($prop['amount']);
+				if ($damage_taken > 0)
+					{
+					Session::flash('zone_travel', "The cold freezes you to the bone for $damage_taken life points.");
+					}
+				}
+			else
+				{
+				// Figure out the times:
+				$current_hour = Carbon::now()->format("H");
+				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['begin'])
+					{
+					// Take damage:
+					$damage_taken = $Character->receive_cold_damage($prop['amount']);
+					if ($damage_taken > 0)
+						{
+						Session::flash('zone_travel', "The cold freezes you to the bone for $damage_taken life points.");
+						}
+					}
 				}
 			}
 
@@ -381,12 +508,15 @@ class GameController extends Controller
 		$Character->save();
 
 		// Clear up any combat logs?  Remove last_room?
-		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $CurrentRoom->id])->first();
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'creatures_id' => $request->creature_id, 'rooms_id' => $CurrentRoom->id])->first();
 		if ($CombatLog)
 			{
 			// check room?  $CombatLog->room_id == $request->room_id ??
 			$CombatLog->delete();
 			}
+
+		// Also remove any session creatures in the new room:
+		Session::pull('creature.'.$NextRoom->id);
 
 		return $this->index($request);
 		}
@@ -398,35 +528,55 @@ class GameController extends Controller
 		$Room = Room::findOrFail($request->room_id);
 		if ($Character->health <= 0)
 			{
+			$request->creature_kill = $Creature->id;
 			return $this->death($request);
 			}
 
-		$flat_npc = null;
-		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'npcs_id' => $request->npc_id, 'rooms_id' => $request->room_id])->first();
+		$flat_creature = null;
+		$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'creatures_id' => $request->creature_id, 'rooms_id' => $request->room_id])->first();
 		if ($CombatLog)
 			{
-			$Npc = Npc::findOrFail($request->npc_id);
-			$flat_npc = $Npc->toArray();
-			$flat_npc['health'] = $CombatLog->remaining_health;
+			$Creature = Creature::findOrFail($request->creature_id);
+			$flat_creature = $Creature->toArray();
+			$flat_creature['health'] = $CombatLog->remaining_health;
 			}
 		else
 			{
-			$Npc = Npc::findOrFail($request->npc_id);
-			$flat_npc = $Npc->toArray();
+			$Creature = Creature::findOrFail($request->creature_id);
+			$flat_creature = $Creature->toArray();
+			}
+
+		if ($request->submit == 'flee')
+			{
+			if ($CombatLog)
+				{
+				$CombatLog->delete();
+				}
+			$cut_xp = $Creature->award_xp * 0.5;
+			$Character->xp = round($Character->xp - $cut_xp, 0);
+			Session::put('combat_log',["You have fled!  You have forfeit $cut_xp xp."]);
+			$Character->save();
+			Session::pull('creature.'.$Room->id);
+			// $request->no_spawn = true;
+			return $this->index($request);
 			}
 
 		$combat_log = [];
 		$reward_log = [];
-		// $flat_npc = $Npc->toArray();
+		// $flat_creature = $Creature->toArray();
 		// $Equipment = Equipment::where(['characters_id' => $Character->id])->first();
 		// Calculate attacks:
-		$attack_count = (int)($Character->dexterity / 20) + 2;
+		$attack_count = floor(($Character->dexterity() - 10) / 20) + 2;
 		$total_damage = 0;
-		$low_damage = $Character->constitution();
-		$high_damage = $Character->strength();
-		// $current_fatigue = $Character->fatigue;
+		$grope_low = $Character->constitution();
+		$grope_high = $Character->constitution() + $Character->strength();
+		// Multiply $grope_low & $grope_high if they ahve the extra grope racial mod!!!
+		$weapon_low = 0;
+		$weapon_high = 0;
+
 		$flat_character = $Character->toArray();
 		$fatigue_use = 1;
+		$fatigue_stat = 'fatigue';
 		$attack_text = 'You grope with your fists';
 		$combat_history = [];
 
@@ -437,25 +587,53 @@ class GameController extends Controller
 		// $crit_multipler_high = 4.0;
 		if ($Character->equipment()->weapon)
 			{
-			// die(print_r($Character->equipment()->weapon()->toArray()));
-			$low_damage = $low_damage + $Character->equipment()->weapon()->damage_low;
-			$high_damage = $high_damage + $Character->equipment()->weapon()->damage_high;
-			$attack_text = $Character->equipment()->weapon()->attack_text;
-			// check weapon requirements:
-			$fatigue_use = 1.5;
-			$stat_check = $Character->equipment()->weapon()->required_stat;
-			if ($Character->$stat_check < $Character->equipment()->weapon()->required_amount)
+			// Mana weapon?
+			if ($Character->equipment()->weapon()->weapon_types_id == 7)
 				{
-				$fatigue_use = 3;
+				// re-calc:
+				$grope_low = $Character->charisma() + (rand(1,10));
+				$grope_high = $Character->charisma() + $Character->wisdom() + rand(1,10);
+				$attack_count = floor(($Character->intelligence() - 10) / 20) + 2;
+				$fatigue_stat = 'mana';
+				}
+			else
+				{
+				$weapon_low = $Character->equipment()->weapon()->damage_low;
+				$weapon_high = $Character->equipment()->weapon()->damage_high;
+				}
+			$attack_text = $Character->equipment()->weapon()->attack_text;
+			$base_accuracy = $Character->equipment()->weapon()->accuracy;
+			$fatigue_use = $Character->equipment()->weapon()->fatigue_use;
+			// So that equipped items count:
+			// TODO: All required_amount values are null at this time.  Uncomment when that's back in.
+			// if (call_user_func_array([$Character,$stat_check], []) < $Character->equipment()->weapon()->required_amount)
+			// 	{
+			// 	$fatigue_use = ($fatigue_use * 1.5);
+			// 	}
+			}
+		// $combat_notes['attack_text'] = $attack_text;
+
+		// And now alignment:
+		$alignment_strength = 1.0;
+		if (isset($flat_creature['alignments_id']) && isset($flat_character['alignments_id']))
+			{
+			$good_align = $flat_character['alignments_id'] == 4 ? 1 : $flat_character['alignments_id'] + 1;
+			if ($good_align == $flat_creature['alignments_id'])
+				{
+				// We are +1 and deal more damage:
+				$alignment_strength = $alignment_strength + $flat_creature['alignment_strength'];
+				}
+			$bad_align = $flat_character['alignments_id'] == 1 ? 4 : $flat_character['alignments_id'] - 1;
+			if ($bad_align == $flat_creature['alignments_id'])
+				{
+				// We are -1 and deal less damage:
+				$alignment_strength = $alignment_strength - $flat_creature['alignment_strength'];
 				}
 			}
 
-		// $combat_notes['attack_text'] = $attack_text;
-
-		while ($flat_npc['health'] > 0)
+		while ($flat_creature['health'] > 0)
 			{
-			$start_time = time();
-			if ($flat_character['health'] <= 0 || $flat_npc['health'] <= 0)
+			if ($flat_character['health'] <= 0 || $flat_creature['health'] <= 0)
 				{
 				break;
 				}				
@@ -463,34 +641,47 @@ class GameController extends Controller
 			$round_damage = 0;
 			$round_damages = [];
 			$miss_count = 0;
-			// npc
-			$npc_damages = [];
-			$npc_round_damage = 0;
-			$npc_absorbs = 0;
-			$no_fatigue = false;
+			// creature
+			$creature_damages = [];
+			$creature_round_damage = 0;
+			$creature_absorbs = 0;
+			// $no_fatigue = false;
 			// We attack first:
 			foreach (range(1, $attack_count) as $i)
 				{
-				if ($flat_npc['health'] <= 0)
+				if ($flat_creature['health'] <= 0)
 					{
 					break;
 					}
 
-				if ($flat_character['fatigue'] < $fatigue_use)
+				if ($flat_character[$fatigue_stat] < $fatigue_use)
 					{
-					$no_fatigue = true;
+					// $arr['no_fatigue'] = true;
+					$combat_history[] = ['no_fatigue' => true];
 					break;
 					}
 
-				$flat_character['fatigue'] = $flat_character['fatigue'] - $fatigue_use;
+				// error_log('eating: '.$fatigue_use);
+				$flat_character[$fatigue_stat] = $flat_character[$fatigue_stat] - $fatigue_use;
 
 				$acc_check = rand() / getrandmax();
 				if ($acc_check <= $base_accuracy)
 					{
-					$calc_damage = rand($low_damage, $high_damage);
-					$actual_damage = (int)($calc_damage * (1.0 - $flat_npc['armor']));
+					// $calc_damage = rand($low_damage, $high_damage);
+					// Grope damage first:
+					$grope_damage = round(rand($grope_low, $grope_high) * $alignment_strength, 0);
+					$weapon_damage = rand($weapon_low, $weapon_high);
 
-					$flat_npc['health'] = $flat_npc['health'] - $actual_damage;
+					$calc_damage = $grope_damage + $weapon_damage;
+
+					// Maybe not cast yet???
+					$actual_damage = (int)($calc_damage - $flat_creature['armor']);
+					if ($actual_damage <= 0)
+						{
+						$actual_damage = 1;
+						}
+
+					$flat_creature['health'] = $flat_creature['health'] - $actual_damage;
 					$round_damage += $actual_damage;
 					$round_damages[] = $actual_damage;
 					}
@@ -501,30 +692,27 @@ class GameController extends Controller
 					}
 				}
 
-			if ($flat_npc['health'] > 0)
+			if ($flat_creature['health'] > 0)
 				{
-				// Then npc:
-				foreach (range(1, $flat_npc['attacks_per_round']) as $i)
+				// Then creature:
+				foreach (range(1, $flat_creature['attacks_per_round']) as $i)
 					{
-					$calc_damage = rand($flat_npc['damage_low'], $flat_npc['damage_high']);
-					$npc_damage = $calc_damage - $Character->equipment()->calculate_armor();
-					if ($npc_damage <= 0)
+					$calc_damage = rand($flat_creature['damage_low'], $flat_creature['damage_high']);
+					$creature_damage = $calc_damage - $Character->equipment()->calculate_armor();
+					if ($creature_damage <= 0)
 						{
-						// No damage:
-						$npc_damages[] = 0;
-						$npc_absorbs++;
+						$creature_damage = 1;
 						}
-					else
-						{
-						$flat_character['health'] = $flat_character['health'] - $npc_damage;
-						$npc_damages[] = $npc_damage;
-						$npc_round_damage += $npc_damage;
 
-						if ($flat_character['health'] <= 0)
-							{
-							break;
-							}	
-						}
+					$flat_character['health'] = $flat_character['health'] - $creature_damage;
+					$creature_damages[] = $creature_damage;
+					$creature_round_damage += $creature_damage;
+
+					if ($flat_character['health'] <= 0)
+						{
+						break;
+						}	
+						
 					}
 				}
 
@@ -535,32 +723,32 @@ class GameController extends Controller
 				'miss_count' => $miss_count,
 				'attacks' => $round_damages,
 				'round_damage' => $round_damage,
-				'npc_text' => $flat_npc['attack_text'],
-				'npc_att_count' => $flat_npc['attacks_per_round'],
-				'npc_round' => $npc_round_damage,
-				'npc_attacks' => $npc_damages,
-				'no_fatigue' => $no_fatigue,
+				'creature_text' => $flat_creature['attack_text'],
+				'creature_att_count' => $flat_creature['attacks_per_round'],
+				'creature_round' => $creature_round_damage,
+				'creature_attacks' => $creature_damages,
 				];
 
 			// player died:
 			if ($flat_character['health'] <= 0)
 				{
 				$arr['pc_died'] = true;
+				if ($CombatLog)
+					{
+					$CombatLog->delete();
+					$CombatLog = null;
+					}
 				}
 
 			$combat_history[] = $arr;
-
-			$finish = time() - $start_time;
-			error_log("This round took $finish seconds.");
-
 			// We ran out of fatigue:
-			if ((int)$flat_character['fatigue'] < $fatigue_use)
+			if ((int)$flat_character[$fatigue_stat] < $fatigue_use)
 				{
 				break;
 				}
 
-			// If the npc died:
-			if ($flat_npc['health'] <= 0)
+			// If the creature died:
+			if ($flat_creature['health'] <= 0)
 				{
 				break;
 				}
@@ -572,7 +760,7 @@ class GameController extends Controller
 			}
 
 		// Int fatigue first:
-		$flat_character['fatigue'] = round($flat_character['fatigue'], 0);
+		// $flat_character[$fatigue_stat] = round($flat_character[$fatigue_stat], 0);
 		// Save the character record based on the $flat_character:
 		$Character->fill($flat_character);
 		$Character->save();
@@ -581,44 +769,49 @@ class GameController extends Controller
 		$reward_log = [];
 
 		// Out of the loop, who died?
-		if ($flat_npc['health'] > 0 && $flat_character['health'] > 0)
+		if ($flat_creature['health'] > 0 && $flat_character['health'] > 0)
 			{
-			// $request->session()->put('combat.'.$Character->id, $flat_npc);
+			// Session::put('combat.'.$Character->id, $flat_creature);
 			if ($CombatLog)
 				{
-				$CombatLog->remaining_health = $flat_npc['health'];
+				$CombatLog->remaining_health = $flat_creature['health'];
 				}
 			else
 				{
 				$CombatLog = new CombatLog;
 				$CombatLog->fill([
 					'characters_id' => $Character->id,
-					'npcs_id' => $Npc->id,
+					'creatures_id' => $Creature->id,
 					'rooms_id' => $request->room_id,
-					'remaining_health' => $flat_npc['health'],
+					'remaining_health' => $flat_creature['health'],
 					'expires_on' => time() + 1800
 					]);
 				}
 			$CombatLog->save();
 			}
-		elseif ($flat_npc['health'] <= 0)
+		elseif ($flat_creature['health'] <= 0)
 			{
 			// Clean up session?
-			$request->session()->pull('npc.'.$Room->id);
-			// npc died
-			// $combat_log[] = "$Npc->name is dead!!!";
-			// $combat_log['npc_killed'] = true;
+			Session::pull('creature.'.$Room->id);
+			// creature died
+			// $combat_log[] = "$Creature->name is dead!!!";
+			// $combat_log['creature_killed'] = true;
 			$reward_log[] = "You beat the poor creature down to a bloody pulp.  With a last breath it dies.";
 			// clean session:
-			// $request->session()->pull('combat.'.$Character->id);
+			// Session::pull('combat.'.$Character->id);
 			if ($CombatLog)
 				{
 				$CombatLog->delete();
 				$CombatLog = null;
 				}
 
+			// TODO: CHEATER BIT
+			// $total_xp = 0;
+			// $total_gold = 0;
+			// for ($i = 0;$i < 100;++$i)
+			// {
 			// Record the kill:
-			$KillCount = KillCount::where(['characters_id' => $Character->id, 'npcs_id' => $Npc->id])->first();
+			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
 			if ($KillCount)
 				{
 				$KillCount->count = $KillCount->count + 1;
@@ -628,33 +821,35 @@ class GameController extends Controller
 				$KillCount = new KillCount;
 				$KillCount->fill([
 					'characters_id' => $Character->id,
-					'npcs_id' => $Npc->id,
+					'creatures_id' => $Creature->id,
 					'count' => 1
 					]);
 				}
 
 			$KillCount->save();
 
-			$xp_variation = rand()/getrandmax()*($Npc->xp_variation*2)-$Npc->xp_variation;
-			$actual_xp = (int)($Npc->award_xp * (1.0 + $xp_variation));
+			$xp_variation = rand()/getrandmax()*($Creature->xp_variation*2)-$Creature->xp_variation;
+			$actual_xp = (int)($Creature->award_xp * (1.0 + $xp_variation));
 
-			$gold_variation = rand()/getrandmax()*($Npc->gold_variation*2)-$Npc->gold_variation;
+			$gold_variation = rand()/getrandmax()*($Creature->gold_variation*2)-$Creature->gold_variation;
 
-			$actual_gold = (int)($Npc->award_gold * (1.0 + $gold_variation));
+			$actual_gold = (int)($Creature->award_gold * (1.0 + $gold_variation));
 			if ($actual_gold == 0)
 				{
 				$actual_gold = 1;
 				}
-
+			// $total_xp += $actual_xp;
+			// $total_gold += $actual_gold;
+			// }
 			$Character->xp += $actual_xp;
 			$Character->gold += $actual_gold;
 			$Character->save();
-			$reward_log[] = "You received $actual_xp xp.";
-
-			$reward_log[] = "You received $actual_gold gold.";
+			$reward_log[] = "You found $actual_gold gold and gained $actual_xp experience.";
+			// $reward_log[] = "You received $actual_xp xp.";
+			// $reward_log[] = "You received $actual_gold gold.";
 			$reward_log[] = '';
 
-			$LootTables = LootTable::where(['npcs_id' => $request->npc_id])->get();
+			$LootTables = LootTable::where(['creatures_id' => $request->creature_id])->get();
 
 			if (count($LootTables) > 0)
 				{
@@ -664,17 +859,17 @@ class GameController extends Controller
 					if ($prob <= $LootTable->chance)
 						{
 						// TODO: So we actually want to add this to the session instead:
-						if ($request->session()->has('loot.'.$request->room_id))
+						if (Session::has('loot.'.$request->room_id))
 							{
-							$current_items = $request->session()->get('loot.'.$request->room_id);
+							$current_items = Session::get('loot.'.$request->room_id);
 							if (!in_array($LootTable->items_id, $current_items))
 								{
-								$request->session()->push('loot.'.$request->room_id, $LootTable->items_id);
+								Session::push('loot.'.$request->room_id, $LootTable->items_id);
 								}
 							}
 						else
 							{
-							$request->session()->put('loot.'.$request->room_id, [$LootTable->items_id]);
+							Session::put('loot.'.$request->room_id, [$LootTable->items_id]);
 							}
 						}
 					}
@@ -691,81 +886,22 @@ class GameController extends Controller
 			// ??
 			}
 
-		// Does the room have loot?
-		$ground_items = [];
-		$loot_items = $request->session()->get('loot.'.$Room->id);
-		if (isset($loot_items))
-			{
-			$item_ids = [];
-			foreach ($loot_items as $loot_item)
-				{
-				$item_ids[] = $loot_item;
-				}
-			$ground_items = Item::whereIn('id', $item_ids)->get();
-			}
-
-		$no_attack = $Character->fatigue > 0 ? false : true;
+		// $no_attack = $Character->fatigue > 0 ? false : true;
 		if ($CombatLog)
 			{
-			$no_attack = false;
+			Session::put('combat_timer', true);
+			// $no_attack = false;
 			}
 
 		// Test:
 		$new_combat = $this->generate_combat_log($combat_history, $Character);
 		// die(print_r($result));
 
-		$request_params = ['character' => $Character, 'room' => $Room, 'npc' => null, 'combat_log' => $new_combat, 'reward_log' => $reward_log, 'ground_items' => $ground_items, 'no_attack' => $no_attack];
-
-		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
-			{
-			$request_params['is_admin'] = true;
-			}
-
-		$Users = User::all();
-		$online = 0;
-		foreach ($Users as $User)
-			{
-			if ($User->isOnline())
-				{
-				$online++;
-				}
-			}
-		$request_params['online_count'] = $online;
-
-		$ChatRoom = ChatRoom::findOrFail(1);
-		$request_params['chat'] = $ChatRoom;
-
-		$request_params['directions'] = $Room->generate_directions($Character);
-
-		if ($flat_character['health'] <= 0)
-			{
-			$Character->death();
-			$Character->fresh();
-			$Room = Room::findOrFail($Character->last_rooms_id);
-			if ($request->ajax())
-				{
-				$view = \View::make('game/main', $request_params);
-				$sections = $view->renderSections();
-				return $sections;
-				}
-			}
-
-		if ($CombatLog)
-			{
-			// debug:
-			$request_params['combat'] = $CombatLog->fresh();
-			$request_params['timer'] = true;
-			$request_params['npc'] = $Npc;
-			}
-
-		if ($request->ajax())
-			{
-			$view = \View::make('game/main', $request_params);
-			$sections = $view->renderSections();
-			return $sections;
-			}
-
-		return view('game/main', $request_params);
+		// No, let's not do all this:
+		Session::put('combat_log', $new_combat);
+		Session::put('reward_log', $reward_log);
+		Session::put('block_spawn', true);
+		return $this->index($request);
 		}
 
 	public function show_stats(Request $request)
@@ -779,23 +915,28 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 		// drop all stats:
 		$Character->death();
+		// Back to the fountain!
 		$Character->last_rooms_id = 1;
 		$Character->save();
+		// 
+
+
+		// May not be needed?
 		$request->death = true;
-		return $this->index($request);
+		return view('character.death', ['character' => $Character]);
+		// return $this->index($request);
 		}
 
 	public function item_pickup(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
 
-		$current_list = $request->session()->get('loot.'.$request->room_id);
+		$current_list = Session::get('loot.'.$request->room_id);
 
-		// $request->no_spawn = true;
 		$received = $Character->inventory()->add_item($request->item_id);
 		if (!$received)
 			{
-			$request->no_carry = true;
+			Session::flash('no_carry', 'You cannot carry anymore!');
 			}
 		else
 			{
@@ -804,9 +945,11 @@ class GameController extends Controller
 				unset($current_list[$key]);
 				}
 
-			$request->session()->put('loot.'.$request->room_id, $current_list);
+			Session::put('loot.'.$request->room_id, $current_list);
 			}
 
+		// TODO: Refactor?
+		Session::put('block_spawn', true);
 		return $this->index($request);
 		}
 
@@ -863,6 +1006,11 @@ class GameController extends Controller
 
 	public function training_cost($current_stat, $cost_adjustment)
 		{
+		/*
+		Spell Training Formula:
+		Level = 1:    price = (4000 - Wis - Int)
+		Level > 1:    price = (4000 - Wis - Int) * (level_to_train - 1)
+		*/
 		// My old calc:
 		// $cost = 5.0 * $cost_adjustment;
 		$cost = $cost_adjustment;
@@ -874,67 +1022,100 @@ class GameController extends Controller
 		{
 		$Character = Character::findOrFail($request->character_id);
 		
-
 		if ($request->action == 'cast')
 			{
 			$Spell = Spell::findOrFail($request->spell_id);
-			// cast spell:
-			// Well WTF do we do here!
-			if ($Spell->has_property('TELEPORT'))
+			// Make sure the Character has the spell:
+			$CharacterSpell = CharacterSpell::where(['spells_id' => $Spell->id])->first();
+
+			if ($Character->mana < $CharacterSpell->level)
 				{
-				// For teleport spells, the spell level can control where we go:
-				// if only 1 spell level (Town Portal), go straight there:
+				Session::flash('errors', 'Not enough mana to cast that!');
+				}
+			else
+				{
+				$random_float = rand()/getrandmax();
+				$random_multiplier = $random_float * rand(1,3);
+				$mana_cost = round($CharacterSpell->level * $random_multiplier);
+
+				$Character->mana = $Character->mana - $mana_cost;
+				if ($Character->mana <= 0)
+					{
+					$Character->mana = 0;
+					}
+				$Character->save();
+				// cast spell:
+				// Well WTF do we do here!
+				if ($Spell->is_type('TELEPORT_ROOM'))
+					{
+					// TODO: Adjust this later?
+
+					// die(print_r('We town portal?'));
+					$TeleportTargets = TeleportTarget::where(['spells_id' => $Spell->id])->get();
+					// Town Portal
+					if ($TeleportTargets->count() == 1)
+						{
+						$success = $CharacterSpell->level + $Character->wisdom();
+						error_log("Chance for success? $success");
+						if ($success >= rand(1,100))
+							{
+							if (!$Character->teleport($TeleportTargets->first()->rooms_id))
+								{
+								Session::flash('errors', 'You cannot access that zone currently.');
+								}
+							else
+								{
+								$request->full_reload = true;
+								return $this->index($request);
+								// return action('GameController@index');
+								}
+							}
+						else
+							{
+							Session::flash('errors', 'Your spell fizzled.');
+							}
+						}
+
+					// For teleport spells, the spell level can control where we go:
+					// if only 1 spell level (Town Portal), go straight there:
+					}
 				}
 
 			}
 
-		// TODO: Update for Spells if we want to remember what was selected:
-		// foreach ($allitems as $inv_item)
-		// 	{
-		// 	// die($inv_item);s
-		// 	$Item = Item::findOrFail($inv_item->items_id);
-
-		// 	if ($Item->item_types_id == 4)
-		// 		{
-		// 		$arr = $Item->toArray();
-		// 		$arr['quantity'] = $inv_item->quantity;
-		// 		$arr['selected'] = false;
-		// 		if (isset($request->item) && $Item->id == $request->item)
-		// 			{
-		// 			$arr['selected'] = true;
-		// 			}
-		// 		// $items[] = $Item;
-		// 		$items[] = $arr;
-		// 		}
-		// 	}
-
-		// $Character = Character::findOrFail($request->character_id);
-
-		return view('character.spells', ['character' => $Character->fresh()]);
+		return ['menu' => view('character.spells', ['character' => $Character->fresh()])->render()];
 		}
 
 	public function train_spell(Request $request)
 		{
 		// die(print_r($request->characters_id));
 		// TODO: Don't trust client cost!!!
+		/*
+		Spell Training Formula:
+		Level = 1:    price = (4000 - Wis - Int)
+		Level > 1:    price = (4000 - Wis - Int) * (level_to_train - 1)
+		*/
 		$Character = Character::findOrFail($request->character_id);
 		$Spell = Spell::findOrFail($request->spells_id);
 
 		$CharacterSpell = CharacterSpell::where(['character_id' => $request->character_id, 'spells_id' => $request->spells_id])->first();
 
-		if ($CharacterSpell)
+		$level = $CharacterSpell ? $CharacterSpell->level : 1;
+		$costs = $this->calculate_spell_training_cost($request);
+
+		if ($Character->xp >= $costs[$Spell->id])
 			{
-			// has the spell already?
-			$CharacterSpell->level++;
-			$CharacterSpell->save();
-			}
-		else
-			{
-			// Create it:
-			if ($Character->xp >= 5000)
+			$Character->xp - $Character->xp - $costs[$Spell->id];
+			$Character->save();
+			if ($CharacterSpell)
 				{
-				$Character->xp = $Character->xp - 5000;
-				$Character->save();
+				// has the spell already?
+				$CharacterSpell->level++;
+				$CharacterSpell->save();
+				}
+			else
+				{
+				// Create it:
 				$CharacterSpell = new CharacterSpell;
 
 				$CharacterSpell->fill([
@@ -945,10 +1126,10 @@ class GameController extends Controller
 
 				$CharacterSpell->save();
 				}
-			else
-				{
-				Session::flash('training', 'You do not have enough experience to train that!');
-				}
+			}
+		else
+			{
+			Session::flash('training', 'You do not have enough experience to train that!');
 			}
 
 		return $this->index($request);
@@ -957,8 +1138,44 @@ class GameController extends Controller
 	// Maybe??? YES.
 	public function calculate_spell_training_cost(Request $request)
 		{
-		// do some stuff:
-		return true;
+		$Character = Character::findOrFail($request->character_id);
+		$Spells = Spell::all();
+
+		$costs = [];
+		foreach ($Spells as $Spell)
+			{
+			// Character have it?
+			
+			$CharacterSpell = $Character->has_spell($Spell->id);
+			$base_value = 20000;
+			// Apparently base for Bedazzle, Magic Shield, Energy Drain is 85000?
+			if ($Character->score > $base_value)
+				{
+				$base_value = $Character->score;
+				}
+
+			if ($CharacterSpell)
+				{
+				// return Math.round(Math.pow(Level+1,2)*C/(Data.Wis+Data.Int))
+				$cost = round((($CharacterSpell->level + 1) * ($CharacterSpell->level)) * $base_value / ($Character->wisdom() + $Character->intelligence()));
+				// $adjusted = ($base_value - $Character->wisdom() - $Character->intelligence());
+				// $cost = ($CharacterSpell->level - 1) * ($CharacterSpell->level * $adjusted);
+				// $cost = ($base_value - $Character->wisdom() - $Character->intelligence()) * $CharacterSpell->level;
+				
+				}
+			else
+				{
+				$cost = ($base_value - $Character->wisdom() - $Character->intelligence());
+				}
+
+			if ($cost <= 0)
+				{
+				$cost = 1;
+				}
+			$costs[$Spell->id] = $cost;
+			}
+
+		return $costs;
 		}
 
 	public function calculate_training_cost(Request $request)
@@ -967,7 +1184,7 @@ class GameController extends Controller
 		// $Character = Character::where(['characters.id' => $request->character_id])->first();
 
 		// $StatCost = StatCost::first();
-		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
+		$StatCost = StatCost::where(['races_id' => $Character->races_id])->first();
 
 		// $request->train_multi;
 		$base_stats = [
@@ -1024,7 +1241,7 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 
 		// $StatCost = StatCost::first();
-		$StatCost = StatCost::where(['player_races_id' => $Character->player_races_id])->first();
+		$StatCost = StatCost::where(['races_id' => $Character->races_id])->first();
 
 		$costs = $this->calculate_training_cost($request);
 
@@ -1058,6 +1275,13 @@ class GameController extends Controller
 
 	public function rest(Request $request)
 		{
+		$Character = Character::findOrFail($request->character_id);
+		if ($Character->last_rooms_id != 1)
+			{
+			Session::flash('errors', "Don't be naughty!");
+			return false;
+			// return $this->index($request);
+			}
 		// die(print_r($request->all()));
 		$healing = false;
 		if ($request->action == 'heal')
@@ -1065,24 +1289,20 @@ class GameController extends Controller
 			// die(print_r($request->all()));
 			$healing = true;
 			// $Character = Character::where(['character_stats.characters_id' => $request->character_id])->first();
-			$Character = Character::findOrFail($request->character_id);
+			
 
-			$healing_amount = ($Character->constitution * 0.6 + $Character->strength * 0.3);
+			$healing_amount = ($Character->wisdom() + $Character->intelligence()) - 30;
 			$Character->health = $Character->health + (int)$healing_amount;
 			if ($Character->health > $Character->max_health)
 				{
 				$Character->health = $Character->max_health;
 				}
-
-			$fatigue_amount = ($Character->constitution * 0.6 + $Character->strength * 0.3 + $Character->dexterity * 0.2);
-			$Character->fatigue = $Character->fatigue + (int)$fatigue_amount;
+			$Character->fatigue = $Character->fatigue + (int)$healing_amount;
 			if ($Character->fatigue > $Character->max_fatigue)
 				{
 				$Character->fatigue = $Character->max_fatigue;
 				}
-
-			$mana_amount = ($Character->intelligence * 0.4 + $Character->wisdom * 0.4);
-			$Character->mana = $Character->mana + (int)$mana_amount;
+			$Character->mana = $Character->mana + (int)$healing_amount;
 			if ($Character->mana > $Character->max_mana)
 				{
 				$Character->mana = $Character->max_mana;
@@ -1445,23 +1665,12 @@ class GameController extends Controller
 		// Then we find the item:
 		// $PurchaseItem = $Shop->shop_items()->where(['id' => $request->item_purchase])->first();
 		$PurchaseItem = ShopItem::where(['id' => $request->item_purchase, 'shops_id' => $Shop->id])->first();
-
-		// $PurchaseItem->item();
-
-		// die(print_r($PurchaseItem->first()));
-
-		// $request_params = ['character' => $Character, 'room' => $Room, 'shop' => $Shop];
-		// $price = $PurchaseItem->item()->value * $PurchaseItem->markup;
 		$price = $PurchaseItem->get_cost($Character->charisma);
 
 		if ($Character->gold < $price)
 			{
-			// $request->insufficient_funds = true;
-			// die('price');
 			Session::flash('purchase', 'You cannot afford that!');
 			return $this->index($request);
-			// $request_params['insufficient_funds'] = true;
-			// return view('game/main', $request_params);
 			}
 
 		$received = $Character->inventory()->add_item($PurchaseItem->item()->id);
@@ -1473,7 +1682,7 @@ class GameController extends Controller
 			}
 		else
 			{
-			$request->no_carry = true;
+			Session::flash('purchase', 'You cannot carry anymore!');
 			}
 
 		return $this->index($request);
@@ -1571,17 +1780,17 @@ class GameController extends Controller
 	public function consider(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		$Npc = Npc::findOrFail($request->npc_id);
+		$Creature = Creature::findOrFail($request->creature_id);
 
-		$request->session()->put('npc.'.$request->room_id, $Npc->id);
+		Session::put('creature.'.$request->room_id, $Creature->id);
 
-		if ($Npc->attacks_per_round > 1)
+		if ($Creature->attacks_per_round > 1)
 			{
-			if ($Character->health >= $Npc->damage_high * $Npc->attacks_per_round)
+			if ($Character->health >= $Creature->damage_high * $Creature->attacks_per_round)
 				{
 				Session::flash('consider', 'You will probably survive all attacks');
 				}
-			elseif ($Character->health >= $Npc->damage_high)
+			elseif ($Character->health >= $Creature->damage_high)
 				{
 				Session::flash('consider', 'You will probably survive a few hits...');
 				}
@@ -1592,7 +1801,7 @@ class GameController extends Controller
 			}
 		else
 			{
-			if ($Character->health >= $Npc->damage_high)
+			if ($Character->health >= $Creature->damage_high)
 				{
 				Session::flash('consider', 'You will probably survive the first hit');
 				}
@@ -1616,7 +1825,7 @@ class GameController extends Controller
 	public function choose_alignment(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		$Alignment = Character::findOrFail($request->alignments_id);
+		$Alignment = Alignment::findOrFail($request->alignments_id);
 
 		$Character->alignments_id = $Alignment->id;
 		$Character->save();
@@ -1793,6 +2002,10 @@ class GameController extends Controller
 		$Character->quest_points = $Character->quest_points + $reward->quest_point_reward;
 		$Character->save();
 
+		$message = $CharacterQuest->quest()->completion_message."<br><br>You receive $reward->gold_reward gold and $reward->xp_reward experience.<br>You gain $reward->quest_point_reward Quest Points.<br>";
+
+		Session::put('quest_text', $message);
+
 		$CharacterQuest->rewarded = true;
 		$CharacterQuest->save();
 		}
@@ -1815,14 +2028,14 @@ class GameController extends Controller
 					$condensed[] = 'You did '.$log_entry['round_damage'].' damage.<br>';
 					}
 
-				if ($log_entry['npc_round'] > 0)
+				if ($log_entry['creature_round'] > 0)
 					{
-					$condensed[] = $log_entry['npc_text'].', doing '.$log_entry['npc_round'].' damage.<br>';
+					$condensed[] = $log_entry['creature_text'].' doing '.$log_entry['creature_round'].' damage.<br>';
 					}
 
 				if (isset($log_entry['pc_died']))
 					{
-					$condensed[] = 'You have died!</br><form method="post" action="/game">'.csrf_field().'<input type="hidden" name="character_id" value="'.$Character->id.'"><input type="submit" value="Continue"></form>';
+					$condensed[] = 'You have died!<br>';
 					}
 				}
 			}
@@ -1830,38 +2043,37 @@ class GameController extends Controller
 			{
 			foreach ($combat_history as $log_entry)
 				{
-				foreach ($log_entry['attacks'] as $attack)
+				if (isset($log_entry['attacks']))
 					{
-					if ($attack > 0)
+					foreach ($log_entry['attacks'] as $attack)
 						{
-						$condensed[] = $log_entry['attack_text'].", for $attack damage!<br>";
-						}
-					else
-						{
-						$condensed[] = 'You missed!<br>';
-						}
-
-					if ($log_entry['no_fatigue'])
-						{
-						$condensed[] = 'You are too tired to attack.<br>';
+						if ($attack > 0)
+							{
+							$condensed[] = $log_entry['attack_text'].", for $attack damage!<br>";
+							}
+						else
+							{
+							$condensed[] = 'You missed!<br>';
+							}
 						}
 					}
 
-				foreach ($log_entry['npc_attacks'] as $npc_attack)
+				if (isset($log_entry['no_fatigue']))
 					{
-					if ($npc_attack > 0)
+					$condensed[] = 'You are too tired to attack.<br>';
+					}
+
+				if (isset($log_entry['creature_attacks']))
+					{
+					foreach ($log_entry['creature_attacks'] as $creature_attack)
 						{
-						$condensed[] = $log_entry['npc_text'].", doing $npc_attack damage.<br>";
-						}
-					else
-						{
-						$condensed[] = 'The enemy could not get through your armor!<br>';
+						$condensed[] = $log_entry['creature_text']." doing $creature_attack damage.<br>";
 						}
 					}
 
 				if (isset($log_entry['pc_died']))
 					{
-					$condensed[] = 'You have died!</br><form method="post" action="/game">'.csrf_field().'<input type="hidden" name="character_id" value="'.$Character->id.'"><input type="submit" value="Continue"></form>';
+					$condensed[] = 'You have died!<br>';
 					}
 				}
 			}

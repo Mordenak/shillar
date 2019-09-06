@@ -25,6 +25,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('/game', 'GameController@index');
 Route::post('/menu', 'GameController@menu');
+Route::post('/footer', 'GameController@footer');
 
 Route::post('/move', 'GameController@move');
 
@@ -35,6 +36,7 @@ Route::post('/show_stats', 'GameController@show_stats');
 Route::post('/train', 'GameController@train');
 Route::post('/spells/train', 'GameController@train_spell');
 Route::post('/spells', 'GameController@spells');
+Route::post('/spells/cast', 'GameController@cast_spell');
 Route::post('/shop', 'GameController@shop');
 Route::post('/shop/purchase', 'GameController@purchase');
 Route::post('/shop/sell', 'GameController@sell');
@@ -70,6 +72,7 @@ Route::post('/trade/send', 'GameController@send');
 Route::post('/chat/message', 'GameController@chat_message');
 
 Route::get('/admin/zone-editor', 'AdminController@zone_editor');
+Route::post('/admin/zone_select', 'AdminController@zone_select');
 Route::post('/admin/zone_builder', 'AdminController@zone_builder');
 
 // TODO: Route these all through /admin and include an Auth Middleware
@@ -84,6 +87,7 @@ Route::get('zone/all', 'ZoneController@all');
 Route::get('zone/create', 'ZoneController@create');
 Route::get('zone/edit/{id}', 'ZoneController@edit')->where('id', '[0-9]+');
 Route::post('zone/save', 'ZoneController@save');
+Route::post('zone/delete', 'ZoneController@delete');
 
 Route::get('item/all', 'ItemController@all');
 Route::get('item/create', 'ItemController@create');
@@ -91,10 +95,10 @@ Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');
 Route::post('item/save', 'ItemController@save');
 Route::get('item/get_item_type', 'ItemController@get_item_fields_ajax');
 
-Route::get('npc/all', 'NpcController@all');
-Route::get('npc/create', 'NpcController@create');
-Route::get('npc/edit/{id}', 'NpcController@edit')->where('id', '[0-9]+');
-Route::post('npc/save', 'NpcController@save');
+Route::get('creature/all', 'CreatureController@all');
+Route::get('creature/create', 'CreatureController@create');
+Route::get('creature/edit/{id}', 'CreatureController@edit')->where('id', '[0-9]+');
+Route::post('creature/save', 'CreatureController@save');
 
 Route::get('character/all', 'CharacterController@all');
 Route::get('character/edit/{id}', 'CharacterController@edit')->where('id', '[0-9]+');
@@ -142,3 +146,4 @@ Route::get('/item/lookup', 'ItemController@lookup');
 Route::get('/room/lookup', 'RoomController@lookup');
 Route::get('/zone/lookup', 'ZoneController@lookup');
 Route::get('/room_property/lookup', 'RoomPropertyController@lookup');
+Route::get('/zone_property/placeholder', 'ZoneController@placeholder');
