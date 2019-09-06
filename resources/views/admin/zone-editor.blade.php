@@ -254,7 +254,7 @@
 	<div class="col-md-1">
 		<a href="/admin" class="btn btn-info">Admin Home</a>
 	</div>
-	<div class="col-md-2">
+	<div class="col-md-2 offset-md-1">
 		<h3 style="display:inline-block;">
 			Zone Editor
 		</h3>
@@ -815,6 +815,8 @@ function addOrUpdateValue($room, field, value)
 		}
 	// Always give the room the data attrib:
 	$room.attr('data-'+field, value);
+	var current_level = $room.attr('data-zone_level');
+	console.log('level: '+$room.attr('data-zone_level'));
 	var id = $room.attr('id');
 	var submit_name = 'new_rooms';
 	if ($room.hasClass('existing-room'))
@@ -835,7 +837,7 @@ function addOrUpdateValue($room, field, value)
 		// We haven't added a value before for this element & set:
 		var hash = $.extend({}, BASE_OBJECT);
 		hash[field] = value;
-		$('<input/>', {type: 'hidden', id: 'hidden_'+id, name: submit_name+'['+id+'][data]', "class": 'hidden-vals', value: JSON.stringify(hash)}).appendTo($room);
+		$('<input/>', {type: 'hidden', id: 'hidden_'+id, name: submit_name+'['+current_level+']['+id+'][data]', "class": 'hidden-vals', value: JSON.stringify(hash)}).appendTo($room);
 		}
 	return true;
 	}
@@ -953,7 +955,7 @@ $('body').on('click', '.add-column', function(e) {
 		});
 
 	// map width doesn't work if the float is displaying???
-	if ($('.map').width() > 1000)
+	if ($('.map').width() > $('.map-wrapper').width() - 150)
 		{
 		$('.map').css({width: '100%'});
 		}
@@ -976,7 +978,7 @@ function addCol(before = false)
 		});
 
 	// map width doesn't work if the float is displaying???
-	if ($('.map').width() > 1000)
+	if ($('.map').width() > $('.map-wrapper').width() - 150)
 		{
 		$('.map').css({width: '100%'});
 		}

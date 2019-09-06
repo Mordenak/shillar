@@ -7,6 +7,8 @@ use Session;
 use App\Zone;
 use App\ZoneProperty;
 use App\ZoneToZoneProperty;
+use App\ZoneLevel;
+use App\ZoneLevelToZoneProperty;
 
 class ZoneController extends Controller
 {
@@ -26,7 +28,8 @@ class ZoneController extends Controller
 		{
 		$Zone = Zone::findOrFail($id);
 		$ZoneProperties = ZoneProperty::all();
-		return view('zone.edit', ['zone' => $Zone, 'zone_properties' => $Zone->properties()->get(), 'properties' => $ZoneProperties]);
+		$ZoneLevels = ZoneLevel::where(['zones_id' => $Zone->id])->get();
+		return view('zone.edit', ['zone' => $Zone, 'zone_properties' => $Zone->properties()->get(), 'properties' => $ZoneProperties, 'zone_levels' => $ZoneLevels]);
 		}
 
 	public function delete(Request $request)

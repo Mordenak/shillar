@@ -105,6 +105,14 @@
 		<br><br>
 		</div>
 
+		<div style="margin-left:1rem;">
+		<h3>Levels:</h3>
+		<div class="zone-levels">
+			@foreach ($zone_levels as $level)
+			{{$level->level}} :: <br>
+			@endforeach
+		</div>		
+
 		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
 			<div class="col-md-1">
 				<a href="/admin" class="btn btn-info">Admin Home</a>
