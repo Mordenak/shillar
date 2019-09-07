@@ -218,7 +218,7 @@
 	<div class="map-wrapper">
 		<div class="level-view"></div>
 		<form method="post" id="builder" action="/admin/zone_builder">
-			<table id="map_1" class="map" data-zone_level="1">
+			<table id="map_0" class="map" data-zone_level="0">
 				<thead>
 				</thead>
 				<tbody>
@@ -232,7 +232,9 @@
 	</div>
 	<div id="unlinked-list">
 		<div>
-			-- Options --<br>
+			-- Room Options --<br>
+			<a href="#" onclick="linkUp()">Go up</a><br>
+			-- Map Options --<br>
 			<a href="#" onclick="addRow(true);">Add Row Top</a><br>
 			<a href="#" onclick="addRow();">Add Row Bottom</a><br>
 			<a href="#" onclick="addCol(true);">Add Column Left</a><br>
@@ -301,9 +303,9 @@ $('body').on('change', '#zone-select', function(e) {
 		});
 	});
 
-var $z_levels = 1;
-var $last_up = 1;
-var $last_down = 1;
+var $z_levels = 0;
+var $last_up = 0;
+var $last_down = 0;
 var $new_ids = 0;
 
 // PLAN FOR LEVELS:
@@ -312,365 +314,426 @@ var $new_ids = 0;
 function process_rooms(room_list)
 	{
 	console.log(room_list);
-	var curr_row = 0;
-	var curr_col = 0;
-	// console.log('Found '+room_list.length);
-	var initial_count = room_list.length;
-	console.log('Found:'+initial_count);
-	var tmp_list = room_list.slice(0);
 	var unlinks = [];
-	var room_checks = {};
-	// Number of times to try to find a room:
-	var max_attempts = 20;
-	// for(i=0;i<room_list.length;i++)
-	// var index = 0;
-	// console.log('Processing...');
-	while (tmp_list.length > 0)
-		{
-		var current_map = 1;
-		var selector = '#map_'+current_map;
-		var unk_room = false;
-		$current_room = null;
-		$original_room = null;
-		var room = null;
-		// console.log(room_list[i]);
-		var room = tmp_list.pop();
-
-		// If a room is completely unlinked...???
-		if (room && 
-			 room.northwest_rooms_id == null && 
-			 room.northeast_rooms_id == null &&
-			 room.north_rooms_id == null &&
-			 room.east_rooms_id == null &&
-			 room.west_rooms_id == null &&
-			 room.southwest_rooms_id == null &&
-			 room.southeast_rooms_id == null &&
-			 room.south_rooms_id == null)
-			{
-			console.log(room);
-			$('#unlinked-rooms').append('Room: '+room.id+'<br>');
-			continue;
-			}
-		console.log(' -- Room '+room.id+' --');
-		if (room.uid == 'base_room')
-			{
-			console.log('Initial room');
-			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
-			$new_room = create_room($current_room, room.id, true);
-			$new_room.addClass('start');
-			}
-		else if ($(selector).find('td#'+room.id).length > 0 )
-			{
-			console.log('Found a room.');
-			// var $original_room = $('.map').find('td#'+room.id).first();
-			var $current_room = $('.map').find('td#'+room.id).first();
-			curr_col = $current_room.index();
-			curr_row = $current_room.parent().index();
-			}
-		else if (tmp_list.length == (initial_count-1))
-			{
-			// TODO: Doesn't exist yet but shouldn't be at 0,0?
-			console.log('Initial room');
-			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
-			$new_room = create_room($current_room, room.id, true);
-			// $new_room.addClass('start');
-			}
-		else
-			{
-			console.log("We don't know what to do with this room.");
-			possible_match = checkLinks(room.id);
-			if (possible_match)
-				{
-				console.log('Apparently this room ['+room.id+'] is linked somewhere?')
-				// Maybe reset checks here too?
-				// This room does link to something on the map, proceed.
-				// var $current_room = $('.map').find('td#'+possible_match);
-				// maybe????????
-				// $new_room = create_room($current_room, room.id, true);
-				}
-			else
-				{
-				if (room_checks[room.id])
-					{
-					room_checks[room.id]++;
-					}
-				else
-					{
-					room_checks[room.id] = 1;	
-					}
-
-				if (room_checks[room.id] > max_attempts)
-					{
-					console.log(room);
-					console.log('We tried to link Room ['+room.id+'] '+max_attempts+' times, but could not.  Discarding.');
-					unlinks.unshift(room.id);
-					continue;
-					}
-				else
-					{
-					console.log('This room does not link to anything on the map yet.');
-					// tmp_list.unshift(room);
-					tmp_list.unshift(room);
-					continue;
-					}
-				}
-			}
-
-		// Add values:
-		Object.keys(room).forEach(function(key) {
-			// Skip these:
-			if (key == 'created_at' || key == 'updated_at')
-				{
-				// do nothing
-				}
-			else
-				{
-				if (key == 'zone_level')
-					{
-					console.log('We have one');
-					}
-				addOrUpdateValue($current_room, key, room[key]);
-				}
-			});
-
-		console.log(room);
-		console.log('Looking at: ['+curr_col+','+curr_row+']');
+	Object.keys(room_list).forEach(function(key) {
+		var curr_row = 0;
+		var curr_col = 0;
+		// console.log('Found '+room_list.length);
+		var initial_count = room_list[key].length;
+		// console.log('Found:'+initial_count);
+		var tmp_list = room_list[key].slice(0);
 		
-		if (room && room.northwest_rooms_id != null)
+		var room_checks = {};
+		// Number of times to try to find a room:
+		var max_attempts = 20;
+		// for(i=0;i<room_list.length;i++)
+		// var index = 0;
+		// console.log('Processing...');
+
+		while (tmp_list.length > 0)
 			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.northwest_rooms_id).length == 0 )
+			// var current_map = 0;
+			var selector = '#map_'+key;
+			$current_room = null;
+			$original_room = null;
+			var room = null;
+			// console.log(room_list[i]);
+			var room = tmp_list.shift();
+
+			// If a room is completely unlinked...???
+			if (room && 
+				 room.northwest_rooms_id == null && 
+				 room.northeast_rooms_id == null &&
+				 room.north_rooms_id == null &&
+				 room.east_rooms_id == null &&
+				 room.west_rooms_id == null &&
+				 room.southwest_rooms_id == null &&
+				 room.southeast_rooms_id == null &&
+				 room.south_rooms_id == null &&
+				 room.up_rooms_id == null &&
+				 room.down_rooms_id == null)
 				{
-				if (curr_row - 1 <= 0)
+				console.log(room);
+				$('#unlinked-rooms').append('Room: '+room.id+'<br>');
+				continue;
+				}
+
+			// if (key != 0)
+			// 	{
+			// 	// Find a room on the map to start at:
+			// 	curr_row = $(selector).find('.room').parent().index();
+			// 	curr_col = $(selector).find('.room').index();
+			// 	}
+
+			console.log(' -- Room '+room.id+' --');
+			if (room.uid == 'base_room')
+				{
+				console.log('Initial room');
+				var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
+				$new_room = create_room($current_room, room.id, true);
+				$new_room.addClass('start');
+				}
+			else if (key != 0 && room.up_rooms_id)
+				{
+				console.log('UP -- DOWN');
+				// console.log($('.map').find('td#'+room.down_rooms_id));
+				if ($('.map').find('td#'+room.up_rooms_id).length > 0)
 					{
-					addRow(true);
-					curr_row++;
+					curr_row = $('.map').find('td#'+room.up_rooms_id).parent().index();
+					curr_col = $('.map').find('td#'+room.up_rooms_id).index();
 					}
-				if (curr_col - 1 <= 0)
+				var $current_room = $('#map_'+key).find('tr').eq(curr_row).find('td').eq(curr_col);
+				}
+			else if (key != 0 && room.down_rooms_id)
+				{
+				if ($('.map').find('td#'+room.down_rooms_id).length > 0)
 					{
-					addCol(true);
-					curr_col++;
+					curr_row = $('.map').find('td#'+room.down_rooms_id).parent().index();
+					curr_col = $('.map').find('td#'+room.down_rooms_id).index();
 					}
-				console.log('Adding a NW ['+room.northwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
-				// Now we can add the room:
-				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
-				var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
-				if ($target.hasClass('room'))
+				var $current_room = $('#map_'+key).find('tr').eq(curr_row).find('td').eq(curr_col);
+				}
+			else if ($(selector).find('td#'+room.id).length > 0)
+				{
+				console.log('Found a room.');
+				// var $original_room = $('.map').find('td#'+room.id).first();
+				var $current_room = $('.map').find('td#'+room.id).first();
+				curr_col = $current_room.index();
+				curr_row = $current_room.parent().index();
+				}
+			else if (tmp_list.length == (initial_count-1) && key == 0)
+				{
+				// TODO: Doesn't exist yet but shouldn't be at 0,0?
+				console.log('Initial room');
+				var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
+				$new_room = create_room($current_room, room.id, true);
+				// $new_room.addClass('start');
+				}
+			else
+				{
+				console.log("We don't know what to do with this room.");
+				possible_match = checkLinks(room.id);
+				if (possible_match)
 					{
-					// TODO: Not ready yet!
-					// var $peek = $('.map').find('tr').eq(curr_row - 2).find('td').eq(curr_col - 2);
-					// if ($peek.hasClass('room'))
-					// 	{
-					// 	$target.append('<br>'+room.northwest_rooms_id);
-					// 	$target.addClass('multiple-rooms');
-					// 	}
-					// else
-					// 	{
-					// 	$new_room = create_room($peek, room.northwest_rooms_id, true);
-					// 	$new_room.addClass('dislocated');
-					// 	}
+					console.log('Apparently this room ['+room.id+'] is linked somewhere?')
+					// Maybe reset checks here too?
+					// This room does link to something on the map, proceed.
+					// var $current_room = $('.map').find('td#'+possible_match);
+					// maybe????????
+					// $new_room = create_room($current_room, room.id, true);
 					}
 				else
 					{
-					$new_room = create_room($target, room.northwest_rooms_id, true);
+					if (room_checks[room.id])
+						{
+						room_checks[room.id]++;
+						}
+					else
+						{
+						room_checks[room.id] = 1;	
+						}
+
+					if (room_checks[room.id] > max_attempts)
+						{
+						console.log(room);
+						console.log('We tried to link Room ['+room.id+'] '+max_attempts+' times, but could not.  Discarding.');
+						unlinks.unshift(room.id);
+						continue;
+						}
+					else
+						{
+						console.log('This room does not link to anything on the map yet.');
+						// tmp_list.unshift(room);
+						// tmp_list.unshift(room);
+						tmp_list.splice(tmp_list.length, 0, room);
+						continue;
+						}
 					}
 				}
-			else
+
+			// Add values:
+			Object.keys(room).forEach(function(wkey) {	
+				// Skip these:
+				if (wkey == 'created_at' || wkey == 'updated_at')
+					{
+					// do nothing
+					}
+				else
+					{
+					addOrUpdateValue($current_room, wkey, room[wkey]);
+					}
+				});
+
+			console.log(room);
+			console.log('Looking at: ['+curr_col+','+curr_row+']');
+			
+			if (room && room.northwest_rooms_id != null)
 				{
-				// unk_room = false;
+				// Room already exists?
+				if ($(selector).find('td#'+room.northwest_rooms_id).length == 0 )
+					{
+					if (curr_row - 1 <= 0)
+						{
+						addRow(true);
+						curr_row++;
+						}
+					if (curr_col - 1 <= 0)
+						{
+						addCol(true);
+						curr_col++;
+						}
+					console.log('Adding a NW ['+room.northwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
+					// Now we can add the room:
+					// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
+					var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col - 1);
+					if ($target.hasClass('room'))
+						{
+						// TODO: Not ready yet!
+						// var $peek = $('.map').find('tr').eq(curr_row - 2).find('td').eq(curr_col - 2);
+						// if ($peek.hasClass('room'))
+						// 	{
+						// 	$target.append('<br>'+room.northwest_rooms_id);
+						// 	$target.addClass('multiple-rooms');
+						// 	}
+						// else
+						// 	{
+						// 	$new_room = create_room($peek, room.northwest_rooms_id, true);
+						// 	$new_room.addClass('dislocated');
+						// 	}
+						}
+					else
+						{
+						$new_room = create_room($target, room.northwest_rooms_id, true);
+						}
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'northwest_rooms_id', room.northwest_rooms_id);
 				}
-			createLink($current_room, 'northwest_rooms_id', room.northwest_rooms_id);
+
+			if (room && room.north_rooms_id != null)
+				{
+				// Room already exists?
+				if ($(selector).find('td#'+room.north_rooms_id).length == 0 )
+					{
+					if (curr_row - 1 <= 0)
+						{
+						addRow(true);
+						curr_row++;
+						}
+					console.log('Adding a N ['+room.north_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
+					// Now we can add the room:
+					// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
+					var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col);
+					$new_room = create_room($target, room.north_rooms_id, true);
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'north_rooms_id', room.north_rooms_id);
+				}
+
+			if (room && room.northeast_rooms_id != null)
+				{
+				// Room already exists?
+				if ($(selector).find('td#'+room.northeast_rooms_id).length == 0 )
+					{
+					if (curr_row - 1 <= 0)
+						{
+						addRow(true);
+						curr_row++;
+						}
+					if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
+						{
+						addCol();
+						// curr_col++;
+						}
+					console.log('Adding a NE ['+room.northeast_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
+					// Now we can add the room:
+					// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
+					var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
+					$new_room = create_room($target, room.northeast_rooms_id, true);
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'northeast_rooms_id', room.northeast_rooms_id);
+				}
+
+			if (room && room.west_rooms_id != null)
+				{
+				// Room already exists?
+				if ($(selector).find('td#'+room.west_rooms_id).length == 0 )
+					{
+					if (curr_col - 1 <= 0)
+						{
+						addCol(true);
+						curr_col++;
+						}
+					console.log('Adding a W ['+room.west_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+					// Now we can add the room:
+					// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
+					var $target = $(selector).find('tr').eq(curr_row).find('td').eq(curr_col - 1);
+					$new_room = create_room($target, room.west_rooms_id, true);
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'west_rooms_id', room.west_rooms_id);
+				}
+
+			if (room && room.east_rooms_id != null)
+				{
+				// Room already exists?
+				if ($(selector).find('td#'+room.east_rooms_id).length == 0 )
+					{
+					if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
+						{
+						addCol();
+						// curr_col++;
+						}
+					console.log('Adding a E ['+room.east_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+					// Now we can add the room:
+					// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
+					var $target = $(selector).find('tr').eq(curr_row).find('td').eq(curr_col + 1);
+					$new_room = create_room($target, room.east_rooms_id, true);
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'east_rooms_id', room.east_rooms_id);
+				}
+
+			if (room && room.southwest_rooms_id != null)
+				{
+				// Room already exists?
+				if ($(selector).find('td#'+room.southwest_rooms_id).length == 0 )
+					{
+					if (curr_row + 1 >= $(selector).find('tr').length)
+						{
+						addRow();
+						// curr_row++;
+						}
+					if (curr_col - 1 <= 0)
+						{
+						addCol(true);
+						curr_col++;
+						}
+					console.log('Adding a SW ['+room.southwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
+					// Now we can add the room:
+					// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
+					var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
+					$new_room = create_room($target, room.southwest_rooms_id, true);
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'southwest_rooms_id', room.southwest_rooms_id);
+				}
+
+			if (room && room.south_rooms_id != null)
+				{
+				// Room already exists?
+				if ($(selector).find('td#'+room.south_rooms_id).length == 0 )
+					{
+					if (curr_row + 1 >= $(selector).find('tr').length)
+						{
+						addRow();
+						// curr_row++;
+						}
+					console.log('Adding a S ['+room.south_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
+					// Now we can add the room:
+					// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
+					var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col);
+					$new_room = create_room($target, room.south_rooms_id, true);
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'south_rooms_id', room.south_rooms_id);
+				}
+
+			if (room && room.southeast_rooms_id != null)
+				{
+				// Room already exists?
+				if ($(selector).find('td#'+room.southeast_rooms_id).length == 0 )
+					{
+					if (curr_row + 1 >= $(selector).find('tr').length)
+						{
+						addRow();
+						// curr_row++;
+						}
+					if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
+						{
+						addCol();
+						// curr_col++;
+						}
+					console.log('Adding a SE ['+room.southeast_rooms_id+'] room at: ['+(curr_row+1)+','+(curr_col+1)+']');
+					// Now we can add the room:
+					var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col + 1);
+					$new_room = create_room($target, room.southeast_rooms_id, true);
+					}
+				else
+					{
+					// unk_room = false;
+					}
+				createLink($current_room, 'southeast_rooms_id', room.southeast_rooms_id);
+				}
+
+			// Grand finale of directions:
+			if (room && room.up_rooms_id != null)
+				{
+				if ($('#map_'+(key +1)).length == 0)
+					{
+					added_level = addZLevel(1);
+					}
+
+				if ($(selector).find('td#'+room.up_rooms_id).length == 0)
+					{
+					var $target = $('#map_'+added_level).find('tr').eq(curr_row).find('td').eq(curr_col);
+					$new_room = create_room($target, room.up_rooms_id, true);
+					}
+				else
+					{
+					// ??
+					}
+				createLink($current_room, 'up_rooms_id', room.up_rooms_id);
+				}
+
+			if (room && room.down_rooms_id != null)
+				{
+				if ($('#map_'+(key +1)).length == 0)
+					{
+					added_level = addZLevel(1);
+					}
+
+				if ($(selector).find('td#'+room.down_rooms_id).length == 0)
+					{
+					var $target = $('#map_'+added_level).find('tr').eq(curr_row).find('td').eq(curr_col);
+					$new_room = create_room($target, room.down_rooms_id, true);
+					}
+				else
+					{
+					// ??
+					}
+				createLink($current_room, 'down_rooms_id', room.down_rooms_id);
+				}
+
+
+			// END OF CHECKS:
+			// If we've linked something, reset the stalemate check:
+			console.log('Reset checks?');
+			room_checks = {};
 			}
-
-		if (room && room.north_rooms_id != null)
-			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.north_rooms_id).length == 0 )
-				{
-				if (curr_row - 1 <= 0)
-					{
-					addRow(true);
-					curr_row++;
-					}
-				console.log('Adding a N ['+room.north_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
-				// Now we can add the room:
-				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col);
-				var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col);
-				$new_room = create_room($target, room.north_rooms_id, true);
-				}
-			else
-				{
-				// unk_room = false;
-				}
-			createLink($current_room, 'north_rooms_id', room.north_rooms_id);
-			}
-
-		if (room && room.northeast_rooms_id != null)
-			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.northeast_rooms_id).length == 0 )
-				{
-				if (curr_row - 1 <= 0)
-					{
-					addRow(true);
-					curr_row++;
-					}
-				if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
-					{
-					addCol();
-					// curr_col++;
-					}
-				console.log('Adding a NE ['+room.northeast_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
-				// Now we can add the room:
-				// var $current_room = $('.map').find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
-				var $target = $(selector).find('tr').eq(curr_row - 1).find('td').eq(curr_col + 1);
-				$new_room = create_room($target, room.northeast_rooms_id, true);
-				}
-			else
-				{
-				// unk_room = false;
-				}
-			createLink($current_room, 'northeast_rooms_id', room.northeast_rooms_id);
-			}
-
-		if (room && room.west_rooms_id != null)
-			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.west_rooms_id).length == 0 )
-				{
-				if (curr_col - 1 <= 0)
-					{
-					addCol(true);
-					curr_col++;
-					}
-				console.log('Adding a W ['+room.west_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
-				// Now we can add the room:
-				// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col - 1);
-				var $target = $(selector).find('tr').eq(curr_row).find('td').eq(curr_col - 1);
-				$new_room = create_room($target, room.west_rooms_id, true);
-				}
-			else
-				{
-				// unk_room = false;
-				}
-			createLink($current_room, 'west_rooms_id', room.west_rooms_id);
-			}
-
-		if (room && room.east_rooms_id != null)
-			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.east_rooms_id).length == 0 )
-				{
-				if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
-					{
-					addCol();
-					// curr_col++;
-					}
-				console.log('Adding a E ['+room.east_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
-				// Now we can add the room:
-				// var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col + 1);
-				var $target = $(selector).find('tr').eq(curr_row).find('td').eq(curr_col + 1);
-				$new_room = create_room($target, room.east_rooms_id, true);
-				}
-			else
-				{
-				// unk_room = false;
-				}
-			createLink($current_room, 'east_rooms_id', room.east_rooms_id);
-			}
-
-		if (room && room.southwest_rooms_id != null)
-			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.southwest_rooms_id).length == 0 )
-				{
-				if (curr_row + 1 >= $(selector).find('tr').length)
-					{
-					addRow();
-					// curr_row++;
-					}
-				if (curr_col - 1 <= 0)
-					{
-					addCol(true);
-					curr_col++;
-					}
-				console.log('Adding a SW ['+room.southwest_rooms_id+'] room at: ['+curr_col+','+curr_row+']');
-				// Now we can add the room:
-				// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
-				var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col - 1);
-				$new_room = create_room($target, room.southwest_rooms_id, true);
-				}
-			else
-				{
-				// unk_room = false;
-				}
-			createLink($current_room, 'southwest_rooms_id', room.southwest_rooms_id);
-			}
-
-		if (room && room.south_rooms_id != null)
-			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.south_rooms_id).length == 0 )
-				{
-				if (curr_row + 1 >= $(selector).find('tr').length)
-					{
-					addRow();
-					// curr_row++;
-					}
-				console.log('Adding a S ['+room.south_rooms_id+'] room at: ['+curr_row+','+curr_col+']');
-				// Now we can add the room:
-				// var $current_room = $('.map').find('tr').eq(curr_row + 1).find('td').eq(curr_col);
-				var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col);
-				$new_room = create_room($target, room.south_rooms_id, true);
-				}
-			else
-				{
-				// unk_room = false;
-				}
-			createLink($current_room, 'south_rooms_id', room.south_rooms_id);
-			}
-
-		if (room && room.southeast_rooms_id != null)
-			{
-			// Room already exists?
-			if ($(selector).find('td#'+room.southeast_rooms_id).length == 0 )
-				{
-				if (curr_row + 1 >= $(selector).find('tr').length)
-					{
-					addRow();
-					// curr_row++;
-					}
-				if (curr_col + 1 >= $(selector).find('tr').first().find('td').length)
-					{
-					addCol();
-					// curr_col++;
-					}
-				console.log('Adding a SE ['+room.southeast_rooms_id+'] room at: ['+(curr_row+1)+','+(curr_col+1)+']');
-				// Now we can add the room:
-				var $target = $(selector).find('tr').eq(curr_row + 1).find('td').eq(curr_col + 1);
-				$new_room = create_room($target, room.southeast_rooms_id, true);
-				}
-			else
-				{
-				// unk_room = false;
-				}
-			createLink($current_room, 'southeast_rooms_id', room.southeast_rooms_id);
-			}
-
-		// Grand finale of directions:
-		if (room && room.up_rooms_id != null)
-			{
-			added_level = addZLevel(1);
-			var $target = $('#map_'+added_level).find('tr').eq(curr_row).find('td').eq(curr_col);
-			$new_room = create_room($target, room.up_rooms_id, true);
-			}
-
-
-		// END OF CHECKS:
-		// If we've linked something, reset the stalemate check:
-		console.log('Reset checks?');
-		room_checks = {};
-		}
+		});
 
 	for(x=0;x<unlinks.length;x++)
 		{
@@ -907,14 +970,14 @@ $('body').on('click', '.clear-map', function(e) {
 
 function clear()
 	{
-	$('table:not([id="map_1"])').remove();
-	$('#map_1').show();
+	$('table:not([id="map_0"])').remove();
+	$('#map_0').show();
 	$('.map tbody').html('');
 	$('#unlinked-rooms').html('');
 	$('.map').css({width: ''});
-	$z_levels = 1;
-	$last_up = 1;
-	$last_down = 1;
+	$z_levels = 0;
+	$last_up = 0;
+	$last_down = 0;
 	start();
 	}
 
@@ -1047,6 +1110,30 @@ function select_room($room)
 		}
 	}
 
+function linkUp()
+	{
+	var $selection = $('.highlight:visible');
+	if ($selection.length == 0)
+		{
+		return false;
+		}
+	var row = $selection.parent().index();
+	var col = $selection.index();
+	var current_level = $selection.closest('.map').attr('data-zone_level');
+	var next_level = parseInt(current_level) + 1;
+	if ($('#map_'+next_level).length == 0)
+		{
+		addZLevel(1);
+		}
+	var $target_room = $('#map_'+next_level).find('tr').eq(row).find('td').eq(col);
+	create_room($target_room, $new_ids);
+	$new_ids++;
+	performLink($selection, $target_room);
+	$selection.removeClass('highlight');
+	$target_room.addClass('highlight');
+	switchZLevel(next_level);
+	}
+
 function switchZLevel($int)
 	{
 	console.log("let's switch levels!");
@@ -1080,7 +1167,7 @@ function addZLevel($int)
 		new_level = $last_down;
 		}
 	console.log('gogo gadget!');
-	$new_map = $('#map_1').clone();
+	$new_map = $('#map_0').clone();
 	$new_map.removeAttr('id');
 	$new_map.removeAttr('data-zone_level');
 	$new_map.attr('id', 'map_'+new_level);
@@ -1103,15 +1190,15 @@ function addZLevel($int)
 			$(e).append('<div class="blip nw-blip"></div><div class="blip n-blip"></div><div class="blip ne-blip"></div><div class="blip e-blip"></div><div class="blip w-blip"></div><div class="blip se-blip"></div><div class="blip s-blip"></div><div class="blip sw-blip"></div>');
 		});
 	// $('map-wrapper').append($('.map').clone());
-	// $('#map_1').hide();
+	// $('#map_0').hide();
 	// $('.level-view').html('Viewing level: '+ (new_level - $z_levels) );
-	$('.map-wrapper form').prepend($new_map);
+	$('.map-wrapper form').append($new_map);
 	$new_map.hide();
 	return new_level;
 	}
 
 // Not needed yet:
- document.getElementById('map_1').addEventListener("wheel", event => {
+ document.getElementById('map_0').addEventListener("wheel", event => {
 	 const delta = Math.sign(event.deltaY);
 	 if (delta == -1)
 		{
@@ -1156,19 +1243,29 @@ function performLink($selected, $target, $reverse = false)
 		{
 		$current = $selected;
 		//$target = $el;
-
-		// TODO: Switch to allow if up/down links:
-		if ($selected.attr('data-zone_level') != $target.attr('data-zone_level'))
-			{
-			// Don't link across z-levels
-			return false;
-			}
-
 		console.log('Perfoming Link');
 
 		if ($current.attr('id') == $target.attr('id'))
 			{
 			return false;
+			}
+
+		if ($current.index() == $target.index())
+			{
+			if ($target.parent().index() == $current.parent().index())
+				{
+				// Then this could go up or down:
+				if ($selected.closest('.map').attr('data-zone_level') > $target.closest('.map').attr('data-zone_level'))
+					{
+					// Down
+					createLink($current, 'down_rooms_id', $target.attr('id'));
+					}
+				else
+					{
+					// Up
+					createLink($current, 'up_rooms_id', $target.attr('id'));
+					}
+				}
 			}
 
 		//otherwise link:
@@ -1183,6 +1280,13 @@ function performLink($selected, $target, $reverse = false)
 				{
 				return false;
 				}
+			}
+
+		// TODO: Switch to allow if up/down links:
+		if ($selected.attr('data-zone_level') != $target.attr('data-zone_level'))
+			{
+			// Don't link across z-levels
+			return false;
 			}
 		// TODO: Make it smarter!
 		// left or right?

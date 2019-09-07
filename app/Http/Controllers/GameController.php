@@ -2018,7 +2018,7 @@ class GameController extends Controller
 			foreach ($combat_history as $log_entry)
 				{
 				$condensed[] = $log_entry['attack_text'].'<br>';
-				if ($log_entry['no_fatigue'])
+				if (isset($log_entry['no_fatigue']))
 					{
 					$condensed[] = 'You are too tired to attack.<br>';
 					}

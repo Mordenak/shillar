@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Character;
 use App\Item;
 use App\Zone;
+use App\ZoneLevel;
 use App\Room;
 
 class AdminController extends Controller
@@ -51,9 +52,21 @@ class AdminController extends Controller
 		{
 		$Zone = Zone::findOrFail($request->zones_id);
 
-		$Rooms = $Zone->rooms_q()->orderBy('id', 'desc')->get();
+		$Rooms = $Zone->rooms_q()->get();
 
-		return $Rooms;
+		$return_rooms = [];
+
+		foreach ($Rooms as $Room)
+			{
+			if (!isset($return_rooms[$Room->zone_level]))
+				{
+				$return_rooms[$Room->zone_level] = [];
+				}
+
+			$return_rooms[$Room->zone_level][] = $Room;
+			}
+
+		return $return_rooms;
 		}
 
 	// TODO: Deprecated now?
@@ -132,17 +145,28 @@ class AdminController extends Controller
 		// $next_id = $Room->id + 1;
 		$Room = null;
 
-		echo(print_r($request->new_rooms));
-		die(print_r($request->existing_rooms));
+		// echo(print_r($request->new_rooms));
+		// die(print_r($request->existing_rooms));
 
 		$new_rooms = [];
 		if (isset($request->new_rooms))
 			{
 			// TODO: Hmm, perhaps we don't need to pre-create these rooms?
-			foreach ($request->new_rooms as $zone_level)
+			foreach ($request->new_rooms as $zone_level => $rooms)
 				{
-				die(print_r($zone_level));
-				foreach ($zone_level as $room_obj)
+				// die(print_r($rooms));
+				$ZoneLevel = ZoneLevel::where(['zones_id' => $Zone->id, 'level' => $zone_level])->first();
+
+				if (!$ZoneLevel)
+					{
+					// create it:
+					$ZoneLevel = new ZoneLevel;
+					$ZoneLevel->zones_id = $Zone->id;
+					$ZoneLevel->level = $zone_level;
+					$ZoneLevel->save();
+					}
+
+				foreach ($rooms as $room_obj)
 					{
 					$Room = new Room;
 					$Room->zones_id = $Zone->id;
@@ -150,10 +174,14 @@ class AdminController extends Controller
 					$json = json_decode($room_obj['data'], true);
 					$new_rooms[$json['id']] = $Room->id;
 					}
+				}
+
+			foreach ($request->new_rooms as $zone_level => $rooms)
+				{
 				
-				foreach ($zone_level as $room_obj)
+				foreach ($rooms as $room_obj)
 					{
-					die(print_r($room_obj['data']));
+					// die(print_r($room_obj['data']));
 					if (!isset($room_obj['data']))
 						{
 						// wtf was submitted?
@@ -178,6 +206,11 @@ class AdminController extends Controller
 							}
 						}
 
+					if (!$json['zone_level'])
+						{
+						$room_values['zone_level'] = $zone_level;
+						}
+
 					$Room->fill($room_values);
 					$Room->save();
 					}
@@ -186,12 +219,23 @@ class AdminController extends Controller
 
 		if (isset($request->existing_rooms))
 			{
-			foreach ($request->existing_rooms as $zone_level)
+			foreach ($request->existing_rooms as $zone_level => $rooms)
 				{
-				die(print_r($zone_level));
-				foreach ($zone_level as $room_obj)
+				$ZoneLevel = ZoneLevel::where(['zones_id' => $Zone->id, 'level' => $zone_level])->first();
+
+				if (!$ZoneLevel)
 					{
-					die(print_r($room_obj['data']));
+					// create it:
+					$ZoneLevel = new ZoneLevel;
+					$ZoneLevel->zones_id = $Zone->id;
+					$ZoneLevel->level = $zone_level;
+					$ZoneLevel->save();
+					}
+
+				// die(print_r($rooms));
+				foreach ($rooms as $room_obj)
+					{
+					// die(print_r($room_obj['data']));
 					if (!isset($room_obj['data']))
 						{
 						// wtf was submitted?
@@ -216,10 +260,13 @@ class AdminController extends Controller
 							}
 						}
 
+					if (!$json['zone_level'])
+						{
+						$room_values['zone_level'] = $zone_level;
+						}
+
 					$Room->fill($room_values);
-
 					$Room->zones_id = $Zone->id;
-
 					$Room->save();
 					}
 				}
