@@ -140,7 +140,7 @@ class SetupTables extends Migration
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
 			$table->integer('zone_level')->default(0);
-			$table->string('uid')->unique()->nullable();
+			$table->string('uid')->nullable();
 			$table->string('title')->nullable();
 			$table->text('description')->nullable();
 			$table->integer('darkness_level')->nullable();

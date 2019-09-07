@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
 {
-	protected $fillable = ['zones_id', 'uid', 'title', 'description', 'img_src', 'spawns_enabled', 'north_rooms_id', 'east_rooms_id', 'south_rooms_id', 'west_rooms_id', 'up_rooms_id', 'down_rooms_id', 'northeast_rooms_id', 'southeast_rooms_id', 'southwest_rooms_id', 'northwest_rooms_id', 'room_properties_id'];
+	protected $fillable = ['zones_id', 'zone_level', 'uid', 'title', 'description', 'img_src', 'spawns_enabled', 'north_rooms_id', 'east_rooms_id', 'south_rooms_id', 'west_rooms_id', 'up_rooms_id', 'down_rooms_id', 'northeast_rooms_id', 'southeast_rooms_id', 'southwest_rooms_id', 'northwest_rooms_id', 'room_properties_id'];
 
 	// doc?
 	public function zone()
@@ -17,6 +17,12 @@ class Room extends Model
 	public function property()
 		{
 		return $this->belongsTo('App\RoomProperty', 'room_properties_id')->first();
+		}
+
+	// TODO Different ways?
+	public function zone_level()
+		{
+		return $this->belongsTo('App\ZoneLevel', 'zones_id', 'zone_level')->first();
 		}
 
 	public function shop()

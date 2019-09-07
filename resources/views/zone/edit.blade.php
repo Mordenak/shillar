@@ -108,9 +108,11 @@
 		<div style="margin-left:1rem;">
 		<h3>Levels:</h3>
 		<div class="zone-levels">
+			@if (isset($zone_levels))
 			@foreach ($zone_levels as $level)
 			{{$level->level}} :: <br>
 			@endforeach
+			@endif
 		</div>		
 
 		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">

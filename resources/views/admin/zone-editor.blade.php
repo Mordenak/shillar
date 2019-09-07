@@ -216,22 +216,9 @@
 		-- Select a Room --
 	</div>
 	<div class="map-wrapper">
-		<div style="float:left;">
-			-- Options --<br>
-			<a href="#" onclick="addRow(true);">Add Row Top</a><br>
-			<a href="#" onclick="addRow();">Add Row Bottom</a><br>
-			<a href="#" onclick="addCol(true);">Add Column Left</a><br>
-			<a href="#" onclick="addCol();">Add Column Right</a><br>
-			<a href="#" onclick="addZLevel(1);">Add Floor Up</a><br>
-			<a href="#" onclick="addZLevel(-1);">Add Floor Down</a><br>
-			<a href="#" onclick="switchZLevel(1);">Switch Level Up</a><br>
-			<a href="#" onclick="switchZLevel(-1);">Switch Level Down</a><br>
-			<a href="#" class="link-adjacents">Link All Adjacents</a><br>
-			<a href="#" class="clear-map">Clear Map</a><br>
-		</div>
 		<div class="level-view"></div>
 		<form method="post" id="builder" action="/admin/zone_builder">
-			<table id="map_100" class="map" data-level="100">
+			<table id="map_1" class="map" data-zone_level="1">
 				<thead>
 				</thead>
 				<tbody>
@@ -244,6 +231,19 @@
 		</form>
 	</div>
 	<div id="unlinked-list">
+		<div>
+			-- Options --<br>
+			<a href="#" onclick="addRow(true);">Add Row Top</a><br>
+			<a href="#" onclick="addRow();">Add Row Bottom</a><br>
+			<a href="#" onclick="addCol(true);">Add Column Left</a><br>
+			<a href="#" onclick="addCol();">Add Column Right</a><br>
+			<a href="#" onclick="addZLevel(1);">Add Floor Up</a><br>
+			<a href="#" onclick="addZLevel(-1);">Add Floor Down</a><br>
+			<a href="#" onclick="switchZLevel(1);">Switch Level Up</a><br>
+			<a href="#" onclick="switchZLevel(-1);">Switch Level Down</a><br>
+			<a href="#" class="link-adjacents">Link All Adjacents</a><br>
+			<a href="#" class="clear-map">Clear Map</a><br>
+		</div>
 		Unlinked List:<br>
 		<div id="unlinked-rooms">
 		</div>
@@ -301,9 +301,9 @@ $('body').on('change', '#zone-select', function(e) {
 		});
 	});
 
-var $z_levels = 100;
-var $last_up = 100;
-var $last_down = 100;
+var $z_levels = 1;
+var $last_up = 1;
+var $last_down = 1;
 var $new_ids = 0;
 
 // PLAN FOR LEVELS:
@@ -311,6 +311,7 @@ var $new_ids = 0;
 // Here comes the fun part lol.
 function process_rooms(room_list)
 	{
+	console.log(room_list);
 	var curr_row = 0;
 	var curr_col = 0;
 	// console.log('Found '+room_list.length);
@@ -320,13 +321,13 @@ function process_rooms(room_list)
 	var unlinks = [];
 	var room_checks = {};
 	// Number of times to try to find a room:
-	var max_attempts = 5;
+	var max_attempts = 20;
 	// for(i=0;i<room_list.length;i++)
 	// var index = 0;
 	// console.log('Processing...');
 	while (tmp_list.length > 0)
 		{
-		var current_map = 100;
+		var current_map = 1;
 		var selector = '#map_'+current_map;
 		var unk_room = false;
 		$current_room = null;
@@ -351,7 +352,7 @@ function process_rooms(room_list)
 			continue;
 			}
 		console.log(' -- Room '+room.id+' --');
-		if (room.title == 'base_room')
+		if (room.uid == 'base_room')
 			{
 			console.log('Initial room');
 			var $current_room = $('.map').find('tr').eq(curr_row).find('td').eq(curr_col);
@@ -424,6 +425,10 @@ function process_rooms(room_list)
 				}
 			else
 				{
+				if (key == 'zone_level')
+					{
+					console.log('We have one');
+					}
 				addOrUpdateValue($current_room, key, room[key]);
 				}
 			});
@@ -685,6 +690,7 @@ function process_rooms(room_list)
 var BASE_OBJECT = {
 	'id': null,
 	'zones_id': null,
+	'zone_level': null,
 	'uid': null,
 	'title': null,
 	'north_rooms_id': null,
@@ -746,7 +752,7 @@ function create_room($room, id, in_database = false)
 			}
 		$room.append(id);
 		$room.attr('id', id);
-		$room.attr('data-level', $room.closest('.map').attr('data-level'));
+		$room.attr('data-zone_level', $room.closest('.map').attr('data-zone_level'));
 		// Set up the hidden values tracker:
 		addOrUpdateValue($room, 'id', id);
 		}
@@ -815,8 +821,8 @@ function addOrUpdateValue($room, field, value)
 		}
 	// Always give the room the data attrib:
 	$room.attr('data-'+field, value);
-	var current_level = $room.attr('data-zone_level');
-	console.log('level: '+$room.attr('data-zone_level'));
+	var current_level = $room.closest('.map').attr('data-zone_level');
+	// console.log('level: '+$room.attr('data-zone_level'));
 	var id = $room.attr('id');
 	var submit_name = 'new_rooms';
 	if ($room.hasClass('existing-room'))
@@ -901,14 +907,14 @@ $('body').on('click', '.clear-map', function(e) {
 
 function clear()
 	{
-	$('table:not([id="map_100"])').remove();
-	$('#map_100').show();
+	$('table:not([id="map_1"])').remove();
+	$('#map_1').show();
 	$('.map tbody').html('');
 	$('#unlinked-rooms').html('');
 	$('.map').css({width: ''});
-	$z_levels = 100;
-	$last_up = 100;
-	$last_down = 100;
+	$z_levels = 1;
+	$last_up = 1;
+	$last_down = 1;
 	start();
 	}
 
@@ -955,7 +961,7 @@ $('body').on('click', '.add-column', function(e) {
 		});
 
 	// map width doesn't work if the float is displaying???
-	if ($('.map').width() > $('.map-wrapper').width() - 150)
+	if ($('.map').width() > $('.map-wrapper').width() - 50)
 		{
 		$('.map').css({width: '100%'});
 		}
@@ -978,7 +984,7 @@ function addCol(before = false)
 		});
 
 	// map width doesn't work if the float is displaying???
-	if ($('.map').width() > $('.map-wrapper').width() - 150)
+	if ($('.map').width() > $('.map-wrapper').width() - 50)
 		{
 		$('.map').css({width: '100%'});
 		}
@@ -1046,7 +1052,7 @@ function switchZLevel($int)
 	console.log("let's switch levels!");
 	$current_map = $('.map:visible');
 	console.log($current_map);
-	$current_level = $current_map.attr('data-level');
+	$current_level = $current_map.attr('data-zone_level');
 	var search = parseInt($current_level) + $int;
 	console.log('looking for: '+ search);
 	if ($('#map_'+search).length > 0)
@@ -1074,11 +1080,11 @@ function addZLevel($int)
 		new_level = $last_down;
 		}
 	console.log('gogo gadget!');
-	$new_map = $('#map_100').clone();
+	$new_map = $('#map_1').clone();
 	$new_map.removeAttr('id');
-	$new_map.removeAttr('data-level');
+	$new_map.removeAttr('data-zone_level');
 	$new_map.attr('id', 'map_'+new_level);
-	$new_map.attr('data-level', new_level);
+	$new_map.attr('data-zone_level', new_level);
 	// Blast the current data:
 	var height = $new_map.find('tr').length;
 	var width = $new_map.find('tr').first().find('td').length;
@@ -1097,7 +1103,7 @@ function addZLevel($int)
 			$(e).append('<div class="blip nw-blip"></div><div class="blip n-blip"></div><div class="blip ne-blip"></div><div class="blip e-blip"></div><div class="blip w-blip"></div><div class="blip se-blip"></div><div class="blip s-blip"></div><div class="blip sw-blip"></div>');
 		});
 	// $('map-wrapper').append($('.map').clone());
-	// $('#map_100').hide();
+	// $('#map_1').hide();
 	// $('.level-view').html('Viewing level: '+ (new_level - $z_levels) );
 	$('.map-wrapper form').prepend($new_map);
 	$new_map.hide();
@@ -1105,7 +1111,7 @@ function addZLevel($int)
 	}
 
 // Not needed yet:
- document.getElementById('map_100').addEventListener("wheel", event => {
+ document.getElementById('map_1').addEventListener("wheel", event => {
 	 const delta = Math.sign(event.deltaY);
 	 if (delta == -1)
 		{
@@ -1151,7 +1157,8 @@ function performLink($selected, $target, $reverse = false)
 		$current = $selected;
 		//$target = $el;
 
-		if ($selected.attr('data-level') != $target.attr('data-level'))
+		// TODO: Switch to allow if up/down links:
+		if ($selected.attr('data-zone_level') != $target.attr('data-zone_level'))
 			{
 			// Don't link across z-levels
 			return false;

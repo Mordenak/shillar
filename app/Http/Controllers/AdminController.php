@@ -132,83 +132,96 @@ class AdminController extends Controller
 		// $next_id = $Room->id + 1;
 		$Room = null;
 
+		echo(print_r($request->new_rooms));
+		die(print_r($request->existing_rooms));
+
 		$new_rooms = [];
 		if (isset($request->new_rooms))
 			{
 			// TODO: Hmm, perhaps we don't need to pre-create these rooms?
-			foreach ($request->new_rooms as $room_obj)
+			foreach ($request->new_rooms as $zone_level)
 				{
-				$Room = new Room;
-				$Room->zones_id = $Zone->id;
-				$Room->save();
-				$json = json_decode($room_obj['data'], true);
-				$new_rooms[$json['id']] = $Room->id;
-				}
-			
-			foreach ($request->new_rooms as $room_obj)
-				{
-				if (!isset($room_obj['data']))
+				die(print_r($zone_level));
+				foreach ($zone_level as $room_obj)
 					{
-					// wtf was submitted?
-					return $this->error('No Data provided.');
+					$Room = new Room;
+					$Room->zones_id = $Zone->id;
+					$Room->save();
+					$json = json_decode($room_obj['data'], true);
+					$new_rooms[$json['id']] = $Room->id;
 					}
-
-				$json = json_decode($room_obj['data'], true);
-				$Room = Room::findOrFail($new_rooms[$json['id']]);
-
-				$room_values = [];
-				foreach ($json as $field => $value)
+				
+				foreach ($zone_level as $room_obj)
 					{
-					// Sanitize?
-					if ($field != 'id' && $field != 'zones_id')
+					die(print_r($room_obj['data']));
+					if (!isset($room_obj['data']))
 						{
-						$room_values[$field] = $value;
+						// wtf was submitted?
+						return $this->error('No Data provided.');
 						}
 
-					if (is_numeric($value) && in_array($value, array_keys($new_rooms)))
-						{
-						$room_values[$field] = $new_rooms[$value];
-						}
-					}
+					$json = json_decode($room_obj['data'], true);
+					$Room = Room::findOrFail($new_rooms[$json['id']]);
 
-				$Room->fill($room_values);
-				$Room->save();
+					$room_values = [];
+					foreach ($json as $field => $value)
+						{
+						// Sanitize?
+						if ($field != 'id' && $field != 'zones_id')
+							{
+							$room_values[$field] = $value;
+							}
+
+						if (is_numeric($value) && in_array($value, array_keys($new_rooms)))
+							{
+							$room_values[$field] = $new_rooms[$value];
+							}
+						}
+
+					$Room->fill($room_values);
+					$Room->save();
+					}
 				}
 			}
 
 		if (isset($request->existing_rooms))
 			{
-			foreach ($request->existing_rooms as $room_obj)
+			foreach ($request->existing_rooms as $zone_level)
 				{
-				if (!isset($room_obj['data']))
+				die(print_r($zone_level));
+				foreach ($zone_level as $room_obj)
 					{
-					// wtf was submitted?
-					return $this->error('No Data provided.');
-					}
-
-				$json = json_decode($room_obj['data'], true);
-				$Room = Room::findOrFail($json['id']);
-
-				$room_values = [];
-				foreach ($json as $field => $value)
-					{
-					// Sanitize?
-					if ($field != 'id' && $field != 'zones_id')
+					die(print_r($room_obj['data']));
+					if (!isset($room_obj['data']))
 						{
-						$room_values[$field] = $value;
+						// wtf was submitted?
+						return $this->error('No Data provided.');
 						}
 
-					if (is_numeric($value) && in_array($value, array_keys($new_rooms)))
+					$json = json_decode($room_obj['data'], true);
+					$Room = Room::findOrFail($json['id']);
+
+					$room_values = [];
+					foreach ($json as $field => $value)
 						{
-						$room_values[$field] = $new_rooms[$value];
+						// Sanitize?
+						if ($field != 'id' && $field != 'zones_id')
+							{
+							$room_values[$field] = $value;
+							}
+
+						if (is_numeric($value) && in_array($value, array_keys($new_rooms)))
+							{
+							$room_values[$field] = $new_rooms[$value];
+							}
 						}
+
+					$Room->fill($room_values);
+
+					$Room->zones_id = $Zone->id;
+
+					$Room->save();
 					}
-
-				$Room->fill($room_values);
-
-				$Room->zones_id = $Zone->id;
-
-				$Room->save();
 				}
 			}
 
