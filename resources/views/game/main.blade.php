@@ -12,8 +12,8 @@
 	There is <span style="color:#33ffee">{{$online_count}}</span> active player online.
 	<br>
 	Population: YOU
-	</div>
 	@endif
+	</div>
 	<br><br>
 	<span style="color: #00FFFF">
 		<strong>Menu:</strong>
