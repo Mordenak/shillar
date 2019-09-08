@@ -90,19 +90,31 @@ class BasicEntries extends Seeder
 			// End 10
 			['name' => 'HOSTILE_RECENT_DEATH', 'description' => 'Must have a recent death as defined in minutes, otherwise creatures are hostile.', 'format' => '{"minutes":30}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'SCRAMBLE_DIRECTIONS', 'description' => "Every room in this zone will have it's directions scrambled, enabling treasure hunting.  Bypassed by COMPASS item property.", 'format' => '{}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_ON_ITEM_STRING', 'description' => 'If character is carrying more than specified number of items matching the item string, creatures are aggressive', 'format' => '{"string":"ice","amount":1}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'HOSTILE_WITHOUT_QUEST', 'description' => 'If Character has not completed a certain quest specified by ID, creatures will be aggressive.', 'format' => '{"quest":1}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'SCRAMBLE_TELEPORT', 'description' => 'Teleport locations in this zone will randomly drop the character in either target or any adjacent room.', 'format' => '{"quest":1}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// End 15
+			['name' => 'RANDOM_ROOM', 'description' => 'Any room in this zone may randomly have an additional link to another specified room.', 'format' => '{"direction":"down","rooms_id":1,"chance":0.01}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		DB::table('item_properties')->insert([
-			['name' => 'STAT_BONUS', 'description' => 'Adds a flat amount of each specified stat.', 'format' => '{"strength":10,"dexterity":10}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'STAT_BONUS', 'description' => 'Adds a flat amount of each specified stat.  Currently used for Racial & Mithrils armors, and phylacteries.', 'format' => '{"strength":10,"dexterity":10}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'RESTORES', 'description' => "Restores a Character's health, mana and fatigue by the specified amount, not used by anything yet.", 'format' => '{"amount":10}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'TRADER_SCORE_RESTRICTION', 'description' => 'The wall score amount required to receive this item.', 'format' => '{"score":2000}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'DROP_RANDOM', 'description' => 'When this item is dropped, randomize the properties based on this property.', 'format' => '[{"Supreme":{"amount":350,"score_req":35000}},{"Masculine": "Male", "Feminine": "Female"},{"Human":"Human"},{"Might":"strength"}]', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'RENAME_ITEM', 'description' => "This overrides the item's original name.", 'format' => '{"name":"new_name"}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'LIGHT_LEVEL_BONUS', 'description' => 'Add an amount of light level.', 'format' => '{"amount":1}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HEAT_PROTECTION', 'description' => 'Add a percentage of heat damage protection, use 1.0 for immunity.', 'format' => '{"amount":0.5}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'COLD_PROTECTION', 'description' => 'Add a percentage of cold damage protection, use 1.0 for immunity.', 'format' => '{"amount":0.5}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'GRANTS_SWIMMING', 'description' => 'When equipped, grants the swimming ability.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'GRANTS_FLYING', 'description' => 'Carrying this item grants the flying ability.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'DAMAGE_EARTH_GUARDIAN', 'description' => 'This weapon can damage the Earth Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'DAMAGE_AIR_GUARDIAN', 'description' => 'This weapon can damage the Air Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'DAMAGE_FIRE_GUARDIAN', 'description' => 'This weapon can damage the Fire Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'DAMAGE_WATER_GUARDIAN', 'description' => 'This weapon can damage the Water Elemental.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'RACE_RESTRICTION', 'description' => 'Must be the specified Race to equip this item.', 'format' => '{"race":"Elf"}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GENDER_RESTRICTION', 'description' => 'Must be the specified Gender to equip this item.', 'format' => '{"gender":"Male"}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GRANTS_SWIMMING', 'description' => 'When equipped, grants the swimming ability.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'GRANTS_FLYING', 'description' => 'Carrying this item grants the flying ability.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'IS_CURSED', 'description' => 'This item is cursed and must be cleansed.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'COMPASS', 'description' => 'This item bypasses zone property SCRAMBLE_DIRECTIONS.', 'format' => '{}', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 

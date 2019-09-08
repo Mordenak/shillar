@@ -233,7 +233,8 @@
 	<div id="unlinked-list">
 		<div>
 			-- Room Options --<br>
-			<a href="#" onclick="linkUp()">Go up</a><br>
+			<a href="#" onclick="linkUp();">Go up</a><br>
+			<a href="#" onclick="linkDown();">Go Down</a><br>
 			-- Map Options --<br>
 			<a href="#" onclick="addRow(true);">Add Row Top</a><br>
 			<a href="#" onclick="addRow();">Add Row Bottom</a><br>
@@ -712,7 +713,7 @@ function process_rooms(room_list)
 				{
 				if ($('#map_'+(key +1)).length == 0)
 					{
-					added_level = addZLevel(1);
+					added_level = addZLevel(-1);
 					}
 
 				if ($(selector).find('td#'+room.down_rooms_id).length == 0)
@@ -1121,6 +1122,7 @@ function linkUp()
 	var col = $selection.index();
 	var current_level = $selection.closest('.map').attr('data-zone_level');
 	var next_level = parseInt(current_level) + 1;
+	console.log('next_level: '+next_level);
 	if ($('#map_'+next_level).length == 0)
 		{
 		addZLevel(1);
@@ -1131,8 +1133,34 @@ function linkUp()
 	performLink($selection, $target_room);
 	$selection.removeClass('highlight');
 	$target_room.addClass('highlight');
-	switchZLevel(next_level);
+	switchZLevel(1);
 	}
+
+function linkDown()
+	{
+	var $selection = $('.highlight:visible');
+	if ($selection.length == 0)
+		{
+		return false;
+		}
+	var row = $selection.parent().index();
+	var col = $selection.index();
+	var current_level = $selection.closest('.map').attr('data-zone_level');
+	var next_level = parseInt(current_level) - 1;
+	console.log('next_level: '+next_level);
+	if ($('#map_'+next_level).length == 0)
+		{
+		addZLevel(-1);
+		}
+	var $target_room = $('#map_'+next_level).find('tr').eq(row).find('td').eq(col);
+	create_room($target_room, $new_ids);
+	$new_ids++;
+	performLink($selection, $target_room);
+	$selection.removeClass('highlight');
+	$target_room.addClass('highlight');
+	switchZLevel(-1);
+	}
+
 
 function switchZLevel($int)
 	{
@@ -1198,17 +1226,17 @@ function addZLevel($int)
 	}
 
 // Not needed yet:
- document.getElementById('map_0').addEventListener("wheel", event => {
-	 const delta = Math.sign(event.deltaY);
-	 if (delta == -1)
-		{
-		$('.map').animate({ 'zoom': 1 }, {'queue': false});
-		}
-	 else
-		{
-		$('.map').animate({ 'zoom': .65 }, {'queue': false});
-		}
-}); 
+// document.getElementById('map_0').addEventListener("wheel", event => {
+// 	 const delta = Math.sign(event.deltaY);
+// 	 if (delta == -1)
+// 		{
+// 		$('.map').animate({ 'zoom': 1 }, {'queue': false});
+// 		}
+// 	 else
+// 		{
+// 		$('.map').animate({ 'zoom': .65 }, {'queue': false});
+// 		}
+// }); 
 
 $('body').on('contextmenu', '.map td', function(e) { 
 	$target = $(e.target);
@@ -1255,7 +1283,7 @@ function performLink($selected, $target, $reverse = false)
 			if ($target.parent().index() == $current.parent().index())
 				{
 				// Then this could go up or down:
-				if ($selected.closest('.map').attr('data-zone_level') > $target.closest('.map').attr('data-zone_level'))
+				if (parseInt($selected.closest('.map').attr('data-zone_level')) > parseInt($target.closest('.map').attr('data-zone_level')))
 					{
 					// Down
 					createLink($current, 'down_rooms_id', $target.attr('id'));

@@ -184,7 +184,7 @@ function addZoneProperty($btn)
 	}
 </script>
 
-<div style="display:none;">
+<div style="">
 @if (isset($zone))
 @foreach ($zone->rooms_q()->orderBy('id', 'asc')->get() as $room)
 [
@@ -201,6 +201,10 @@ function addZoneProperty($btn)
 @else
 
 @if ($key == 'spawns_enabled')
+'{{$key}}' => true,
+@elseif ($key == 'inherit_creatures')
+'{{$key}}' => true,
+@elseif ($key == 'inherit_properties')
 '{{$key}}' => true,
 @else
 '{{$key}}' => '{{$value}}', 

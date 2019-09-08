@@ -29,6 +29,13 @@ Creating a new room:<br>
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Level:</label>
+			<div class="col-md-3">
+				<input type="text" name="zone_level" value="{{isset($room) ? $room->zone_level : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">UID:</label>
 			<div class="col-md-3">
 				<input type="text" name="uid" value="{{isset($room) ? $room->uid : ''}}" class="form-control">

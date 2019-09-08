@@ -303,7 +303,6 @@ class SetupTables extends Migration
 			// TODO: Remove duplicate name for now?  Consider re-adding?
 			// $table->string('name');
 			$table->integer('equipment_slot');
-			$table->integer('light_level')->nullable();
 			$table->integer('strength_bonus')->nullable();
 			$table->integer('dexterity_bonus')->nullable();
 			$table->integer('constitution_bonus')->nullable();
@@ -341,12 +340,18 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		// ???
+		// Schema::create('item_scrolls', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('items_id');
+		// 	$table->foreign('items_id')->references('id')->on('items');
+		// 	$table->timestamps();
+		// });
+
 		Schema::create('item_others', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
-			// TODO: Remove duplicate name for now?  Consider re-adding?
-			// $table->string('name');
 			$table->timestamps();
 		});
 
@@ -444,6 +449,28 @@ class SetupTables extends Migration
 			$table->foreign('item_properties_id')->references('id')->on('item_properties');
 			$table->integer('inventory_items_id');
 			$table->foreign('inventory_items_id')->references('id')->on('inventory_items');
+			$table->jsonb('data');
+			$table->timestamps();
+		});
+
+		Schema::create('ground_items',function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('rooms_id');
+			$table->foreign('rooms_id')->references('id')->on('rooms');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
+			$table->integer('items_id');
+			$table->foreign('items_id')->references('id')->on('items');
+			$table->integer('expires_on');
+			$table->timestamps();
+		});
+
+		Schema::create('ground_item_to_item_properties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('item_properties_id');
+			$table->foreign('item_properties_id')->references('id')->on('item_properties');
+			$table->integer('ground_items_id');
+			$table->foreign('ground_items_id')->references('id')->on('ground_items');
 			$table->jsonb('data');
 			$table->timestamps();
 		});
@@ -996,9 +1023,10 @@ class SetupTables extends Migration
 		Schema::dropIfExists('item_property_items');
 		Schema::dropIfExists('item_to_item_properties');
 		Schema::dropIfExists('inventory_item_to_item_properties');
+		Schema::dropIfExists('ground_item_to_item_properties');
 		Schema::dropIfExists('item_properties');
-		
 		Schema::dropIfExists('inventory_items');
+		Schema::dropIfExists('ground_items');
 		Schema::dropIfExists('inventories');
 		
 		Schema::dropIfExists('quest_rewards');
