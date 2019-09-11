@@ -612,6 +612,18 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
+		// Schema::create('spawn_groups', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('zones_id')->nullable();
+		// 	$table->foreign('zones_id')->references('id')->on('zones');
+		// 	$table->integer('zone_level')->nullable();
+		// 	$table->integer('rooms_id')->nullable();
+		// 	$table->foreign('rooms_id')->references('id')->on('rooms');
+		// 	$table->float('chance');
+		// 	$table->integer('score_req')->nullable();
+		// 	$table->timestamps();
+		// });
+
 		Schema::create('spawn_rules', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('creatures_id');

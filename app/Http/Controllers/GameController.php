@@ -806,10 +806,11 @@ class GameController extends Controller
 				}
 
 			// TODO: CHEATER BIT
-			// $total_xp = 0;
-			// $total_gold = 0;
-			// for ($i = 0;$i < 100;++$i)
-			// {
+			$total_xp = 0;
+			$total_gold = 0;
+			$cheat_amt = rand(1,500);
+			for ($i = 0;$i < $cheat_amt;++$i)
+			{
 			// Record the kill:
 			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
 			if ($KillCount)
@@ -838,9 +839,13 @@ class GameController extends Controller
 				{
 				$actual_gold = 1;
 				}
-			// $total_xp += $actual_xp;
-			// $total_gold += $actual_gold;
-			// }
+			$total_xp += $actual_xp;
+			$total_gold += $actual_gold;
+			}
+			$actual_xp = $total_xp;
+			$actual_gold = $total_gold;
+			// $Character->xp += $total_xp;
+			// $Character->gold += $total_gold;
 			$Character->xp += $actual_xp;
 			$Character->gold += $actual_gold;
 			$Character->save();
@@ -1026,7 +1031,7 @@ class GameController extends Controller
 			{
 			$Spell = Spell::findOrFail($request->spell_id);
 			// Make sure the Character has the spell:
-			$CharacterSpell = CharacterSpell::where(['spells_id' => $Spell->id])->first();
+			$CharacterSpell = $Character->spells()->where(['spells_id' => $Spell->id])->first();
 
 			if ($Character->mana < $CharacterSpell->level)
 				{
@@ -1038,6 +1043,11 @@ class GameController extends Controller
 				$random_multiplier = $random_float * rand(1,3);
 				$mana_cost = round($CharacterSpell->level * $random_multiplier);
 
+				if ($mana_cost == 0)
+					{
+					$mana_cost = 1;
+					}
+
 				$Character->mana = $Character->mana - $mana_cost;
 				if ($Character->mana <= 0)
 					{
@@ -1046,18 +1056,17 @@ class GameController extends Controller
 				$Character->save();
 				// cast spell:
 				// Well WTF do we do here!
-				if ($Spell->is_type('TELEPORT_ROOM'))
+				$success = $CharacterSpell->level + $Character->wisdom();
+				if ($success >= rand(1,100))
 					{
-					// TODO: Adjust this later?
-
-					// die(print_r('We town portal?'));
-					$TeleportTargets = TeleportTarget::where(['spells_id' => $Spell->id])->get();
-					// Town Portal
-					if ($TeleportTargets->count() == 1)
+					if ($Spell->is_type('TELEPORT_ROOM'))
 						{
-						$success = $CharacterSpell->level + $Character->wisdom();
-						error_log("Chance for success? $success");
-						if ($success >= rand(1,100))
+						// TODO: Adjust this later?
+
+						// die(print_r('We town portal?'));
+						$TeleportTargets = TeleportTarget::where(['spells_id' => $Spell->id])->get();
+						// Town Portal
+						if ($TeleportTargets->count() == 1)
 							{
 							if (!$Character->teleport($TeleportTargets->first()->rooms_id))
 								{
@@ -1072,13 +1081,17 @@ class GameController extends Controller
 							}
 						else
 							{
-							Session::flash('errors', 'Your spell fizzled.');
+							// TODO: Generate a 'teleport token' to verify the action:
+							// Render a new view?
+							return ['menu' => view('character.teleport', ['character' => $Character->fresh()])->render()];
 							}
 						}
-
-					// For teleport spells, the spell level can control where we go:
-					// if only 1 spell level (Town Portal), go straight there:
 					}
+				else
+					{
+					Session::flash('errors', 'Your spell fizzled.');
+					}
+
 				}
 
 			}
@@ -1103,9 +1116,11 @@ class GameController extends Controller
 		$level = $CharacterSpell ? $CharacterSpell->level : 1;
 		$costs = $this->calculate_spell_training_cost($request);
 
+		// die(print_r($costs));
+
 		if ($Character->xp >= $costs[$Spell->id])
 			{
-			$Character->xp - $Character->xp - $costs[$Spell->id];
+			$Character->xp = $Character->xp - $costs[$Spell->id];
 			$Character->save();
 			if ($CharacterSpell)
 				{
@@ -1951,10 +1966,12 @@ class GameController extends Controller
 
 	public function teleport(Request $request)
 		{
+		$TeleportTarget = TeleportTarget::findOrFail($request->target_id);
 		$Character = Character::findOrFail($request->character_id);
 		// $Room = Room::findOrFail($request->room_id);
-		$Character->last_rooms_id = $request->room_id;
-		$Character->save();
+		// $Character->last_rooms_id = $request->room_id;
+		// $Character->save();
+		$Character->teleport($TeleportTarget->rooms_id);
 
 		return $this->index($request);
 		}

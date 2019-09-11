@@ -62,16 +62,39 @@ Creating an item:
 		<input type="hidden" name="id" id="db-id" value="{{$item->id}}">
 		@endif
 
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-1">
-				<a href="/item/all" class="btn btn-primary">Cancel</a>
+		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
+			<div class="col-md-1">
+				<a href="/admin" class="btn btn-info">Admin Home</a>
 			</div>
-			<div class="col-md-2 offset-md-2">
+			<div class="col-md-3 offset-md-1">
+				<h3>
+				@if (isset($zone))
+				Editing a Item:
+				@else
+				Creating a Item:
+				@endif
+				</h3>
+			</div>
+			<div class="col-md-1">
+				<a href="/item/all" class="btn btn-secondary">Cancel</a>
+			</div>
+			<div class="col-md-1">
 				<input type="submit" value="Save" class="btn btn-primary">
 			</div>
 		</div>
 	</form>
 </div>
+
+<br><br>
+@if (isset($item))
+<div class="col-md-1">
+	<form method="post" action="/item/delete">
+		{{csrf_field()}}
+		<input type="hidden" name="id" value="{{$item->id}}">
+		<input type="submit" value="Delete This Item" class="btn btn-danger">
+	</form>
+</div>
+@endif
 
 <script>
 $('#type-select').on('change', function(e) {

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-<div style="margin-top:5rem;">
+<div>
 	<form action="/creature/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
 		<div class="form-group row">
@@ -42,7 +42,7 @@
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">XP Variation:</label>
 			<div class="col-md-3">
-				<input type="text" name="xp_variation" value="{{isset($creature) ? $creature->xp_variation : ''}}" placeholder="0.15" class="form-control">
+				<input type="text" name="xp_variation" value="{{isset($creature) ? $creature->xp_variation : '0.1'}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
@@ -62,7 +62,17 @@
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Gold Variation:</label>
 			<div class="col-md-3">
-				<input type="text" name="gold_variation" value="{{isset($creature) ? $creature->gold_variation : ''}}" placeholder="0.15" class="form-control">
+				<input type="text" name="gold_variation" value="{{isset($creature) ? $creature->gold_variation : '0.375'}}" class="form-control">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Magic Resist:</label>
+			<div class="col-md-3">
+				<input type="text" name="magic_resistance" value="{{isset($creature) ? $creature->magic_resistance : ''}}" class="form-control">
+			</div>
+			<label class="col-md-2 col-form-label text-md-right">Scroll Resist:</label>
+			<div class="col-md-3">
+				<input type="text" name="scroll_resistance" value="{{isset($creature) ? $creature->scroll_resistance : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
@@ -202,29 +212,39 @@
 		<input type="hidden" name="id" value="{{$creature->id}}">
 		@endif
 
-		<div class="form-group row mb-0 fixed-top">
+		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
 			<div class="col-md-1">
-				@if (isset($creature))
+				<a href="/admin" class="btn btn-info">Admin Home</a>
+			</div>
+			<div class="col-md-3 offset-md-1">
+				<h3>
+				@if (isset($zone))
 				Editing a Creature:
 				@else
 				Creating a Creature:
 				@endif
+				</h3>
 			</div>
 			<div class="col-md-1">
-				<a href="/creature/all" class="btn btn-primary">Cancel</a>
+				<a href="/creature/all" class="btn btn-secondary">Cancel</a>
 			</div>
-			<div class="col-md-2">
+			<div class="col-md-1">
 				<input type="submit" value="Save" class="btn btn-primary">
 			</div>
 		</div>
 	</form>
-
-	<br><br>
-
 </div>
 
-<a href="/creature/all">Back</a>
 <br><br>
+@if (isset($creature))
+<div class="col-md-1">
+	<form method="post" action="/creature/delete">
+		{{csrf_field()}}
+		<input type="hidden" name="id" value="{{$creature->id}}">
+		<input type="submit" value="Delete This Creature" class="btn btn-danger">
+	</form>
+</div>
+@endif
 
 <script>
 function addSpawnRule($btn)

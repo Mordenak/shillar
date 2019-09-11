@@ -1,57 +1,59 @@
-
-
+<span style="color: #00FFFF">
+	<strong>Equipment</strong>
+</span>
+<br><br>
 @if ($character)
 <form method="post" action="/equipment" class="ajax" id="equip">
-	Weapon:
+	Weapon:<br>
 	<select name="weapon">
 		<option value="0">-- Nothing --</option>
 		@foreach ($weapons as $weapon)
 		<option value="{{$weapon['id']}}" {{ $weapon['selected'] ? 'selected' : '' }} >{{$weapon['name']}}</option>
 		@endforeach
 	</select><br>
-	Shield:
+	Shield:<br>
 	<select name="shield">
 		<option value="0">-- Nothing --</option>
 		@foreach ($shields as $shield)
 		<option value="{{$shield['id']}}" {{ $shield['selected'] ? 'selected' : '' }} >{{$shield['name']}}</option>
 		@endforeach
 	</select><br>
-	Head:
+	Head:<br>
 	<select name="head">
 		<option value="0">-- Nothing --</option>
 		@foreach ($heads as $head)
 		<option value="{{$head['id']}}" {{ $head['selected'] ? 'selected' : '' }} >{{$head['name']}}</option>
 		@endforeach
 	</select><br>
-	Neck:
+	Neck:<br>
 	<select name="neck">
 		<option value="0">-- Nothing --</option>
 		@foreach ($necks as $neck)
 		<option value="{{$neck['id']}}" {{ $neck['selected'] ? 'selected' : '' }} >{{$neck['name']}}</option>
 		@endforeach
 	</select><br>
-	Chest:
+	Chest:<br>
 	<select name="chest">
 		<option value="0">-- Nothing --</option>
 		@foreach ($chests as $chest)
 		<option value="{{$chest['id']}}" {{ $chest['selected'] ? 'selected' : '' }} >{{$chest['name']}}</option>
 		@endforeach
 	</select><br>
-	Hands:
+	Hands:<br>
 	<select name="hands">
 		<option value="0">-- Nothing --</option>
 		@foreach ($hands as $hand)
 		<option value="{{$hand['id']}}" {{ $hand['selected'] ? 'selected' : '' }} >{{$hand['name']}}</option>
 		@endforeach
 	</select><br>
-	Legs:
+	Legs:<br>
 	<select name="legs">
 		<option value="0">-- Nothing --</option>
 		@foreach ($legs as $leg)
 		<option value="{{$leg['id']}}" {{ $leg['selected'] ? 'selected' : '' }} >{{$leg['name']}}</option>
 		@endforeach
 	</select><br>
-	Feet:
+	Feet:<br>
 	<select name="feet">
 		<option value="0">-- Nothing --</option>
 		@foreach ($feets as $feet)
@@ -59,28 +61,28 @@
 		@endforeach
 	</select><br>
 	-- Accessories --<br>
-	Neck:
+	Neck:<br>
 	<select name="amulet">
 		<option value="0">-- Nothing --</option>
 		@foreach ($amulets as $amulet)
 		<option value="{{$amulet['id']}}" {{ $amulet['selected'] ? 'selected' : '' }} >{{$amulet['name']}}</option>
 		@endforeach
 	</select><br>
-	Left Ring:
+	Left Ring:<br>
 	<select name="left_ring">
 		<option value="0">-- Nothing --</option>
 		@foreach ($left_rings as $ring)
 		<option value="{{$ring['id']}}" {{ $ring['selected'] ? 'selected' : '' }} >{{$ring['name']}}</option>
 		@endforeach
 	</select><br>
-	Right Ring:
+	Right Ring:<br>
 	<select name="right_ring">
 		<option value="0">-- Nothing --</option>
 		@foreach ($right_rings as $ring)
 		<option value="{{$ring['id']}}" {{ $ring['selected'] ? 'selected' : '' }} >{{$ring['name']}}</option>
 		@endforeach
 	</select><br>
-	Bracelet:
+	Bracelet:<br>
 	<select name="bracelet">
 		<option value="0">-- Nothing --</option>
 		@foreach ($bracelets as $bracelet)

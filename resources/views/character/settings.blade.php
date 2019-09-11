@@ -1,9 +1,12 @@
+<span style="color: #00FFFF">
+	<strong>Options</strong>
+</span>
+<br><br>
 @if( Session::has("settings") )
 <p>
 {{ Session::get("settings") }}
 </p>
 @endif
-
 <form method="post" action="/character/update_settings" class="ajax">
 	Menu Refresh:
 	<select name="refresh_rate">

@@ -87,6 +87,21 @@ class Character extends Model
 		return $arr;
 		}
 
+	public function eligible_teleports()
+		{
+		$CharacterSpell = $this->has_spell(1);
+		// TODO: code this differently to support multiple teleports, or code something else entirely:
+		if ($CharacterSpell)
+			{
+			$TeleportTargets = TeleportTarget::where('spells_id', '=', 1)
+				->where('level_req', '<=', $CharacterSpell->level)
+				->where('wisdom_req', '<=', $this->wisdom())
+				->get();
+			return $TeleportTargets;
+			}
+		return null;
+		}
+
 	public function rank()
 		{
 		// Get rank:

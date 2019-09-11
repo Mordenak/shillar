@@ -262,7 +262,7 @@
 			e.preventDefault();
 
 			var main_exceptions = [
-				'/teleport',
+				// '/teleport',
 				];
 
 			var menu_inserts = [
@@ -318,30 +318,12 @@
 
 					$('input:disabled,select:disabled').removeAttr('disabled');
 
-					if (this['url'] == '/spells')
+					if (this['url'] == '/spells' || this['url'] == '/game/teleport')
 						{
 						$('.main').html(resp.main);
 						$('.menu').html(resp.menu);
 						return true;
 						}
-
-					var main_exceptions = [
-						'/teleport',
-						];
-
-					var menu_inserts = [
-						'/equipment',
-						'/food',
-						'/show_stats',
-						'/menu',
-						'/settings',
-						'/character/update_settings'
-						];
-
-					var footer_inserts = [
-						'/chat/message',
-						'/footer'
-						];
 
 					// var replace = '.game-container';
 					// console.log(this['url']);

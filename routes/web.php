@@ -59,6 +59,7 @@ Route::post('/admin/give_item', 'AdminController@give_item');
 Route::post('/game/deposit', 'GameController@deposit');
 Route::post('/game/withdraw', 'GameController@withdraw');
 Route::post('/game/consider', 'GameController@consider');
+Route::post('/game/teleport', 'GameController@teleport');
 Route::post('/game/choose_alignment', 'GameController@choose_alignment');
 
 Route::post('/character/update_settings', 'CharacterController@update_settings');

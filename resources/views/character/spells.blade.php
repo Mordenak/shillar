@@ -1,24 +1,24 @@
+<span style="color: #00FFFF">
+	<strong>Spell Book</strong>
+</span>
+<br><br>
 @if( Session::has("errors") )
 <p style="color: red;display: inline;">
 {{ Session::pull("errors") }}
 <p>
 @endif
-
 @if ($character)
+
+@foreach ($character->spells()->get() as $spell)
 <form method="post" action="/spells" class="ajax" id="cast">
-	Cast Spell:
-	<select name="spell_id">
-		<option disabled selected>-- None --</option>
-		@foreach ($character->spells()->get() as $spell)
-		<option value="{{$spell->spell()->id}}">{{$spell->spell()->name}}</option>
-		@endforeach
-	</select><br>
+	<label for="spell_{{$spell->spell()->id}}">Cast {{$spell->spell()->name}}</label>
+	<input type="submit" id="spell_{{$spell->spell()->id}}" style="display:none;">
 	<input type="hidden" name="character_id" value="{{$character->id}}">
+	<input type="hidden" name="spell_id" value="{{$spell->spell()->id}}">
 	<input type="hidden" name="action" value="cast">
 	{{csrf_field()}}
-
-	<input type="submit" value="Cast">
 </form>
+@endforeach
 
 <br>
 <div style="display: inline-block;">

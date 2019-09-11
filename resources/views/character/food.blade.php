@@ -1,6 +1,10 @@
+<span style="color: #00FFFF">
+	<strong>Food</strong>
+</span>
+<br><br>
 @if ($character)
 <form method="post" action="/food" class="ajax" id="consume">
-	Consumable:
+	Food:
 	<select name="item">
 		<option disabled selected>-- None --</option>
 		@foreach ($items as $item)
