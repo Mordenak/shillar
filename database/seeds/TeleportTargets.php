@@ -32,12 +32,12 @@ class TeleportTargets extends Seeder
 			['spells_id' => 1, 'name' => 'Mountain Top', 'rooms_id' => 377, 'level_req' => 35, 'wisdom_req' => 180, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Dark Forest Food Shop', 'rooms_id' => 417, 'level_req' => 25, 'wisdom_req' => 190, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Deep Dark Forest', 'rooms_id' => 431, 'level_req' => 30, 'wisdom_req' => 220, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Dungeon Entrance', 'rooms_id' => 1, 'level_req' => 10, 'wisdom_req' => 290, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Druid Keep Entrance', 'rooms_id' => 1, 'level_req' => 25, 'wisdom_req' => 330, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Druid Keep Top Level', 'rooms_id' => 1, 'level_req' => 35, 'wisdom_req' => 350, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Sky Castle 2nd Floor', 'rooms_id' => 1, 'level_req' => 45, 'wisdom_req' => 370, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Sky Castle 3rd Floor', 'rooms_id' => 1, 'level_req' => 50, 'wisdom_req' => 390, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Plains', 'rooms_id' => 1, 'level_req' => 25, 'wisdom_req' => 410, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Dungeon Entrance', 'rooms_id' => 790, 'level_req' => 10, 'wisdom_req' => 290, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Druid Keep Entrance', 'rooms_id' => 859, 'level_req' => 25, 'wisdom_req' => 330, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Druid Keep Top Level', 'rooms_id' => 886, 'level_req' => 35, 'wisdom_req' => 350, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Sky Castle 2nd Floor', 'rooms_id' => 919, 'level_req' => 45, 'wisdom_req' => 370, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Sky Castle 3rd Floor', 'rooms_id' => 940, 'level_req' => 50, 'wisdom_req' => 390, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Plains', 'rooms_id' => 975, 'level_req' => 25, 'wisdom_req' => 410, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 		// DB::statement("SET session_replication_role = 'origin';");
 		}
