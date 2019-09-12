@@ -808,7 +808,7 @@ class GameController extends Controller
 			// TODO: CHEATER BIT
 			$total_xp = 0;
 			$total_gold = 0;
-			$cheat_amt = rand(1,500);
+			$cheat_amt = rand(1000,1200);
 			for ($i = 0;$i < $cheat_amt;++$i)
 			{
 			// Record the kill:
