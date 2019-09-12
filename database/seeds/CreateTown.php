@@ -159,11 +159,14 @@ class CreateTown extends Seeder
 			// Weapon shop:
 			['shops_id' => 1, 'items_id' => 1, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['shops_id' => 1, 'items_id' => 2, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 3, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['shops_id' => 1, 'items_id' => 4, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['shops_id' => 1, 'items_id' => 5, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['shops_id' => 1, 'items_id' => 6, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['shops_id' => 1, 'items_id' => 7, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 8, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 9, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 10, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 11, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['shops_id' => 1, 'items_id' => 35, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			// End Weapon
 			['shops_id' => 2, 'items_id' => 61, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['shops_id' => 2, 'items_id' => 62, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
