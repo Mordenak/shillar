@@ -612,27 +612,58 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// Schema::create('spawn_groups', function (Blueprint $table) {
+		// Schema::create('creature_groups', function (Blueprint $table) {
 		// 	$table->bigIncrements('id');
-		// 	$table->integer('zones_id')->nullable();
-		// 	$table->foreign('zones_id')->references('id')->on('zones');
-		// 	$table->integer('zone_level')->nullable();
-		// 	$table->integer('rooms_id')->nullable();
+		// 	$table->string('name');
+		// 	$table->text('description')->nullable();
+		// 	$table->timestamps();
+		// });
+
+		// Schema::create('creature_to_creature_groups', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('creatures_id');
+		// 	$table->foreign('creatures_id')->references('id')->on('creatures');
+		// 	$table->integer('creature_groups_id');
+		// 	$table->foreign('creature_groups_id')->references('id')->on('creature_groups');
+		// 	$table->timestamps();
+		// });
+
+		// Schema::create('room_groups', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->string('uid')->unique()->nullable();
+		// 	$table->string('name');
+		// 	$table->text('description')->nullable();
+		// 	$table->text('travel_text')->nullable();
+		// 	$table->string('img_src')->nullable();
+		// 	$table->string('bg_color')->nullable();
+		// 	$table->string('font_color')->nullable();
+		// 	$table->string('label_color')->nullable();
+		// 	$table->string('custom_view')->nullable();
+		// 	$table->timestamps();
+		// });
+
+		// Schema::create('room_to_room_groups', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('rooms_id');
 		// 	$table->foreign('rooms_id')->references('id')->on('rooms');
-		// 	$table->float('chance');
-		// 	$table->integer('score_req')->nullable();
+		// 	$table->integer('room_groups_id');
+		// 	$table->foreign('room_groups_id')->references('id')->on('room_groups');
 		// 	$table->timestamps();
 		// });
 
 		Schema::create('spawn_rules', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('creatures_id');
+			$table->integer('creatures_id')->nullable();
 			$table->foreign('creatures_id')->references('id')->on('creatures');
+			// $table->integer('creature_groups_id')->nullable();
+			// $table->foreign('creature_groups_id')->references('id')->on('creature_groups');
 			$table->integer('zones_id')->nullable();
 			$table->foreign('zones_id')->references('id')->on('zones');
 			$table->integer('zone_level')->nullable();
 			$table->integer('rooms_id')->nullable();
 			$table->foreign('rooms_id')->references('id')->on('rooms');
+			// $table->integer('room_groups_id')->nullable();
+			// $table->foreign('room_groups_id')->references('id')->on('room_groups');
 			$table->float('chance');
 			$table->integer('score_req')->nullable();
 			$table->timestamps();
