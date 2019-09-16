@@ -22,4 +22,9 @@ class SpawnRule extends Model
 		{
 		return $this->belongsTo('App\Creature', 'creatures_id')->first();
 		}
+
+	public function creature_group()
+		{
+		return $this->belongsTo('App\CreatureGroup', 'creature_groups_id')->first();
+		}
 }

@@ -30,7 +30,7 @@ class TeleportTargets extends Seeder
 			['spells_id' => 1, 'name' => 'Mountain Entrance', 'rooms_id' => 362, 'level_req' => 30, 'wisdom_req' => 160, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Ogre Cave', 'rooms_id' => 387, 'level_req' => 35, 'wisdom_req' => 170, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Mountain Top', 'rooms_id' => 377, 'level_req' => 35, 'wisdom_req' => 180, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['spells_id' => 1, 'name' => 'Dark Forest Food Shop', 'rooms_id' => 417, 'level_req' => 25, 'wisdom_req' => 190, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Dark Forest Food Shop', 'rooms_id' => 416, 'level_req' => 25, 'wisdom_req' => 190, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Deep Dark Forest', 'rooms_id' => 431, 'level_req' => 30, 'wisdom_req' => 220, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Dungeon Entrance', 'rooms_id' => 790, 'level_req' => 10, 'wisdom_req' => 290, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Druid Keep Entrance', 'rooms_id' => 859, 'level_req' => 25, 'wisdom_req' => 330, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],

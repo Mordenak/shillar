@@ -260,6 +260,33 @@ class ItemsData extends Seeder
 			['name' => 'Mulled Wine', 'item_types_id' => 4, 'value' => 800000, 'weight' => 0.75, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Fresh Flesh', 'item_types_id' => 4, 'value' => 900000, 'weight' => 0.75, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Ancient Spirit Herb', 'item_types_id' => 4, 'value' => 1000000, 'weight' => 0.5, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Jewels?
+			['name' => 'Green Emerald', 'item_types_id' => 5, 'value' => 1000000, 'weight' => 1.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Black Pearl', 'item_types_id' => 5, 'value' => 1000000, 'weight' => 1.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Red Ruby', 'item_types_id' => 5, 'value' => 1000000, 'weight' => 1.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Azure Diamond', 'item_types_id' => 5, 'value' => 1000000, 'weight' => 1.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Small Pearl', 'item_types_id' => 5, 'value' => 1000000, 'weight' => 1.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Black Obsidian', 'item_types_id' => 5, 'value' => 1000000, 'weight' => 1.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Aqua Sapphire', 'item_types_id' => 5, 'value' => 1000000, 'weight' => 1.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Dusts?
+			['name' => 'Green Pixie Dust', 'item_types_id' => 6, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Gold Pixie Dust', 'item_types_id' => 6, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Red Pixie Dust', 'item_types_id' => 6, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'White Pixie Dust', 'item_types_id' => 6, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Black Pixie Dust', 'item_types_id' => 6, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Aqua Pixie Dust', 'item_types_id' => 6, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Other?  Scrolls/etc?
+			['name' => 'Fire Storm Scroll', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Ice Storm Scroll', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 0.25, 'is_stackable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Green Trunk', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 12.5, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Red Trunk', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 12.5, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Black Trunk', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 12.5, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Jewelry Box', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 12.5, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Compass', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 1.0, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Earth Key', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 0, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Fire Key', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 0, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Water Key', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 0, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Air Key', 'item_types_id' => 7, 'value' => 1000000, 'weight' => 0, 'is_stackable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 
 		DB::table('item_weapons')->insert([
@@ -515,6 +542,39 @@ class ItemsData extends Seeder
 			['items_id' => 233, 'potency' => 7866, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['items_id' => 234, 'potency' => 8172, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['items_id' => 235, 'potency' => 8478, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
+
+		DB::table('item_jewels')->insert([
+			['items_id' => 236, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 237, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 238, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 239, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 240, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 241, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 242, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			]);
+
+		DB::table('item_dusts')->insert([
+			['items_id' => 243, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 244, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 245, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 246, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 247, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 248, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			]);
+
+		DB::table('item_others')->insert([
+			['items_id' => 249, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 250, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 251, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 252, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 253, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 254, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 255, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 256, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 257, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 258, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['items_id' => 259, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			]);
 		}
 	}

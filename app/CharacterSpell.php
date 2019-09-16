@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CharacterSpell extends Model
 {
-	protected $fillable = ['spells_id', 'character_id', 'level'];
+	protected $fillable = ['spells_id', 'characters_id', 'level'];
 
 	public function spell()
 		{

@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 // Lol, what is going on here:
-// Refactor to use App\{User, Character, etc.}?
 use Session;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget};
+use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem};
 
 class GameController extends Controller
 	{
@@ -28,6 +27,7 @@ class GameController extends Controller
 			return redirect('/home');
 			}
 
+		$Character->calc_quick_stats();
 		if ($Character->health <= 0)
 			{
 			return $this->death($request);
@@ -37,6 +37,7 @@ class GameController extends Controller
 		$Room = Room::findOrFail($Character->last_rooms_id);
 		$Zone = $Room->zone();
 		
+		// TODO: Spawn code, refactor?
 		$Creature = null;
 		// Block spawn in certain events:
 		if (Session::has('creature.'.$Room->id))
@@ -52,42 +53,13 @@ class GameController extends Controller
 			}
 		else
 			{
-			// Find spawn rules for room:
-			$SpawnRule = SpawnRule::where(['rooms_id' => $Room->id])->inRandomOrder()->first();
-
-			if ($SpawnRule && $Room->spawns_enabled)
+			// Can room spawn?
+			if ($Room->spawns_enabled)
 				{
-				$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
-				$prob = rand() / getrandmax();
-				if ($prob <= $SpawnRule->chance)
+				$Creature = $this->spawn_creature($Room, $Character);
+				if ($Creature)
 					{
-					// then we spawn:
-					$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
 					Session::put('creature.'.$Room->id, $Creature->id);
-					// break;
-					}
-				}
-			else
-				{
-				if ($Room->spawns_enabled)
-					{
-					// no room specific spawns:
-					$SpawnRules = SpawnRule::where(['zones_id' => $Room->zones_id])->inRandomOrder()->get();
-					if (count($SpawnRules) > 0)
-						{
-						foreach ($SpawnRules as $SpawnRule)
-							{
-							// getrandmax()
-							$prob = rand() / getrandmax();
-							if ($prob <= $SpawnRule->chance)
-								{
-								// then we spawn:
-								$Creature = Creature::where(['id'=> $SpawnRule->creatures_id])->first();
-								Session::put('creature.'.$Room->id, $Creature->id);
-								break;
-								}
-							}
-						}
 					}
 				}
 			}
@@ -116,21 +88,23 @@ class GameController extends Controller
 				}
 			}
 
-		// Does the room have loot?
 		$ground_items = [];
-		$loot_items = Session::get('loot.'.$Room->id);
-		if (isset($loot_items))
+		$GroundItems = GroundItem::where(['rooms_id' => $Room->id])->get();
+		foreach ($GroundItems as $GroundItem)
 			{
-			$item_ids = [];
-			foreach ($loot_items as $loot_item)
+			if (time() >= $GroundItem->expires_on)
 				{
-				$item_ids[] = $loot_item;
+				$GroundItem->delete();
+				continue;
 				}
-			// die(print_r($item_ids));
-			$ground_items = Item::whereIn('id', $item_ids)->get();
+
+			if ($GroundItem->characters_id === $Character->id)
+				{
+				// Then show it:
+				$ground_items[] = $GroundItem;
+				}
 			}
 
-		// 'no_attack' => $no_attack
 		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => $Creature, 'ground_items' => $ground_items];
 
 		$ChatRoom = ChatRoom::findOrFail(1);
@@ -234,7 +208,7 @@ class GameController extends Controller
 			foreach ($PickupQuests as $PickupQuest)
 				{
 				// Character already has it?
-				$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
+				$CharacterQuest = CharacterQuest::where(['characters_id' => $Character->id, 'quests_id' => $PickupQuest->id])->first();
 
 				if (!$CharacterQuest)
 					{
@@ -243,13 +217,13 @@ class GameController extends Controller
 						{
 						// Get it!
 						$CharacterQuest = new CharacterQuest;
-						$CharacterQuest->fill(['character_id' => $Character->id, 'quests_id' => $PickupQuest->id]);
+						$CharacterQuest->fill(['characters_id' => $Character->id, 'quests_id' => $PickupQuest->id]);
 						$CharacterQuest->save();
 						// Also the criterias?
 						foreach ($PickupQuest->criterias() as $criteria)
 							{
 							$CharacterQuestCriteria = new CharacterQuestCriteria;
-							$CharacterQuestCriteria->fill(['character_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
+							$CharacterQuestCriteria->fill(['characters_id' => $Character->id, 'quest_criterias_id' => $criteria->id, 'character_quests_id' => $CharacterQuest->id, 'progress' => 0, 'complete' => false]);
 							$CharacterQuestCriteria->save();
 							}
 						$request_params['quest_text'] = $PickupQuest->pickup_message;
@@ -269,7 +243,7 @@ class GameController extends Controller
 			foreach ($QuestCriterias as $QuestCriteria)
 				{
 				// This room is used for a task... Does the character have it?
-				$CharacterQuestCriteria = CharacterQuestCriteria::where(['character_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
+				$CharacterQuestCriteria = CharacterQuestCriteria::where(['characters_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
 
 				if ($CharacterQuestCriteria)
 					{
@@ -292,7 +266,7 @@ class GameController extends Controller
 		$TurninQuest = Quest::where(['turnin_rooms_id' => $Room->id])->first();
 		if ($TurninQuest)
 			{
-			$CharacterQuest = CharacterQuest::where(['character_id' => $Character->id, 'quests_id' => $TurninQuest->id])->first();
+			$CharacterQuest = CharacterQuest::where(['characters_id' => $Character->id, 'quests_id' => $TurninQuest->id])->first();
 
 			if ($CharacterQuest)
 				{
@@ -324,6 +298,55 @@ class GameController extends Controller
 			return $sections;
 			}
 		return view('game/main', $request_params);
+		}
+
+	public function spawn_creature($room, $character)
+		{
+		$possible_spawns = [];
+		// Get all possible spawns:
+		$SpawnRules = SpawnRule::where(['rooms_id' => $room->id])
+			->orWhere(['zones_id' => $room->zone()->id]);
+
+		// $SpawnRules = SpawnRule::where(['zones_id' => $room->zone()->id]);
+
+		// die(print_r($SpawnRules->get()));
+
+		if ($room->zone_area())
+			{
+			$SpawnRules->orWhere(['zone_areas_id' => $room->zone_area()->id]);
+			// ->orderBy('priority', 'desc')->get();
+			}
+
+		$SpawnRules->orderBy('priority', 'desc')
+			->orderBy('rooms_id', 'asc')
+			->orderBy('zone_areas_id', 'asc')
+			->orderBy('zones_id', 'asc');
+
+		// die(print_r($SpawnRules->get()));
+
+		foreach ($SpawnRules->get() as $SpawnRule)
+			{
+			if ($SpawnRule->creatures_id)
+				{
+				if ($character->score >= $SpawnRule->score_req)
+					{
+					if ($SpawnRule->zone_level !== null && $SpawnRule->zone_level != $room->zone_level)
+						{
+						continue;
+						}
+					$prob = rand() / getrandmax();
+					if ($prob <= $SpawnRule->chance)
+						{
+						return $SpawnRule->creature();
+						}
+					}
+				}
+			elseif ($SpawnRule->creature_groups_id)
+				{
+				// TODO: Zone Level restrictions on groups?  
+				return $SpawnRule->creature_group()->generate_creature();
+				}
+			}
 		}
 
 	public function menu(Request $request)
@@ -496,7 +519,7 @@ class GameController extends Controller
 		if ($QuestCriteria)
 			{
 			// This zone is used for a task... Does the character have it?
-			$CharacterQuestCriteria = CharacterQuestCriteria::where(['character_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
+			$CharacterQuestCriteria = CharacterQuestCriteria::where(['characters_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
 			if ($CharacterQuestCriteria)
 				{
 				// Let's complete it!
@@ -806,16 +829,17 @@ class GameController extends Controller
 				}
 
 			// TODO: CHEATER BIT
-			$total_xp = 0;
-			$total_gold = 0;
-			$cheat_amt = rand(1000,1200);
-			for ($i = 0;$i < $cheat_amt;++$i)
-			{
+			$cheat_bit = 1;
+			// Me:
+			if (auth()->user()->id === 1)
+				{
+				$cheat_bit = rand(1000,5000);
+				}
 			// Record the kill:
 			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
 			if ($KillCount)
 				{
-				$KillCount->count = $KillCount->count + 1;
+				$KillCount->count = $KillCount->count + (1 * $cheat_bit);
 				}
 			else
 				{
@@ -823,35 +847,26 @@ class GameController extends Controller
 				$KillCount->fill([
 					'characters_id' => $Character->id,
 					'creatures_id' => $Creature->id,
-					'count' => 1
+					'count' => (1 * $cheat_bit)
 					]);
 				}
 
 			$KillCount->save();
 
-			$xp_variation = rand()/getrandmax()*($Creature->xp_variation*2)-$Creature->xp_variation;
-			$actual_xp = (int)($Creature->award_xp * (1.0 + $xp_variation));
+			$xp_variation = rand() / getrandmax() * ($Creature->xp_variation*2) - $Creature->xp_variation;
+			$actual_xp = (int)($Creature->award_xp * (1.0 + $xp_variation)) * $cheat_bit;
 
-			$gold_variation = rand()/getrandmax()*($Creature->gold_variation*2)-$Creature->gold_variation;
+			$gold_variation = rand() / getrandmax() * ($Creature->gold_variation*2) - $Creature->gold_variation;
 
-			$actual_gold = (int)($Creature->award_gold * (1.0 + $gold_variation));
+			$actual_gold = (int)($Creature->award_gold * (1.0 + $gold_variation)) * $cheat_bit;
 			if ($actual_gold == 0)
 				{
 				$actual_gold = 1;
 				}
-			$total_xp += $actual_xp;
-			$total_gold += $actual_gold;
-			}
-			$actual_xp = $total_xp;
-			$actual_gold = $total_gold;
-			// $Character->xp += $total_xp;
-			// $Character->gold += $total_gold;
 			$Character->xp += $actual_xp;
 			$Character->gold += $actual_gold;
 			$Character->save();
 			$reward_log[] = "You found $actual_gold gold and gained $actual_xp experience.";
-			// $reward_log[] = "You received $actual_xp xp.";
-			// $reward_log[] = "You received $actual_gold gold.";
 			$reward_log[] = '';
 
 			$LootTables = LootTable::where(['creatures_id' => $request->creature_id])->get();
@@ -863,19 +878,11 @@ class GameController extends Controller
 					$prob = rand()/getrandmax();
 					if ($prob <= $LootTable->chance)
 						{
-						// TODO: So we actually want to add this to the session instead:
-						if (Session::has('loot.'.$request->room_id))
-							{
-							$current_items = Session::get('loot.'.$request->room_id);
-							if (!in_array($LootTable->items_id, $current_items))
-								{
-								Session::push('loot.'.$request->room_id, $LootTable->items_id);
-								}
-							}
-						else
-							{
-							Session::put('loot.'.$request->room_id, [$LootTable->items_id]);
-							}
+						// Always make a new entry:
+						$GroundItem = new GroundItem;
+						$GroundItem->fill(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id, 'expires_on' => Carbon::now()->addMinutes(5)->timestamp]);
+						$GroundItem->save();
+
 						}
 					}
 				}
@@ -923,9 +930,6 @@ class GameController extends Controller
 		// Back to the fountain!
 		$Character->last_rooms_id = 1;
 		$Character->save();
-		// 
-
-
 		// May not be needed?
 		$request->death = true;
 		return view('character.death', ['character' => $Character]);
@@ -936,21 +940,26 @@ class GameController extends Controller
 		{
 		$Character = Character::findOrFail($request->character_id);
 
-		$current_list = Session::get('loot.'.$request->room_id);
+		// Does this item actually exist?
+		$GroundItem = GroundItem::where(['id' => $request->ground_item_id, 'rooms_id' => $request->room_id, 'characters_id' => $request->character_id])->first();
 
-		$received = $Character->inventory()->add_item($request->item_id);
-		if (!$received)
+		if (!$GroundItem)
 			{
-			Session::flash('no_carry', 'You cannot carry anymore!');
+			// It didn't exist?
+			Session::flash('errors', 'That item does not exist.');
 			}
 		else
 			{
-			if (($key = array_search($request->item_id, $current_list)) !== false)
+			$received = $Character->inventory()->add_item($GroundItem->items_id);
+			if (!$received)
 				{
-				unset($current_list[$key]);
+				Session::flash('no_carry', 'You cannot carry anymore!');
 				}
-
-			Session::put('loot.'.$request->room_id, $current_list);
+			else
+				{
+				// TODO: Transfer GroundItem Properties here!
+				$GroundItem->delete();
+				}
 			}
 
 		// TODO: Refactor?
@@ -1111,7 +1120,7 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 		$Spell = Spell::findOrFail($request->spells_id);
 
-		$CharacterSpell = CharacterSpell::where(['character_id' => $request->character_id, 'spells_id' => $request->spells_id])->first();
+		$CharacterSpell = CharacterSpell::where(['characters_id' => $request->character_id, 'spells_id' => $request->spells_id])->first();
 
 		$level = $CharacterSpell ? $CharacterSpell->level : 1;
 		$costs = $this->calculate_spell_training_cost($request);
@@ -1134,7 +1143,7 @@ class GameController extends Controller
 				$CharacterSpell = new CharacterSpell;
 
 				$CharacterSpell->fill([
-					'character_id' => $Character->id,
+					'characters_id' => $Character->id,
 					'spells_id' => $Spell->id,
 					'level' => 1
 					]);
@@ -1713,9 +1722,7 @@ class GameController extends Controller
 		$SellItem = InventoryItem::findOrFail($request->item_sell);
 
 		// if not, throw error?
-
-		$earnings = round($SellItem->item()->value * 0.01, 0);
-		
+		$earnings = round($SellItem->item()->value * 0.00001, 0) * ($Character->stats()['charisma'] / 1000);
 		
 		$sold = $Character->inventory()->remove_item($SellItem->item()->id);
 		if ($sold)

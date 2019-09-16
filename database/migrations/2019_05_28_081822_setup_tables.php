@@ -90,22 +90,23 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// Schema::create('zone_areas', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->integer('zones_id');
-		// 	$table->foreign('zones_id')->references('id')->on('zones');
-		// 	$table->string('uid')->unique()->nullable();
-		// 	$table->string('name');
-		// 	$table->boolean('inherit_creatures')->default(true);
-		// 	$table->boolean('inherit_properties')->default(true);
-		// 	$table->text('description')->nullable();
-		// 	$table->string('bg_color')->nullable();
-		// 	$table->string('bg_img')->nullable();
-		// 	$table->string('font_color')->nullable();
-		// 	$table->string('label_color')->nullable();
-		// 	$table->string('custom_view')->nullable();
-		// 	$table->timestamps();
-		// });
+		Schema::create('zone_areas', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('zones_id');
+			$table->foreign('zones_id')->references('id')->on('zones');
+			$table->string('uid')->unique()->nullable();
+			$table->string('name');
+			$table->text('travel_text');
+			$table->text('description')->nullable();
+			$table->boolean('inherit_creatures')->default(true);
+			$table->boolean('inherit_properties')->default(true);
+			$table->string('bg_color')->nullable();
+			$table->string('bg_img')->nullable();
+			$table->string('font_color')->nullable();
+			$table->string('label_color')->nullable();
+			$table->string('custom_view')->nullable();
+			$table->timestamps();
+		});
 
 		// Schema::create('zone_area_to_zone_properties', function (Blueprint $table) {
 		// 	$table->bigIncrements('id');
@@ -140,6 +141,8 @@ class SetupTables extends Migration
 			$table->integer('zones_id');
 			$table->foreign('zones_id')->references('id')->on('zones');
 			$table->integer('zone_level')->default(0);
+			$table->integer('zone_areas_id')->nullable();
+			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
 			$table->string('uid')->nullable();
 			$table->string('title')->nullable();
 			$table->text('description')->nullable();
@@ -420,16 +423,11 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// Redo this?
+		// TODO: Redo this?
 		Schema::create('inventories', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('characters_id');
 			$table->foreign('characters_id')->references('id')->on('characters');
-			// $table->integer('items_id');
-			// $table->foreign('items_id')->refences('id')->on('items');
-			// $table->integer('quantity');
-			$table->integer('max_size');
-			$table->integer('max_weight');
 			$table->timestamps();
 		});
 
@@ -534,7 +532,7 @@ class SetupTables extends Migration
 			$table->foreign('alignments_id')->references('id')->on('alignments');
 			$table->integer('guilds_id')->nullable();
 			$table->foreign('guilds_id')->references('id')->on('guilds');
-			$table->string('name');
+			$table->string('name')->nullable();
 			$table->integer('result_items_id');
 			$table->foreign('result_items_id')->references('id')->on('items');
 			$table->timestamps();
@@ -612,62 +610,83 @@ class SetupTables extends Migration
 			$table->timestamps();
 		});
 
-		// Schema::create('creature_groups', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->string('name');
-		// 	$table->text('description')->nullable();
-		// 	$table->timestamps();
-		// });
+		Schema::create('creature_groups', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->string('name');
+			$table->text('description')->nullable();
+			$table->timestamps();
+		});
 
-		// Schema::create('creature_to_creature_groups', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->integer('creatures_id');
-		// 	$table->foreign('creatures_id')->references('id')->on('creatures');
-		// 	$table->integer('creature_groups_id');
-		// 	$table->foreign('creature_groups_id')->references('id')->on('creature_groups');
-		// 	$table->timestamps();
-		// });
-
-		// Schema::create('room_groups', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->string('uid')->unique()->nullable();
-		// 	$table->string('name');
-		// 	$table->text('description')->nullable();
-		// 	$table->text('travel_text')->nullable();
-		// 	$table->string('img_src')->nullable();
-		// 	$table->string('bg_color')->nullable();
-		// 	$table->string('font_color')->nullable();
-		// 	$table->string('label_color')->nullable();
-		// 	$table->string('custom_view')->nullable();
-		// 	$table->timestamps();
-		// });
-
-		// Schema::create('room_to_room_groups', function (Blueprint $table) {
-		// 	$table->bigIncrements('id');
-		// 	$table->integer('rooms_id');
-		// 	$table->foreign('rooms_id')->references('id')->on('rooms');
-		// 	$table->integer('room_groups_id');
-		// 	$table->foreign('room_groups_id')->references('id')->on('room_groups');
-		// 	$table->timestamps();
-		// });
+		Schema::create('creature_to_creature_groups', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->integer('creatures_id');
+			$table->foreign('creatures_id')->references('id')->on('creatures');
+			$table->integer('creature_groups_id');
+			$table->foreign('creature_groups_id')->references('id')->on('creature_groups');
+			$table->integer('weight')->nullable();
+			$table->integer('priority')->nullable();
+			$table->integer('score_req')->nullable();
+			$table->timestamps();
+		});
 
 		Schema::create('spawn_rules', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->integer('creatures_id')->nullable();
 			$table->foreign('creatures_id')->references('id')->on('creatures');
-			// $table->integer('creature_groups_id')->nullable();
-			// $table->foreign('creature_groups_id')->references('id')->on('creature_groups');
+			$table->integer('creature_groups_id')->nullable();
+			$table->foreign('creature_groups_id')->references('id')->on('creature_groups');
 			$table->integer('zones_id')->nullable();
 			$table->foreign('zones_id')->references('id')->on('zones');
 			$table->integer('zone_level')->nullable();
+			$table->integer('zone_areas_id')->nullable();
+			$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
 			$table->integer('rooms_id')->nullable();
 			$table->foreign('rooms_id')->references('id')->on('rooms');
-			// $table->integer('room_groups_id')->nullable();
-			// $table->foreign('room_groups_id')->references('id')->on('room_groups');
-			$table->float('chance');
+			$table->float('chance')->nullable();
+			$table->integer('spawn_hour')->nullable();
+			$table->boolean('random_hour')->default(false);
+			$table->integer('priority')->nullable();
 			$table->integer('score_req')->nullable();
+			$table->boolean('spawns_once')->default(false);
 			$table->timestamps();
 		});
+
+		// TODO: SpawnRules replacements:
+		// Schema::create('creature_group_spawns', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('creature_groups_id');
+		// 	$table->foreign('creature_groups_id')->references('id')->on('creature_groups');
+		// 	$table->integer('zones_id')->nullable();
+		// 	$table->foreign('zones_id')->references('id')->on('zones');
+		// 	$table->integer('zone_level')->nullable();
+		// 	$table->integer('zone_areas_id')->nullable();
+		// 	$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+		// 	$table->integer('rooms_id')->nullable();
+		// 	$table->foreign('rooms_id')->references('id')->on('rooms');
+		// 	$table->integer('spawn_hour')->nullable();
+		// 	$table->boolean('random_hour')->default(false);
+		// 	$table->timestamps();
+		// 	});
+
+		// Schema::create('creature_spawns', function (Blueprint $table) {
+		// 	$table->bigIncrements('id');
+		// 	$table->integer('creatures_id');
+		// 	$table->foreign('creatures_id')->references('id')->on('creatures');
+		// 	$table->integer('zones_id')->nullable();
+		// 	$table->foreign('zones_id')->references('id')->on('zones');
+		// 	$table->integer('zone_level')->nullable();
+		// 	$table->integer('zone_areas_id')->nullable();
+		// 	$table->foreign('zone_areas_id')->references('id')->on('zone_areas');
+		// 	$table->integer('rooms_id')->nullable();
+		// 	$table->foreign('rooms_id')->references('id')->on('rooms');
+		// 	$table->float('chance')->nullable();
+		// 	$table->integer('spawn_hour')->nullable();
+		// 	$table->boolean('random_hour')->default(false);
+		// 	$table->integer('priority')->nullable();
+		// 	$table->integer('score_req')->nullable();
+		// 	$table->boolean('spawns_once')->default(false);
+		// 	$table->timestamps();
+		// });
 
 		Schema::create('loot_tables', function (Blueprint $table) {
 			$table->bigIncrements('id');
@@ -771,8 +790,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('quests_id');
 			$table->foreign('quests_id')->references('id')->on('quests');
-			$table->integer('character_id');
-			$table->foreign('character_id')->references('id')->on('characters');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
 			$table->boolean('complete')->default(false);
 			$table->boolean('rewarded')->default(false);
 			$table->timestamps();
@@ -852,8 +871,8 @@ class SetupTables extends Migration
 			$table->foreign('quest_criterias_id')->references('id')->on('quest_criterias');
 			$table->integer('character_quests_id');
 			$table->foreign('character_quests_id')->references('id')->on('character_quests');
-			$table->integer('character_id');
-			$table->foreign('character_id')->references('id')->on('characters');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
 			$table->integer('progress')->nullable();
 			$table->boolean('complete')->default(false);
 			$table->timestamps();
@@ -893,8 +912,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('spells_id');
 			$table->foreign('spells_id')->references('id')->on('spells');
-			$table->integer('character_id');
-			$table->foreign('character_id')->references('id')->on('characters');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
 			$table->integer('level');
 			$table->timestamps();
 		});
@@ -903,8 +922,8 @@ class SetupTables extends Migration
 			$table->bigIncrements('id');
 			$table->integer('character_spells_id');
 			$table->foreign('character_spells_id')->references('id')->on('character_spells');
-			$table->integer('character_id');
-			$table->foreign('character_id')->references('id')->on('characters');
+			$table->integer('characters_id');
+			$table->foreign('characters_id')->references('id')->on('characters');
 			$table->integer('expires_on');
 			$table->jsonb('buff');
 			$table->timestamps();
@@ -1098,6 +1117,8 @@ class SetupTables extends Migration
 		Schema::dropIfExists('graveyard');
 		Schema::dropIfExists('creature_to_creature_properties');
 		Schema::dropIfExists('creature_properties');
+		Schema::dropIfExists('creature_to_creature_groups');
+		Schema::dropIfExists('creature_groups');
 		Schema::dropIfExists('creatures');
 		Schema::dropIfExists('zone_instances');
 		Schema::dropIfExists('game_progression');

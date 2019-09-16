@@ -21,7 +21,6 @@ class ShopItem extends Model
 			}
 		else
 			{
-
 			$pre_cost = round(($this->item()->value * $this->markup) / $charisma, 0);
 			}
 		// Things are a minimum of 1:

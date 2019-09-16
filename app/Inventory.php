@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 // use App\InventoryItems;
 
 class Inventory extends Model
-{
-    //
-    protected $fillable = ['characters_id', 'max_size', 'max_weight'];
+	{
+	protected $fillable = ['characters_id'];
 
-    public function character()
+	public function character()
 		{
 		return $this->belongsTo('App\Character', 'characters_id');
 		}
@@ -24,12 +23,6 @@ class Inventory extends Model
 	public function character_items()
 		{
 		return $this->hasMany('App\InventoryItems')->get();
-		}
-
-	public function set_weight(int $weight)
-		{
-		$this->max_weight = $weight;
-		$this->save();
 		}
 
 	public function remove_item($item_id)
@@ -61,6 +54,18 @@ class Inventory extends Model
 		return $this->inventory_items()->where(['items_id' => $item_id])->first() ? true : false;
 		}
 
+	public function max_weight()
+		{
+		$inventory_size = $this->character()->first()->stats()['strength'];
+		$racial_modifier = $this->character()->first()->race()->modifiers()->where(['racial_modifier_id' => 1])->first();
+		if ($racial_modifier)
+			{
+			$inventory_size = floor($inventory_size * $racial_modifier->value);
+			}
+
+		return $inventory_size;
+		}
+
 	public function current_weight()
 		{
 		$total_weight = 0.0;
@@ -83,7 +88,7 @@ class Inventory extends Model
 		// Add an items_to_inventories record:;
 		$Item = Item::findOrFail($item_id);
 
-		if (($this->current_weight() + $Item->weight) > $this->max_weight)
+		if (($this->current_weight() + $Item->weight) > $this->max_weight())
 			{
 			return false;
 			}
@@ -112,4 +117,4 @@ class Inventory extends Model
 
 		return true;
 		}
-}
+	}

@@ -229,13 +229,13 @@
 						{
 						var $cell = $('<td/>', {"class": key});
 						$cell.append($new_options[key]+'<br>');
-						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: creature}));
+						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: creature, tabindex: "9"}));
 						$('#combat-table tr').append($cell);
 						}
 					else
 						{
 						var $cell = $('<td/>', {"class": key});
-						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: creature}));
+						$cell.append($('<input/>', {type: 'submit', id: key, "class": 'submit-id', value: creature, tabindex: "9"}));
 						$cell.append('<br>'+$new_options[key]);
 						$('#combat-table tr').append($cell);
 						}

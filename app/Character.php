@@ -55,7 +55,7 @@ class Character extends Model
 
 	public function spells()
 		{
-		return $this->hasMany('App\CharacterSpell', 'character_id')->orderBy('spells_id','asc');
+		return $this->hasMany('App\CharacterSpell', 'characters_id')->orderBy('spells_id','asc');
 		}
 
 	public function has_spell($id)
@@ -237,16 +237,6 @@ class Character extends Model
 		$this->max_mana = $stats['wisdom'] + $stats['intelligence'] + $stats['charisma'];
 		$this->max_fatigue = $stats['dexterity'] + $stats['constitution'] + $stats['wisdom'];
 		$this->save();
-
-		$inventory_size = $stats['strength'];
-		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 1])->first();
-		if ($racial_modifier)
-			{
-			$inventory_size = floor($stats['strength'] * $racial_modifier->value);
-			}
-
-		$this->inventory()->set_weight($inventory_size);
-
 		return true;
 		}
 

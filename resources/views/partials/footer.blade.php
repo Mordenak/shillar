@@ -38,7 +38,7 @@
 		{{$combat->id}} {{$combat->remaining_health}}
 		@endif
 
-		Current weight: {{$character->inventory()->current_weight()}} / {{$character->inventory()->max_weight}}<br>
+		Current weight: {{$character->inventory()->current_weight()}} / {{$character->inventory()->max_weight()}}<br>
 
 		@foreach ($character->inventory()->character_items() as $item)
 			{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>

@@ -216,9 +216,9 @@
 	<form method="post" action="/item_pickup" class="ajax">
 		<input type="hidden" name="room_id" value="{{$room->id}}">
 		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<input type="hidden" name="item_id" value="{{$ground_item->id}}">
+		<input type="hidden" name="ground_item_id" value="{{$ground_item->id}}">
 		<input type="hidden" name="no_spawn" value="true">
-		You notice a <label for="pickup">{{$ground_item->name}}</label> just dropped.
+		You notice a <label for="pickup" tabindex="9">{{$ground_item->item()->name}}</label> just dropped.
 		<input type="submit" id="pickup" style="display: none;">
 	</form>
 	@endforeach
@@ -260,7 +260,7 @@
 			{{csrf_field()}}
 			<input type="hidden" name="room_id" value="{{$room_id}}">
 			<input type="hidden" name="character_id" value="{{$character->id}}">
-			You can travel <label for="move_{{$col}}">{{ substr($col, 0, strpos($col, '_')) }}</label>
+			You can travel <label for="move_{{$col}}" tabindex="10">{{ substr($col, 0, strpos($col, '_')) }}</label>
 			<input type="submit" id="move_{{$col}}" style="display: none;">
 		</form>
 		@endforeach
@@ -344,7 +344,7 @@
 		{{$combat->id}} {{$combat->remaining_health}}
 		@endif
 
-		Current weight: {{$character->inventory()->current_weight()}} / {{$character->inventory()->max_weight}}<br>
+		Current weight: {{$character->inventory()->current_weight()}} / {{$character->inventory()->max_weight()}}<br>
 
 		@foreach ($character->inventory()->character_items() as $item)
 			{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>

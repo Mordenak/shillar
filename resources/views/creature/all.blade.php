@@ -22,6 +22,7 @@
 		<thead>
 			<th>ID</th>
 			<th>Name</th>
+			<th>Creature Group(s)</th>
 			<th>Spawn Zone</th>
 			<th>Spawn Room</th>
 		</thead>
@@ -33,11 +34,29 @@
 					<a href="/creature/edit/{{$creature->id}}">{{$creature->name}}</a>
 				</td>
 				<td>
+					@if ($creature->creature_groups()->get())
+					@foreach ($creature->creature_groups()->get() as $group)
+					{{$group->name}}
+					@endforeach
+					@endif
+				</td>
+				<td>
 					@if ($creature->spawn_rules()->count() > 0)
 					@foreach ($creature->spawn_rules() as $spawn_rule)
 					@if ($spawn_rule->zone())
 					{{$spawn_rule->zone()->name}},
 					@endif
+					@endforeach
+					@endif
+
+					@if ($creature->creature_groups()->get())
+					@foreach ($creature->creature_groups()->get() as $group)
+
+					@foreach ($group->spawn_rules() as $spawn_rule)
+					@if ($spawn_rule->zone())
+					{{$spawn_rule->zone()->name}},
+					@endif
+					@endforeach
 					@endforeach
 					@endif
 				</td>

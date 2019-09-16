@@ -25,6 +25,11 @@ class Room extends Model
 		return $this->belongsTo('App\ZoneLevel', 'zones_id', 'zone_level')->first();
 		}
 
+	public function zone_area()
+		{
+		return $this->belongsTo('App\ZoneArea', 'zone_areas_id')->first();
+		}
+
 	public function shop()
 		{
 		return $this->hasOne('App\Shop', 'rooms_id')->first();

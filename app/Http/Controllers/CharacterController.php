@@ -147,7 +147,7 @@ class CharacterController extends Controller
 			$Equipment->save();
 
 			$Inventory = new Inventory;
-			$Inventory->fill(['characters_id' => $Character->id, 'max_size' => 100, 'max_weight' => $values['strength']]);
+			$Inventory->fill(['characters_id' => $Character->id]);
 			$Inventory->save();
 
 			// Creating a settings entry:

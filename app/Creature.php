@@ -17,4 +17,9 @@ class Creature extends Model
 		{
 		return $this->hasMany('App\LootTable', 'creatures_id')->get();
 		}
+
+	public function creature_groups()
+		{
+		return $this->belongsToMany('App\CreatureGroup', 'creature_to_creature_groups', 'creatures_id', 'creature_groups_id');
+		}
 }
