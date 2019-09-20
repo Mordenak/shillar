@@ -634,6 +634,18 @@ class GameController extends Controller
 			// 	$fatigue_use = ($fatigue_use * 1.5);
 			// 	}
 			}
+
+		// Check for accuracy bonuses?
+		if ($base_accuracy != 1.0)
+			{
+			$acc_mod = $Character->get_modifier('ACCURACY_ADJUSTMENT');
+			if ($acc_mod)
+				{
+				$remainder = abs($base_accuracy - 1.0);
+				$bonus = round(($remainder * $acc_mod->value), 2);
+				$base_accuracy += $bonus;
+				}
+			}
 		// $combat_notes['attack_text'] = $attack_text;
 
 		// And now alignment:
@@ -668,7 +680,7 @@ class GameController extends Controller
 			$creature_damages = [];
 			$creature_round_damage = 0;
 			$creature_absorbs = 0;
-			// $no_fatigue = false;
+			$no_fatigue = false;
 			// We attack first:
 			foreach (range(1, $attack_count) as $i)
 				{
@@ -680,7 +692,8 @@ class GameController extends Controller
 				if ($flat_character[$fatigue_stat] < $fatigue_use)
 					{
 					// $arr['no_fatigue'] = true;
-					$combat_history[] = ['no_fatigue' => true];
+					// $combat_history[] = ['no_fatigue' => true];
+					$no_fatigue = true;
 					break;
 					}
 
@@ -741,6 +754,7 @@ class GameController extends Controller
 
 			// Record the round:
 			$arr = [
+				'no_fatigue' => $no_fatigue,
 				'attack_text' => $attack_text,
 				'attack_count' => count(array_filter($round_damages, function($i) {return $i > 0 ? $i : null;})) + $miss_count,
 				'miss_count' => $miss_count,
@@ -2035,22 +2049,28 @@ class GameController extends Controller
 		$condensed = [];
 		if ($Character->settings()->brief_mode)
 			{
+			// die(print_r($combat_history));
 			foreach ($combat_history as $log_entry)
 				{
-				$condensed[] = $log_entry['attack_text'].'<br>';
-				if (isset($log_entry['no_fatigue']))
+				
+				if ($log_entry['attack_count'] > 0)
 					{
-					$condensed[] = 'You are too tired to attack.<br>';
-					}
-				else
-					{
+					$condensed[] = $log_entry['attack_text'].'<br>';
 					$condensed[] = 'You made attacks '.$log_entry['attack_count'].' and missed '.$log_entry['miss_count'].' times.<br>';
 					$condensed[] = 'You did '.$log_entry['round_damage'].' damage.<br>';
 					}
 
-				if ($log_entry['creature_round'] > 0)
+				if ($log_entry['no_fatigue'])
 					{
-					$condensed[] = $log_entry['creature_text'].' doing '.$log_entry['creature_round'].' damage.<br>';
+					$condensed[] = 'You are too tired to attack.<br>';
+					}
+
+				if (isset($log_entry['creature_attacks']))
+					{
+					if ($log_entry['creature_round'] > 0)
+						{
+						$condensed[] = $log_entry['creature_text'].' doing '.$log_entry['creature_round'].' damage.<br>';
+						}
 					}
 
 				if (isset($log_entry['pc_died']))
