@@ -830,11 +830,7 @@ class GameController extends Controller
 
 			// TODO: CHEATER BIT
 			$cheat_bit = 1;
-			// Me:
-			if (auth()->user()->id === 1)
-				{
-				$cheat_bit = rand(1000,5000);
-				}
+			// Make this a character setting for admins?
 			// Record the kill:
 			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
 			if ($KillCount)
