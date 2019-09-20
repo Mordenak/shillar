@@ -25,7 +25,7 @@ class LootData extends Seeder
 			['creatures_id' => 16, 'items_id' => 171, 'chance' => 0.66, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 16, 'items_id' => 171, 'chance' => 0.66, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 14, 'items_id' => 14, 'chance' => 0.525, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['creatures_id' => 14, 'items_id' => 91, 'chance' => 0.525, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 17, 'items_id' => 91, 'chance' => 0.525, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 19, 'items_id' => 168, 'chance' => 0.575, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 22, 'items_id' => 13, 'chance' => 0.16, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 23, 'items_id' => 83, 'chance' => 0.275, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
