@@ -45,7 +45,7 @@ class Character extends Model
 
 	public function quests()
 		{
-		return $this->hasMany('App\CharacterQuest', 'character_id')->get();
+		return $this->hasMany('App\CharacterQuest', 'characters_id')->get();
 		}
 
 	public function kill_stats()
