@@ -12,13 +12,10 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+	return view('welcome');
 });
 
-// Route::get('player/{id}', 'PlayerController@show')->where('id', '[0-9]+');
-
-
-
+// Route::get('/', 'HomeController@welcome');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

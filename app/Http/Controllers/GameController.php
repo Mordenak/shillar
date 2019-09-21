@@ -13,6 +13,8 @@ class GameController extends Controller
 	//
 	public function index(Request $request)
 		{
+		$timers = [];
+		$start_timer = microtime(true);
 		World::tick();
 		// TODO: This should be unreachable?
 		if (!auth()->user())
@@ -290,6 +292,10 @@ class GameController extends Controller
 			$request_params['directions'] = $Room->generate_directions($Character);
 			}
 
+		$finish_timer = round(microtime(true) - $start_timer, 3);
+		$timers[] = "index took:: $finish_timer ms";
+		Session::put('perf_log', $timers);
+
 		// $character = array_merge($Character->pluck(), $Characters->pluck());;
 		if ($request->ajax())
 			{
@@ -415,6 +421,9 @@ class GameController extends Controller
 
 	public function move(Request $request)
 		{
+		$timers = [];
+		$start_timer = microtime(true);
+		// Session::put('perf_log', $timers);
 		$Character = Character::findOrFail($request->character_id);
 		$NextRoom = Room::findOrFail($request->room_id);
 
@@ -452,7 +461,6 @@ class GameController extends Controller
 					}
 				}
 			}
-
 		// SWIM / FLY Check?
 
 		// Heat damage?
@@ -540,6 +548,10 @@ class GameController extends Controller
 
 		// Also remove any session creatures in the new room:
 		Session::pull('creature.'.$NextRoom->id);
+
+		$finish_timer = round(microtime(true) - $start_timer, 3);
+		$timers[] = "move took:: $finish_timer ms";
+		Session::put('perf_log', $timers);
 
 		return $this->index($request);
 		}

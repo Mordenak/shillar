@@ -258,6 +258,13 @@
 		</div>
 
 		<script>
+		$('body').on('keyup', 'label', function(e) {
+			if (e.keyCode == 13)
+				{
+				$(e.target).closest('form').submit();
+				}
+			});
+
 		$('body').on('submit', 'form.ajax', function(e, i) {
 			e.preventDefault();
 
