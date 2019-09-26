@@ -975,7 +975,7 @@ class GameController extends Controller
 			$received = $Character->inventory()->add_item($GroundItem->items_id);
 			if (!$received)
 				{
-				Session::flash('no_carry', 'You cannot carry anymore!');
+				Session::flash('errors', 'You cannot carry anymore!');
 				}
 			else
 				{

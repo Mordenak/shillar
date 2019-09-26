@@ -211,19 +211,6 @@
 	<span style="color:red;">{{Session::pull("no_carry")}}</span><br>
 	@endif
 
-	@if (isset($ground_items))
-	@foreach ($ground_items as $ground_item)
-	<form method="post" action="/item_pickup" class="ajax">
-		<input type="hidden" name="room_id" value="{{$room->id}}">
-		<input type="hidden" name="character_id" value="{{$character->id}}">
-		<input type="hidden" name="ground_item_id" value="{{$ground_item->id}}">
-		<input type="hidden" name="no_spawn" value="true">
-		You notice a <label for="pickup" tabindex="9">{{$ground_item->item()->name}}</label> just dropped.
-		<input type="submit" id="pickup" style="display: none;">
-	</form>
-	@endforeach
-	@endif
-
 	<!-- Special actions? -->
 	@if( Session::has("action_failed") )
 	<p style="color:red;">{{ Session::pull("action_failed") }}</p>
@@ -267,6 +254,19 @@
 	</p>
 	@endif
 
+	@if (isset($ground_items))
+	@foreach ($ground_items as $ground_item)
+	<form method="post" action="/item_pickup" class="ajax">
+		<input type="hidden" name="room_id" value="{{$room->id}}">
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<input type="hidden" name="ground_item_id" value="{{$ground_item->id}}">
+		<input type="hidden" name="no_spawn" value="true">
+		You notice a <label for="pickup" tabindex="11">{{$ground_item->item()->name}}</label> just dropped.
+		<input type="submit" id="pickup" style="display: none;">
+	</form>
+	@endforeach
+	@endif
+
 	@if ($room->has_property('WALL_SCORE'))
 		<table>
 		@foreach ($score_list as $listing)
@@ -294,6 +294,7 @@
 
 	<!-- Debug -->
 	@if (isset($is_admin) && $is_admin)
+	<br>
 	<div style="padding-left: 1rem;">
 		-- Admin --<br>
 		Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a>
