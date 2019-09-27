@@ -374,26 +374,6 @@ function process_rooms(room_list)
 				$new_room = create_room($current_room, room.id, true);
 				$new_room.addClass('start');
 				}
-			else if (key != 0 && room.up_rooms_id)
-				{
-				console.log('UP -- DOWN');
-				// console.log($('.map').find('td#'+room.down_rooms_id));
-				if ($('.map').find('td#'+room.up_rooms_id).length > 0)
-					{
-					curr_row = $('.map').find('td#'+room.up_rooms_id).parent().index();
-					curr_col = $('.map').find('td#'+room.up_rooms_id).index();
-					}
-				var $current_room = $('#map_'+key).find('tr').eq(curr_row).find('td').eq(curr_col);
-				}
-			else if (key != 0 && room.down_rooms_id)
-				{
-				if ($('.map').find('td#'+room.down_rooms_id).length > 0)
-					{
-					curr_row = $('.map').find('td#'+room.down_rooms_id).parent().index();
-					curr_col = $('.map').find('td#'+room.down_rooms_id).index();
-					}
-				var $current_room = $('#map_'+key).find('tr').eq(curr_row).find('td').eq(curr_col);
-				}
 			else if ($(selector).find('td#'+room.id).length > 0)
 				{
 				console.log('Found a room.');
@@ -401,6 +381,28 @@ function process_rooms(room_list)
 				var $current_room = $('.map').find('td#'+room.id).first();
 				curr_col = $current_room.index();
 				curr_row = $current_room.parent().index();
+
+				if (key != 0 && room.up_rooms_id)
+					{
+					if ($('.map').find('td#'+room.up_rooms_id).length > 0)
+						{
+						console.log('Reseting current rows and cols:');
+						curr_row = $('.map').find('td#'+room.up_rooms_id).parent().index();
+						curr_col = $('.map').find('td#'+room.up_rooms_id).index();
+						}
+					console.log('Starting up/down at: ['+curr_row+','+curr_col+']');
+					var $current_room = $('#map_'+key).find('tr').eq(curr_row).find('td').eq(curr_col);
+					}
+
+				if (key != 0 && room.down_rooms_id)
+					{
+					if ($('.map').find('td#'+room.down_rooms_id).length > 0)
+						{
+						curr_row = $('.map').find('td#'+room.down_rooms_id).parent().index();
+						curr_col = $('.map').find('td#'+room.down_rooms_id).index();
+						}
+					var $current_room = $('#map_'+key).find('tr').eq(curr_row).find('td').eq(curr_col);
+					}
 				}
 			else if (tmp_list.length == (initial_count-1) && key == 0)
 				{
@@ -692,33 +694,35 @@ function process_rooms(room_list)
 			// Grand finale of directions:
 			if (room && room.up_rooms_id != null)
 				{
-				if ($('#map_'+(key +1)).length == 0)
+				if ($('#map_'+(parseInt(key) +1)).length == 0)
 					{
+					console.log('map_'+(parseInt(key)+1)+' does not exist, creating.');
 					added_level = addZLevel(1);
 					}
 
 				if ($(selector).find('td#'+room.up_rooms_id).length == 0)
 					{
-					var $target = $('#map_'+added_level).find('tr').eq(curr_row).find('td').eq(curr_col);
+					var $target = $('#map_'+(parseInt(key)+1)).find('tr').eq(curr_row).find('td').eq(curr_col);
 					$new_room = create_room($target, room.up_rooms_id, true);
 					}
 				else
 					{
 					// ??
 					}
+				console.log('Linking UP at: ['+$current_room.parent().index()+','+$current_room.index()+']');
 				createLink($current_room, 'up_rooms_id', room.up_rooms_id);
 				}
 
 			if (room && room.down_rooms_id != null)
 				{
-				if ($('#map_'+(key +1)).length == 0)
+				if ($('#map_'+(parseInt(key) -1)).length == 0)
 					{
 					added_level = addZLevel(-1);
 					}
 
 				if ($(selector).find('td#'+room.down_rooms_id).length == 0)
 					{
-					var $target = $('#map_'+added_level).find('tr').eq(curr_row).find('td').eq(curr_col);
+					var $target = $('#map_'+(parseInt(key)-1)).find('tr').eq(curr_row).find('td').eq(curr_col);
 					$new_room = create_room($target, room.down_rooms_id, true);
 					}
 				else
