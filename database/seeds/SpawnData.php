@@ -23,10 +23,27 @@ class SpawnData extends Seeder
 			['name' => 'Crypt', 'description' => 'Crypt creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Lake Gala', 'description' => 'Lake Gala creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Dark Forest', 'description' => 'Dark Forest creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// end 10
 			['name' => 'Mountains', 'description' => 'Mountains creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Ogre Cave', 'description' => 'Ogre Cave creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Deep Dark Forest', 'description' => 'Deep Dark Forest creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'The Pit', 'description' => 'Pit creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Outer Maze', 'description' => 'Outer Maze creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Inner Maze Group 1', 'description' => 'Inner Maze creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Inner Maze Group 2', 'description' => 'Inner Maze creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Inner Maze Group 3', 'description' => 'Inner Maze creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Inner Maze Group 4', 'description' => 'Inner Maze creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Inner Maze Group 5', 'description' => 'Inner Maze creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// end 20
+			['name' => 'Dungeons - Cells', 'description' => 'Dungeon Cell creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Dungeons', 'description' => 'Dungeons creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Sky Castle Level 1', 'description' => 'Sky Castle creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Sky Castle Level 2', 'description' => 'Sky Castle creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Sky Castle Level 3', 'description' => 'Sky Castle creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Great Plains Group 1', 'description' => 'Great Plains creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Great Plains Group 2', 'description' => 'Great Plains creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Great Plains Group 3', 'description' => 'Great Plains creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'Great Plains Group Salena', 'description' => 'Great Plains creatures', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		DB::table('creature_to_creature_groups')->insert([
@@ -73,6 +90,52 @@ class SpawnData extends Seeder
 			['creatures_id' => 51, 'creature_groups_id' => 14, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 52, 'creature_groups_id' => 14, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 53, 'creature_groups_id' => 14, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Outer maze (Beach to Mountains):
+			['creatures_id' => 2, 'creature_groups_id' => 15, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 44, 'creature_groups_id' => 15, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Inner maze groups:
+			['creatures_id' => 55, 'creature_groups_id' => 16, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 55, 'creature_groups_id' => 17, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 55, 'creature_groups_id' => 18, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 55, 'creature_groups_id' => 19, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 55, 'creature_groups_id' => 20, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Dungeons
+			['creatures_id' => 75, 'creature_groups_id' => 21, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 77, 'creature_groups_id' => 21, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 79, 'creature_groups_id' => 21, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			['creatures_id' => 74, 'creature_groups_id' => 22, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 76, 'creature_groups_id' => 22, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 78, 'creature_groups_id' => 22, 'weight' => 25, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			// Sky castle groups:
+			['creatures_id' => 86, 'creature_groups_id' => 23, 'weight' => 50, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 87, 'creature_groups_id' => 23, 'weight' => 50, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			['creatures_id' => 87, 'creature_groups_id' => 24, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 88, 'creature_groups_id' => 24, 'weight' => 40, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 89, 'creature_groups_id' => 24, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			['creatures_id' => 89, 'creature_groups_id' => 25, 'weight' => 50, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 90, 'creature_groups_id' => 25, 'weight' => 50, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			// Great Plains groups:
+			['creatures_id' => 93, 'creature_groups_id' => 26, 'weight' => 40, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 94, 'creature_groups_id' => 26, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 95, 'creature_groups_id' => 26, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			['creatures_id' => 99, 'creature_groups_id' => 27, 'weight' => 40, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 100, 'creature_groups_id' => 27, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 101, 'creature_groups_id' => 27, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			['creatures_id' => 96, 'creature_groups_id' => 28, 'weight' => 40, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 97, 'creature_groups_id' => 28, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 98, 'creature_groups_id' => 28, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+
+			['creatures_id' => 95, 'creature_groups_id' => 29, 'weight' => 35, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 96, 'creature_groups_id' => 29, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 101, 'creature_groups_id' => 29, 'weight' => 30, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 103, 'creature_groups_id' => 29, 'weight' => 5, 'priority' => null, 'score_req' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 
 			]);
 
@@ -88,6 +151,8 @@ class SpawnData extends Seeder
 			['creatures_id' => null, 'creature_groups_id' => 10, 'zones_id' => 12, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => null, 'creature_groups_id' => 11, 'zones_id' => 10, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => null, 'creature_groups_id' => 12, 'zones_id' => 11, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => null, 'creature_groups_id' => 13, 'zones_id' => 13, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => null, 'creature_groups_id' => 14, 'zones_id' => 14, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			// Specifics:
 			['creatures_id' => 5, 'creature_groups_id' => null, 'zones_id' => null, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => 104, 'chance' => 1.0, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 17, 'creature_groups_id' => null, 'zones_id' => null, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => 239, 'chance' => 0.75, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => 2000, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -103,9 +168,17 @@ class SpawnData extends Seeder
 			['creatures_id' => 36, 'creature_groups_id' => null, 'zones_id' => null, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => 362, 'chance' => 1.0, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 41, 'creature_groups_id' => null, 'zones_id' => null, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => 379, 'chance' => 0.25, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 41, 'creature_groups_id' => null, 'zones_id' => null, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => 380, 'chance' => 0.25, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-
 			['creatures_id' => 54, 'creature_groups_id' => null, 'zones_id' => null, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => 552, 'chance' => 0.25, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['creatures_id' => 54, 'creature_groups_id' => null, 'zones_id' => null, 'zone_level' => null, 'zone_areas_id' => null, 'rooms_id' => 562, 'chance' => 0.25, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Druid Keep:
+			['creatures_id' => 82, 'creature_groups_id' => null, 'zones_id' => 18, 'zone_level' => 0, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => 1.0, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 83, 'creature_groups_id' => null, 'zones_id' => 18, 'zone_level' => 1, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => 1.0, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 84, 'creature_groups_id' => null, 'zones_id' => 18, 'zone_level' => 2, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => 1.0, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => 85, 'creature_groups_id' => null, 'zones_id' => 18, 'zone_level' => 3, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => 1.0, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			// Sky Castle:
+			['creatures_id' => null, 'creature_groups_id' => 23, 'zones_id' => 20, 'zone_level' => 0, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => null, 'creature_groups_id' => 24, 'zones_id' => 20, 'zone_level' => 1, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['creatures_id' => null, 'creature_groups_id' => 25, 'zones_id' => 20, 'zone_level' => 2, 'zone_areas_id' => null, 'rooms_id' => null, 'chance' => null, 'spawn_hour' => null, 'random_hour' => false, 'score_req' => null, 'spawns_once' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 		}
 	}
