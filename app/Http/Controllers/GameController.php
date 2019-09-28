@@ -349,8 +349,18 @@ class GameController extends Controller
 				}
 			elseif ($SpawnRule->creature_groups_id)
 				{
-				// TODO: Zone Level restrictions on groups?  
-				return $SpawnRule->creature_group()->generate_creature();
+				// TODO: Zone Level restrictions on groups?
+				if ($SpawnRule->zone_level !== null)
+					{
+					if ($SpawnRule->zone_level == $room->zone_level)
+						{
+						return $SpawnRule->creature_group()->generate_creature();
+						}
+					}
+				else
+					{
+					return $SpawnRule->creature_group()->generate_creature();
+					}
 				}
 			}
 		}

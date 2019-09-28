@@ -326,7 +326,7 @@ function process_rooms(room_list)
 		
 		var room_checks = {};
 		// Number of times to try to find a room:
-		var max_attempts = 20;
+		var max_attempts = 30;
 		// for(i=0;i<room_list.length;i++)
 		// var index = 0;
 		// console.log('Processing...');
@@ -1071,6 +1071,13 @@ function getAdjacents($el)
 
 	indexes = [-1, 0, 1];
 
+	// row_indexes = [-1, 0, 1];
+	// map = {
+	// 	-1: 0,
+	// 	0: -1, 1
+	// 	1: 0
+	// }
+
 	// console.log('searching Adjacents');
 
 	for(i=0;i<indexes.length;i++)
@@ -1093,7 +1100,15 @@ function getAdjacents($el)
 				}
 			if ($room.hasClass('room'))
 				{
-				performLink($el, $room);
+				if ((i == -1 && x == 0) ||
+					(i == 0 && x == -1) || 
+					(i == 0 && x == 1) ||
+					(i == 1 && x == 0)
+					)
+					{
+					performLink($el, $room);
+					}
+					
 				}
 			}
 		}
