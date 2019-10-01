@@ -311,8 +311,9 @@ class GameController extends Controller
 			}
 
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
-		$timers[] = "index took:: $finish_timer ms";
-		Session::push('perf_log', $timers);
+		// $timers[] = "index took:: $finish_timer ms";
+		// Session::push('perf_log', $timers);
+		Session::push('perf_log', "index took:: $finish_timer ms");
 
 		// $character = array_merge($Character->pluck(), $Characters->pluck());;
 		if ($request->ajax())
@@ -578,8 +579,9 @@ class GameController extends Controller
 		Session::pull('creature.'.$NextRoom->id);
 
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
-		$timers[] = "move took:: $finish_timer ms";
-		Session::push('perf_log', $timers);
+		// $timers[] = "move took:: $finish_timer ms";
+		// Session::push('perf_log', $timers);
+		Session::push('perf_log', "move took:: $finish_timer ms");
 
 		return $this->index($request);
 		}
@@ -626,15 +628,18 @@ class GameController extends Controller
 			return $this->index($request);
 			}
 
+		$combat_timer = microtime(true);
+
 		$combat_log = [];
 		$reward_log = [];
 		// $flat_creature = $Creature->toArray();
 		// $Equipment = Equipment::where(['characters_id' => $Character->id])->first();
+		$character_stats = $Character->stats();
 		// Calculate attacks:
-		$attack_count = floor(($Character->dexterity() - 10) / 20) + 2;
+		$attack_count = floor(($character_stats['dexterity'] - 10) / 20) + 2;
 		$total_damage = 0;
-		$grope_low = $Character->constitution();
-		$grope_high = $Character->constitution() + $Character->strength();
+		$grope_low = $character_stats['constitution'];
+		$grope_high = $character_stats['constitution'] + $character_stats['strength'];
 		// Multiply $grope_low & $grope_high if they ahve the extra grope racial mod!!!
 		$weapon_low = 0;
 		$weapon_high = 0;
@@ -846,7 +851,14 @@ class GameController extends Controller
 		$Character->save();
 		$Character->fresh();
 
+		$combat_finish = round(microtime(true) - $combat_timer, 3) * 1000;
+		// $timers[] = "combat calculations took:: $combat_finish ms";
+		// Session::push('perf_log', $timers);
+		// Session::push('perf_log', "combat calculations took:: $combat_finish ms");
+
 		$reward_log = [];
+
+		$reward_timer = microtime(true);
 
 		// Out of the loop, who died?
 		if ($flat_creature['health'] > 0 && $flat_character['health'] > 0)
@@ -939,7 +951,6 @@ class GameController extends Controller
 						}
 					}
 				}
-
 			}
 		elseif ($flat_character['health'] <= 0)
 			{
@@ -952,6 +963,11 @@ class GameController extends Controller
 			// ??
 			}
 
+		$reward_finish = round(microtime(true) - $reward_timer, 3) * 1000;
+		// $timers[] = "rewards took:: $reward_finish ms";
+		// Session::push('perf_log', $timers);
+		// Session::push('perf_log', "rewards took:: $reward_finish ms");
+
 		// $no_attack = $Character->fatigue > 0 ? false : true;
 		if ($CombatLog)
 			{
@@ -963,9 +979,9 @@ class GameController extends Controller
 		$new_combat = $this->generate_combat_log($combat_history, $Character);
 		// die(print_r($result));
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
-		error_log('combat took:: '.$finish_timer);
-		$timers[] = "combat took:: $finish_timer ms";
-		Session::push('perf_log', $timers);
+		// $timers[] = "total combat took:: $finish_timer ms";
+		// Session::push('perf_log', $timers);
+		Session::push('perf_log', "total combat took:: $finish_timer ms");
 
 		// No, let's not do all this:
 		Session::put('combat_log', $new_combat);

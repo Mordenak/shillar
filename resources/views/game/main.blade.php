@@ -303,7 +303,7 @@
 		@if (Session::has('perf_log'))
 		<p style="">
 		@foreach (Session::pull('perf_log') as $log_entry)
-			{!! $log_entry[0] !!}<br>
+			{!! $log_entry !!}<br>
 		@endforeach
 		</p>
 		@endif

@@ -75,6 +75,7 @@ class Equipment extends Model
 		return $total_armor;
 		}
 
+	// TODO: Performance pass!
 	public function calculate_stats()
 		{
 		$bonus_stats = [
