@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use Session;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem};
+use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, CreatureKill, Graveyard};
 
 class GameController extends Controller
 	{
@@ -29,15 +29,27 @@ class GameController extends Controller
 			return redirect('/home');
 			}
 
-		$Character->calc_quick_stats();
+		// TODO: The next 4 lines are a HUGE performance hit:
+		// $Character->calc_quick_stats();
+		// if ($Character->health <= 0)
+		// 	{
+		// 	return $this->death($request);
+		// 	}
+		
+		$Room = Room::findOrFail($Character->last_rooms_id);
+		$CombatCheck = CombatLog::where(['characters_id' => $Character->id, 'rooms_id' => $Room->id]);
+		if ($CombatCheck->count() > 0)
+			{	
+			$CombatLog = CombatLog::where(['characters_id' => $Character->id, 'rooms_id' => $Room->id])->first();
+			}
+		$Zone = $Room->zone();
+
 		if ($Character->health <= 0)
 			{
+			$request->creature_kill = Session::get('creature_death');
+			$request->rooms_id = $Room->id;
 			return $this->death($request);
 			}
-		
-		$CombatLog = CombatLog::where(['characters_id' => $Character->id])->first();
-		$Room = Room::findOrFail($Character->last_rooms_id);
-		$Zone = $Room->zone();
 		
 		// TODO: Spawn code, refactor?
 		$Creature = null;
@@ -156,6 +168,12 @@ class GameController extends Controller
 				{
 				$Results = Character::select()->orderBy('score', 'desc')->get();
 				$request_params['score_list'] = $Results;
+				}
+
+			if ($Room->has_property('HAS_KILL_LOG'))
+				{
+				$Results = KillCount::where(['characters_id' => $Character->id])->get();
+				$request_params['kill_list'] = $Results;
 				}
 
 			// Make the view:
@@ -292,9 +310,9 @@ class GameController extends Controller
 			$request_params['directions'] = $Room->generate_directions($Character);
 			}
 
-		$finish_timer = round(microtime(true) - $start_timer, 3);
+		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
 		$timers[] = "index took:: $finish_timer ms";
-		Session::put('perf_log', $timers);
+		Session::push('perf_log', $timers);
 
 		// $character = array_merge($Character->pluck(), $Characters->pluck());;
 		if ($request->ajax())
@@ -559,15 +577,16 @@ class GameController extends Controller
 		// Also remove any session creatures in the new room:
 		Session::pull('creature.'.$NextRoom->id);
 
-		$finish_timer = round(microtime(true) - $start_timer, 3);
+		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
 		$timers[] = "move took:: $finish_timer ms";
-		Session::put('perf_log', $timers);
+		Session::push('perf_log', $timers);
 
 		return $this->index($request);
 		}
 
 	public function combat(Request $request)
 		{
+		$start_timer = microtime(true);
 		// error_log('Start combat');
 		$Character = Character::findOrFail($request->character_id);
 		$Room = Room::findOrFail($request->room_id);
@@ -602,6 +621,7 @@ class GameController extends Controller
 			Session::put('combat_log',["You have fled!  You have forfeit $cut_xp xp."]);
 			$Character->save();
 			Session::pull('creature.'.$Room->id);
+			Session::put('block_spawn', true);
 			// $request->no_spawn = true;
 			return $this->index($request);
 			}
@@ -794,6 +814,7 @@ class GameController extends Controller
 				$arr['pc_died'] = true;
 				if ($CombatLog)
 					{
+					Session::put('creature_death', $CombatLog->creatures_id);
 					$CombatLog->delete();
 					$CombatLog = null;
 					}
@@ -843,7 +864,7 @@ class GameController extends Controller
 					'creatures_id' => $Creature->id,
 					'rooms_id' => $request->room_id,
 					'remaining_health' => $flat_creature['health'],
-					'expires_on' => time() + 1800
+					'expires_on' => time() + 60
 					]);
 				}
 			$CombatLog->save();
@@ -923,6 +944,7 @@ class GameController extends Controller
 		elseif ($flat_character['health'] <= 0)
 			{
 			// we died:
+			// $request->creature_kill = $Creature->id;
 			// return $this->death($request);
 			}
 		else
@@ -940,6 +962,10 @@ class GameController extends Controller
 		// Test:
 		$new_combat = $this->generate_combat_log($combat_history, $Character);
 		// die(print_r($result));
+		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
+		error_log('combat took:: '.$finish_timer);
+		$timers[] = "combat took:: $finish_timer ms";
+		Session::push('perf_log', $timers);
 
 		// No, let's not do all this:
 		Session::put('combat_log', $new_combat);
@@ -962,6 +988,37 @@ class GameController extends Controller
 		// Back to the fountain!
 		$Character->last_rooms_id = 1;
 		$Character->save();
+		// Add a kill for a creature if exists:
+		if ($request->creature_kill)
+			{
+			$Room = Room::findOrFail($request->room_id);
+			// Create Graveyard entry:
+			$Graveyard = new Graveyard;
+			$Graveyard->fill([
+				'characters_id' => $request->character_id,
+				'creatures_id' => $request->creature_kill,
+				'zones_id' => $Room->zones_id
+				]);
+			$Graveyard->save();
+			// $Creature = Creature::findOrFail($request->creature_kill);
+			$CreatureKill = CreatureKill::where(['creatures_id' => $request->creature_kill])->first();
+
+			if ($CreatureKill)
+				{
+				$CreatureKill->count++;
+				// $CreatureKill->save();
+				}
+			else
+				{
+				$CreatureKill = new CreatureKill;
+				$CreatureKill->fill([
+					'creatures_id' => $request->creature_kill,
+					'count' => 1
+					]);
+				}
+
+			$CreatureKill->save();
+			}
 		// May not be needed?
 		$request->death = true;
 		return view('character.death', ['character' => $Character]);

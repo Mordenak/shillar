@@ -314,6 +314,7 @@
 
 			// Direct submit:
 			// $combatTimer = false;
+			var ajaxTime = new Date().getTime();
 
 			$.ajax({
 				type: 'POST',
@@ -363,6 +364,10 @@
 					// Probably a shit idea... REAL shit, whoops!
 					// $('body').html(resp);
 					}
+				}).done(function() {
+					var totalTime = new Date().getTime() - ajaxTime;
+					// console.log(totalTime);
+					$('.admin-display').append('<p>AJAX: '+totalTime+'ms</p>')
 				});
 			});
 		</script>

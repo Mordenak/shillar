@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CharacterQuest extends Model
 {
-	protected $fillable = ['character_id', 'quests_id', 'complete', 'rewarded'];
+	protected $fillable = ['characters_id', 'quests_id', 'complete', 'rewarded'];
 
 	public function criterias()
 		{

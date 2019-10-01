@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CharacterQuestCriteria extends Model
 	{
-	protected $fillable = ['quest_criterias_id', 'character_id', 'character_quests_id', 'progress', 'complete'];
+	protected $fillable = ['quest_criterias_id', 'characters_id', 'character_quests_id', 'progress', 'complete'];
 
 	public function quest()
 		{

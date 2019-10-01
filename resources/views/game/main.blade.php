@@ -295,7 +295,7 @@
 	<!-- Debug -->
 	@if (isset($is_admin) && $is_admin)
 	<br>
-	<div style="padding-left: 1rem;">
+	<div class="admin-display" style="padding-left: 1rem;">
 		-- Admin --<br>
 		Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a>
 		n: {{$room->north_rooms_id}}, e: {{$room->east_rooms_id}}, s: {{$room->south_rooms_id}}, w: {{$room->west_rooms_id}}, ne: {{$room->northeast_rooms_id}}, nw: {{$room->northwest_rooms_id}}, se: {{$room->southeast_rooms_id}}, sw: {{$room->southwest_rooms_id}}, u: {{$room->up_rooms_id}}, d: {{$room->down_rooms_id}}<br>
@@ -303,7 +303,7 @@
 		@if (Session::has('perf_log'))
 		<p style="">
 		@foreach (Session::pull('perf_log') as $log_entry)
-			{!! $log_entry !!}<br>
+			{!! $log_entry[0] !!}<br>
 		@endforeach
 		</p>
 		@endif

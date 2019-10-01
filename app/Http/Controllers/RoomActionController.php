@@ -52,7 +52,7 @@ class RoomActionController extends Controller
 			'failed_action' => $request->failed_action,
 			'display' => $request->display,
 			'directions_blocked' => $request->directions_blocked,
-			'remember' => $request->remember,
+			'remember' => isset($request->remember) ? true : false,
 			'has_item' => $request->has_item,
 			'completed_quest' => $request->completed_quest,
 			'completed_quest_task' => $request->completed_quest_task,

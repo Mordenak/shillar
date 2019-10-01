@@ -37,7 +37,7 @@ class TeleportTargets extends Seeder
 			['spells_id' => 1, 'name' => 'Druid Keep Top Level', 'rooms_id' => 888, 'level_req' => 35, 'wisdom_req' => 350, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Sky Castle 2nd Floor', 'rooms_id' => 920, 'level_req' => 45, 'wisdom_req' => 370, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['spells_id' => 1, 'name' => 'Sky Castle 3rd Floor', 'rooms_id' => 941, 'level_req' => 50, 'wisdom_req' => 390, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			// ['spells_id' => 1, 'name' => 'Plains', 'rooms_id' => 975, 'level_req' => 25, 'wisdom_req' => 410, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['spells_id' => 1, 'name' => 'Plains', 'rooms_id' => 976, 'level_req' => 25, 'wisdom_req' => 410, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 		]);
 		// DB::statement("SET session_replication_role = 'origin';");
 		}
