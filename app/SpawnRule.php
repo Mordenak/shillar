@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SpawnRule extends Model
 {
-	protected $fillable = ['zones_id', 'zone_areas_id', 'zone_levels', 'rooms_id', 'creature_groups_id', 'creatures_id', 'chance'];
+	protected $fillable = ['zones_id', 'zone_areas_id', 'zone_level', 'rooms_id', 'creature_groups_id', 'creatures_id', 'chance'];
 
 	public function zone()
 		{
