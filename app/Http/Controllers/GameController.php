@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 // Lol, what is going on here:
 use Session;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, CreatureKill, Graveyard};
@@ -47,6 +48,7 @@ class GameController extends Controller
 		if ($Character->health <= 0)
 			{
 			$request->creature_kill = Session::get('creature_death');
+			// die(print_r($request->creature_kill));
 			$request->rooms_id = $Room->id;
 			return $this->death($request);
 			}
@@ -174,6 +176,12 @@ class GameController extends Controller
 				{
 				$Results = KillCount::where(['characters_id' => $Character->id])->get();
 				$request_params['kill_list'] = $Results;
+				}
+
+			if ($Room->has_property('HAS_GRAVEYARD'))
+				{
+				$Results = Graveyard::all();
+				$request_params['graves'] = $Results;
 				}
 
 			// Make the view:
@@ -509,7 +517,7 @@ class GameController extends Controller
 				{
 				// Figure out the times:
 				$current_hour = Carbon::now()->format("H");
-				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['begin'])
+				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['end'])
 					{
 					// Take damage:
 					$damage_taken = $Character->receive_heat_damage($prop['amount']);
@@ -538,7 +546,7 @@ class GameController extends Controller
 				{
 				// Figure out the times:
 				$current_hour = Carbon::now()->format("H");
-				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['begin'])
+				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['end'])
 					{
 					// Take damage:
 					$damage_taken = $Character->receive_cold_damage($prop['amount']);
@@ -819,6 +827,7 @@ class GameController extends Controller
 				$arr['pc_died'] = true;
 				if ($CombatLog)
 					{
+					// die(print_r($CombatLog->creatures_id));
 					Session::put('creature_death', $CombatLog->creatures_id);
 					$CombatLog->delete();
 					$CombatLog = null;
@@ -1006,6 +1015,7 @@ class GameController extends Controller
 		$Character->last_rooms_id = 1;
 		$Character->save();
 		// Add a kill for a creature if exists:
+		// die(print_r($request->character_id));
 		if ($request->creature_kill)
 			{
 			$Room = Room::findOrFail($request->room_id);
@@ -2085,6 +2095,34 @@ class GameController extends Controller
 		// $Character->last_rooms_id = $request->room_id;
 		// $Character->save();
 		$Character->teleport($TeleportTarget->rooms_id);
+
+		return $this->index($request);
+		}
+
+	public function treasure_loot(Request $request)
+		{
+		$Room = Room::findOrFail($request->room_id);
+		$Character = Character::findOrFail($request->character_id);
+		$loot = Cache::get('room-treasure-'.$request->room_id);
+		// Remove from the cache:
+		Cache::forget('room-treasure-'.$request->room_id);
+		if (!$loot)
+			{
+			Session::flash('errors', 'That treasure is no longer there!');
+			return $this->index($request);
+			}
+		// Else, let's award the loot:
+		$values = $Room->zone()->get_property('TREASURE_HUNTING')->decode();
+		$possible_loot = $values[$loot];
+
+		$selected_loot = $possible_loot[array_rand($possible_loot)];
+
+		foreach ($selected_loot as $item_id)
+			{
+			$Item = Item::findOrFail($item_id);
+			$Character->inventory()->add_item($item_id);
+			Session::push('messages', 'You received a '.$Item->name);
+			}
 
 		return $this->index($request);
 		}

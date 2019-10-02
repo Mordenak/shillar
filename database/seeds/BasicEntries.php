@@ -95,6 +95,8 @@ class BasicEntries extends Seeder
 			['name' => 'SCRAMBLE_TELEPORT', 'description' => 'Teleport locations in this zone will randomly drop the character in either target or any adjacent room.', 'format' => '{}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			// End 15
 			['name' => 'RANDOM_ROOM', 'description' => 'Any room in this zone may randomly have an additional link to another specified room.', 'format' => '{"direction":"down","rooms_id":1,"chance":0.01}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'TREASURE_HUNTING', 'description' => "Used in conjunction with the SCRAMBLE_DIRECTIONS property to generate random hidden treasures. Format as same direction count to an array of item arrays.", 'format' => '{"2":[[1],[2,3],[4,5,6]}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['name' => 'PREVENT_SPELLS', 'description' => "Spells cannot be cast while in this zone.", 'format' => '{}', 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		DB::table('item_properties')->insert([

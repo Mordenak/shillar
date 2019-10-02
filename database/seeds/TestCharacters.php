@@ -27,7 +27,7 @@ class TestCharacters extends Seeder
 			]);
 
 		DB::table('inventory_items')->insert([
-			['inventory_id' => 1, 'items_id' => 217, 'quantity' => 250, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['inventory_id' => 1, 'items_id' => 231, 'quantity' => 250, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['inventory_id' => 1, 'items_id' => 54, 'quantity' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['inventory_id' => 1, 'items_id' => 111, 'quantity' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['inventory_id' => 1, 'items_id' => 112, 'quantity' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],

@@ -146,6 +146,7 @@ class SetupTables extends Migration
 			$table->string('uid')->nullable();
 			$table->string('title')->nullable();
 			$table->text('description')->nullable();
+			$table->text('custom_view')->nullable();
 			$table->integer('darkness_level')->nullable();
 			$table->string('img_src')->nullable();
 			$table->boolean('spawns_enabled')->default(true);

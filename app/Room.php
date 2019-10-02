@@ -1,7 +1,9 @@
 <?php
 
 namespace App;
-
+use Session;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
@@ -94,32 +96,106 @@ class Room extends Model
 	public function generate_directions($Character)
 		{
 		$directions = [];
-		foreach ($this->directions() as $col => $room_id)
+		if ($this->zone()->has_property('SCRAMBLE_DIRECTIONS'))
 			{
-			if ($room_id)
+			// Get current valid directions:
+			$valid_dirs = [$this->id];
+			foreach ($this->directions() as $col => $room_id)
 				{
-				if ($this->room_actions())
+				if ($room_id)
 					{
-					if (in_array($col, array_keys($this->room_actions()->blocked_dirs())))
+					$valid_dirs[] = $room_id;
+					}
+				}
+
+			$get_dirs = $this->directions();
+			unset($get_dirs['up_rooms_id']);
+			unset($get_dirs['down_rooms_id']);
+			$poss_dirs = array_keys($get_dirs);
+			
+			// TODO: Should we force at least 1 valid direction every time?
+			// Map the valids?
+			// foreach ($valid_dirs as $valid_dir)
+			// 	{
+			// 	$directions[] = [$poss_dirs[array_rand($poss_dirs)] => $valid_dir];
+			// 	}
+			// Then generate random ones up to... 5? ::
+
+			// TODO: better
+
+			if (rand(0,100) >= 0)
+				{
+				$directions[] = [$poss_dirs[array_rand($poss_dirs)] => $valid_dirs[array_rand($valid_dirs)]];
+				}
+
+			if (rand(0,100) >= 0)
+				{
+				$directions[] = [$poss_dirs[array_rand($poss_dirs)] => $valid_dirs[array_rand($valid_dirs)]];
+				}
+
+			if (rand(0,100) >= 40)
+				{
+				$directions[] = [$poss_dirs[array_rand($poss_dirs)] => $valid_dirs[array_rand($valid_dirs)]];
+				}
+
+			if (rand(0,100) >= 60)
+				{
+				$directions[] = [$poss_dirs[array_rand($poss_dirs)] => $valid_dirs[array_rand($valid_dirs)]];
+				}
+
+			if (rand(0,100) >= 80)
+				{
+				$directions[] = [$poss_dirs[array_rand($poss_dirs)] => $valid_dirs[array_rand($valid_dirs)]];
+				}
+
+			shuffle($directions);
+
+			if (count(array_unique(array_map(function ($i) { return key($i); }, $directions))) == 1)
+				{
+				// TODO: Random chance of treasure actually showing, using Character skill level
+				// Was unique groupings:
+				Session::put('has_treasure', true);
+				$num_dirs = count($directions);
+				$expiresAt = Carbon::now()->addMinutes(5);
+				Cache::put('room-treasure-'.$this->id, $num_dirs, $expiresAt);
+				}
+			}
+		else
+			{
+			foreach ($this->directions() as $col => $room_id)
+				{
+				if ($room_id)
+					{
+					if ($this->room_actions())
 						{
-						// better have character record:
-						$CharacterRoomAction = CharacterRoomAction::where(['characters_id' => $Character->id, 'room_actions_id' => $this->room_actions()->id])->first();
-						if ($CharacterRoomAction)
+						if (in_array($col, array_keys($this->room_actions()->blocked_dirs())))
 							{
-							$directions[$col] = $room_id;
+							// better have character record:
+							$CharacterRoomAction = CharacterRoomAction::where(['characters_id' => $Character->id, 'room_actions_id' => $this->room_actions()->id])->first();
+							if ($CharacterRoomAction)
+								{
+								$directions[] = [$col => $room_id];
+								}
+							}
+						else
+							{
+							$directions[] = [$col => $room_id];
 							}
 						}
 					else
 						{
-						$directions[$col] = $room_id;
+						$directions[] = [$col => $room_id];
 						}
 					}
 				else
 					{
-					$directions[$col] = $room_id;
+
 					}
 				}
 			}
+
+		// When we generate directions, store something on the server for that room:
+		// Cache::put()
 		return $directions;
 		}
 

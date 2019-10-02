@@ -211,6 +211,14 @@
 	<span style="color:red;">{{Session::pull("no_carry")}}</span><br>
 	@endif
 
+	@if ( Session::has('messages') )
+	<p>
+	@foreach ( Session::pull('messages') as $message)
+	{{ $message }}<br>
+	@endforeach
+	</p>
+	@endif
+
 	<!-- Special actions? -->
 	@if( Session::has("action_failed") )
 	<p style="color:red;">{{ Session::pull("action_failed") }}</p>
@@ -242,7 +250,8 @@
 	<p style="color:orange;">You must fight your way through this enemy to move again!</p>
 	@else
 	<p>
-		@foreach ($directions as $col => $room_id)
+		@foreach ($directions as $direction_entry)
+		@foreach ($direction_entry as $col => $room_id)
 		<form method="post" action="/move" class="ajax">
 			{{csrf_field()}}
 			<input type="hidden" name="room_id" value="{{$room_id}}">
@@ -251,12 +260,14 @@
 			<input type="submit" id="move_{{$col}}" style="display: none;">
 		</form>
 		@endforeach
+		@endforeach
 	</p>
 	@endif
 
 	@if (isset($ground_items))
 	@foreach ($ground_items as $ground_item)
 	<form method="post" action="/item_pickup" class="ajax">
+		{{csrf_field()}}
 		<input type="hidden" name="room_id" value="{{$room->id}}">
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 		<input type="hidden" name="ground_item_id" value="{{$ground_item->id}}">
@@ -265,6 +276,23 @@
 		<input type="submit" id="pickup" style="display: none;">
 	</form>
 	@endforeach
+	@endif
+
+	@if ($room->zone()->has_property('TREASURE_HUNTING'))
+	Treasure Active!
+
+	@if (Session::pull('has_treasure'))
+	<form method="post" action="/treasure_loot" class="ajax">
+		{{csrf_field()}}
+		<input type="hidden" name="room_id" value="{{$room->id}}">
+		<input type="hidden" name="character_id" value="{{$character->id}}">
+		<input type="hidden" name="no_spawn" value="true">
+		You notice a <label for="pickup" tabindex="11">hidden treasure</label> in the sand.
+		<input type="submit" id="pickup" style="display: none;">
+	</form>
+	@endif
+
+	
 	@endif
 
 	@if ($room->has_property('WALL_SCORE'))

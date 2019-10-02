@@ -351,8 +351,6 @@
 				data: formData,
 				success: function(resp) {
 
-					$('input:disabled,select:disabled').removeAttr('disabled');
-
 					if (this['url'] == '/spells' || this['url'] == '/game/teleport')
 						{
 						$('.main').html(resp.main);
@@ -390,8 +388,13 @@
 					// some type of full page reload:
 					// Probably a shit idea... REAL shit, whoops!
 					// $('body').html(resp);
+					},
+				error: function() {
+					console.log('should fire on error');
+					$('input:disabled,select:disabled').removeAttr('disabled');
 					}
 				}).done(function() {
+					$('input:disabled,select:disabled').removeAttr('disabled');
 					var totalTime = new Date().getTime() - ajaxTime;
 					// console.log(totalTime);
 					var insertString = '<td class="perf-green">'+totalTime+' ms</td>';
@@ -403,7 +406,7 @@
 						{
 						insertString = '<td class="perf-warning">'+totalTime+' ms</td>';
 						}
-					$('.perf-table').append('<tr><td>AJAX</td>'+insertString+'</tr>')
+					$('.perf-table').append('<tr><td>AJAX</td>'+insertString+'</tr>');
 				});
 			});
 		</script>
