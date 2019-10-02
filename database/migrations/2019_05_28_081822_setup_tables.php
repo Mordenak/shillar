@@ -96,7 +96,7 @@ class SetupTables extends Migration
 			$table->foreign('zones_id')->references('id')->on('zones');
 			$table->string('uid')->unique()->nullable();
 			$table->string('name');
-			$table->text('travel_text');
+			$table->text('travel_text')->nullable();
 			$table->text('description')->nullable();
 			$table->boolean('inherit_creatures')->default(true);
 			$table->boolean('inherit_properties')->default(true);

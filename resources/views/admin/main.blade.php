@@ -8,9 +8,11 @@
 		<a href="admin/zone-editor">Zone Editor [WIP]</a><br>
 		<br>
 		<a href="zone/all">All Zones</a><br>
+		<a href="zone_area/all">All Zone Areas</a><br>
 		<a href="room/all">All Rooms</a><br>
 		<a href="item/all">All Items</a><br>
 		<a href="creature/all">All Creatures</a><br>
+		<a href="creature_group/all">All Creature Groups</a><br>
 		<a href="shop/all">All Shops</a><br>
 		<a href="quest/all">All Quests</a><br>
 		<a href="race/all">All Races [NYI]</a><br>

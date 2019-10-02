@@ -95,9 +95,19 @@
 				url = '/zone/lookup';
 				}
 
+			if ($target.hasClass('zone-area-lookup'))
+				{
+				url = '/zone_area/lookup';
+				}
+
 			if ($target.hasClass('room-lookup'))
 				{
 				url = '/room/lookup';
+				}
+
+			if ($target.hasClass('creature-lookup'))
+				{
+				url = '/creature/lookup';
 				}
 
 			if ($target.hasClass('item-lookup'))

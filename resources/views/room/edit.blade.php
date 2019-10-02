@@ -29,6 +29,13 @@ Creating a new room:<br>
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Zone Area:</label>
+			<div class="col-md-3">
+				<input type="text" name="zone_areas_id" value="{{isset($room) ? $room->zone_areas_id : ''}}" class="form-control auto-lookup zone-area-lookup">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Level:</label>
 			<div class="col-md-3">
 				<input type="text" name="zone_level" value="{{isset($room) ? $room->zone_level : ''}}" class="form-control">

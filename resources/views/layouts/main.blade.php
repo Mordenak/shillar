@@ -175,6 +175,33 @@
 			white-space: nowrap;
 			}
 
+		.perf-green
+			{
+			color: green;
+			}
+
+		.perf-warning
+			{
+			color: yellow;
+			}
+
+		.perf-alert
+			{
+			color: red;
+			}
+
+		a
+			{
+			color: yellow;
+			}
+
+		.admin-display
+			{
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			}
+
 		</style>
 	</head>
 	<body>
@@ -367,7 +394,16 @@
 				}).done(function() {
 					var totalTime = new Date().getTime() - ajaxTime;
 					// console.log(totalTime);
-					$('.admin-display').append('<p>AJAX: '+totalTime+'ms</p>')
+					var insertString = '<td class="perf-green">'+totalTime+' ms</td>';
+					if (totalTime >= 1500)
+						{
+						insertString = '<td class="perf-alert">'+totalTime+' ms</td>';
+						}
+					else if (totalTime >= 800)
+						{
+						insertString = '<td class="perf-warning">'+totalTime+' ms</td>';
+						}
+					$('.perf-table').append('<tr><td>AJAX</td>'+insertString+'</tr>')
 				});
 			});
 		</script>

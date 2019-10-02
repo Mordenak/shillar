@@ -10,17 +10,17 @@ class CreatureGroup extends Model
 
 	public function spawn_rules()
 		{
-		return $this->hasMany('App\SpawnRule', 'creature_groups_id')->get();
+		return $this->hasMany('App\SpawnRule', 'creature_groups_id');
 		}
 
-	public function creatures()
+	public function linked_creatures()
 		{
 		return $this->hasMany('App\CreatureToCreatureGroup', 'creature_groups_id');
 		}
 
 	public function weight_sum()
 		{
-		return $this->creatures()->sum('weight');
+		return $this->linked_creatures()->sum('weight');
 		}
 
 	public function generate_creature()
@@ -31,14 +31,14 @@ class CreatureGroup extends Model
 		$total = $this->weight_sum();
 		$spawn_marker = rand(0, $total);
 		$n = 0;
-		foreach ($this->creatures()->get() as $creature)
+		foreach ($this->linked_creatures()->get() as $linked_creature)
 			{
 			// die(print_r($creature));
-			$n += $creature->weight;
+			$n += $linked_creature->weight;
 			if ($n >= $spawn_marker)
 				{
 				// die(print_r($creature));
-				return $creature->creature();
+				return $linked_creature->creature();
 				}
 			}
 		// die('no creature');

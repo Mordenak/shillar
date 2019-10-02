@@ -8,7 +8,7 @@ class CreatureToCreatureGroup extends Model
 	{
 	// protected $table = 'creature_to_creature_groups';
 
-	protected $fillable = ['creatures_id', 'creature_groups_id'];
+	protected $fillable = ['creatures_id', 'creature_groups_id', 'weight'];
 
 	public function creature()
 		{

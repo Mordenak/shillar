@@ -313,7 +313,7 @@ class GameController extends Controller
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
 		// $timers[] = "index took:: $finish_timer ms";
 		// Session::push('perf_log', $timers);
-		Session::push('perf_log', "index took:: $finish_timer ms");
+		Session::push('perf_log', ['index' => $finish_timer]);
 
 		// $character = array_merge($Character->pluck(), $Characters->pluck());;
 		if ($request->ajax())
@@ -581,7 +581,7 @@ class GameController extends Controller
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
 		// $timers[] = "move took:: $finish_timer ms";
 		// Session::push('perf_log', $timers);
-		Session::push('perf_log', "move took:: $finish_timer ms");
+		Session::push('perf_log', ['move' => $finish_timer]);
 
 		return $this->index($request);
 		}
@@ -981,7 +981,8 @@ class GameController extends Controller
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
 		// $timers[] = "total combat took:: $finish_timer ms";
 		// Session::push('perf_log', $timers);
-		Session::push('perf_log', "total combat took:: $finish_timer ms");
+		// Session::push('perf_log', "total combat took:: $finish_timer ms");
+		Session::push('perf_log', ['combat' => $finish_timer]);
 
 		// No, let's not do all this:
 		Session::put('combat_log', $new_combat);
@@ -2193,7 +2194,7 @@ class GameController extends Controller
 						}
 					}
 
-				if (isset($log_entry['no_fatigue']))
+				if ($log_entry['no_fatigue'])
 					{
 					$condensed[] = 'You are too tired to attack.<br>';
 					}

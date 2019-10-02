@@ -297,15 +297,33 @@
 	<br>
 	<div class="admin-display" style="padding-left: 1rem;">
 		-- Admin --<br>
+		Current Zone: <a href="/zone/edit/{{$room->zone()->id}}" target="_blank">{{$room->zone()->name}}</a><br>
 		Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a>
 		n: {{$room->north_rooms_id}}, e: {{$room->east_rooms_id}}, s: {{$room->south_rooms_id}}, w: {{$room->west_rooms_id}}, ne: {{$room->northeast_rooms_id}}, nw: {{$room->northwest_rooms_id}}, se: {{$room->southeast_rooms_id}}, sw: {{$room->southwest_rooms_id}}, u: {{$room->up_rooms_id}}, d: {{$room->down_rooms_id}}<br>
+		@if ($creature)
+		Current Creature: <a href="/creature/edit/{{$creature->id}}" target="_blank">{{$creature->name}}</a><br>
+		@endif
+		
 		-- Performance --<br>
 		@if (Session::has('perf_log'))
-		<p style="">
-		@foreach (Session::pull('perf_log') as $log_entry)
-			{!! $log_entry !!}<br>
+		<table class="perf-table">
+		@foreach (Session::pull('perf_log') as $timer_entry)
+
+		@foreach ($timer_entry as $timer => $time)
+			<tr>
+			<td>{{$timer}}</td>
+			@if ($time >= 500)
+			<td class="perf-alert">{{$time}} ms</td>
+			@elseif ($time >= 250)
+			<td class="perf-warning">{{$time}} ms</td>
+			@else
+			<td class="perf-green">{{$time}} ms</td>
+			@endif
+			</tr>
 		@endforeach
-		</p>
+
+		@endforeach
+		</table>
 		@endif
 	</div>
 	@endif

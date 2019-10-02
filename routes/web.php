@@ -87,6 +87,12 @@ Route::get('zone/edit/{id}', 'ZoneController@edit')->where('id', '[0-9]+');
 Route::post('zone/save', 'ZoneController@save');
 Route::post('zone/delete', 'ZoneController@delete');
 
+Route::get('zone_area/all', 'ZoneAreaController@all');
+Route::get('zone_area/create', 'ZoneAreaController@create');
+Route::get('zone_area/edit/{id}', 'ZoneAreaController@edit')->where('id', '[0-9]+');
+Route::post('zone_area/save', 'ZoneAreaController@save');
+Route::post('zone_area/delete', 'ZoneAreaController@delete');
+
 Route::get('item/all', 'ItemController@all');
 Route::get('item/create', 'ItemController@create');
 Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');
@@ -97,6 +103,13 @@ Route::get('creature/all', 'CreatureController@all');
 Route::get('creature/create', 'CreatureController@create');
 Route::get('creature/edit/{id}', 'CreatureController@edit')->where('id', '[0-9]+');
 Route::post('creature/save', 'CreatureController@save');
+Route::post('creature/delete', 'CreatureController@delete');
+
+Route::get('creature_group/all', 'CreatureGroupController@all');
+Route::get('creature_group/create', 'CreatureGroupController@create');
+Route::get('creature_group/edit/{id}', 'CreatureGroupController@edit')->where('id', '[0-9]+');
+Route::post('creature_group/save', 'CreatureGroupController@save');
+Route::post('creature_group/delete', 'CreatureGroupController@delete');
 
 Route::get('character/all', 'CharacterController@all');
 Route::get('character/edit/{id}', 'CharacterController@edit')->where('id', '[0-9]+');
@@ -142,6 +155,8 @@ Route::post('spell/delete', 'SpellController@delete');
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');
 Route::get('/room/lookup', 'RoomController@lookup');
+Route::get('/creature/lookup', 'CreatureController@lookup');
 Route::get('/zone/lookup', 'ZoneController@lookup');
+Route::get('/zone_area/lookup', 'ZoneAreaController@lookup');
 Route::get('/room_property/lookup', 'RoomPropertyController@lookup');
 Route::get('/zone_property/placeholder', 'ZoneController@placeholder');

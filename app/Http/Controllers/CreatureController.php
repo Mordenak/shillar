@@ -156,4 +156,49 @@ class CreatureController extends Controller
 
 		return $this->edit($Creature->fresh()->id);
 		}
+
+	public function lookup(Request $request)
+		{
+		$Creatures = Creature::where('name', 'ilike', "%$request->term%")->get();	
+
+		$arr = [];
+
+		if ($Creatures)
+			{
+			foreach ($Creatures as $Creature)
+				{
+				$label = "($Creature->id) ".$Creature->name;
+				$arr[] = [
+					'label' => $label,
+					'value' => $Creature->id,
+					];
+				}
+			}
+
+		// Also search IDs:
+		if (is_numeric($request->term))
+			{
+			$Creatures = Creature::where('id', '=', $request->term)->get();
+
+			if ($Creatures)
+				{
+				foreach ($Creatures as $Creature)
+					{
+					$label = "($Creature->id) ".$Creature->name;
+					$arr[] = [
+						'label' => $label,
+						'value' => $Creature->id,
+						];
+					}
+				}
+			}
+
+		if (empty($arr))
+			{
+			$arr[] = ['label' => 'No Results', 'value' => $request->term];
+			}
+
+		echo (json_encode($arr));;
+		header('Content-type: application/json');
+		}
 	}

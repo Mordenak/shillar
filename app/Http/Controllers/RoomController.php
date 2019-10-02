@@ -8,7 +8,7 @@ use App\Zone;
 use App\Room;
 
 class RoomController extends Controller
-{
+	{
 	public function create()
 		{
 		$zones = Zone::all();
@@ -48,6 +48,7 @@ class RoomController extends Controller
 
 		$values = [
 			'zones_id' => $request->selected_zone,
+			'zone_areas_id' => $request->zone_areas_id,
 			'uid' => $request->uid,
 			'title' => $request->title,
 			'description' => $request->description,
@@ -138,19 +139,13 @@ class RoomController extends Controller
 			$LinkRoom->save();
 			}
 
-
-
 		// return view('admin/main');
 		return redirect()->action('RoomController@all');
 		}
 
 	public function lookup(Request $request)
 		{
-		if ($request->term == 'has:title')
-			{
-			$Rooms = Room::whereNotNull('title')->get();
-			}
-		elseif (preg_match("/zone:(.+)/", $request->term, $matches))
+		if (preg_match("/zone:(.+)/", $request->term, $matches))
 			{
 			if (is_numeric($matches[1]))
 				{
@@ -241,4 +236,4 @@ class RoomController extends Controller
 		echo (json_encode($arr));;
 		header('Content-type: application/json');
 		}
-}
+	}
