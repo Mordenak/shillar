@@ -63,6 +63,7 @@ class CreatureController extends Controller
 			'damage_low' => $request->damage_low,
 			'damage_high' => $request->damage_high,
 			'attacks_per_round' => $request->attacks_per_round,
+			'attack_text' => $request->attack_text,
 			'magic_resistance' => $request->magic_resistance,
 			'scroll_resistance' => $request->scroll_resistance,
 			'alignments_id' => $request->alignments_id,
