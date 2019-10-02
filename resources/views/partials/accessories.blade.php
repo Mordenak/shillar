@@ -12,13 +12,6 @@
 </div>
 
 <div class="form-group row">
-	<label class="col-md-2 col-form-label text-md-right">Light Level:</label>
-	<div class="col-md-3">
-		<input type="text" name="light_level" value="{{isset($actual_item) ? $actual_item->light_level : ''}}" class="form-control">
-	</div>
-</div>
-
-<div class="form-group row">
 	<label class="col-md-2 col-form-label text-md-right">Strength:</label>
 	<div class="col-md-3">
 		<input type="text" name="strength_bonus" value="{{isset($actual_item) ? $actual_item->strength_bonus : ''}}" class="form-control">

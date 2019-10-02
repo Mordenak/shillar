@@ -94,7 +94,7 @@
 	</p>
 	@endif
 
-	@if ($room->zone()->darkness_level() > $character->light_level())
+	@if ($room->zone()->darkness_level() > 0 && ($room->zone()->darkness_level() > $character->light_level()))
 	<p style="color: red;">
 		It is too dark, you cannot see anything!
 	</p>
@@ -363,18 +363,4 @@
 	</form>
 	@endif
 
-	<!-- Debug section -->
-
-	@if (auth()->user()->admin_level > 0)
-
-		@if (isset($combat))
-		{{$combat->id}} {{$combat->remaining_health}}
-		@endif
-
-		Current weight: {{$character->inventory()->current_weight()}} / {{$character->inventory()->max_weight()}}<br>
-
-		@foreach ($character->inventory()->character_items() as $item)
-			{{$item->id}}: {{$item->items_id}} -- {{$item->item()->name}}, {{$item->item()->item_types_id}} ({{$item->quantity}})<br>
-		@endforeach
-	@endif
 @endsection
