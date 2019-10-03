@@ -118,7 +118,7 @@ class CreatureGroupController extends Controller
 			$SpawnRule->save();
 			}
 
-		Session::flash('success', 'Creature Updated!');
+		Session::flash('success', 'Creature Group Updated!');
 		return redirect()->action('CreatureGroupController@edit', ['id' => $CreatureGroup->id]);
 		}
 	}

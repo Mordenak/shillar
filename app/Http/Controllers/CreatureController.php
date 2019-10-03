@@ -154,8 +154,7 @@ class CreatureController extends Controller
 			}
 
 		Session::flash('success', 'Creature Updated!');
-
-		return $this->edit($Creature->fresh()->id);
+		return redirect()->action('CreatureController@edit', ['id' => $Creature->id]);
 		}
 
 	public function lookup(Request $request)

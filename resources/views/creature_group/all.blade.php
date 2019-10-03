@@ -11,7 +11,7 @@
 		<form method="get" action="/creature_group/create">
 			<div class="form-group row">
 				<div class="col-md-3">
-					<input type="submit" value="Add Creature" class="form-control btn btn-success">
+					<input type="submit" value="Add Creature Group" class="form-control btn btn-success">
 				</div>
 			</div>
 		</form>
