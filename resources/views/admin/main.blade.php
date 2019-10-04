@@ -39,6 +39,7 @@
 		@endif
 		@if (auth()->user()->admin_level > 2)
 		<a href="user/all">All Users</a><br>
+		<a href="/admin/creature_dump">Creature Dump</a><br>
 		@endif
 	</div>
 

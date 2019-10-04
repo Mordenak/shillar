@@ -201,4 +201,10 @@ class CreatureController extends Controller
 		echo (json_encode($arr));;
 		header('Content-type: application/json');
 		}
+
+	public function seed_dump()
+		{
+		$Creatures = Creature::all();
+		return view('admin.creature_dump', ['Creatures' => $Creatures]);
+		}
 	}

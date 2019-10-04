@@ -97,19 +97,19 @@ class ItemController extends Controller
 			{
 			$item_values['equipment_slot'] = $request->equipment_slot;
 			$item_values['armor'] = $request->armor;
-			$item_values['strength_bonus'] = $request->strength_bonus;
-			$item_values['dexterity_bonus'] = $request->dexterity_bonus;
-			$item_values['constitution_bonus'] = $request->constitution_bonus;
-			$item_values['wisdom_bonus'] = $request->wisdom_bonus;
-			$item_values['intelligence_bonus'] = $request->intelligence_bonus;
-			$item_values['charisma_bonus'] = $request->charisma_bonus;
+			// $item_values['strength_bonus'] = $request->strength_bonus;
+			// $item_values['dexterity_bonus'] = $request->dexterity_bonus;
+			// $item_values['constitution_bonus'] = $request->constitution_bonus;
+			// $item_values['wisdom_bonus'] = $request->wisdom_bonus;
+			// $item_values['intelligence_bonus'] = $request->intelligence_bonus;
+			// $item_values['charisma_bonus'] = $request->charisma_bonus;
 			}
 
 		// die(print_r($ItemType->table_name));
 		if ($ItemType->table_name == 'item_accessories')
 			{
 			$item_values['equipment_slot'] = $request->equipment_slot;
-			$item_values['light_level'] = $request->light_level;
+			// $item_values['light_level'] = $request->light_level;
 			$item_values['strength_bonus'] = $request->strength_bonus;
 			$item_values['dexterity_bonus'] = $request->dexterity_bonus;
 			$item_values['constitution_bonus'] = $request->constitution_bonus;

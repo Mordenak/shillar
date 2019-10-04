@@ -53,6 +53,7 @@ Route::get('/admin', 'AdminController@index');
 Route::post('/admin/process', 'AdminController@process');
 // Admin bit:
 Route::post('/admin/give_item', 'AdminController@give_item');
+Route::get('/admin/creature_dump', 'CreatureController@seed_dump');
 
 Route::post('/game/deposit', 'GameController@deposit');
 Route::post('/game/withdraw', 'GameController@withdraw');
