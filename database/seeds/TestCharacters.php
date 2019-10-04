@@ -59,15 +59,15 @@ class TestCharacters extends Seeder
 			]);
 
 		DB::table('kill_counts')->insert([
-			['characters_id' => 2, 'creatures_id' => 2, 'amount' => 285, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 3, 'amount' => 277, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 4, 'amount' => 311, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 6, 'amount' => 315, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 7, 'amount' => 278, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 8, 'amount' => 263, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 9, 'amount' => 241, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 10, 'amount' => 308, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['characters_id' => 2, 'creatures_id' => 11, 'amount' => 245, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 2, 'count' => 285, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 3, 'count' => 277, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 4, 'count' => 311, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 6, 'count' => 315, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 7, 'count' => 278, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 8, 'count' => 263, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 9, 'count' => 241, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 10, 'count' => 308, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
+			['characters_id' => 2, 'creatures_id' => 11, 'count' => 245, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
 		}
