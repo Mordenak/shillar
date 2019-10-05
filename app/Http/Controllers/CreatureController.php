@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Creature;
 // TODO: Temp --
 use App\CreatureGroup;
+use App\CreatureToCreatureGroup;
+// End Temp --
 use App\RewardTable;
 use App\SpawnRule;
 use App\LootTable;
@@ -208,8 +210,9 @@ class CreatureController extends Controller
 		{
 		$Creatures = Creature::orderBy('id')->get();
 		$CreatureGroups = CreatureGroup::orderBy('id')->get();
+		$CreatureToCreatureGroups = CreatureToCreatureGroup::orderBy('id')->get();
 		$SpawnRules = SpawnRule::orderBy('id')->get();
 		$LootTables = LootTable::orderBy('id')->get();
-		return view('admin.creature_dump', ['Creatures' => $Creatures, 'CreatureGroups' => $CreatureGroups, 'SpawnRules' => $SpawnRules, 'LootTables' => $LootTables]);
+		return view('admin.creature_dump', ['Creatures' => $Creatures, 'CreatureGroups' => $CreatureGroups, 'CreatureToCreatureGroups' => $CreatureToCreatureGroups, 'SpawnRules' => $SpawnRules, 'LootTables' => $LootTables]);
 		}
 	}

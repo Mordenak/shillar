@@ -29,11 +29,21 @@
 @endforeach
 
 <br><br><br>
+<h2>CreatureGroups</h2>
+
+@foreach ($CreatureToCreatureGroups as $CreatureToCreatureGroup)
+
+['creatures_id' => {{$CreatureToCreatureGroup->creatures_id}}, 'creature_groups_id' => {{$CreatureToCreatureGroup->creature_groups_id}}, 'weight' => {{$CreatureToCreatureGroup->weight}}, 'priority' => {{isset($CreatureToCreatureGroup->priority) ? $CreatureToCreatureGroup->priority : 'null'}}, 'score_req' => {{isset($CreatureToCreatureGroup->score_req) ? $CreatureToCreatureGroup->score_req : 'null'}}, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],<br>
+
+@endforeach
+
+
+<br><br><br>
 <h2>SpawnRules</h2>
 
 @foreach ($SpawnRules as $SpawnRule)
 
-['creatures_id' => {{isset($SpawnRule->creatures_id) ? $SpawnRule->creatures_id : 'null'}}, 'creature_groups_id' => {{isset($SpawnRule->creature_groups_id) ? $SpawnRule->creature_groups_id : 'null'}}, 'zones_id' => {{isset($SpawnRule->zones_id) ? $SpawnRule->zones_id : 'null'}}, 'zone_level' => {{isset($SpawnRule->zone_level) ? $SpawnRule->zone_level : 'null'}}, zone_areas_id' => {{isset($SpawnRule->zone_areas_id) ? $SpawnRule->zone_areas_id : 'null'}}, 'rooms_id' => {{isset($SpawnRule->rooms_id) ? $SpawnRule->rooms_id : 'null'}}, 'chance' => {{isset($SpawnRule->chance) ? $SpawnRule->chance : 'null'}}, 'spawn_hour' => {{isset($SpawnRule->spawn_hour) ? $SpawnRule->spawn_hour : 'null'}}, 'random_hour' => {{$SpawnRule->random_hour ? 'true' : 'false'}}, 'priority' => {{isset($SpawnRule->priority) ? $SpawnRule->priority : 'null'}}, 'score_req' => {{isset($SpawnRule->score_req) ? $SpawnRule->score_req : 'null'}}, 'spawns_once' => {{$SpawnRule->spawns_once ? 'true' : 'false'}}, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],<br>
+['creatures_id' => {{isset($SpawnRule->creatures_id) ? $SpawnRule->creatures_id : 'null'}}, 'creature_groups_id' => {{isset($SpawnRule->creature_groups_id) ? $SpawnRule->creature_groups_id : 'null'}}, 'zones_id' => {{isset($SpawnRule->zones_id) ? $SpawnRule->zones_id : 'null'}}, 'zone_level' => {{isset($SpawnRule->zone_level) ? $SpawnRule->zone_level : 'null'}}, 'zone_areas_id' => {{isset($SpawnRule->zone_areas_id) ? $SpawnRule->zone_areas_id : 'null'}}, 'rooms_id' => {{isset($SpawnRule->rooms_id) ? $SpawnRule->rooms_id : 'null'}}, 'chance' => {{isset($SpawnRule->chance) ? $SpawnRule->chance : 'null'}}, 'spawn_hour' => {{isset($SpawnRule->spawn_hour) ? $SpawnRule->spawn_hour : 'null'}}, 'random_hour' => {{$SpawnRule->random_hour ? 'true' : 'false'}}, 'priority' => {{isset($SpawnRule->priority) ? $SpawnRule->priority : 'null'}}, 'score_req' => {{isset($SpawnRule->score_req) ? $SpawnRule->score_req : 'null'}}, 'spawns_once' => {{$SpawnRule->spawns_once ? 'true' : 'false'}}, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],<br>
 
 @endforeach
 
