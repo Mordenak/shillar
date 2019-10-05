@@ -6,6 +6,8 @@ use Session;
 use View;
 use Illuminate\Http\Request;
 use App\Creature;
+// TODO: Temp --
+use App\CreatureGroup;
 use App\RewardTable;
 use App\SpawnRule;
 use App\LootTable;
@@ -205,6 +207,9 @@ class CreatureController extends Controller
 	public function seed_dump()
 		{
 		$Creatures = Creature::orderBy('id')->get();
-		return view('admin.creature_dump', ['Creatures' => $Creatures]);
+		$CreatureGroups = CreatureGroup::orderBy('id')->get();
+		$SpawnRules = SpawnRule::orderBy('id')->get();
+		$LootTables = LootTable::orderBy('id')->get();
+		return view('admin.creature_dump', ['Creatures' => $Creatures, 'CreatureGroups' => $CreatureGroups, 'SpawnRules' => $SpawnRules, 'LootTables' => $LootTables]);
 		}
 	}

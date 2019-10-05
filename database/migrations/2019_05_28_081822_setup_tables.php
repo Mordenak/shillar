@@ -696,6 +696,7 @@ class SetupTables extends Migration
 			$table->integer('items_id');
 			$table->foreign('items_id')->references('id')->on('items');
 			$table->float('chance');
+			$table->boolean('prevent_others')->default(false);
 			$table->timestamps();
 		});
 
