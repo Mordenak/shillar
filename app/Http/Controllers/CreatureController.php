@@ -204,7 +204,7 @@ class CreatureController extends Controller
 
 	public function seed_dump()
 		{
-		$Creatures = Creature::all();
+		$Creatures = Creature::orderBy('id')->get();
 		return view('admin.creature_dump', ['Creatures' => $Creatures]);
 		}
 	}
