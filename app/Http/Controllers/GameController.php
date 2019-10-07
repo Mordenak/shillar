@@ -47,7 +47,7 @@ class GameController extends Controller
 
 		if ($Character->health <= 0)
 			{
-			$request->creature_kill = Session::get('creature_death');
+			// $request->creature_kill = Session::get('creature_death');
 			// die(print_r($request->creature_kill));
 			$request->rooms_id = $Room->id;
 			return $this->death($request);
@@ -828,7 +828,7 @@ class GameController extends Controller
 				if ($CombatLog)
 					{
 					// die(print_r($CombatLog->creatures_id));
-					Session::put('creature_death', $CombatLog->creatures_id);
+					Session::put('creature_death', $Creature->id);
 					$CombatLog->delete();
 					$CombatLog = null;
 					}
@@ -1015,20 +1015,21 @@ class GameController extends Controller
 		$Character->last_rooms_id = 1;
 		$Character->save();
 		// Add a kill for a creature if exists:
-		// die(print_r($request->character_id));
-		if ($request->creature_kill)
+		// die(print_r($request->creature_kill));
+		$creature_kill = Session::pull('creature_death');
+		if ($creature_kill)
 			{
 			$Room = Room::findOrFail($request->room_id);
 			// Create Graveyard entry:
 			$Graveyard = new Graveyard;
 			$Graveyard->fill([
 				'characters_id' => $request->character_id,
-				'creatures_id' => $request->creature_kill,
+				'creatures_id' => $creature_kill,
 				'zones_id' => $Room->zones_id
 				]);
 			$Graveyard->save();
 			// $Creature = Creature::findOrFail($request->creature_kill);
-			$CreatureKill = CreatureKill::where(['creatures_id' => $request->creature_kill])->first();
+			$CreatureKill = CreatureKill::where(['creatures_id' => $creature_kill])->first();
 
 			if ($CreatureKill)
 				{
@@ -1039,7 +1040,7 @@ class GameController extends Controller
 				{
 				$CreatureKill = new CreatureKill;
 				$CreatureKill->fill([
-					'creatures_id' => $request->creature_kill,
+					'creatures_id' => $creature_kill,
 					'count' => 1
 					]);
 				}
