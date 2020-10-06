@@ -1889,30 +1889,78 @@ class GameController extends Controller
 	public function deposit(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		if ($request->deposit > $Character->gold)
+		if ($Character->gold == 0)
 			{
-			Session::flash('bank', 'You do not have that much gold!');
+			Session::flash('bank', 'You have no money to deposit.');
 			return $this->index($request);
 			}
-		$Character->gold = $Character->gold - $request->deposit;
-		$Character->bank = $Character->bank + $request->deposit;
-		$Character->save();
-		Session::flash('bank', 'You deposited '.$request->deposit.' gold into the bank.');
+
+		if ($request->all)
+			{
+			$current_gold = $Character->gold;
+			$Character->gold = 0;
+			$Character->bank = $Character->bank + $current_gold;
+			$Character->save();
+			Session::flash('bank', 'You deposited '.$current_gold.' gold into the bank.');
+			}
+		else
+			{
+			if ($request->deposit <= 0)
+				{
+				Session::flash('bank', 'Please try to deposit a valid amount!');
+				return $this->index($request);
+				}
+
+			if ($request->deposit > $Character->gold)
+				{
+				Session::flash('bank', 'You do not have that much gold!');
+				return $this->index($request);
+				}
+			$Character->gold = $Character->gold - $request->deposit;
+			$Character->bank = $Character->bank + $request->deposit;
+			$Character->save();
+			Session::flash('bank', 'You deposited '.$request->deposit.' gold into the bank.');
+			}
+		
 		return $this->index($request);
 		}
 
 	public function withdraw(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		if ($request->withdraw > $Character->bank)
+		if ($Character->bank == 0)
 			{
-			Session::flash('bank', 'You do not have that much gold in the bank!');
+			Session::flash('bank', 'You have no money to withdraw.');
 			return $this->index($request);
 			}
-		$Character->bank = $Character->bank - $request->withdraw;
-		$Character->gold = $Character->gold + $request->withdraw;
-		$Character->save();
-		Session::flash('bank', 'You withdraw '.$request->withdraw.' gold from the bank.');
+
+		if ($request->all)
+			{
+			$current_bank = $Character->bank;
+			$Character->bank = 0;
+			$Character->gold = $Character->gold + $current_bank;
+			$Character->save();
+			Session::flash('bank', 'You withdrew '.$current_bank.' gold into the bank.');
+			}
+		else
+			{
+			if ($request->withdraw <= 0)
+				{
+				Session::flash('bank', 'Please try to withdraw a valid amount!');
+				return $this->index($request);
+				}
+
+			if ($request->withdraw > $Character->bank)
+				{
+				Session::flash('bank', 'You do not have that much gold in the bank!');
+				return $this->index($request);
+				}
+			$Character->bank = $Character->bank - $request->withdraw;
+			$Character->gold = $Character->gold + $request->withdraw;
+			$Character->save();
+			Session::flash('bank', 'You withdraw '.$request->withdraw.' gold from the bank.');
+			}
+
 		return $this->index($request);
 		}
 

@@ -325,6 +325,11 @@
 				formData.append('submit', $(document.activeElement).attr('id'));
 				}
 
+			if ($(document.activeElement).attr('type') == 'submit')
+				{
+				formData.append($(document.activeElement).attr('name'), '1');
+				}
+
 			$(e.target).find('input,select').attr('disabled', 'disabled');
 
 			if (!main_exceptions.includes($(e.target).attr('action')) && 
