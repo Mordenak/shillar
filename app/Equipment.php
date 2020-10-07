@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Equipment extends Model
 {
@@ -75,6 +76,15 @@ class Equipment extends Model
 		return $total_armor;
 		}
 
+	public function retrieve_stats()
+		{
+		if (!Cache::get($this->characters_id . '_stats'))
+			{
+			$this->calculate_stats();
+			}
+		return Cache::get($this->characters_id . '_stats');
+		}
+
 	// TODO: Performance pass!
 	public function calculate_stats()
 		{
@@ -110,6 +120,7 @@ class Equipment extends Model
 			}
 
 		// die(print_r($bonus_stats));
+		Cache::put($this->characters_id . '_stats', $bonus_stats);
 
 		return $bonus_stats;
 		}

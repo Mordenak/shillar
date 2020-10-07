@@ -1586,6 +1586,7 @@ class GameController extends Controller
 				}
 
 			$Equipment->save();
+			$Equipment->calculate_stats();
 			$Character->calc_quick_stats();
 			}
 

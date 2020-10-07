@@ -171,7 +171,8 @@ class Character extends Model
 			$stats['light_level'] = 1;
 			}
 
-		$armor_stats = $this->equipment()->calculate_stats();
+		// $armor_stats = $this->equipment()->calculate_stats();
+		$armor_stats = $this->equipment()->retrieve_stats();
 		foreach ($armor_stats as $stat => $value)
 			{
 			$stats[$stat] = $stats[$stat] + $value;
