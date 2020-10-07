@@ -4,7 +4,7 @@
 		color: red;
 		}
 
-	#training-form input[name="submit"]
+	#training-form input[name="train"]
 		{
 		margin-bottom: .5rem;
 		}
@@ -35,27 +35,27 @@
 		
 		Str: {{$character->strength}} - <span class="{{$costs['strength'] > $character->xp ? 'non-train' : ''}}">{{$costs['strength']}}</span>
 		<!-- <label for="strength_submit" class="fa fa-plus"></label> -->
-		<input type="submit" id="strength_submit" name="submit" value="strength" class="submit-val">
+		<input type="submit" id="strength_submit" name="train" value="strength" class="submit-val">
 		<br>
 		Dex: {{$character->dexterity}} - <span class="{{$costs['dexterity'] > $character->xp ? 'non-train' : ''}}">{{$costs['dexterity']}}</span>
 		<!-- <label for="dexterity_submit" class="fa fa-plus"></label> -->
-		<input type="submit" id="dexterity_submit" name="submit" value="dexterity" class="submit-val">
+		<input type="submit" id="dexterity_submit" name="train" value="dexterity" class="submit-val">
 		<br>
 		Con: {{$character->constitution}} - <span class="{{$costs['constitution'] > $character->xp ? 'non-train' : ''}}">{{$costs['constitution']}}</span>
 		<!-- <label for="constitution_submit" class="fa fa-plus"></label> -->
-		<input type="submit" id="constitution_submit" name="submit" value="constitution" class="submit-val">
+		<input type="submit" id="constitution_submit" name="train" value="constitution" class="submit-val">
 		<br>
 		Wis: {{$character->wisdom}} - <span class="{{$costs['wisdom'] > $character->xp ? 'non-train' : ''}}">{{$costs['wisdom']}}</span>
 		<!-- <label for="wisdom_submit" class="fa fa-plus"></label> -->
-		<input type="submit" id="wisdom_submit" name="submit" value="wisdom" class="submit-val">
+		<input type="submit" id="wisdom_submit" name="train" value="wisdom" class="submit-val">
 		<br>
 		Int: {{$character->intelligence}} - <span class="{{$costs['intelligence'] > $character->xp ? 'non-train' : ''}}">{{$costs['intelligence']}}</span>
 		<!-- <label for="intelligence_submit" class="fa fa-plus"></label> -->
-		<input type="submit" id="intelligence_submit" name="submit" value="intelligence" class="submit-val">
+		<input type="submit" id="intelligence_submit" name="train" value="intelligence" class="submit-val">
 		<br>
 		Cha: {{$character->charisma}} - <span class="{{$costs['charisma'] > $character->xp ? 'non-train' : ''}}">{{$costs['charisma']}}</span>
 		<!-- <label for="charisma_submit" class="fa fa-plus"></label> -->
-		<input type="submit" id="charisma_submit" name="submit" value="charisma" class="submit-val">
+		<input type="submit" id="charisma_submit" name="train" value="charisma" class="submit-val">
 		<br>
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 		{{csrf_field()}}
