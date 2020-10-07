@@ -46,6 +46,7 @@ Route::post('/settings', 'GameController@settings');
 
 Route::post('/food', 'GameController@food');
 Route::post('/item_pickup', 'GameController@item_pickup');
+Route::post('/item_drop', 'GameController@item_drop');
 Route::post('/treasure_loot', 'GameController@treasure_loot');
 
 Route::get('/admin', 'AdminController@index');

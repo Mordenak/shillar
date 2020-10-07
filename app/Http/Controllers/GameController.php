@@ -1084,6 +1084,16 @@ class GameController extends Controller
 		return $this->index($request);
 		}
 
+	public function item_drop(Request $request)
+		{
+		$Character = Character::findOrFail($request->character_id);
+
+		// Does character have item?
+		$Character->inventory()->remove_item($request->item_id);
+
+		return $this->index($request);
+		}
+
 	public function train(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
