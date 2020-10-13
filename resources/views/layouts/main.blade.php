@@ -70,7 +70,7 @@
 			border: 1px solid black;
 			/*height: 100px;*/
 			min-height: 100px;
-			padding: .5rem;
+			/*padding: .5rem;*/
 			}
 
 		.game-container .menu
@@ -79,6 +79,7 @@
 			min-height: 500px;
 			/*text-align: center;*/
 			overflow-x: scroll;
+			padding: .5rem;
 			}
 
 		.game-container .menu header
@@ -100,9 +101,16 @@
 			grid-area: main;
 			}
 
+		.game-container .main-wrapper
+			{
+			padding: .5rem;
+			height: 99%;
+			}
+
 		.game-container .footer
 			{
 			grid-area: footer;
+			padding: .5rem;
 			}
 
 		.stat-bar
@@ -275,6 +283,7 @@
 				@yield('menu')
 			</div>
 
+			<!-- There should always be a room here... -->
 			<div class="main">
 				@yield('main')
 			</div>
@@ -285,6 +294,15 @@
 		</div>
 
 		<script>
+		function apply_listeners()
+			{
+			$('.main').resizable({
+				handles: "s"
+				});
+			}
+
+		apply_listeners();
+
 		$('body').on('keyup', 'label', function(e) {
 			if (e.keyCode == 13)
 				{
@@ -393,6 +411,7 @@
 					// some type of full page reload:
 					// Probably a shit idea... REAL shit, whoops!
 					// $('body').html(resp);
+					apply_listeners();
 					},
 				error: function() {
 					console.log('should fire on error');

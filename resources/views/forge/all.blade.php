@@ -27,7 +27,7 @@
 		@foreach ($forges as $forge)
 		<tr>
 			<td>{{$forge->id}}</td>
-			<td><a href="/forge/edit/{{$forge->id}}">{{$forge->name}}</a></td>
+			<td><a href="/forge/edit/{{$forge->id}}">{{$forge->name ?? '[No Name]'}}</a></td>
 			<td>{{$forge->result_item()->name}}</td>
 		</tr>
 		@endforeach

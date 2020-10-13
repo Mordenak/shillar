@@ -55,6 +55,7 @@ class ZoneController extends Controller
 			'travel_text' => $request->travel_text,
 			'img_src' => $request->img_src,
 			'bg_color' => $request->bg_color,
+			'bg_img' => $request->bg_img,
 			'font_color' => $request->font_color,
 			'label_color' => $request->label_color,
 			'description' => $request->description,

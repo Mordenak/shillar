@@ -123,6 +123,16 @@ class GameController extends Controller
 
 		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => $Creature, 'ground_items' => $ground_items];
 
+		if ($Zone->bg_img)
+			{
+			$request_params['bg_src'] = asset('bgs/' . $Zone->bg_img);
+			}
+
+		if ($Zone->bg_color)
+			{
+			$request_params['bg_color'] = $Zone->bg_color;
+			}
+
 		$ChatRoom = ChatRoom::findOrFail(1);
 		$request_params['chat'] = $ChatRoom;
 
@@ -2250,7 +2260,7 @@ class GameController extends Controller
 				if ($log_entry['attack_count'] > 0)
 					{
 					$condensed[] = $log_entry['attack_text'].'<br>';
-					$condensed[] = 'You made attacks '.$log_entry['attack_count'].' and missed '.$log_entry['miss_count'].' times.<br>';
+					$condensed[] = 'You made '.$log_entry['attack_count'].' attacks and missed '.$log_entry['miss_count'].' times.<br>';
 					$condensed[] = 'You did '.$log_entry['round_damage'].' damage.<br>';
 					}
 

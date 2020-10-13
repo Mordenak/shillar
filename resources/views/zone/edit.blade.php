@@ -27,6 +27,13 @@
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Background Image:</label>
+			<div class="col-md-3">
+				<input type="text" name="bg_img" value="{{isset($zone) ? $zone->bg_img : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Background Color [NYI]:</label>
 			<div class="col-md-3">
 				<input type="text" name="bg_color" value="{{isset($zone) ? $zone->bg_color : ''}}" class="form-control">
