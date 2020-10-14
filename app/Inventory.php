@@ -15,6 +15,11 @@ class Inventory extends Model
 		return $this->belongsTo('App\Character', 'characters_id');
 		}
 
+	public function character_direct()
+		{
+		return $this->belongsTo('App\Character', 'characters_id')->first();
+		}
+
 	public function inventory_items()
 		{
 		return $this->hasMany('App\InventoryItems');
@@ -23,6 +28,12 @@ class Inventory extends Model
 	public function character_items()
 		{
 		return $this->hasMany('App\InventoryItems')->get();
+		}
+
+	public function unequipped_items()
+		{
+		// die(print_r($this->hasMany('App\InventoryItems')->whereNotIn('items_id', $this->character()->first()->equipment()->equipment_list())));
+		return $this->character_items()->whereNotIn('id', $this->character_direct()->equipment_list());
 		}
 
 	public function remove_item($item_id)

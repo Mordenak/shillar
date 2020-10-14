@@ -12,7 +12,7 @@ This is a shop:<br>
 
 <form method="post" action="/shop/purchase" class="ajax">
 	<select name="item_purchase">
-		<option>-- Select --</option>
+		<option value="0">-- Select --</option>
 	@foreach ($shop->shop_items() as $shop_item)
 		<option value="{{$shop_item->id}}">{{$shop_item->item()->name}} ({{ $shop_item->get_cost($character->charisma) }})</option>
 	@endforeach
@@ -31,8 +31,8 @@ This is a shop:<br>
 <br>
 <form method="post" action="/shop/sell" class="ajax">
 	<select name="item_sell">
-		<option>-- Select --</option>
-	@foreach ($character->inventory()->character_items() as $char_item)
+		<option value="0">-- Select --</option>
+	@foreach ($character->inventory()->unequipped_items() as $char_item)
 		@if ($shop->will_buy($char_item->item()->item_types_id))
 		<option value="{{$char_item->id}}">{{$char_item->item()->name}} ()</option>
 		@endif

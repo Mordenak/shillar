@@ -1486,117 +1486,30 @@ class GameController extends Controller
 
 		if ($request->action == 'equip')
 			{
+			// We need to ensure the item is actually in our inventory...
 			// die('stuff');
-			if ($request->weapon > 0)
+			// die(print_r($request->equipment));
+			// die(print_r($Character->inventory()->inventory_items()->pluck('id')->toArray()));
+			foreach ($request->equipment as $slot => $item)
 				{
-				$Equipment->weapon = $request->weapon;
-				}
-			else
-				{
-				$Equipment->weapon = null;
-				}
-
-			if ($request->shield > 0)
-				{
-				$Equipment->shield = $request->shield;
-				}
-			else
-				{
-				$Equipment->shield = null;
-				}
-
-			if ($request->head > 0)
-				{
-				$Equipment->head = $request->head;
-				}
-			else
-				{
-				$Equipment->head = null;
-				}
-
-			if ($request->neck > 0)
-				{
-				$Equipment->neck = $request->neck;
-				}
-			else
-				{
-				$Equipment->neck = null;
-				}			
-
-			if ($request->chest > 0)
-				{
-				$Equipment->chest = $request->chest;
-				}
-			else
-				{
-				$Equipment->chest = null;
-				}
-
-			if ($request->legs > 0)
-				{
-				$Equipment->legs = $request->legs;
-				}
-			else
-				{
-				$Equipment->legs = null;
-				}
-
-			if ($request->hands > 0)
-				{
-				$Equipment->hands = $request->hands;
-				}
-			else
-				{
-				$Equipment->hands = null;
-				}
-
-			if ($request->feet > 0)
-				{
-				$Equipment->feet = $request->feet;
-				}
-			else
-				{
-				$Equipment->feet = null;
-				}
-
-			if ($request->amulet > 0)
-				{
-				$Equipment->amulet = $request->amulet;
-				}
-			else
-				{
-				$Equipment->amulet = null;
-				}
-
-			if ($request->left_ring > 0)
-				{
-				$Equipment->left_ring = $request->left_ring;
-				}
-			else
-				{
-				$Equipment->left_ring = null;
-				}
-
-			if ($request->right_ring > 0)
-				{
-				$Equipment->right_ring = $request->right_ring;
-				}
-			else
-				{
-				$Equipment->right_ring = null;
-				}
-
-			if ($request->bracelet > 0)
-				{
-				$Equipment->bracelet = $request->bracelet;
-				}
-			else
-				{
-				$Equipment->bracelet = null;
+				if ($item != 0 && !in_array($item, $Character->inventory()->inventory_items()->pluck('id')->toArray()))
+					{
+					Session::flash('errors', 'You no longer have that item!');
+					break;
+					}
+				if ($item > 0)
+					{
+					$Equipment->$slot = $item;
+					}
+				else
+					{
+					$Equipment->$slot = null;
+					}
 				}
 
 			$Equipment->save();
 			$Equipment->calculate_stats();
+			$Equipment->refresh_equip();
 			$Character->calc_quick_stats();
 			}
 
@@ -1819,6 +1732,11 @@ class GameController extends Controller
 
 	public function purchase(Request $request)
 		{
+		if ($request->item_purchase == 0)
+			{
+			Session::flash('errors', 'Please select an item to buy');
+			return $this->index($request);
+			}
 		$Character = Character::findOrFail($request->character_id);
 		// $Room = Room::findOrFail($request->room_id);
 		// Probably auth some stuff about the store:
@@ -1852,6 +1770,11 @@ class GameController extends Controller
 
 	public function sell(Request $request)
 		{
+		if ($request->item_sell == 0)
+			{
+			Session::flash('errors', 'Please select an item to sell');
+			return $this->index($request);
+			}
 		$Character = Character::findOrFail($request->character_id);
 		// $Room = Room::findOrFail($request->room_id);
 		// Probably auth some stuff about the store:
@@ -1861,6 +1784,13 @@ class GameController extends Controller
 
 		// if not, throw error?
 		$earnings = round($SellItem->item()->value * 0.00001, 0) * ($Character->stats()['charisma'] / 1000);
+
+		// die(print_r($Character->equipment_list()));
+		if (in_array($request->item_sell, $Character->equipment_list()))
+			{
+			Session::flash('errors', 'You cannot sell equipped items!');
+			return $this->index($request);
+			}
 		
 		$sold = $Character->inventory()->remove_item($SellItem->item()->id);
 		if ($sold)

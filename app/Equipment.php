@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 
 class Equipment extends Model
 {
-	protected $fillable = ['characters_id', 'head', 'chest', 'legs', 'weapon', 'hands', 'feet', 'neck', 'left_ring', 'right_ring'];
+	protected $fillable = ['characters_id', 'head', 'chest', 'legs', 'weapon', 'hands', 'feet', 'neck', 'left_ring', 'right_ring', 'amulet', 'bracelet'];
 
 	public function character()
 		{
@@ -18,6 +18,36 @@ class Equipment extends Model
 		{
 		// Weapon = InventoryItem record, items_id.
 		return $this->hasOne('App\InventoryItem', 'id', 'weapon')->first()->item()->actual_item();
+		}
+
+	public function get_all()
+		{
+		if (!Cache::get($this->characters_id . '_equipment'))
+			{
+			$this->refresh_equip();
+			}
+		return Cache::get($this->characters_id . '_equipment');
+		}
+
+	public function refresh_equip()
+		{
+		$arr = [
+			$this->weapon,
+			$this->shield,
+			$this->head,
+			$this->neck,
+			$this->chest,
+			$this->legs,
+			$this->hands,
+			$this->feet,
+			$this->amulet,
+			$this->left_ring,
+			$this->right_ring,
+			$this->bracelet
+			];
+		Cache::put($this->characters_id . '_equipment', $arr);
+		
+		return $arr;
 		}
 
 	public function calculate_armor()

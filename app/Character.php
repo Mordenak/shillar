@@ -28,6 +28,11 @@ class Character extends Model
 		return $this->hasOne('App\Equipment', 'characters_id')->first();
 		}
 
+	public function equipment_list()
+		{
+		return $this->equipment()->get_all();
+		}
+
 	public function trader_items()
 		{
 		return $this->hasMany('App\TraderItem', 'characters_id')->get();
