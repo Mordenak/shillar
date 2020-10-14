@@ -1783,7 +1783,7 @@ class GameController extends Controller
 		$SellItem = InventoryItem::findOrFail($request->item_sell);
 
 		// if not, throw error?
-		$earnings = round($SellItem->item()->value * 0.00001, 0) * ($Character->stats()['charisma'] / 1000);
+		$earnings = round(($SellItem->item()->value * 0.00001) * ($Character->stats()['charisma'] / 1000), 0);
 
 		// die(print_r($Character->equipment_list()));
 		if (in_array($request->item_sell, $Character->equipment_list()))
