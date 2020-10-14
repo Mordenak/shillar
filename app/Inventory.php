@@ -27,7 +27,7 @@ class Inventory extends Model
 
 	public function character_items()
 		{
-		return $this->hasMany('App\InventoryItems')->get();
+		return $this->hasMany('App\InventoryItems')->orderby('id')->get();
 		}
 
 	public function unequipped_items()
