@@ -20,6 +20,28 @@ class Equipment extends Model
 		return $this->hasOne('App\InventoryItem', 'id', 'weapon')->first()->item()->actual_item();
 		}
 
+	public function remove_all()
+		{
+		$this->weapon = null;
+		$this->shield = null;
+		$this->head = null;
+		$this->neck = null;
+		$this->chest = null;
+		$this->legs = null;
+		$this->hands = null;
+		$this->feet = null;
+		$this->amulet = null;
+		$this->left_ring = null;
+		$this->right_ring = null;
+		$this->bracelet = null;
+
+		$this->save();
+
+		$this->refresh_equip();
+
+		return true;
+		}
+
 	public function get_all()
 		{
 		if (!Cache::get($this->characters_id . '_equipment'))

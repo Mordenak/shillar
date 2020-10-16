@@ -43,6 +43,12 @@
 			color: blue;
 			}
 
+		label.admin
+			{
+			color: inherit;
+			text-decoration: none;
+			}
+
 		form label
 			{
 			color: #55ff8b;
@@ -310,6 +316,18 @@
 				}
 			});
 
+		$('body').on('submit', 'form.tester-options', function(e, i) {
+			e.preventDefault();
+			var formData = new FormData(e.target);
+			$.ajax({
+				type: 'POST',
+				url: $(e.target).attr('action'),
+				contentType: false,
+				processData: false,
+				data: formData,
+				});
+			});
+
 		$('body').on('submit', 'form.ajax', function(e, i) {
 			e.preventDefault();
 
@@ -335,7 +353,12 @@
 
 			if ($(document.activeElement).hasClass('submit-val'))
 				{
-				formData.append('submit', $(document.activeElement).val());
+				var value = $(document.activeElement).val();
+				if (value == '')
+					{
+					value = $(document.activeElement).attr('value');
+					}
+				formData.append('submit', value);
 				}
 
 			if ($(document.activeElement).hasClass('submit-id'))

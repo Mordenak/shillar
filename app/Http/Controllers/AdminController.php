@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Session;
 use Illuminate\Http\Request;
 use App\Character;
 use App\Item;
@@ -135,6 +136,17 @@ class AdminController extends Controller
 			}
 
 		return view('admin/give_item');
+		}
+
+	public function tester_options(Request $request)
+		{
+		if (!isset(auth()->user()->admin_level))
+			{
+			// error
+			return view('home');
+			}
+		Session::put('admin_killsim', $request->admin_killsim);
+		// die(print_r($request->admin_killsim));
 		}
 
 	public function zone_builder(Request $request)

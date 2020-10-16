@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Session;
 use Illuminate\Database\Eloquent\Model;
 
 // use App\InventoryItems;
@@ -34,6 +35,13 @@ class Inventory extends Model
 		{
 		// die(print_r($this->hasMany('App\InventoryItems')->whereNotIn('items_id', $this->character()->first()->equipment()->equipment_list())));
 		return $this->character_items()->whereNotIn('id', $this->character_direct()->equipment_list());
+		}
+
+	public function remove_all()
+		{
+		$this->inventory_items()->delete();
+
+		return true;
 		}
 
 	public function remove_item($item_id)
@@ -96,6 +104,7 @@ class Inventory extends Model
 
 	public function add_item($item_id, $quantity = 1)
 		{
+		$start_timer = microtime(true);
 		// Add an items_to_inventories record:;
 		$Item = Item::findOrFail($item_id);
 
@@ -125,6 +134,9 @@ class Inventory extends Model
 			$InventoryItems->fill($values);
 			$InventoryItems->save();
 			}
+
+		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
+		Session::push('perf_log', ['add_item' => $finish_timer]);
 
 		return true;
 		}

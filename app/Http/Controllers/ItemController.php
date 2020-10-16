@@ -109,7 +109,7 @@ class ItemController extends Controller
 		if ($ItemType->table_name == 'item_accessories')
 			{
 			$item_values['equipment_slot'] = $request->equipment_slot;
-			// $item_values['light_level'] = $request->light_level;
+			$item_values['light_level'] = $request->light_level;
 			$item_values['strength_bonus'] = $request->strength_bonus;
 			$item_values['dexterity_bonus'] = $request->dexterity_bonus;
 			$item_values['constitution_bonus'] = $request->constitution_bonus;

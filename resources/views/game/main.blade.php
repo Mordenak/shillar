@@ -274,7 +274,12 @@
 			<input type="hidden" name="character_id" value="{{$character->id}}">
 			<input type="hidden" name="ground_item_id" value="{{$ground_item->id}}">
 			<input type="hidden" name="no_spawn" value="true">
-			You notice a <label for="pickup" tabindex="11">{{$ground_item->item()->name}}</label> just dropped.
+			You notice a <label for="pickup" tabindex="11" value="{{$ground_item->id}}" class="submit-val">{{$ground_item->item()->name}}</label> 
+			@if ($ground_item->quantity > 1)
+			just dropped (x{{$ground_item->quantity}}).
+			@else
+			just dropped.
+			@endif
 			<input type="submit" id="pickup" style="display: none;">
 		</form>
 		@endforeach
@@ -333,7 +338,14 @@
 			@if ($creature)
 			Current Creature: <a href="/creature/edit/{{$creature->id}}" target="_blank">{{$creature->name}}</a><br>
 			@endif
+
+			-- Testing --<br>
+			Kill Sim:
+			<form method="post" action="/tester_options" class="tester-options">
+				<input type="text" name="admin_killsim" class="admin_killsim" onblur="$(this).closest('form').submit();" size="4" value="{{isset($killsim_setting) ? $killsim_setting : ''}}">
+			</form>
 			
+			<br>
 			-- Performance --<br>
 			@if (Session::has('perf_log'))
 			<table class="perf-table">

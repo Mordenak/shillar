@@ -316,6 +316,8 @@ class Character extends Model
 		$this->last_rooms_id = 1;
 
 		// unequip everything:
+		$this->equipment()->remove_all();
+		$this->inventory()->remove_all();
 
 
 		$this->save();

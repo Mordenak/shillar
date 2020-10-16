@@ -4,9 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ZoneAdjustments extends Migration
+class AddLightLevelAccessories extends Migration
 	{
-
 	/**
 	* Run the migrations.
 	*
@@ -14,8 +13,8 @@ class ZoneAdjustments extends Migration
 	*/
 	public function up()
 		{
-		Schema::table('zones', function (Blueprint $table) {
-			$table->string('bg_img')->nullable();
+		Schema::table('item_accessories', function (Blueprint $table) {
+			$table->integer('light_level')->nullable();
 			});
 		}
 
@@ -26,8 +25,8 @@ class ZoneAdjustments extends Migration
 	*/
 	public function down()
 		{
-		Schema::table('zones', function (Blueprint $table) {
-			$table->dropColumn('bg_img');
+		Schema::table('item_accessories', function (Blueprint $table) {
+			$table->dropColumn('light_level');
 			});
 		}
 	}

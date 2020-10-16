@@ -89,9 +89,10 @@ class GameController extends Controller
 				{
 				$current_count = $Character->kill_count($check['creature_id'])->count;
 				$required_stat = floor($current_count * $check['multiplier']);
+				// die(print_r($required_stat));
 				if ($Character->get_stat($check['stat']) < $required_stat)
 					{
-					if ($Creature && !$CombatLog)
+					if ($Creature && !isset($CombatLog))
 						{
 						// Everything is aggro:
 						$request->character_id = $Character->id;
@@ -105,7 +106,7 @@ class GameController extends Controller
 			}
 
 		$ground_items = [];
-		$GroundItems = GroundItem::where(['rooms_id' => $Room->id])->get();
+		$GroundItems = GroundItem::where(['rooms_id' => $Room->id])->orderby('id')->get();
 		foreach ($GroundItems as $GroundItem)
 			{
 			if (time() >= $GroundItem->expires_on)
@@ -158,6 +159,10 @@ class GameController extends Controller
 		if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
 			{
 			$request_params['is_admin'] = true;
+			if (Session::has('admin_killsim'))
+				{
+				$request_params['killsim_setting'] = Session::get('admin_killsim');
+				}
 			}
 
 		$request_params['room_custom'] = null;
@@ -918,6 +923,10 @@ class GameController extends Controller
 
 			// TODO: CHEATER BIT
 			$cheat_bit = 1;
+			if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
+				{
+				$cheat_bit = Session::get('admin_killsim');
+				}
 			// Make this a character setting for admins?
 			// Record the kill:
 			$KillCount = KillCount::where(['characters_id' => $Character->id, 'creatures_id' => $Creature->id])->first();
@@ -962,11 +971,23 @@ class GameController extends Controller
 					$prob = rand()/getrandmax();
 					if ($prob <= $LootTable->chance)
 						{
-						// Always make a new entry:
-						$GroundItem = new GroundItem;
-						$GroundItem->fill(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id, 'expires_on' => Carbon::now()->addMinutes(5)->timestamp]);
+						$GroundItem = GroundItem::where(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id])->first();
+						$quantity = 1;
+						if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
+							{
+							$quantity = Session::get('admin_killsim');
+							}
+						// die(print_r($GroundItem));
+						if ($GroundItem)
+							{
+							$GroundItem->fill(['expires_on' => Carbon::now()->addMinutes(5)->timestamp, 'quantity' => $GroundItem->quantity + $quantity]);
+							}
+						else
+							{
+							$GroundItem = new GroundItem;
+							$GroundItem->fill(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id, 'expires_on' => Carbon::now()->addMinutes(5)->timestamp, 'quantity' => $quantity]);
+							}
 						$GroundItem->save();
-
 						}
 					}
 				}
@@ -1065,10 +1086,13 @@ class GameController extends Controller
 
 	public function item_pickup(Request $request)
 		{
+		$start_timer = microtime(true);
 		$Character = Character::findOrFail($request->character_id);
 
+		// die(print_r($request->submit));
+
 		// Does this item actually exist?
-		$GroundItem = GroundItem::where(['id' => $request->ground_item_id, 'rooms_id' => $request->room_id, 'characters_id' => $request->character_id])->first();
+		$GroundItem = GroundItem::where(['id' => $request->submit, 'rooms_id' => $request->room_id, 'characters_id' => $request->character_id])->first();
 
 		if (!$GroundItem)
 			{
@@ -1085,12 +1109,24 @@ class GameController extends Controller
 			else
 				{
 				// TODO: Transfer GroundItem Properties here!
-				$GroundItem->delete();
+				$GroundItem->quantity = $GroundItem->quantity - 1;
+				if ($GroundItem->quantity == 0)
+					{
+					$GroundItem->delete();
+					}
+				else
+					{
+					$GroundItem->save();
+					}
 				}
 			}
 
+		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
+		Session::push('perf_log', ['item_pickup' => $finish_timer]);
+
 		// TODO: Refactor?
 		Session::put('block_spawn', true);
+
 		return $this->index($request);
 		}
 

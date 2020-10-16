@@ -50,6 +50,7 @@ Route::post('/item_drop', 'GameController@item_drop');
 Route::post('/treasure_loot', 'GameController@treasure_loot');
 
 Route::get('/admin', 'AdminController@index');
+Route::post('/tester_options', 'AdminController@tester_options');
 
 Route::post('/admin/process', 'AdminController@process');
 // Admin bit:

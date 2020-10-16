@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GroundItem extends Model
 	{
-	protected $fillable = ['rooms_id', 'characters_id', 'items_id', 'expires_on'];
+	protected $fillable = ['rooms_id', 'characters_id', 'items_id', 'expires_on', 'quantity'];
 
 	public function room()
 		{
