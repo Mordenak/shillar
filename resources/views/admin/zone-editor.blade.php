@@ -232,18 +232,18 @@
 	</div>
 	<div id="unlinked-list">
 		<div>
-			-- Room Options --<br>
-			<a href="#" onclick="linkUp();">Go up</a><br>
-			<a href="#" onclick="linkDown();">Go Down</a><br>
 			-- Map Options --<br>
+			<a href="#" onclick="switchZLevel(1);">+ Up</a> Level <a href="#" onclick="switchZLevel(-1);">- Down</a><br>
+			-- Room Options --<br>
+			<a href="#" onclick="linkUp();">Create Room Up</a><br>
+			<a href="#" onclick="linkDown();">Create Room Down</a><br>
+			-- Other Options --<br>
 			<a href="#" onclick="addRow(true);">Add Row Top</a><br>
 			<a href="#" onclick="addRow();">Add Row Bottom</a><br>
 			<a href="#" onclick="addCol(true);">Add Column Left</a><br>
 			<a href="#" onclick="addCol();">Add Column Right</a><br>
 			<a href="#" onclick="addZLevel(1);">Add Floor Up</a><br>
 			<a href="#" onclick="addZLevel(-1);">Add Floor Down</a><br>
-			<a href="#" onclick="switchZLevel(1);">Switch Level Up</a><br>
-			<a href="#" onclick="switchZLevel(-1);">Switch Level Down</a><br>
 			<a href="#" class="link-adjacents">Link All Adjacents</a><br>
 			<a href="#" class="clear-map">Clear Map</a><br>
 		</div>

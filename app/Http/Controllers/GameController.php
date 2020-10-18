@@ -923,7 +923,7 @@ class GameController extends Controller
 
 			// TODO: CHEATER BIT
 			$cheat_bit = 1;
-			if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
+			if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0 && Session::has('admin_killsim'))
 				{
 				$cheat_bit = Session::get('admin_killsim');
 				}
@@ -973,7 +973,7 @@ class GameController extends Controller
 						{
 						$GroundItem = GroundItem::where(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id])->first();
 						$quantity = 1;
-						if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0)
+						if (isset(auth()->user()->admin_level) && auth()->user()->admin_level > 0 && Session::has('admin_killsim'))
 							{
 							$quantity = Session::get('admin_killsim');
 							}
@@ -2020,10 +2020,17 @@ class GameController extends Controller
 			Session::flash('receive', 'You must enter a character name to send to.');
 			return $this->index($request);
 			}
+
 		$Character = Character::findOrFail($request->character_id);
 
 		// find send to:
 		$ToCharacter = Character::where('name', $request->send_character)->first();
+
+		if ($ToCharacter->id == $request->character_id)
+			{
+			Session::flash('send', 'You cannot send items to yourself.');
+			return $this->index($request);
+			}
 
 		if (!$ToCharacter)
 			{

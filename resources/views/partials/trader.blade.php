@@ -7,11 +7,11 @@ This is a trader:<br>
 
 
 @if( Session::has("send") )
-{{ Session::get("send") }}
+{{ Session::pull("send") }}
 @endif
 
 @if( Session::has("receive") )
-{{ Session::get("receive") }}
+{{ Session::pull("receive") }}
 @endif
 
 <br><br>
@@ -19,7 +19,7 @@ This is a trader:<br>
 	Give:
 	<select name="item_send">
 		<option value="null">-- Select --</option>
-	@foreach ($character->inventory()->character_items() as $char_item)
+	@foreach ($character->inventory()->unequipped_items() as $char_item)
 		@if ($trader->will_trade($char_item->item()->item_types_id))
 		<option value="{{$char_item->id}}">{{$char_item->item()->name}}</option>
 		@endif

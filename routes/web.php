@@ -156,6 +156,13 @@ Route::get('spell/edit/{id}', 'SpellController@edit')->where('id', '[0-9]+');
 Route::post('spell/save', 'SpellController@save');
 Route::post('spell/delete', 'SpellController@delete');
 
+Route::get('teleport/all', 'TeleportTargetController@all');
+Route::get('teleport/create', 'TeleportTargetController@create');
+Route::get('teleport/edit/{id}', 'TeleportTargetController@edit')->where('id', '[0-9]+');
+Route::post('teleport/save', 'TeleportTargetController@save');
+Route::post('teleport/delete', 'TeleportTargetController@delete');
+
+
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');
 Route::get('/room/lookup', 'RoomController@lookup');

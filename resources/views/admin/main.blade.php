@@ -19,7 +19,7 @@
 		<a href="forge/all">All Forges [NYI]</a><br>
 		<a href="forge/all">All Forge Recipes</a><br>
 		<a href="spell/all">All Spells [NYI]</a><br>
-		<a href="teleport/all">Teleport Targets [NYI]</a><br>
+		<a href="teleport/all">Teleport Targets</a><br>
 		<a href="room_action/all">All RoomActions</a><br>
 		<a href="admin/knowledge">Knowledge Base [NYI]</a><br>
 		@if (auth()->user()->admin_level > 1)
