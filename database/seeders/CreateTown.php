@@ -1,5 +1,6 @@
 <?php
 
+namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,11 +15,11 @@ class CreateTown extends Seeder
 		{
 		DB::table('zones')->insert([
 			['name' => 'Town', 'description' => '', 'travel_text' => 'You are standing on a street in Town.', 'bg_color' => null, 'img_src' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('zone_levels')->insert([
 			['zones_id' => 1, 'level' => 0, 'name' => null, 'inherit_creatures' => true, 'inherit_properties' => true, 'description' => '', 'img_src' => null, 'bg_color' => null, 'font_color' => null, 'label_color' => null, 'custom_view' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		// DB::statement("SET session_replication_role = 'replica';");
 		DB::table('rooms')->insert([
@@ -124,7 +125,7 @@ class CreateTown extends Seeder
 			['zones_id' => 1, 'zone_level' => 0, 'uid' => 'shillatown_weapons', 'title' => 'The Weapons Shop', 'description' => null, 'img_src' => null, 'spawns_enabled' => false, 'north_rooms_id' => null, 'east_rooms_id' => null, 'south_rooms_id' => 82, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['zones_id' => 1, 'zone_level' => 0, 'uid' => 'shillatown_armors', 'title' => 'The Armor Shop', 'description' => null, 'img_src' => null, 'spawns_enabled' => false, 'north_rooms_id' => null, 'east_rooms_id' => null, 'south_rooms_id' => null, 'west_rooms_id' => 82, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			[ 'zones_id' => 1, 'zone_level' => 0, 'uid' => null, 'title' => 'Online listings', 'description' => null, 'img_src' => null, 'spawns_enabled' => true, 'north_rooms_id' => 15, 'east_rooms_id' => null, 'south_rooms_id' => null, 'west_rooms_id' => null, 'up_rooms_id' => null, 'down_rooms_id' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s"), ],
-		]);
+			]);
 		// DB::statement("SET session_replication_role = 'origin';");
 
 		// Apply room properties?
@@ -148,12 +149,12 @@ class CreateTown extends Seeder
 			['rooms_id' => 85, 'name' => 'Armor Shop', 'description' => 'The armor shop', 'buys_weapons' => false, 'buys_armors' => true, 'buys_accessories' => false, 'buys_foods' => false, 'buys_jewels' => false, 'buys_dusts' => false, 'buys_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['rooms_id' => 58, 'name' => 'The Trinket Exchange', 'description' => 'The trinket shop', 'buys_weapons' => false, 'buys_armors' => false, 'buys_accessories' => true, 'buys_foods' => false, 'buys_jewels' => false, 'buys_dusts' => false, 'buys_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['rooms_id' => 24, 'name' => 'Food Shop', 'description' => 'The food shop', 'buys_weapons' => false, 'buys_armors' => false, 'buys_accessories' => false, 'buys_foods' => true, 'buys_jewels' => false, 'buys_dusts' => false, 'buys_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('traders')->insert([
 			['rooms_id' => 79, 'name' => "Trader Jack's Exchange", 'description' => 'You walk in, and Trader Jack stands behind the counter, clothed in bear, deer and racoon <br>skins.  He smiles at you with a big grin.  A gold tooth glimmers at you as he asks,<br>"What can I do for you today?"<br><br>"Oh I should warn you, I can only hold 5 items for a player at a time."', 'trades_weapons' => true, 'trades_armors' => true, 'trades_accessories' => false, 'trades_foods' => false, 'trades_jewels' => false, 'trades_dusts' => false, 'trades_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['rooms_id' => 55, 'name' => 'Trader Bob', 'description' => 'Trader Bob', 'trades_weapons' => false, 'trades_armors' => false, 'trades_accessories' => true, 'trades_foods' => true, 'trades_jewels' => false, 'trades_dusts' => false, 'trades_others' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('shop_items')->insert([
 			// Weapon shop:
@@ -194,11 +195,11 @@ class CreateTown extends Seeder
 			// remove later:
 			['shops_id' => 3, 'items_id' => 129, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['shops_id' => 4, 'items_id' => 124, 'price' => null, 'markup' => 1.0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		// setup the room action:
 		DB::table('room_actions')->insert([
 			['uid' => 'sewer_cover', 'rooms_id' => 41, 'redirect_room' => null, 'description' => null, 'action' => 'lift', 'failed_action' => 'You are not strong enough to lift the cover!', 'success_action' => 'You succesfully lift the manhole cover, granting access to the Sewers!', 'display' => 'Try to [action] the manhole cover.', 'directions_blocked' => 'down', 'remember' => true, 'has_item' => null, 'completed_quest' => null, 'completed_quest_task' => null, 'strength_req' => 60, 'dexterity_req' => null, 'constitution_req' => null, 'wisdom_req' => null, 'intelligence_req' => null, 'charisma_req' => null, 'score_req' => null],
-		]);
+			]);
 		}
 	}

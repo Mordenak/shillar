@@ -1,20 +1,21 @@
 <?php
 
+namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class BasicEntries extends Seeder
-{
+	{
 	/**
 	 * Run the database seeds.
 	 *
 	 * @return void
 	 */
 	public function run()
-	{
+		{
 		DB::table('world')->insert([
 			['cycle' => 1, 'year' => 100, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('equipment_slots')->insert([
 			['name' => 'weapon', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -28,7 +29,7 @@ class BasicEntries extends Seeder
 			['name' => 'amulet', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'ring', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'bracelet', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('weapon_types')->insert([
 			['name' => 'Sword', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -39,7 +40,7 @@ class BasicEntries extends Seeder
 			['name' => 'Staff', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Mana', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Other', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		// Deprecate These ideas:
 		/*
@@ -136,7 +137,7 @@ class BasicEntries extends Seeder
 			['name' => 'HAS_GRAVEYARD', 'custom_view' => 'partials/graveyard', 'description' => 'This room has a graveyard.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_KILL_LOG', 'custom_view' => 'partials/kill-log', 'description' => 'This room has a graveyard.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'HAS_INVENTORY', 'custom_view' => 'partials/inventory', 'description' => 'This room has shows the inventory.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('spell_types')->insert([
 			['name' => 'TELEPORT_ROOM', 'description' => 'Used to move a character to another room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -146,7 +147,7 @@ class BasicEntries extends Seeder
 			['name' => 'EXTRA_ARMOR', 'description' => 'Grants additional armor', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'RESTORE_HEALTH', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'RESTORE_FATIGUE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('spells')->insert([
 			['name' => 'Teleport', 'spell_types_id' => 1, 'description' => 'Teleport spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -155,12 +156,12 @@ class BasicEntries extends Seeder
 			['name' => 'Rejuvinate', 'spell_types_id' => 7, 'description' => 'Rejuvinate spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Bedazzle', 'spell_types_id' => 4, 'description' => 'Bedazzle spell.', 'formula' => 'level', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Magic Shield', 'spell_types_id' => 5, 'description' => 'Magic Shield spell.', 'formula' => '[level] * 0.5', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('chat_rooms')->insert([
 			['name' => 'Nostalgia Tavern', 'score_req' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => "Bizarro's Bizarre House", 'score_req' => 20000, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		// Deprecate for now:
 		// DB::table('quest_criteria')->insert([
@@ -182,7 +183,7 @@ class BasicEntries extends Seeder
 			['name' => 'Jewel', 'table_name' => 'item_jewels', 'model_name' => 'App\ItemJewel', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Dust', 'table_name' => 'item_dust', 'model_name' => 'App\ItemDust', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Other', 'table_name' => 'item_others', 'model_name' => 'App\ItemOther', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('alignments')->insert([
 			['name' => 'Fire', 'color' => 'EE0000', 'selectable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -190,7 +191,7 @@ class BasicEntries extends Seeder
 			['name' => 'Earth', 'color' => '55FF8B', 'selectable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Water', 'color' => '0066FF', 'selectable' => true, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Spirit', 'color' => 'FFFF00', 'selectable' => false, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('wall_score_ranks')->insert([
 			['name' => 'Leper', 'color' => '996600', 'score_req' => 6, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -220,7 +221,7 @@ class BasicEntries extends Seeder
 			['name' => 'Celestial', 'color' => 'CC6666', 'score_req' => 77100, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Astral', 'color' => 'CC9999', 'score_req' => 85900, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Planeswalker', 'color' => 'CCCC99', 'score_req' => 95300, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('kill_ranks')->insert([
 			['name' => 'Attacker', 'min_count' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -232,7 +233,7 @@ class BasicEntries extends Seeder
 			['name' => 'Destroyer', 'min_count' => 10001, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Obliterator', 'min_count' => 15001, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Disintegrator', 'min_count' => 30001, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		DB::table('spell_ranks')->insert([
 			['name' => 'Prestidigitator', 'min_count' => 1, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
@@ -244,10 +245,10 @@ class BasicEntries extends Seeder
 			['name' => 'Enchanter', 'min_count' => 6001, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Warlock', 'min_count' => 9001, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => 'Sorcerer', 'min_count' => 13501, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-		]);
+			]);
 
 		// DB::table('user_settings')->insert([
 		// 	['users_id' => 1, 'short_mode' => true],
 		// ]);
+		}
 	}
-}

@@ -41,6 +41,29 @@ http://www.shillatime.org/shillatime.html
 http://www.oocities.org/sotrin_gotr/shilla_index.html
 http://shillahelpsite.wikidot.com/
 
+New Environment Troubleshooting:
+
+On Linux:
+
+1. Get basic tools
+	1. sudo apt-get install git
+	2. sudo apt-get install php7.4
+	3. sudo apt-get install composer
+	4. sudo apt-get install php-ext (and possibly php-mbstring)
+	5. sudo apt-get install postgresql
+	6. sudo apt-get install php7.4-pgsql
+2. git clone repo
+3. composer install
+4. cp .env.example .env   (OR touch .env but be prepared to fill out the env file yourself)
+5. Setup database
+	1. sudo -u postgres createuser "username"
+	2. Create database, ex: createdb adventure
+	3. Create role and/or modify ownership
+	4. edit .env to have correct database info
+	5. php artisan migrate
+9. php artisan key:generate
+
+
 Code Todo:
 
 * BIG TODO: Add error checking/handling for lots of actions to reduce game errors.
