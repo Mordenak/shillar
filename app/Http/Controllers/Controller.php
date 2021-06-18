@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -11,5 +12,8 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    Request::setTrustedProxies(array($request->server->get('REMOTE_ADDR')));
+    public function __construct()
+    	{
+    	Request::setTrustedProxies(array($request->server->get('REMOTE_ADDR')));
+    	}
 }
