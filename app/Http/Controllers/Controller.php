@@ -14,6 +14,6 @@ class Controller extends BaseController
 
     public function __construct()
     	{
-    	Request::setTrustedProxies(array($request->server->get('REMOTE_ADDR')));
+    	Request::setTrustedProxies([request()->server->get('REMOTE_ADDR')], 1);
     	}
 }
