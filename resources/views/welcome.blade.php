@@ -83,6 +83,9 @@
                 <div class="title m-b-md">
                     Shilla Resurrection
                 </div>
+                <div>
+                    Welcome to my attempt to recreate Shilla as it was prior to it's transition to The Dark Traveler code.
+                </div>
             </div>
         </div>
     </body>

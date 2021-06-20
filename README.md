@@ -6,6 +6,9 @@ Second Phase: Branch off own project with custom changes based on Shilla.
 
 Game Todo:
 
+* Finalize all necessary game data
+	** Missing forges, guilds, quests & all zone/room properties
+* Implement custom scripts to help alleviate zone/room property limitations?
 * ~~Proper combat attack differences~~
 * ~~Death functions~~
 * ~~Shops~~
@@ -20,12 +23,12 @@ Game Todo:
 * ~~Wall score ranks~~
 * Online character listing
 * Full admin tools
-* Items on ground stack
+* ~~Items on ground stack~~
 * ~~Add Consider feature~~
 * ~~Scramble Combat buttons~~
 * Support multiple layouts?
 * Light levels
-* Environmental Heat/Cold
+* ~~Environmental Heat/Cold~~
 * Add Tutorial back in?
 * Encumbrance?  Probably not.
 * Guilds?  Ehhhh.
@@ -66,6 +69,7 @@ On Linux:
 
 Code Todo:
 
+* Debug the extra GET /game request that causes 405s
 * BIG TODO: Add error checking/handling for lots of actions to reduce game errors.
 * BIG TODO: Fix combat function so that it doesn't also manage the main view :/
 * BIG TODO: Refactor some views/partials and combine them -- DRY!

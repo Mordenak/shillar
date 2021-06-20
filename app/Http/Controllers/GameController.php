@@ -497,6 +497,7 @@ class GameController extends Controller
 				if (!$Character->can_access($NextRoom->zone()))
 					{
 					Session::flash('zone_travel', 'You cannot go that way yet, you must train some more.');
+					// die(var_dump($request->server));
 					return $this->index($request);
 					}
 				}
@@ -635,6 +636,8 @@ class GameController extends Controller
 			$flat_creature = $Creature->toArray();
 			}
 
+		$xp_variation = rand() / getrandmax() * ($Creature->xp_variation*2) - $Creature->xp_variation;
+
 		if ($request->submit == 'flee')
 			{
 			if ($CombatLog)
@@ -642,6 +645,7 @@ class GameController extends Controller
 				$CombatLog->delete();
 				}
 			$cut_xp = $Creature->award_xp * 0.5;
+			$cut_xp = floor(($Creature->award_xp * (1.0 + $xp_variation)) * 0.5);
 			$Character->xp = round($Character->xp - $cut_xp, 0);
 			Session::put('combat_log',["You have fled!  You have forfeit $cut_xp xp."]);
 			$Character->save();
@@ -946,7 +950,6 @@ class GameController extends Controller
 
 			$KillCount->save();
 
-			$xp_variation = rand() / getrandmax() * ($Creature->xp_variation*2) - $Creature->xp_variation;
 			$actual_xp = (int)($Creature->award_xp * (1.0 + $xp_variation)) * $cheat_bit;
 
 			$gold_variation = rand() / getrandmax() * ($Creature->gold_variation*2) - $Creature->gold_variation;
@@ -1750,7 +1753,9 @@ class GameController extends Controller
 			if ($Item->item_types_id == 4)
 				{
 				$arr = $Item->toArray();
+				$ItemFood = ItemFood::where(['items_id' => $Item->id])->first();
 				$arr['quantity'] = $inv_item->quantity;
+				$arr['potency'] = $ItemFood->potency;
 				$arr['selected'] = false;
 				if (isset($request->item) && $Item->id == $request->item)
 					{
@@ -1758,6 +1763,46 @@ class GameController extends Controller
 					}
 				// $items[] = $Item;
 				$items[] = $arr;
+				}
+			}
+
+		if ($Character->settings()->food_sort)
+			{
+			switch ($Character->settings()->food_sort)
+				{
+				case 0: // potency ASC
+					usort($items, function($a, $b) {
+						return $a['potency'] <=> $b['potency'];
+					});
+					break;
+				case 1: // potency DESC
+					usort($items, function($a, $b) {
+						return $b['potency'] <=> $a['potency'];
+					});
+					break;
+				case 2: // count ASC
+					usort($items, function($a, $b) {
+						return $a['quantity'] <=> $b['quantity'];
+					});
+					break;
+				case 3: // count DESC
+					usort($items, function($a, $b) {
+						return $b['quantity'] <=> $a['quantity'];
+					});
+					break;
+				case 4: // alpha ASC
+					usort($items, function($a, $b) {
+						return $a['name'] <=> $b['name'];
+					});
+					break;
+				case 5: // alpha DESC
+					usort($items, function($a, $b) {
+						return $b['name'] <=> $a['name'];
+					});
+					break;
+				default:
+					// no sort
+					break;
 				}
 			}
 

@@ -410,7 +410,7 @@
 					if (!main_exceptions.includes(this['url']) && !menu_inserts.includes(this['url']) && !footer_inserts.includes(this['url']))
 						{
 						// replace = '.main';
-						console.log('replace main');
+						// console.log('replace main');
 						if (resp.main)
 							{
 							$('.main').html(resp.main);
@@ -423,12 +423,12 @@
 					if (menu_inserts.includes(this['url']))
 						{
 						// replace = '.menu';
-						console.log('replace menu');
+						// console.log('replace menu');
 						$('.menu').html(resp);
 						}
 					if (footer_inserts.includes(this['url']))
 						{
-						console.log('replace footer');
+						// console.log('replace footer');
 						$('.footer').html(resp);
 						}
 					// some type of full page reload:
@@ -440,7 +440,8 @@
 					console.log('should fire on error');
 					$('input:disabled,select:disabled').removeAttr('disabled');
 					}
-				}).done(function() {
+				})
+				.done(function() {
 					$('input:disabled,select:disabled').removeAttr('disabled');
 					var totalTime = new Date().getTime() - ajaxTime;
 					// console.log(totalTime);
@@ -454,7 +455,7 @@
 						insertString = '<td class="perf-warning">'+totalTime+' ms</td>';
 						}
 					$('.perf-table').append('<tr><td>AJAX</td>'+insertString+'</tr>');
-				});
+					});
 			});
 		</script>
 	</body>

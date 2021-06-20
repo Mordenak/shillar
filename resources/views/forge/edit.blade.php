@@ -26,23 +26,9 @@ Creating a Forge Recipe:
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Weapon:</label>
-			<div class="col-md-3">
-				<input type="text" name="item_weapons_id" value="{{isset($forge) ? $forge->item_weapons_id : ''}}" class="form-control item-lookup">
-			</div>
-		</div>
-
-		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Armor:</label>
 			<div class="col-md-3">
 				<input type="text" name="item_armors_id" value="{{isset($forge) ? $forge->item_armors_id : ''}}" class="form-control item-lookup">
-			</div>
-		</div>
-
-		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Food:</label>
-			<div class="col-md-3">
-				<input type="text" name="item_foods_id" value="{{isset($forge) ? $forge->item_foods_id : ''}}" class="form-control item-lookup">
 			</div>
 		</div>
 
@@ -54,9 +40,23 @@ Creating a Forge Recipe:
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Weapon:</label>
+			<div class="col-md-3">
+				<input type="text" name="item_weapons_id" value="{{isset($forge) ? $forge->item_weapons_id : ''}}" class="form-control item-lookup">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Dust:</label>
 			<div class="col-md-3">
 				<input type="text" name="item_dusts_id" value="{{isset($forge) ? $forge->item_dusts_id : ''}}" class="form-control item-lookup">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Food:</label>
+			<div class="col-md-3">
+				<input type="text" name="item_foods_id" value="{{isset($forge) ? $forge->item_foods_id : ''}}" class="form-control item-lookup">
 			</div>
 		</div>
 

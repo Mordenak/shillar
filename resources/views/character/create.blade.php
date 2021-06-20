@@ -25,7 +25,7 @@
 
 		<div class="form-group row">
 			<label class="col-md-1 col-form-label text-md-right">Race:</label>
-			<div class="col-md-1">
+			<div class="col-md-2">
 				<select name="selected_race" class="form-control">
 				@foreach ($races as $race)
 					<option value="{{$race->id}}">{{$race->name}}</option>
@@ -36,7 +36,7 @@
 
 		<div class="form-group row">
 			<label class="col-md-1 col-form-label text-md-right">Gender:</label>
-			<div class="col-md-1">
+			<div class="col-md-2">
 				<select name="selected_gender" class="form-control">
 					<option value="male">Male</option>
 					<option value="female">Female</option>

@@ -4,12 +4,14 @@
 <br><br>
 @if ($character)
 <form method="post" action="/food" class="ajax" id="consume">
-	Food:
 	<select name="item">
-		<option disabled selected>-- None --</option>
+		@if (count($items) > 0)
 		@foreach ($items as $item)
 		<option value="{{$item['id']}}" {{ $item['selected'] ? 'selected' : '' }}>{{$item['name']}} ({{$item['quantity']}})</option>
 		@endforeach
+		@else
+		<option disabled selected>-- None --</option>
+		@endif
 	</select><br>
 	<input type="hidden" name="character_id" value="{{$character->id}}">
 	<input type="hidden" name="action" value="consume">

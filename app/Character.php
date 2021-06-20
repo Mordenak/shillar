@@ -17,6 +17,11 @@ class Character extends Model
 		{
 		return $this->belongsTo('App\Race', 'races_id')->first();
 		}
+		
+	public function room()
+		{
+		return $this->belongsTo('App\Room', 'last_rooms_id')->first();
+		}
 
 	public function inventory()
 		{
