@@ -2,9 +2,6 @@
 
 @section('content')
 
-@if (isset($user))
-Editing a User:
-@endif
 <br>
 <div>
 	<form action="/user/save" method="POST" class="form-horizontal">
@@ -19,23 +16,8 @@ Editing a User:
 		@if (isset($user))
 		<input type="hidden" name="id" id="db-id" value="{{$user->id}}">
 		@endif
-
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-1">
-				<a href="/user/all" class="btn btn-primary">Cancel</a>
-			</div>
-			<div class="col-md-2 offset-md-2">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($user) ? 'Editing a User' : 'Creating a User' }}" baseroute="user" dbid="{{ isset($user) ? $user->id : 0}}"></x-admin-nav>
 </div>
-
-@if (isset($user))
-<form method="post" action="/user/delete">
-	{{csrf_field()}}
-	<input type="hidden" name="id" value="{{$user->id}}">
-	<input type="submit" value="Delete" class="btn btn-danger">
-</form>
-@endif
 @endsection

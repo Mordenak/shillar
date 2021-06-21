@@ -1,13 +1,6 @@
 @extends('layouts.admin')
 
 @section('content')
-
-@if (isset($character))
-Editing a character:
-@else
-Creating a character:
-@endif
-<br>
 <div>
 	<form action="/character/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
@@ -127,15 +120,8 @@ Creating a character:
 		@if (isset($character))
 		<input type="hidden" name="id" id="db-id" value="{{$character->id}}">
 		@endif
-
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-1">
-				<a href="/character/all" class="btn btn-primary">Cancel</a>
-			</div>
-			<div class="col-md-2 offset-md-2">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($character) ? 'Editing a Character' : 'Creating a Character' }}" baseroute="character" dbid="{{ isset($character) ? $character->id : 0}}"></x-admin-nav>
 </div>
 @endsection

@@ -2,12 +2,6 @@
 
 @section('content')
 
-@if (isset($quest))
-Editing a Quest:
-@else
-Creating a Quest:
-@endif
-<br>
 <div>
 	<form action="/quest/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
@@ -274,16 +268,9 @@ Creating a Quest:
 		@if (isset($quest))
 		<input type="hidden" name="id" id="db-id" value="{{$quest->id}}">
 		@endif
-
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-1">
-				<a href="/quest/all" class="btn btn-primary">Cancel</a>
-			</div>
-			<div class="col-md-2 offset-md-2">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($quest) ? 'Editing a Quest' : 'Creating a Quest' }}" baseroute="quest" dbid="{{ isset($quest) ? $quest->id : 0}}"></x-admin-nav>
 </div>
 
 <script>

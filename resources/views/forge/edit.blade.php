@@ -2,12 +2,6 @@
 
 @section('content')
 
-@if (isset($forge))
-Editing a Forge Recipe:
-@else
-Creating a Forge Recipe:
-@endif
-<br>
 <div>
 	<form action="/forge/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
@@ -64,14 +58,8 @@ Creating a Forge Recipe:
 		<input type="hidden" name="id" id="db-id" value="{{$forge->id}}">
 		@endif
 
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-1">
-				<a href="/forge/all" class="btn btn-primary">Cancel</a>
-			</div>
-			<div class="col-md-2 offset-md-2">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
+		<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+		<x-admin-nav title="{{ isset($forge) ? 'Editing a Forge Recipe' : 'Creating a Forge Recipe' }}" baseroute="forge" dbid="{{ isset($forge) ? $forge->id : 0}}"></x-admin-nav>
 	</form>
 </div>
 @endsection

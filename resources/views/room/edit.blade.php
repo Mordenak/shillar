@@ -1,12 +1,6 @@
 @extends('layouts.admin')
 
 @section('content')
-@if (isset($room))
-Editing a room:<br>
-@else
-Creating a new room:<br>
-@endif
-
 <div>
 	<form action="/room/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
@@ -190,38 +184,8 @@ Creating a new room:<br>
 		@if (isset($room))
 		<input type="hidden" name="id" id="db-id" value="{{$room->id}}">
 		@endif
-
-		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
-			<div class="col-md-1">
-				<a href="/admin" class="btn btn-info">Admin Home</a>
-			</div>
-			<div class="col-md-3 offset-md-1">
-				<h3>
-				@if (isset($zone))
-				Editing a Room:
-				@else
-				Creating a Room:
-				@endif
-				</h3>
-			</div>
-			<div class="col-md-1">
-				<a href="/room/all" class="btn btn-secondary">Cancel</a>
-			</div>
-			<div class="col-md-1">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($room) ? 'Editing a Room' : 'Creating a Room' }}" baseroute="room" dbid="{{ isset($room) ? $room->id : 0}}"></x-admin-nav>
 </div>
-
-<br><br>
-@if (isset($room))
-<div class="col-md-1">
-	<form method="post" action="/room/delete">
-		{{csrf_field()}}
-		<input type="hidden" name="id" value="{{$room->id}}">
-		<input type="submit" value="Delete This Room" class="btn btn-danger">
-	</form>
-</div>
-@endif
 @endsection

@@ -1,12 +1,6 @@
 @extends('layouts.admin')
 
 @section('content')
-
-@if (isset($shop))
-Editing a shop:
-@else
-Creating a shop:
-@endif
 	
 <div>
 	<form action="/shop/save" method="POST" class="form-horizontal">
@@ -89,15 +83,15 @@ Creating a shop:
 				@foreach ($shop->shop_items() as $shop_item)
 				<input type="hidden" name="shop_items[{{$shop_item->id}}][id]" value="{{$shop_item->id}}">
 				<div class="form-group row">
-					<label class="col-md-2 col-form-label text-md-right">Item:</label>
+					<label class="col-md-1 col-form-label text-md-right">Item:</label>
 					<div class="col-md-2">
 						<input type="text" name="shop_items[{{$shop_item->id}}][item_id]" value="{{$shop_item->item()->id}}" class="form-control item-lookup">
 					</div>
-					<label class="col-md-2 col-form-label text-md-right">Markup:</label>
+					<label class="col-md-1 col-form-label text-md-right">Markup:</label>
 					<div class="col-md-2">
 						<input type="text" name="shop_items[{{$shop_item->id}}][markup]" value="{{$shop_item->markup}}" class="form-control">
 					</div>
-					<label class="col-md-2 col-form-label text-md-right">Price:</label>
+					<label class="col-md-1 col-form-label text-md-right">Price:</label>
 					<div class="col-md-2">
 						<input type="text" name="shop_items[{{$shop_item->id}}][price]" value="{{$shop_item->price}}" class="form-control">
 					</div>
@@ -105,15 +99,15 @@ Creating a shop:
 				@endforeach
 			@endif
 				<div class="form-group row">
-					<label class="col-md-2 col-form-label text-md-right">Item:</label>
+					<label class="col-md-1 col-form-label text-md-right">Item:</label>
 					<div class="col-md-2">
 						<input type="text" name="shop_items[0][item_id]" class="form-control item-lookup">
 					</div>
-					<label class="col-md-2 col-form-label text-md-right">Markup:</label>
+					<label class="col-md-1 col-form-label text-md-right">Markup:</label>
 					<div class="col-md-2">
 						<input type="text" name="shop_items[0][markup]" class="form-control">
 					</div>
-					<label class="col-md-2 col-form-label text-md-right">Price:</label>
+					<label class="col-md-1 col-form-label text-md-right">Price:</label>
 					<div class="col-md-2">
 						<input type="text" name="shop_items[0][price]" class="form-control">
 					</div>
@@ -124,25 +118,10 @@ Creating a shop:
 		@if (isset($shop))
 		<input type="hidden" name="id" id="db-id" value="{{$shop->id}}">
 		@endif
-
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-2">
-				<a href="/shop/all" class="btn btn-primary">Cancel</a>
-			</div>
-			<div class="col-md-2 offset-md-1">
-				<input type="submit" value="Save" class="btn btn-primary" style="position: absolute;">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($shop) ? 'Editing a Shop' : 'Creating a Shop' }}" baseroute="shop" dbid="{{ isset($shop) ? $shop->id : 0}}"></x-admin-nav>
 </div>
-
-@if (isset($shop))
-<form method="post" action="/shop/delete">
-	{{csrf_field()}}
-	<input type="hidden" name="id" value="{{$shop->id}}">
-	<input type="submit" value="Delete" class="btn btn-danger">
-</form>
-@endif
 
 <script>
 function addShopItem($btn)

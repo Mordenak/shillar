@@ -21,7 +21,7 @@ Creating a Room Action:
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="rooms_id" value="{{isset($room_action) ? $room_action->rooms_id : ''}}" class="form-control room-lookup">
+				<input type="text" name="rooms_id" value="{{isset($room_action) ? $room_action->rooms_id : ''}}" class="form-control room-lookup" required>
 			</div>
 		</div>
 
@@ -147,23 +147,8 @@ Creating a Room Action:
 		@if (isset($room_action))
 		<input type="hidden" name="id" id="db-id" value="{{$room_action->id}}">
 		@endif
-
-		<div class="form-group row mb-0">
-			<div class="col-md-1 offset-md-1">
-				<a href="/room_action/all" class="btn btn-primary">Cancel</a>
-			</div>
-			<div class="col-md-2 offset-md-2">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($room_action) ? 'Editing a Room Action' : 'Creating a Room Action' }}" baseroute="room_action" dbid="{{ isset($room_action) ? $room_action->id : 0}}"></x-admin-nav>
 </div>
-
-@if (isset($room_action))
-<form method="post" action="/room_action/delete">
-	{{csrf_field()}}
-	<input type="hidden" name="id" value="{{$room_action->id}}">
-	<input type="submit" value="Delete" class="btn btn-danger">
-</form>
-@endif
 @endsection

@@ -154,28 +154,9 @@
 		@if (isset($creature_group))
 		<input type="hidden" name="id" value="{{$creature_group->id}}">
 		@endif
-
-		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
-			<div class="col-md-1">
-				<a href="/admin" class="btn btn-info">Admin Home</a>
-			</div>
-			<div class="col-md-3 offset-md-1">
-				<h3>
-				@if (isset($creature_group))
-				Editing a Creature Group:
-				@else
-				Creating a Creature Group:
-				@endif
-				</h3>
-			</div>
-			<div class="col-md-1">
-				<a href="/creature_group/all" class="btn btn-secondary">Cancel</a>
-			</div>
-			<div class="col-md-1">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($creature_group) ? 'Editing a Creature Group' : 'Creating a Creature Group' }}" baseroute="creature_group" dbid="{{ isset($creature_group) ? $creature_group->id : 0}}"></x-admin-nav>
 </div>
 
 <br><br>

@@ -3,7 +3,7 @@
 @section('content')
 
 <div>
-	<form action="/zone/save" method="POST" class="form-horizontal">
+	<form action="/zone/save" method="POST" class="form-horizontal main-form">
 		{{ csrf_field() }}
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Name:</label>
@@ -14,7 +14,7 @@
 
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Travel Text:</label>
-			<div class="col-md-3">
+			<div class="col-md-5">
 				<input type="text" name="travel_text" value="{{isset($zone) ? $zone->travel_text : ''}}" class="form-control" required>
 			</div>
 		</div>
@@ -120,41 +120,15 @@
 			{{$level->level}} :: <br>
 			@endforeach
 			@endif
-		</div>		
-
-		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
-			<div class="col-md-1">
-				<a href="/admin" class="btn btn-info">Admin Home</a>
-			</div>
-			<div class="col-md-3 offset-md-1">
-				<h3>
-				@if (isset($zone))
-				Editing a Zone:
-				@else
-				Creating a Zone:
-				@endif
-				</h3>
-			</div>
-			<div class="col-md-1">
-				<a href="/zone/all" class="btn btn-secondary">Cancel</a>
-			</div>
-			<div class="col-md-1">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
 		</div>
 	</form>
+	<!-- This somehow still joins the form above and everything still seems to work accordingly for some reason when it really shouldn't... Maybe the JS is responsible -->
+	<!-- TODO: Keep an eye out for weird bugs here and be ready to enable the below marked snippet instead -->
+	<!-- <x-admin-nav title="{{ isset($zone) ? 'Editing a Zone' : 'Creating a Zone' }}" baseroute="zone" dbid="{{ isset($zone) ? $zone->id : 0}}"></x-admin-nav> -->
 </div>
 
-<br><br>
-@if (isset($zone))
-<div class="col-md-1">
-	<form method="post" action="/zone/delete">
-		{{csrf_field()}}
-		<input type="hidden" name="id" value="{{$zone->id}}">
-		<input type="submit" value="Delete This Zone" class="btn btn-danger">
-	</form>
-</div>
-@endif
+<!-- This is where this should live: -->
+<x-admin-nav title="{{ isset($zone) ? 'Editing a Zone' : 'Creating a Zone' }}" baseroute="zone" dbid="{{ isset($zone) ? $zone->id : 0}}"></x-admin-nav>
 
 <!-- HAHAHAH HAVE FUN! -->
 <script>

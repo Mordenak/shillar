@@ -183,40 +183,10 @@
 		@if (isset($creature))
 		<input type="hidden" name="id" value="{{$creature->id}}">
 		@endif
-
-		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
-			<div class="col-md-1">
-				<a href="/admin" class="btn btn-info">Admin Home</a>
-			</div>
-			<div class="col-md-3 offset-md-1">
-				<h3>
-				@if (isset($zone))
-				Editing a Creature:
-				@else
-				Creating a Creature:
-				@endif
-				</h3>
-			</div>
-			<div class="col-md-1">
-				<a href="/creature/all" class="btn btn-secondary">Cancel</a>
-			</div>
-			<div class="col-md-1">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($creature) ? 'Editing a Creature' : 'Creating a Creature' }}" baseroute="creature" dbid="{{ isset($creature) ? $creature->id : 0}}"></x-admin-nav>
 </div>
-
-<br><br>
-@if (isset($creature))
-<div class="col-md-1">
-	<form method="post" action="/creature/delete">
-		{{csrf_field()}}
-		<input type="hidden" name="id" value="{{$creature->id}}">
-		<input type="submit" value="Delete This Creature" class="btn btn-danger">
-	</form>
-</div>
-@endif
 
 <script>
 function addSpawnRule($btn)

@@ -43,39 +43,9 @@
 		@if (isset($teleport))
 		<input type="hidden" name="id" id="db-id" value="{{$teleport->id}}">
 		@endif
-
-		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
-			<div class="col-md-1">
-				<a href="/admin" class="btn btn-info">Admin Home</a>
-			</div>
-			<div class="col-md-3 offset-md-1">
-				<h3>
-				@if (isset($teleport))
-				Editing a TeleportTarget:
-				@else
-				Creating a TeleportTarget:
-				@endif
-				</h3>
-			</div>
-			<div class="col-md-1">
-				<a href="/teleport/all" class="btn btn-secondary">Cancel</a>
-			</div>
-			<div class="col-md-1">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($teleport) ? 'Editing a Telepolrt Target' : 'Creating a Teleport Target' }}" baseroute="teleport" dbid="{{ isset($teleport) ? $teleport->id : 0}}"></x-admin-nav>
 </div>
-
-<br><br>
-@if (isset($teleport))
-<div class="col-md-1">
-	<form method="post" action="/teleport/delete">
-		{{csrf_field()}}
-		<input type="hidden" name="id" value="{{$teleport->id}}">
-		<input type="submit" value="Delete This TeleportTarget" class="btn btn-danger">
-	</form>
-</div>
-@endif
 
 @endsection

@@ -2,13 +2,6 @@
 
 @section('content')
 
-@if (isset($item))
-Editing an item:
-@else
-Creating an item:
-@endif
-<br>
-
 <div>
 	<form action="/item/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
@@ -61,40 +54,10 @@ Creating an item:
 		@if (isset($item))
 		<input type="hidden" name="id" id="db-id" value="{{$item->id}}">
 		@endif
-
-		<div class="form-group row fixed-top" style="padding:.5rem;background-color:#555;border-bottom:2px solid white;">
-			<div class="col-md-1">
-				<a href="/admin" class="btn btn-info">Admin Home</a>
-			</div>
-			<div class="col-md-3 offset-md-1">
-				<h3>
-				@if (isset($zone))
-				Editing a Item:
-				@else
-				Creating a Item:
-				@endif
-				</h3>
-			</div>
-			<div class="col-md-1">
-				<a href="/item/all" class="btn btn-secondary">Cancel</a>
-			</div>
-			<div class="col-md-1">
-				<input type="submit" value="Save" class="btn btn-primary">
-			</div>
-		</div>
 	</form>
+	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+	<x-admin-nav title="{{ isset($item) ? 'Editing a Item' : 'Creating a Item' }}" baseroute="item" dbid="{{ isset($item) ? $item->id : 0}}"></x-admin-nav>
 </div>
-
-<br><br>
-@if (isset($item))
-<div class="col-md-1">
-	<form method="post" action="/item/delete">
-		{{csrf_field()}}
-		<input type="hidden" name="id" value="{{$item->id}}">
-		<input type="submit" value="Delete This Item" class="btn btn-danger">
-	</form>
-</div>
-@endif
 
 <script>
 $('#type-select').on('change', function(e) {
