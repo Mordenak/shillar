@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Character extends Model
 {
-	protected $fillable = ['users_id', 'name', 'races_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
+	protected $fillable = ['users_id', 'name', 'races_id', 'genders_id', 'alignments_id', 'last_rooms_id', 'xp', 'gold', 'bank', 'health', 'max_health', 'mana', 'max_mana', 'fatigue', 'max_fatigue', 'strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma', 'quest_points', 'score'];
 
 	public function user()
 		{
@@ -16,6 +16,11 @@ class Character extends Model
 	public function race()
 		{
 		return $this->belongsTo('App\Race', 'races_id')->first();
+		}
+
+	public function gender()
+		{
+		return $this->belongsTo('App\Gender', 'genders_id')->first();
 		}
 		
 	public function room()
@@ -82,7 +87,7 @@ class Character extends Model
 			}
 		if ($this->race()->modifiers()->get())
 			{
-			return $this->race()->modifiers()->where(['racial_modifier_id' => $RacialModifier->id])->first();
+			return $this->race()->modifiers()->where(['racial_modifiers_id' => $RacialModifier->id])->first();
 			}
 		return false;
 		}
@@ -172,6 +177,7 @@ class Character extends Model
 			'wisdom' => $this->wisdom,
 			'intelligence' => $this->intelligence,
 			'charisma' => $this->charisma,
+			'armor' => 0
 			];
 
 		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 2])->first();
@@ -186,6 +192,12 @@ class Character extends Model
 		foreach ($armor_stats as $stat => $value)
 			{
 			$stats[$stat] = $stats[$stat] + $value;
+			}
+
+		$armor_modifier = $this->get_modifier('ARMOR_ADJUSTMENT');
+		if ($armor_modifier)
+			{
+			$stats['armor'] = floor($stats['armor'] * $armor_modifier->value);
 			}
 
 		return $stats;
@@ -226,6 +238,11 @@ class Character extends Model
 	public function charisma()
 		{
 		return $this->stats()['charisma'];
+		}
+
+	public function armor()
+		{
+		return $this->stats()['armor'];
 		}
 
 	public function get_stat($stat)

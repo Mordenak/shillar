@@ -7,7 +7,7 @@
 <br><br>
 
 @if ($characters)
-<table id="all-characters">
+<table id="all-records">
 	<thead>
 		<th>ID</th>
 		<th>Record</th>
@@ -23,10 +23,6 @@
 		@endforeach
 	</tbody>
 </table>
-
-<script>
-$('#all-characters').dataTable();
-</script>
 @endif
 
 @endsection

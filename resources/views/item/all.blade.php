@@ -18,7 +18,7 @@
 	</div>
 
 	@if ($items)
-	<table id="all-items">
+	<table id="all-records">
 		<thead>
 			<th>ID</th>
 			<th>Item Name</th>
@@ -35,10 +35,6 @@
 		</tbody>
 	</table>
 </div>
-
-<script>
-$('#all-items').dataTable();
-</script>
 @endif
 
 @endsection

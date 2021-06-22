@@ -66,6 +66,15 @@ On Linux:
 	5. php artisan migrate
 9. php artisan key:generate
 
+Database Reload examples:
+Windows:
+	pg_restore -U adventure --no-acl --clean -d adventure <file>
+	or
+	pg_restore -U adventure -d adventure --no-owner <file>
+Linux - pg_restore --no-acl --clean -d adventure <file>
+
+Other Windows notes, composer might need to be updated like so:
+php -d memory_limit=-1 C:\ProgramData\ComposerSetup\bin\composer.phar update
 
 Code Todo:
 

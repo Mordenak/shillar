@@ -18,7 +18,7 @@
 	</div>
 
 	@if ($creatures)
-	<table id="all-creatures">
+	<table id="all-records">
 		<thead>
 			<th>ID</th>
 			<th>Name</th>
@@ -74,10 +74,6 @@
 		</tbody>
 	</table>
 </div>
-
-<script>
-$('#all-creatures').dataTable();
-</script>
 @endif
 
 @endsection

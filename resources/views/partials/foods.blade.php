@@ -5,6 +5,6 @@
 	</div>
 </div>
 
-@if ($actual_item)
+@if (isset($actual_item))
 <input type="hidden" name="actual_id" id="actual-db-id" value="{{$actual_item->id}}">
 @endif

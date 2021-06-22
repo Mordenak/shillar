@@ -85,6 +85,29 @@
 		</div>
 
 		<script>
+		$('#all-records').dataTable({pageLength: 50});
+
+		document.addEventListener('keydown', function(e) {
+			if (e.altKey)
+				{
+				if (e.key === 's')
+					{
+					$('form.form-horizontal').submit();
+					}
+				else if (e.key === 'c')
+					{
+					$('.cancel-link')[0].click();
+					}
+				else if (e.key === 'n')
+					{
+					$('.new-link')[0].click();
+					}
+				else if (e.key === 'w')
+					{
+					$('.admin-link')[0].click();
+					}
+				}
+			});
 		// autocompletes
 		$('body').on('focusin', '.auto-lookup', function(e, i) {
 			// determine lookup url:
@@ -118,6 +141,11 @@
 			if ($target.hasClass('room-property-lookup'))
 				{
 				url = '/room_property/lookup';
+				}
+
+			if ($target.hasClass('character-lookup'))
+				{
+				url = '/character/lookup';
 				}
 
 			$(e.target).autocomplete({

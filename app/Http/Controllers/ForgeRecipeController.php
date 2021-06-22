@@ -26,10 +26,12 @@ class ForgeRecipeController extends Controller
 		return view('forge.edit', ['forge' => $ForgeRecipe]);
 		}
 
-	public function delete($id)
+	public function delete(Request $request)
 		{
-		ForgeRecipe::delete($id);
-		return $this->action('ForgeRecipeController@all');
+		$ForgeRecipe = ForgeRecipe::findOrFail($request->id);
+		$ForgeRecipe->delete();
+		Session::flash('success', 'Forge Recipe Deleted!');
+		return redirect()->action('ForgeRecipeController@all');
 		}
 
 	public function save(Request $request)

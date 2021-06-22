@@ -15,7 +15,7 @@
 		<a href="creature_group/all">All Creature Groups</a><br>
 		<a href="shop/all">All Shops</a><br>
 		<a href="quest/all">All Quests</a><br>
-		<a href="race/all">All Races [NYI]</a><br>
+		<a href="race/all">All Races</a><br>
 		<a href="forge/all">All Forges [NYI]</a><br>
 		<a href="forge/all">All Forge Recipes</a><br>
 		<a href="spell/all">All Spells [NYI]</a><br>

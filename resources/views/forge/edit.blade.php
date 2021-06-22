@@ -57,9 +57,9 @@
 		@if (isset($forge))
 		<input type="hidden" name="id" id="db-id" value="{{$forge->id}}">
 		@endif
-
-		<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
-		<x-admin-nav title="{{ isset($forge) ? 'Editing a Forge Recipe' : 'Creating a Forge Recipe' }}" baseroute="forge" dbid="{{ isset($forge) ? $forge->id : 0}}"></x-admin-nav>
 	</form>
 </div>
+
+<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
+<x-admin-nav title="{{ isset($forge) ? 'Editing a Forge Recipe' : 'Creating a Forge Recipe' }}" baseroute="forge" dbid="{{ isset($forge) ? $forge->id : 0}}"></x-admin-nav>
 @endsection

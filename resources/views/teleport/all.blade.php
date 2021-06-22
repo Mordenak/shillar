@@ -17,7 +17,7 @@
 		</form>
 	</div>
 	@if ($teleports)
-	<table id="all-teleports">
+	<table id="all-records">
 		<thead>
 			<th>ID</th>
 			<th>Name</th>
@@ -39,12 +39,6 @@
 			@endforeach
 		</tbody>
 	</table>
-	<script>
-	$('#all-teleports').dataTable();
-	</script>
 	@endif
 </div>
-
-
-
 @endsection 

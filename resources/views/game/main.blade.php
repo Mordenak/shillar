@@ -307,10 +307,10 @@
 			@foreach ($score_list as $listing)
 				<tr>
 					<td>{!! $listing->display_name() !!}</td>
-					<td>{{$listing->score}}</td>
+					<td>{{ $listing->score }}</td>
 					<td>{{ $listing->rank() }}</td>
-					<td>{{$listing->race()->gender}}</td>
-					<td>{{$listing->race()->name}}</td>
+					<td>{{ $listing->gender()->title }}</td>
+					<td>{{ $listing->race()->name }}</td>
 				</tr>
 			@endforeach
 			</table>

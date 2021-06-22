@@ -13,7 +13,7 @@
 	</tr>
 	<tr>
 		<td>Sex</td>
-		<td>{{$character->race()->gender}}</td>
+		<td>{{$character->gender()->title}}</td>
 	</tr>
 	@if ($character->alignment())
 	<tr>

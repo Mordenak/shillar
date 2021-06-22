@@ -38,8 +38,9 @@
 			<label class="col-md-1 col-form-label text-md-right">Gender:</label>
 			<div class="col-md-2">
 				<select name="selected_gender" class="form-control">
-					<option value="male">Male</option>
-					<option value="female">Female</option>
+				@foreach ($genders as $gender)
+					<option value="{{$gender->id}}">{{$gender->title}}</option>
+				@endforeach
 				</select>
 			</div>
 		</div>

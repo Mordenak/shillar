@@ -17,7 +17,7 @@
 		</form>
 	</div>
 	@if ($zones)
-	<table id="all-zones">
+	<table id="all-records">
 		<thead>
 			<th>ID</th>
 			<th>Zone Name</th>
@@ -30,13 +30,7 @@
 			</tr>
 			@endforeach
 		</tbody>
-	</table>
-	<script>
-	$('#all-zones').dataTable();
-	</script>
+	</table>	
 	@endif
 </div>
-
-
-
 @endsection 

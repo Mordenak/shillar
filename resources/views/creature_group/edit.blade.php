@@ -154,21 +154,10 @@
 		@if (isset($creature_group))
 		<input type="hidden" name="id" value="{{$creature_group->id}}">
 		@endif
-	</form>
-	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
-	<x-admin-nav title="{{ isset($creature_group) ? 'Editing a Creature Group' : 'Creating a Creature Group' }}" baseroute="creature_group" dbid="{{ isset($creature_group) ? $creature_group->id : 0}}"></x-admin-nav>
+	</form>	
 </div>
 
-<br><br>
-@if (isset($creature))
-<div class="col-md-1">
-	<form method="post" action="/creature/delete">
-		{{csrf_field()}}
-		<input type="hidden" name="id" value="{{$creature->id}}">
-		<input type="submit" value="Delete This Creature" class="btn btn-danger">
-	</form>
-</div>
-@endif
+<x-admin-nav title="{{ isset($creature_group) ? 'Editing a Creature Group' : 'Creating a Creature Group' }}" baseroute="creature_group" dbid="{{ isset($creature_group) ? $creature_group->id : 0}}"></x-admin-nav>
 
 <style>
 .spawn-forms > div

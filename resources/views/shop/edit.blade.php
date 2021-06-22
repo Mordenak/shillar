@@ -84,15 +84,15 @@
 				<input type="hidden" name="shop_items[{{$shop_item->id}}][id]" value="{{$shop_item->id}}">
 				<div class="form-group row">
 					<label class="col-md-1 col-form-label text-md-right">Item:</label>
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<input type="text" name="shop_items[{{$shop_item->id}}][item_id]" value="{{$shop_item->item()->id}}" class="form-control item-lookup">
 					</div>
 					<label class="col-md-1 col-form-label text-md-right">Markup:</label>
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<input type="text" name="shop_items[{{$shop_item->id}}][markup]" value="{{$shop_item->markup}}" class="form-control">
 					</div>
 					<label class="col-md-1 col-form-label text-md-right">Price:</label>
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<input type="text" name="shop_items[{{$shop_item->id}}][price]" value="{{$shop_item->price}}" class="form-control">
 					</div>
 				</div>
@@ -100,15 +100,15 @@
 			@endif
 				<div class="form-group row">
 					<label class="col-md-1 col-form-label text-md-right">Item:</label>
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<input type="text" name="shop_items[0][item_id]" class="form-control item-lookup">
 					</div>
 					<label class="col-md-1 col-form-label text-md-right">Markup:</label>
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<input type="text" name="shop_items[0][markup]" class="form-control">
 					</div>
 					<label class="col-md-1 col-form-label text-md-right">Price:</label>
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<input type="text" name="shop_items[0][price]" class="form-control">
 					</div>
 				</div>

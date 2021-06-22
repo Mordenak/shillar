@@ -162,6 +162,10 @@ Route::get('teleport/edit/{id}', 'TeleportTargetController@edit')->where('id', '
 Route::post('teleport/save', 'TeleportTargetController@save');
 Route::post('teleport/delete', 'TeleportTargetController@delete');
 
+Route::get('race/all', 'RaceController@all');
+Route::get('race/edit/{id}', 'RaceController@edit')->where('id', '[0-9]+');
+Route::get('race/create', 'RaceController@create');
+Route::post('race/save', 'RaceController@save');
 
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');
@@ -170,4 +174,5 @@ Route::get('/creature/lookup', 'CreatureController@lookup');
 Route::get('/zone/lookup', 'ZoneController@lookup');
 Route::get('/zone_area/lookup', 'ZoneAreaController@lookup');
 Route::get('/room_property/lookup', 'RoomPropertyController@lookup');
+Route::get('/character/lookup', 'CharacterController@lookup');
 Route::get('/zone_property/placeholder', 'ZoneController@placeholder');

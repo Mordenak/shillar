@@ -17,7 +17,7 @@
 </div>
 
 @if ($shops)
-<table id="all-shops">
+<table id="all-records">
 	<thead>
 		<th>ID</th>
 		<th>Shop Name</th>
@@ -31,10 +31,6 @@
 		@endforeach
 	</tbody>
 </table>
-
-<script>
-$('#all-shops').dataTable();
-</script>
 @endif
 
 @endsection 

@@ -662,6 +662,7 @@ class GameController extends Controller
 		// $flat_creature = $Creature->toArray();
 		// $Equipment = Equipment::where(['characters_id' => $Character->id])->first();
 		$character_stats = $Character->stats();
+		// die(print_r($Character->stats()));
 		// Calculate attacks:
 		$attack_count = floor(($character_stats['dexterity'] - 10) / 20) + 2;
 		$total_damage = 0;
@@ -808,7 +809,7 @@ class GameController extends Controller
 				foreach (range(1, $flat_creature['attacks_per_round']) as $i)
 					{
 					$calc_damage = rand($flat_creature['damage_low'], $flat_creature['damage_high']);
-					$creature_damage = $calc_damage - $Character->equipment()->calculate_armor();
+					$creature_damage = $calc_damage - $Character->armor();
 					if ($creature_damage <= 0)
 						{
 						$creature_damage = 1;
@@ -1384,7 +1385,7 @@ class GameController extends Controller
 		// $Character = Character::where(['characters.id' => $request->character_id])->first();
 
 		// $StatCost = StatCost::first();
-		$StatCost = StatCost::where(['races_id' => $Character->races_id])->first();
+		$StatCost = StatCost::where(['races_id' => $Character->races_id, 'genders_id' => $Character->genders_id])->first();
 
 		// $request->train_multi;
 		$base_stats = [
@@ -1522,6 +1523,18 @@ class GameController extends Controller
 
 		// Find current equipment:
 		$Equipment = Equipment::where(['characters_id' => $request->character_id])->first();
+
+		// If Character missing equipment record:
+		if (!$Equipment)
+			{
+			// TODO: And yet somehow if we reach this condition we end up running out of memory in the rest of the code...?
+			$Equipment = new Equipment;
+			$Equipment->fill(['characters_id' => $Character->id]);
+			$Equipment->save();
+			$Equipment->fresh();
+			}
+
+		// die(print_r($Equipment));
 
 		if ($request->action == 'equip')
 			{

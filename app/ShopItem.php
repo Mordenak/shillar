@@ -13,6 +13,11 @@ class ShopItem extends Model
 		return $this->belongsTo('App\Item', 'items_id')->first();
 		}
 
+	public function shop()
+		{
+		return $this->belongsTo('App\Shop', 'shops_id')->first();
+		}
+
 	public function get_cost($charisma)
 		{
 		if ($this->price)

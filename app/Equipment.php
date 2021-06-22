@@ -72,62 +72,6 @@ class Equipment extends Model
 		return $arr;
 		}
 
-	public function calculate_armor()
-		{
-		$total_armor = 3;
-
-		if ($this->shield)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->shield);
-			$ItemArmor = $InventoryItem->item()->actual_item();
-			$total_armor += $ItemArmor->armor;
-			}
-
-		if ($this->head)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->head);
-			$ItemArmor = $InventoryItem->item()->actual_item();
-			$total_armor += $ItemArmor->armor;
-			}
-
-		if ($this->neck)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->neck);
-			$ItemArmor = $InventoryItem->item()->actual_item();
-			$total_armor += $ItemArmor->armor;
-			}
-
-		if ($this->chest)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->chest);
-			$ItemArmor = $InventoryItem->item()->actual_item();
-			$total_armor += $ItemArmor->armor;
-			}
-
-		if ($this->hands)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->hands);
-			$ItemArmor = $InventoryItem->item()->actual_item();
-			$total_armor += $ItemArmor->armor;
-			}
-
-		if ($this->legs)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->legs);
-			$ItemArmor = $InventoryItem->item()->actual_item();
-			$total_armor += $ItemArmor->armor;
-			}
-
-		if ($this->feet)
-			{
-			$InventoryItem = InventoryItem::findOrFail($this->feet);
-			$ItemArmor = $InventoryItem->item()->actual_item();
-			$total_armor += $ItemArmor->armor;
-			}
-
-		return $total_armor;
-		}
-
 	public function retrieve_stats()
 		{
 		if (!Cache::get($this->characters_id . '_stats'))
@@ -148,6 +92,7 @@ class Equipment extends Model
 			'wisdom' => 0,
 			'intelligence' => 0,
 			'charisma' => 0,
+			'armor' => 0
 			];
 
 		$slots = ['shield', 'head', 'neck', 'chest', 'hands', 'legs', 'feet', 'amulet', 'left_ring', 'right_ring', 'bracelet'];

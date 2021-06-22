@@ -17,7 +17,7 @@
 		</form>
 	</div>
 	@if ($rooms)
-	<table id="all-rooms">
+	<table id="all-records">
 		<thead>
 			<th>ID</th>
 			<th>Title</th>
@@ -33,9 +33,6 @@
 			@endforeach
 		</tbody>
 	</table>
-	<script>
-	$('#all-rooms').dataTable();
-	</script>
 	@endif
 </div>
 

@@ -10,6 +10,7 @@ use App\Wallet;
 use App\Equipment;
 use App\Inventory;
 use App\StartingStat;
+use App\Gender;
 use Session;
 
 class CharacterController extends Controller
@@ -20,8 +21,8 @@ class CharacterController extends Controller
 		}
 
 	public function create()
-		{	
-		return view('character.create', ['races' => Race::where('gender', '=', 'Male')->orderby('name')->get()]);
+		{
+		return view('character.create', ['races' => Race::orderby('name')->get(), 'genders' => Gender::all()]);
 		}
 
 	public function all()
@@ -45,6 +46,7 @@ class CharacterController extends Controller
 			$values = [
 				'name' => $request->name,
 				'races_id' => $request->races_id,
+				'genders_id' => $request->genders_id,
 				'alignments_id' => $request->alignments_id,
 				'last_rooms_id' => $request->last_rooms_id,
 				'health' => $request->health,
@@ -85,15 +87,10 @@ class CharacterController extends Controller
 
 			$Character = new Character;
 
-			$selected_race = $request->selected_race;
-			if ($request->selected_gender == 'female')
-				{
-				$selected_race = $selected_race + 17;
-				}
-
 			$values = [
 				'users_id' => auth()->user()->id,
-				'races_id' => $selected_race,
+				'races_id' => $request->selected_race,
+				'genders_id' => $request->selected_gender,
 				'name' => $request->name,
 				'last_rooms_id' => 1,
 				'xp' => 0,
@@ -186,5 +183,77 @@ class CharacterController extends Controller
 		Session::flash('settings', 'Settings updated!');
 
 		return view('character.settings', ['character' => $Character, 'settings' => $CharacterSetting->fresh()]);
+		}
+
+	public function lookup(Request $request)
+		{
+		if ($request->term == 'has:title')
+			{
+			// $Rooms = Room::whereNotNull('title')->get();
+			}
+		elseif (preg_match("/user:(.+)/", $request->term, $matches))
+			{
+			if (is_numeric($matches[1]))
+				{
+				$Characters = Character::where('users_id', '=', $matches[1])->get();
+				}
+			// 	{
+			// 	$Zone = Zone::findOrFail($matches[1]);
+			// 	}
+			// else
+			// 	{
+			// 	$Zone = Zone::where('name', 'ilike', "%$matches[1]%")->first();
+			// 	if ($Zone->count === 0)
+			// 		{
+			// 		return [];
+			// 		}
+
+			// 	}
+			// $Rooms = $Zone->rooms();
+			}
+		else
+			{
+			$Characters = Character::where('name', 'ilike', "%$request->term%")->get();
+			}
+
+		$arr = [];
+
+		if ($Characters)
+			{
+			foreach ($Characters as $Character)
+				{
+				$label = "($Character->id) $Character->name [".$Character->user()->name."]";
+				$arr[] = [
+					'label' => $label,
+					'value' => $Character->id,
+					];
+				}
+			}
+
+		// Also search IDs:
+		if (is_numeric($request->term))
+			{
+			$Characters = Character::where('id', '=', $request->term)->get();
+
+			if ($Characters)
+				{
+				foreach ($Characters as $Character)
+					{
+					$label = "($Character->id) $Character->name [".$Character->user()->name."]";
+					$arr[] = [
+						'label' => $label,
+						'value' => $Character->id,
+						];
+					}
+				}
+			}
+
+		if (empty($arr))
+			{
+			$arr[] = ['label' => 'No Results', 'value' => $request->term];
+			}
+
+		echo (json_encode($arr));;
+		header('Content-type: application/json');
 		}
 	}

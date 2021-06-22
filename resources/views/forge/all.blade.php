@@ -17,11 +17,16 @@
 </div>
 
 @if ($forges)
-<table id="all-forges">
+<table id="all-records">
 	<thead>
 		<th>ID</th>
 		<th>Recipe Name</th>
 		<th>Resulting Item</th>
+		<th>Armor</th>
+		<th>Jewel</th>
+		<th>Weapon</th>
+		<th>Dust</th>
+		<th>Food</th>
 	</thead>
 	<tbody>
 		@foreach ($forges as $forge)
@@ -29,14 +34,15 @@
 			<td>{{$forge->id}}</td>
 			<td><a href="/forge/edit/{{$forge->id}}">{{$forge->name ?? '[No Name]'}}</a></td>
 			<td>{{$forge->result_item()->name}}</td>
+			<td>{{$forge->armor()->name}}</td>
+			<td>{{$forge->jewel()->name}}</td>
+			<td>{{$forge->weapon()->name}}</td>
+			<td>{{$forge->dust()->name}}</td>
+			<td>{{$forge->food()->name}}</td>
 		</tr>
 		@endforeach
 	</tbody>
 </table>
-
-<script>
-$('#all-forges').dataTable();
-</script>
 @endif
 
 @endsection

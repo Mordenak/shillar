@@ -7,7 +7,7 @@
 <br><br>
 
 @if ($users)
-<table id="all-users">
+<table id="all-records">
 	<thead>
 		<th>ID</th>
 		<th>Record</th>
@@ -23,10 +23,6 @@
 		@endforeach
 	</tbody>
 </table>
-
-<script>
-$('#all-users').dataTable();
-</script>
 @endif
 
 @endsection

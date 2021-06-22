@@ -48,7 +48,7 @@
 <div class="form-group row">
 	<label class="col-md-2 col-form-label text-md-right">Accuracy:</label>
 	<div class="col-md-3">
-		<input type="text" name="accuracy" value="{{isset($actual_item) ? $actual_item->accuracy : ''}}" class="form-control">
+		<input type="text" name="accuracy" value="{{isset($actual_item) ? $actual_item->accuracy : ''}}" class="form-control" placeholder="0.0 - 1.0">
 	</div>
 </div>
 
@@ -66,6 +66,6 @@
 	</div>
 </div>
 
-@if ($actual_item)
+@if (isset($actual_item))
 <input type="hidden" name="actual_id" id="actual-db-id" value="{{$actual_item->id}}">
 @endif

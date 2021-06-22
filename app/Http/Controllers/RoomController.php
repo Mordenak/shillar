@@ -139,8 +139,9 @@ class RoomController extends Controller
 			$LinkRoom->save();
 			}
 
+		Session::flash('success', 'Room Updated!');
 		// return view('admin/main');
-		return redirect()->action('RoomController@all');
+		return redirect()->action('RoomController@edit', ['id' => $Room->id]);
 		}
 
 	public function lookup(Request $request)

@@ -118,6 +118,12 @@ class AdminController extends Controller
 
 	public function give_item(Request $request)
 		{
+		if (!isset(auth()->user()->admin_level))
+			{
+			Session::put('messages', 'You do not have access to that area!');
+			return view('home');
+			}
+
 		if ($request->characters_id)
 			{
 			if ($request->items_id)

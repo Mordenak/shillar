@@ -8,11 +8,11 @@ class RaceRacialModifier extends Model
 	{
 	protected $table = 'race_racial_modifiers';
 
-	protected $fillable = [];
+	protected $fillable = ['racial_modifiers_id', 'races_id', 'value'];
 
 	public function modifier()
 		{
-		return $this->belongsTo('App\RacialModifier');
+		return $this->belongsTo('App\RacialModifier', 'racial_modifiers_id');
 		}
 
 	public function race()

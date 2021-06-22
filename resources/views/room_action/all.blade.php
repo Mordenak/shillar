@@ -17,7 +17,7 @@
 </div>
 
 @if ($room_actions)
-<table id="all-room_actions">
+<table id="all-records">
 	<thead>
 		<th>ID</th>
 		<th>Action UID</th>
@@ -31,10 +31,6 @@
 		@endforeach
 	</tbody>
 </table>
-
-<script>
-$('#all-room_actions').dataTable();
-</script>
 @endif
 
 @endsection

@@ -66,6 +66,7 @@ class Item extends Model
 				'wisdom' => $this->actual_item()->wisdom_bonus,
 				'intelligence' => $this->actual_item()->intelligence_bonus,
 				'charisma' => $this->actual_item()->charisma_bonus,
+				'armor' => $this->actual_item()->armor
 				];
 			}
 

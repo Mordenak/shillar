@@ -15,6 +15,9 @@ use App\ItemAccessories;
 use App\ItemOthers;
 use App\EquipmentSlot;
 use App\WeaponType;
+use App\ForgeRecipe;
+use App\LootTable;
+use App\ShopItem;
 
 class ItemController extends Controller
 {
@@ -39,8 +42,19 @@ class ItemController extends Controller
 		$weapon_types = WeaponType::all();
 
 		$item_type_fields = $this->get_item_fields($Item->item_types_id, $Item->id);
+
+		// Find item references:
+		$ResultForges = ForgeRecipe::where('result_items_id', $id)->get();
+		$UsedForges = ForgeRecipe::where('item_weapons_id', $id)
+			->orWhere('item_armors_id', $id)
+			->orWhere('item_jewels_id', $id)
+			->orWhere('item_foods_id', $id)
+			->orWhere('item_dusts_id', $id)->get();
+
+		$LootTables = LootTable::where('items_id', $id)->get();
+		$ShopItems = ShopItem::where('items_id', $id)->get();
 		
-		return view('item.edit', ['item' => Item::findOrFail($id), 'item_types' => $item_types, 'item_fields' => $item_type_fields, 'weapon_types' => $weapon_types]);
+		return view('item.edit', ['item' => Item::findOrFail($id), 'item_types' => $item_types, 'item_fields' => $item_type_fields, 'weapon_types' => $weapon_types, 'forged_by' => $ResultForges, 'forged_with' => $UsedForges, 'dropped_by' => $LootTables, 'sold_by' => $ShopItems]);
 		}
 
 	public function save(Request $request)
@@ -162,11 +176,11 @@ class ItemController extends Controller
 				$weapon_types = WeaponType::all();
 				break;
 			case 2:
-				$equip_slots = EquipmentSlot::all();
+				$equip_slots = EquipmentSlot::where('type_restriction', 'armors')->get();
 				$partial_name = 'armors';
 				break;
 			case 3:
-				$equip_slots = EquipmentSlot::all();
+				$equip_slots = EquipmentSlot::where('type_restriction', 'accessories')->get();
 				$partial_name = 'accessories';
 				break;
 			case 4:

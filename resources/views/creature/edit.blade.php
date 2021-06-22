@@ -184,9 +184,9 @@
 		<input type="hidden" name="id" value="{{$creature->id}}">
 		@endif
 	</form>
-	<!-- TODO: See zone/edit.blade.php for comments on this component placement -->
-	<x-admin-nav title="{{ isset($creature) ? 'Editing a Creature' : 'Creating a Creature' }}" baseroute="creature" dbid="{{ isset($creature) ? $creature->id : 0}}"></x-admin-nav>
 </div>
+
+<x-admin-nav title="{{ isset($creature) ? 'Editing a Creature' : 'Creating a Creature' }}" baseroute="creature" dbid="{{ isset($creature) ? $creature->id : 0}}"></x-admin-nav>
 
 <script>
 function addSpawnRule($btn)
