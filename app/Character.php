@@ -180,7 +180,7 @@ class Character extends Model
 			'armor' => 0
 			];
 
-		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 2])->first();
+		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 2])->first();
 		$racial_modifier = $this->get_modifier('HAS_NIGHTVISION');
 		if ($racial_modifier)
 			{
@@ -382,7 +382,7 @@ class Character extends Model
 
 		// We know the modifier we want is ID 3:
 		$modifier = 1.0;
-		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 3])->first();
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 3])->first();
 		if ($racial_modifier)
 			{
 			$modifier = $racial_modifier->value;
@@ -415,7 +415,7 @@ class Character extends Model
 	public function receive_heat_damage($damage)
 		{
 		// Ok, first find out if we take modified heat damage due to racial:
-		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 7])->first();
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 7])->first();
 		if ($racial_modifier)
 			{
 			// TODO: floor or round?
@@ -440,7 +440,7 @@ class Character extends Model
 	public function receive_cold_damage($damage)
 		{
 		// Ok, first find out if we take modified heat damage due to racial:
-		$racial_modifier = $this->race()->modifiers()->where(['racial_modifier_id' => 8])->first();
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 8])->first();
 		if ($racial_modifier)
 			{
 			// TODO: floor or round?

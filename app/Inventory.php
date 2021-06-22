@@ -76,7 +76,7 @@ class Inventory extends Model
 	public function max_weight()
 		{
 		$inventory_size = $this->character()->first()->stats()['strength'];
-		$racial_modifier = $this->character()->first()->race()->modifiers()->where(['racial_modifier_id' => 1])->first();
+		$racial_modifier = $this->character()->first()->race()->modifiers()->where(['racial_modifiers_id' => 1])->first();
 		if ($racial_modifier)
 			{
 			$inventory_size = floor($inventory_size * $racial_modifier->value);
