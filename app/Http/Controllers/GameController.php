@@ -1628,12 +1628,15 @@ class GameController extends Controller
 			}
 
 		// die(print_r($costs));
+		// TODO: Lazy bit
+		/**
 		$base_value = 20000;
 		if ($Room->zones_id != 1)
 			{
 			// Elven Village, Necropolis, Mana User Guild?
 			$base_value = 85000;
 			}
+		*/
 		// Draconian Lair, 115000?
 		
 		foreach ($Spells as $Spell)
@@ -1649,7 +1652,7 @@ class GameController extends Controller
 
 			while ($train_multi > 0)
 				{
-				$costs[$spell['id']] = $costs[$spell['id']] + $this->spell_training_cost($base_value, $current_level, $stats['wisdom'], $stats['intelligence']);
+				$costs[$spell['id']] = $costs[$spell['id']] + $this->spell_training_cost($spell['base_training_value'], $current_level, $stats['wisdom'], $stats['intelligence']);
 				$current_level++;
 				$train_multi--;
 				}

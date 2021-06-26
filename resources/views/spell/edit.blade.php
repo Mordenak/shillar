@@ -6,35 +6,43 @@
 	<form action="/spell/save" method="POST" class="form-horizontal main-form">
 		{{ csrf_field() }}
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Name:</label>
+			<label class="col-md-1 col-form-label text-md-right">Name:</label>
 			<div class="col-md-3">
 				<input type="text" name="name" value="{{isset($spell) ? $spell->name : ''}}" class="form-control" required>
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Display Text:</label>
+			<label class="col-md-1 col-form-label text-md-right">Display Text:</label>
 			<div class="col-md-3">
 				<input type="text" name="display_text" value="{{isset($spell) ? $spell->display_text : ''}}" class="form-control" required>
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Description:</label>
+			<label class="col-md-1 col-form-label text-md-right">Description:</label>
 			<div class="col-md-6">
 				<textarea class="form-control" name="description">{{isset($spell) ? $spell->description : ''}}</textarea>
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Trained at Room:</label>
-			<div class="col-md-3">
-				<input type="text" name="rooms_id" value="{{isset($spell) ? $spell->rooms_id : ''}}" class="form-control auto-lookup room-lookup" required>
+			<label class="col-md-1 col-form-label text-md-right">Trained at Room:</label>
+			<div class="col-md-1">
+				<input type="text" name="base_training_value" value="{{isset($spell) ? $spell->base_training_value : ''}}" class="form-control" required>
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Combat Casted:</label>
+			<label class="col-md-1 col-form-label text-md-right">Trained at Room:</label>
+			<div class="col-md-1">
+				<input type="text" name="rooms_id" value="{{isset($spell) ? $spell->rooms_id : ''}}" class="form-control auto-lookup room-lookup" required>
+			</div>
+		</div>
+
+
+		<div class="form-group row">
+			<label class="col-md-1 col-form-label text-md-right">Combat Casted:</label>
 			<div class="col-md-1">
 				<input type="checkbox" name="is_combat" class="form-control" {{isset($spell) ? $spell->is_combat ? 'checked' : '' : ''}}>
 			</div>

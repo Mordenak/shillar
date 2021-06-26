@@ -55,6 +55,7 @@ class SpellController extends Controller
 			'description' => $request->description,
 			'display_text' => $request->display_text,
 			'rooms_id' => $request->rooms_id,
+			'base_training_value' => $request->base_training_value,
 			'is_combat' => $request->is_combat ? true : false
 			];
 

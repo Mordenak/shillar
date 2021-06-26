@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Spell extends Model
 	{
-	protected $fillable = ['name', 'description', 'display_text', 'rooms_id', 'is_combat'];
+	protected $fillable = ['name', 'description', 'display_text', 'rooms_id', 'is_combat', 'base_training_value'];
 
 	public function properties()
 		{
