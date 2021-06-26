@@ -7,7 +7,7 @@ use Session;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, CreatureKill, Graveyard};
+use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, CharacterSpellBuff, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, CreatureKill, Graveyard};
 
 class GameController extends Controller
 	{
@@ -16,7 +16,9 @@ class GameController extends Controller
 		{
 		$timers = [];
 		$start_timer = microtime(true);
+		// Offload to a Worker?
 		World::tick();
+		CharacterSpellBuff::clean_buffs();
 		// TODO: This should be unreachable?
 		if (!auth()->user())
 			{
@@ -177,7 +179,11 @@ class GameController extends Controller
 
 			if ($Room->has_property('CAN_TRAIN_SPELLS'))
 				{
-				$request_params['spells'] = Spell::all();
+				$request_params['spells'] = Spell::where('rooms_id', $Room->id)->get();
+				$request_params['multi'] = $request->train_multi ? $request->train_multi : 1;
+				// $Spells = Spell::where('rooms_id', $request->rooms_id)->get();
+				// die(print_r($request_params['spells']->toArray()));
+				$request->rooms_id = $Room->id;
 				$request_params['costs'] = $this->calculate_spell_training_cost($request);
 				}
 
@@ -672,6 +678,9 @@ class GameController extends Controller
 		$weapon_low = 0;
 		$weapon_high = 0;
 
+		$avoidance = 0.0;
+		$current_armor = $Character->armor();
+
 		$flat_character = $Character->toArray();
 		$fatigue_use = 1;
 		$fatigue_stat = 'fatigue';
@@ -679,6 +688,22 @@ class GameController extends Controller
 		$combat_history = [];
 
 		$base_accuracy = 0.80;
+
+		if ($Character->has_buffs())
+			{
+			foreach ($Character->active_buffs() as $buff)
+				{
+				$stat_affected = $buff->decode()['affects'];
+				if ($stat_affected == 'avoidance')
+					{
+					$avoidance += $buff->decode()['value'];
+					}
+				if ($stat_affected == 'armor')
+					{
+					$current_armor += round($buff->decode()['value']);
+					}
+				}
+			}
 		// $base_dodge = 0.05;
 		// $base_crit = 0.05;
 		// $crit_multipler_low = 2.0;
@@ -754,52 +779,112 @@ class GameController extends Controller
 			// creature
 			$creature_damages = [];
 			$creature_round_damage = 0;
+			$creature_round_misses = 0;
 			$creature_absorbs = 0;
 			$no_fatigue = false;
 			// We attack first:
-			foreach (range(1, $attack_count) as $i)
+			if ($request->character_spell_id)
 				{
-				if ($flat_creature['health'] <= 0)
+				// Then we're casting spells instead!
+				if ($Character->has_spell($request->spell_id))
 					{
-					break;
-					}
+					$Spell = Spell::findOrFail($request->spell_id);
+					$CharacterSpell = CharacterSpell::findOrFail($request->character_spell_id);
 
-				if ($flat_character[$fatigue_stat] < $fatigue_use)
-					{
-					// $arr['no_fatigue'] = true;
-					// $combat_history[] = ['no_fatigue' => true];
-					$no_fatigue = true;
-					break;
-					}
-
-				// error_log('eating: '.$fatigue_use);
-				$flat_character[$fatigue_stat] = $flat_character[$fatigue_stat] - $fatigue_use;
-
-				$acc_check = rand() / getrandmax();
-				if ($acc_check <= $base_accuracy)
-					{
-					// $calc_damage = rand($low_damage, $high_damage);
-					// Grope damage first:
-					$grope_damage = round(rand($grope_low, $grope_high) * $alignment_strength, 0);
-					$weapon_damage = rand($weapon_low, $weapon_high);
-
-					$calc_damage = $grope_damage + $weapon_damage;
-
-					// Maybe not cast yet???
-					$actual_damage = (int)($calc_damage - $flat_creature['armor']);
-					if ($actual_damage <= 0)
+					if ($Character->mana < $CharacterSpell->level)
 						{
-						$actual_damage = 1;
+						Session::flash('errors', 'Not enough mana to cast that!');
+						return $this->index($request);
 						}
 
-					$flat_creature['health'] = $flat_creature['health'] - $actual_damage;
-					$round_damage += $actual_damage;
-					$round_damages[] = $actual_damage;
+					$mana_cost = rand($CharacterSpell->level, $CharacterSpell->level * 3);
+
+					if ($mana_cost == 0 || $mana_cost < $CharacterSpell->level)
+						{
+						$mana_cost = $CharacterSpell->level;
+						}
+
+					$flat_character['mana'] = $flat_character['mana'] - $mana_cost;
+					if ($flat_character['mana'] <= 0)
+						{
+						$flat_character['mana'] = 0;
+						}
+					// TODO: We might want to move this logic up much higher to prevent useless processing?
+					if ($Spell->has_property('CONSUME_ITEM'))
+						{
+						$item_id = $CharacterSpell->process()['CONSUME_ITEM'];
+
+						if (!$Character->inventory()->has_item($item_id))
+							{
+							Session::flash('errors', "You don't have the required item!");
+							return $this->index($request);
+							}
+						else
+							{
+							$Character->inventory()->remove_item($item_id);
+							}
+						}
+					
+					$attack_text = 'You cast your ' . $Spell->name;
+
+					// TODO: Apply alignment damage
+					$base_amount = $CharacterSpell->process()['DAMAGE_HEALTH'];
+
+					// $spell_damage = rand(($base_amount * 0.85), ($base_amount * 1.15));
+					$spell_damage = $base_amount;
+
+					$flat_creature['health'] = $flat_creature['health'] - $spell_damage;
+					$round_damage += $spell_damage;
+					$round_damages[] = $spell_damage;
+					// die(print_r($spell_damage));
 					}
-				else
+				}
+			else
+				{
+				foreach (range(1, $attack_count) as $i)
 					{
-					$round_damages[] = 0;
-					$miss_count++;
+					if ($flat_creature['health'] <= 0)
+						{
+						break;
+						}
+
+					if ($flat_character[$fatigue_stat] < $fatigue_use)
+						{
+						// $arr['no_fatigue'] = true;
+						// $combat_history[] = ['no_fatigue' => true];
+						$no_fatigue = true;
+						break;
+						}
+
+					// error_log('eating: '.$fatigue_use);
+					$flat_character[$fatigue_stat] = $flat_character[$fatigue_stat] - $fatigue_use;
+
+					$acc_check = rand() / getrandmax();
+					if ($acc_check <= $base_accuracy)
+						{
+						// $calc_damage = rand($low_damage, $high_damage);
+						// Grope damage first:
+						$grope_damage = round(rand($grope_low, $grope_high) * $alignment_strength, 0);
+						$weapon_damage = rand($weapon_low, $weapon_high);
+
+						$calc_damage = $grope_damage + $weapon_damage;
+
+						// Maybe not cast yet???
+						$actual_damage = (int)($calc_damage - $flat_creature['armor']);
+						if ($actual_damage <= 0)
+							{
+							$actual_damage = 1;
+							}
+
+						$flat_creature['health'] = $flat_creature['health'] - $actual_damage;
+						$round_damage += $actual_damage;
+						$round_damages[] = $actual_damage;
+						}
+					else
+						{
+						$round_damages[] = 0;
+						$miss_count++;
+						}
 					}
 				}
 
@@ -808,27 +893,37 @@ class GameController extends Controller
 				// Then creature:
 				foreach (range(1, $flat_creature['attacks_per_round']) as $i)
 					{
-					$calc_damage = rand($flat_creature['damage_low'], $flat_creature['damage_high']);
-					$creature_damage = $calc_damage - $Character->armor();
-					if ($creature_damage <= 0)
+
+					if (rand(0,100) > ($avoidance * 100))
 						{
-						$creature_damage = 1;
+						$calc_damage = rand($flat_creature['damage_low'], $flat_creature['damage_high']);
+						$creature_damage = $calc_damage - $current_armor;
+						if ($creature_damage <= 0)
+							{
+							$creature_damage = 1;
+							}
+
+						$flat_character['health'] = $flat_character['health'] - $creature_damage;
+						$creature_damages[] = $creature_damage;
+						$creature_round_damage += $creature_damage;
+
+						if ($flat_character['health'] <= 0)
+							{
+							break;
+							}
+						}
+					else
+						{
+						$creature_round_misses++;
+						$creature_damages[] = 0;
 						}
 
-					$flat_character['health'] = $flat_character['health'] - $creature_damage;
-					$creature_damages[] = $creature_damage;
-					$creature_round_damage += $creature_damage;
-
-					if ($flat_character['health'] <= 0)
-						{
-						break;
-						}	
-						
 					}
 				}
 
 			// Record the round:
 			$arr = [
+				'combat_title' => '<b>You attacked '. $flat_creature['name'] . '</b>.<br>',
 				'no_fatigue' => $no_fatigue,
 				'attack_text' => $attack_text,
 				'attack_count' => count(array_filter($round_damages, function($i) {return $i > 0 ? $i : null;})) + $miss_count,
@@ -838,6 +933,7 @@ class GameController extends Controller
 				'creature_text' => $flat_creature['attack_text'],
 				'creature_att_count' => $flat_creature['attacks_per_round'],
 				'creature_round' => $creature_round_damage,
+				'creature_round_misses' => $creature_round_misses,
 				'creature_attacks' => $creature_damages,
 				];
 
@@ -1209,15 +1305,40 @@ class GameController extends Controller
 		return (int)$result;
 		}
 
+	public function spell_training_cost($base_value, $current_level, $wisdom, $intelligence)
+		{
+		$cost = ((($current_level + 1) * ($current_level + 1)) * $base_value) / ($wisdom + $intelligence);
+
+		return (int)$cost;
+		}
+
 	public function spells(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
 		
 		if ($request->action == 'cast')
 			{
+			// die('casting');
 			$Spell = Spell::findOrFail($request->spell_id);
 			// Make sure the Character has the spell:
 			$CharacterSpell = $Character->spells()->where(['spells_id' => $Spell->id])->first();
+
+			// For custom views:
+			$params = [];
+
+			if ($Spell->has_property('CONSUME_ITEM'))
+				{
+				$item_id = $CharacterSpell->process()['CONSUME_ITEM'];
+
+				if (!$Character->inventory()->has_item($item_id))
+					{
+					Session::flash('error', "You don't have the required item!");
+					}
+				else
+					{
+					$Character->inventory()->remove_item($item_id);
+					}
+				}
 
 			if ($Character->mana < $CharacterSpell->level)
 				{
@@ -1225,26 +1346,161 @@ class GameController extends Controller
 				}
 			else
 				{
-				$random_float = rand()/getrandmax();
-				$random_multiplier = $random_float * rand(1,3);
-				$mana_cost = round($CharacterSpell->level * $random_multiplier);
-
-				if ($mana_cost == 0)
+				// $random_float = rand()/getrandmax();
+				// $random_multiplier = $random_float * rand(100,300);
+				// $mana_cost = round(($CharacterSpell->level * $random_multiplier) / 100);
+				if (!isset($request->delay_mana_cost))
 					{
-					$mana_cost = 1;
-					}
+					$mana_cost = rand($CharacterSpell->level, $CharacterSpell->level * 3);
 
-				$Character->mana = $Character->mana - $mana_cost;
-				if ($Character->mana <= 0)
-					{
-					$Character->mana = 0;
+					if ($mana_cost == 0 || $mana_cost < $CharacterSpell->level)
+						{
+						$mana_cost = $CharacterSpell->level;
+						}
+
+					$Character->mana = $Character->mana - $mana_cost;
+					if ($Character->mana <= 0)
+						{
+						$Character->mana = 0;
+						}
+					$Character->save();
 					}
-				$Character->save();
+				
 				// cast spell:
 				// Well WTF do we do here!
 				$success = $CharacterSpell->level + $Character->wisdom();
 				if ($success >= rand(1,100))
 					{
+					// die(print_r($Spell->id));
+					if ($Spell->has_property('RESTORE_HEALTH'))
+						{
+						$base_amount = $CharacterSpell->process()['RESTORE_HEALTH'];
+
+						$amount = rand(($base_amount * 0.8), ($base_amount * 1.2));
+
+						$Character->health = $Character->health + $amount;
+						if ($Character->health > $Character->max_health)
+							{
+							$Character->health = $Character->max_health;
+							}
+						// $Character->save();
+						Session::flash('spell_messages', 'Your spell heals you for ' . $amount);
+						}
+
+					if ($Spell->has_property('RESTORE_FATIGUE'))
+						{
+						$base_amount = $CharacterSpell->process()['RESTORE_FATIGUE'];
+
+						$amount = rand(($base_amount * 0.8), ($base_amount * 1.2));
+
+						$Character->fatigue = $Character->fatigue + $amount;
+						if ($Character->fatigue > $Character->max_fatigue)
+							{
+							$Character->fatigue = $Character->max_fatigue;
+							}
+						
+						Session::flash('spell_messages', 'Your spell restores ' . $amount . ' fatigue');
+						}
+
+					if ($Spell->has_property('CHANGE_ROOM'))
+						{
+						$spell_data = $CharacterSpell->process()['CHANGE_ROOM'];
+
+						if (isset($spell_data['rooms']))
+							{
+							$available_rooms = [];
+
+							foreach ($spell_data['rooms'] as $target)
+								{
+								if ($Character->wisdom() >= $target['wisdom'] && $CharacterSpell->level >= $target['level'])
+									{
+									$available_rooms[] = ['name' => $target['name'], 'id' => $target['target']];
+									}
+								}
+
+							$params['available_rooms'] = $available_rooms;
+							$params['spell'] = $CharacterSpell;
+							}
+
+						// die(print_r($_REQUEST));
+						if (isset($spell_data['target']) || $request->target_id)
+							{
+							// die('target');
+							// die(print_r($request->target_id));
+							$room_target = $request->target_id ? $request->target_id : $spell_data['target'];
+							// die(print_r($room_target));
+
+							// Prevent any cheating!
+							if ($request->target_id)
+								{
+								if (count($available_rooms) == 0)
+									{
+									Session::flash('errors', 'Oops, what are you doing!?');
+									$request->full_reload = true;
+									return $this->index($request);
+									}
+								else
+									{
+									$room_ids = array_column($available_rooms, 'id');
+									$room_is_available = array_search($request->target_id, $room_ids);
+
+									if ($room_is_available === null)
+										{
+										Session::flash('errors', 'You cannot go there!');
+										$request->full_reload = true;
+										return $this->index($request);
+										}
+									}
+								}
+
+							if (!$Character->teleport($room_target))
+								{
+								Session::flash('errors', 'You cannot access that zone currently.');
+								}
+							else
+								{
+								// die('we tele');
+								$request->full_reload = true;
+								return $this->index($request);
+								// return action('GameController@index');
+								}
+							}
+						
+						}
+
+					if ($Spell->has_property('APPLY_BUFF'))
+						{
+						$spell_data = $CharacterSpell->process('APPLY_BUFF');
+
+						$CharacterSpellBuff = new CharacterSpellBuff;
+
+						if (CharacterSpellBuff::where('characters_id', $Character->id)->where('buff_type', $spell_data['name'])->where('expires_on', '>', time())->count() > 0)
+							{
+							$CharacterSpellBuff = CharacterSpellBuff::where('characters_id', $Character->id)->where('buff_type', $spell_data['name'])->where('expires_on', '>', time())->first();
+							}
+
+						$values = [
+							'character_spells_id' => $CharacterSpell->id,
+							'characters_id' => $Character->id,
+							'expires_on' => time() + ($spell_data['duration'] + $CharacterSpell->level),
+							'buff' => json_encode(['affects' => $spell_data['affects'], 'value' => $spell_data['result'], 'text' => $spell_data['text']]),
+							'buff_type' => $spell_data['name']
+							];
+
+						$CharacterSpellBuff->fill($values);
+						$CharacterSpellBuff->save();
+						}
+
+					$Character->save();
+
+					if ($Spell->has_property('HAS_PARTIAL'))
+						{
+						$get_view = $Spell->get_property('HAS_PARTIAL')->decode()['view'];
+						// die(print_r($params));
+						return ['menu' => view($get_view, ['character' => $Character->fresh(), 'params' => $params])->render()];
+						}
+
+					/**
 					if ($Spell->is_type('TELEPORT_ROOM'))
 						{
 						// TODO: Adjust this later?
@@ -1260,6 +1516,8 @@ class GameController extends Controller
 								}
 							else
 								{
+								// TODO: flashes don't work here?
+								// Session::flash('messages', 'You have returned to the safety of town.');
 								$request->full_reload = true;
 								return $this->index($request);
 								// return action('GameController@index');
@@ -1272,14 +1530,14 @@ class GameController extends Controller
 							return ['menu' => view('character.teleport', ['character' => $Character->fresh()])->render()];
 							}
 						}
+						**/
+
 					}
 				else
 					{
 					Session::flash('errors', 'Your spell fizzled.');
 					}
-
 				}
-
 			}
 
 		return ['menu' => view('character.spells', ['character' => $Character->fresh()])->render()];
@@ -1287,17 +1545,17 @@ class GameController extends Controller
 
 	public function train_spell(Request $request)
 		{
-		// die(print_r($request->characters_id));
-		// TODO: Don't trust client cost!!!
-		/*
-		Spell Training Formula:
-		Level = 1:    price = (4000 - Wis - Int)
-		Level > 1:    price = (4000 - Wis - Int) * (level_to_train - 1)
-		*/
 		$Character = Character::findOrFail($request->character_id);
-		$Spell = Spell::findOrFail($request->spells_id);
+		// $Spell = Spell::findOrFail($request->spells_id);
+		$spell_name = $request->submit;
+		if ($spell_name === null)
+			{
+			return $this->index($request);
+			}
+		$Spell = Spell::where('name', $spell_name)->first();
+		$spell_id = $Spell->id;
 
-		$CharacterSpell = CharacterSpell::where(['characters_id' => $request->character_id, 'spells_id' => $request->spells_id])->first();
+		$CharacterSpell = CharacterSpell::where(['characters_id' => $request->character_id, 'spells_id' => $spell_id])->first();
 
 		$level = $CharacterSpell ? $CharacterSpell->level : 1;
 		$costs = $this->calculate_spell_training_cost($request);
@@ -1306,12 +1564,17 @@ class GameController extends Controller
 
 		if ($Character->xp >= $costs[$Spell->id])
 			{
-			$Character->xp = $Character->xp - $costs[$Spell->id];
+			$new_stats = $Character->toArray();
+			// $new_stats[$stat] = $new_stats[$stat] + $request->train_multi;
+			// $new_stats['xp'] = $new_stats['xp'] - $costs[$stat];
+
+
+			$Character->xp = $Character->xp - $costs[$spell_id];
 			$Character->save();
 			if ($CharacterSpell)
 				{
 				// has the spell already?
-				$CharacterSpell->level++;
+				$CharacterSpell->level = $CharacterSpell->level + $request->train_multi;
 				$CharacterSpell->save();
 				}
 			else
@@ -1340,40 +1603,56 @@ class GameController extends Controller
 	public function calculate_spell_training_cost(Request $request)
 		{
 		$Character = Character::findOrFail($request->character_id);
-		$Spells = Spell::all();
+
+		$stats = $Character->stats();
+		// $Spells = Spell::all();
+		// die(print_r($_REQUEST));
+		$Room = Room::findOrFail($request->rooms_id);
+		$Spells = Spell::where('rooms_id', $request->rooms_id)->get();
 
 		$costs = [];
+		if ($request->train_multi)
+			{
+			$train_multi = $request->train_multi;
+			}
+		else
+			{
+			$train_multi = 1;
+			}
+
 		foreach ($Spells as $Spell)
 			{
-			// Character have it?
-			
-			$CharacterSpell = $Character->has_spell($Spell->id);
-			$base_value = 20000;
-			// Apparently base for Bedazzle, Magic Shield, Energy Drain is 85000?
-			if ($Character->score > $base_value)
-				{
-				$base_value = $Character->score;
-				}
+			$spell = $Spell->toArray();
+			// die(print_r($spell));
+			$costs[$spell['id']] = 0;
+			}
 
+		// die(print_r($costs));
+		$base_value = 20000;
+		if ($Room->zones_id != 1)
+			{
+			// Elven Village, Necropolis, Mana User Guild?
+			$base_value = 85000;
+			}
+		// Draconian Lair, 115000?
+		
+		foreach ($Spells as $Spell)
+			{
+			$train_multi = $request->train_multi ? $request->train_multi : 1;
+			$spell = $Spell->toArray();
+			$CharacterSpell = $Character->has_spell($spell['id']);
+			$current_level = 0;
 			if ($CharacterSpell)
 				{
-				// return Math.round(Math.pow(Level+1,2)*C/(Data.Wis+Data.Int))
-				$cost = round((($CharacterSpell->level + 1) * ($CharacterSpell->level)) * $base_value / ($Character->wisdom() + $Character->intelligence()));
-				// $adjusted = ($base_value - $Character->wisdom() - $Character->intelligence());
-				// $cost = ($CharacterSpell->level - 1) * ($CharacterSpell->level * $adjusted);
-				// $cost = ($base_value - $Character->wisdom() - $Character->intelligence()) * $CharacterSpell->level;
-				
-				}
-			else
-				{
-				$cost = ($base_value - $Character->wisdom() - $Character->intelligence());
+				$current_level = $CharacterSpell->level;
 				}
 
-			if ($cost <= 0)
+			while ($train_multi > 0)
 				{
-				$cost = 1;
+				$costs[$spell['id']] = $costs[$spell['id']] + $this->spell_training_cost($base_value, $current_level, $stats['wisdom'], $stats['intelligence']);
+				$current_level++;
+				$train_multi--;
 				}
-			$costs[$Spell->id] = $cost;
 			}
 
 		return $costs;
@@ -2290,7 +2569,8 @@ class GameController extends Controller
 				
 				if ($log_entry['attack_count'] > 0)
 					{
-					$condensed[] = $log_entry['attack_text'].'<br>';
+					$condensed[] = $log_entry['combat_title'];
+					$condensed[] = '<b>'.$log_entry['attack_text'].'</b><br>';
 					$condensed[] = 'You made '.$log_entry['attack_count'].' attacks and missed '.$log_entry['miss_count'].' times.<br>';
 					$condensed[] = 'You did '.$log_entry['round_damage'].' damage.<br>';
 					}
@@ -2306,6 +2586,10 @@ class GameController extends Controller
 						{
 						$condensed[] = $log_entry['creature_text'].' doing '.$log_entry['creature_round'].' damage.<br>';
 						}
+					if ($log_entry['creature_round_misses'] > 0)
+						{
+						$condensed[] = "You expertly dodged the creature's attack " . $log_entry['creature_round_misses'] . " times.<br>";
+						}
 					}
 
 				if (isset($log_entry['pc_died']))
@@ -2320,11 +2604,12 @@ class GameController extends Controller
 				{
 				if (isset($log_entry['attacks']))
 					{
+					$condensed[] = $log_entry['combat_title'];
 					foreach ($log_entry['attacks'] as $attack)
 						{
 						if ($attack > 0)
 							{
-							$condensed[] = $log_entry['attack_text'].", for $attack damage!<br>";
+							$condensed[] = '<b>'.$log_entry['attack_text'].", for $attack damage!</b><br>";
 							}
 						else
 							{
@@ -2342,7 +2627,14 @@ class GameController extends Controller
 					{
 					foreach ($log_entry['creature_attacks'] as $creature_attack)
 						{
-						$condensed[] = $log_entry['creature_text']." doing $creature_attack damage.<br>";
+						if ($creature_attack > 0)
+							{
+							$condensed[] = $log_entry['creature_text']." doing $creature_attack damage.<br>";
+							}
+						else
+							{
+							$condensed[] = "You expertly avoided the creature's attack!<br>";
+							}
 						}
 					}
 

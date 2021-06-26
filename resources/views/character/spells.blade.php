@@ -7,17 +7,27 @@
 {{ Session::pull("errors") }}
 <p>
 @endif
+@if( Session::has("spell_messages") )
+<p style="color: green;display: inline;">
+{{ Session::pull("spell_messages") }}
+<p>
+@endif
 @if ($character)
 
 @foreach ($character->spells()->get() as $spell)
+@if ($spell->spell()->is_combat == false)
 <form method="post" action="/spells" class="ajax" id="cast">
-	<label for="spell_{{$spell->spell()->id}}">Cast {{$spell->spell()->name}}</label>
+	<label for="spell_{{$spell->spell()->id}}">{{$spell->spell()->display_text ? $spell->spell()->display_text : 'Cast ' . $spell->spell()->name}}</label>
 	<input type="submit" id="spell_{{$spell->spell()->id}}" style="display:none;">
 	<input type="hidden" name="character_id" value="{{$character->id}}">
 	<input type="hidden" name="spell_id" value="{{$spell->spell()->id}}">
+	@if ($spell->spell()->has_property('HAS_PARTIAL'))
+	<input type="hidden" name="delay_mana_cost" value="true">
+	@endif
 	<input type="hidden" name="action" value="cast">
 	{{csrf_field()}}
 </form>
+@endif
 @endforeach
 
 <br>

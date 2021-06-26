@@ -41,4 +41,14 @@
 	</table>
 	@endif
 </div>
+
+<div>
+	[
+	@foreach ($teleports as $teleport)
+	@if ($teleport->spells_id == 1)
+	{"name":"{{$teleport->name}}","level":{{$teleport->level_req}},"target":{{$teleport->rooms_id}},"wisdom":{{$teleport->wisdom_req}}},
+	@endif
+	@endforeach
+	]
+</div>
 @endsection 

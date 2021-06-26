@@ -3,13 +3,15 @@
 </span>
 <br><br>
 @if ($character)
-@if ($character->eligible_teleports()->count() > 0)
-@foreach ($character->eligible_teleports() as $target)
-<form method="post" action="/game/teleport" class="ajax" id="cast">
-	<label for="spell_{{$target->id}}">{{$target->name}}</label>
-	<input type="submit" id="spell_{{$target->id}}" style="display:none;">
+@if (count($params['available_rooms']) > 0)
+@foreach ($params['available_rooms'] as $target)
+<form method="post" action="/spells" class="ajax" id="cast">
+	<label for="spell_{{$loop->index}}">{{$target['name']}}</label>
+	<input type="submit" id="spell_{{$loop->index}}" style="display:none;">
 	<input type="hidden" name="character_id" value="{{$character->id}}">
-	<input type="hidden" name="target_id" value="{{$target->id}}">
+	<input type="hidden" name="target_id" value="{{$target['id']}}">
+	<input type="hidden" name="spell_id" value="{{$params['spell']->spell()->id}}">
+	<input type="hidden" name="action" value="cast">
 	{{csrf_field()}}
 </form>
 @endforeach

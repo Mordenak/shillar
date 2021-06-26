@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Zone extends Model
 	{
-	protected $fillable = ['name', 'travel_text', 'img_src', 'bg_img', 'bg_color', 'font_color', 'label_color', 'description',];
+	protected $fillable = ['name', 'travel_text', 'img_src', 'bg_img', 'bg_color', 'font_color', 'label_color', 'description'];
 
 	private $property_list = [];
 

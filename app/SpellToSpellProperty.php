@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SpellToSpellProperty extends Model
 	{
-	protected $fillable = ['spell_properties_id', 'spells_id', 'data'];
+	protected $fillable = ['spell_properties_id', 'spells_id', 'target_is_self', 'data'];
 
 	public function spell()
 		{

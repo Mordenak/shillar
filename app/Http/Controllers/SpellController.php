@@ -3,56 +3,156 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Session;
+use App\Spell;
+use App\SpellProperty;
+use App\SpellToSpellProperty;
 
 class SpellController extends Controller
 {
 	public function create()
 		{
-		// $forges = ForgeRecipe::all();
-		return view('forge.edit');
+		$SpellProperties = SpellProperty::all();
+		return view('spell.edit', ['properties' => $SpellProperties]);
 		}
 
 	public function all(Request $request)
 		{
-		$forges = ForgeRecipe::all();
-		return view('forge.all', ['forges' => $forges]);
+		$spells = Spell::all();
+		return view('spell.all', ['spells' => $spells]);
 		}
 
 	public function edit($id)
 		{
-		$ForgeRecipe = ForgeRecipe::findOrFail($id);
-		return view('forge.edit', ['forge' => $ForgeRecipe]);
+		$Spell = Spell::findOrFail($id);
+		$SpellProperties = SpellProperty::all();
+		// return view('spell.edit', ['spell' => $Spell]);
+		return view('spell.edit', ['spell' => $Spell, 'spell_properties' => $Spell->properties()->get(), 'properties' => $SpellProperties]);
 		}
 
-	public function delete($id)
+	public function delete(Request $request)
 		{
-		ForgeRecipe::delete($id);
-		return $this->action('ForgeRecipeController@all');
+		// clear out shop items:
+		$Spell = Spell::findOrFail($request->id);
+		$Spell->delete();
+		Session::flash('success', 'Spell Deleted!');
+		return redirect()->action('SpellController@all');
 		}
 
 	public function save(Request $request)
 		{
-		$ForgeRecipe = new ForgeRecipe;
+		$Spell = new Spell;
 
 		if ($request->id)
 			{
-			$ForgeRecipe = ForgeRecipe::findOrFail($request->id);
+			$Spell = Spell::findOrFail($request->id);
 			}
+
+		// die(print_r($_REQUEST));
 
 		$values = [
 			'name' => $request->name,
-			'result_items_id' => $request->result_items_id,
-			'item_weapons_id' => $request->item_weapons_id,
-			'item_armors_id' => $request->item_armors_id,
-			'item_foods_id' => $request->item_foods_id,
-			'item_jewels_id' => $request->item_jewels_id,
-			'item_dusts_id' => $request->item_dusts_id,
+			'description' => $request->description,
+			'display_text' => $request->display_text,
+			'rooms_id' => $request->rooms_id,
+			'is_combat' => $request->is_combat ? true : false
 			];
 
-		$ForgeRecipe->fill($values);
-		$ForgeRecipe->save();
+		$Spell->fill($values);
+		$Spell->save();
 
-		Session::flash('success', 'Forge Recipe Updated!');
-		return $this->edit($ForgeRecipe->fresh()->id);
+		foreach ($request->spell_properties as $spell_property)
+			{
+			$SpellToSpellProperty = new SpellToSpellProperty;
+
+			if (isset($spell_property['id']))
+				{
+				$SpellToSpellProperty = SpellToSpellProperty::findOrFail($spell_property['id']);
+				if ($spell_property['spell_properties_id'] == 'null' && !$spell_property['data'])
+					{
+					$SpellToSpellProperty->delete();
+					continue;
+					}
+				}
+
+			if ($spell_property['spell_properties_id'] == 'null')
+				{
+				continue;
+				}
+
+			$values = [
+				'spells_id' => $Spell->id,
+				'spell_properties_id' => $spell_property['spell_properties_id'],
+				'target_is_self' => $spell_property['target'] == 'self' ? true : false,
+				'data' => $spell_property['data'],
+				];
+
+			$SpellToSpellProperty->fill($values);
+			$SpellToSpellProperty->save();
+			}
+
+		Session::flash('success', 'Spell Updated!');
+		return redirect()->action('SpellController@edit', ['id' => $Spell->id]);
+		}
+
+	public function placeholder(Request $request)
+		{
+		if ($request->id === 'null')
+			{
+			// This is our hacky select value workaround:
+			return '{}';
+			}
+		// Given a property ID:
+		$SpellProperty = SpellProperty::findOrFail($request->id);
+		if ($SpellProperty)
+			{
+			return $SpellProperty->format;
+			}
+		return '{}';
+		}
+
+	public function lookup(Request $request)
+		{
+		$Spells = Spell::where('name', 'ilike', "%$request->term%")->get();	
+
+		$arr = [];
+
+		if ($Spells)
+			{
+			foreach ($Spells as $Spell)
+				{
+				$label = "($Spell->id) ".$Spell->name;
+				$arr[] = [
+					'label' => $label,
+					'value' => $Spell->id,
+					];
+				}
+			}
+
+		// Also search IDs:
+		if (is_numeric($request->term))
+			{
+			$Spells = Spell::where('id', '=', $request->term)->get();
+
+			if ($Spells)
+				{
+				foreach ($Spells as $Spell)
+					{
+					$label = "($Spell->id) ".$Spell->name;
+					$arr[] = [
+						'label' => $label,
+						'value' => $Spell->id,
+						];
+					}
+				}
+			}
+
+		if (empty($arr))
+			{
+			$arr[] = ['label' => 'No Results', 'value' => $request->term];
+			}
+
+		echo (json_encode($arr));;
+		header('Content-type: application/json');
 		}
 }

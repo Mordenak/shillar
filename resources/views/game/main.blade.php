@@ -148,6 +148,25 @@
 					{{ Session::pull("consider") }}
 					@endif
 				</div>
+				<div style="margin-left: .5rem;">
+					@if (count($character->combat_spells()) > 0)
+					<br><br>
+					@foreach ($character->combat_spells() as $spell)
+					@if (!$spell->spell()->has_property('CONSUME_ITEM') || ($spell->spell()->has_property('CONSUME_ITEM') && $character->inventory()->has_item($spell->process('CONSUME_ITEM'))))
+					<form method="post" action="/combat" class="ajax">
+						{{csrf_field()}}
+						<input type="hidden" name="room_id" value="{{$room->id}}">
+						<input type="hidden" name="creature_id" value="{{$creature->id}}">
+						<input type="hidden" name="character_id" value="{{$character->id}}">
+						<input type="hidden" name="character_spell_id" value="{{$spell->id}}">
+						<input type="hidden" name="spell_id" value="{{$spell->spell()->id}}">
+						<label for="spell_cast_{{$spell->id}}">{{$spell->spell()->display_text ? $spell->spell()->display_text : 'Cast ' . $spell->spell()->name}}</label>
+						<input type="submit" id="spell_cast_{{$spell->id}}" style="display:none;">
+					</form>
+					@endif
+					@endforeach
+					@endif
+				</div>
 			</div>
 		@else
 			@if ($room->img_src)
@@ -246,6 +265,20 @@
 
 		@if( Session::has("zone_travel") )
 		<p style="color:red;">{{ Session::pull("zone_travel") }}</p>
+		@endif
+
+		@if ($character->has_buffs())
+		@foreach ($character->active_buffs() as $buff)
+			@if ($buff->expires_on - time() < 180 && $buff->expires_on - time() > 60)
+			<span style="color:yellow;">
+			@elseif ($buff->expires_on - time() <= 60)
+			<span style="color:red;">
+			@else
+			<span style="color:green;">
+			@endif
+			{{$buff->decode()['text']}}
+			</span><br>
+		@endforeach
 		@endif
 
 		@if ($creature && $creature->is_blocking)

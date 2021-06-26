@@ -27,6 +27,7 @@ Route::post('/footer', 'GameController@footer');
 Route::post('/move', 'GameController@move');
 
 Route::post('/combat', 'GameController@combat');
+// Route::post('/combat_cast', 'GameController@combat');
 
 Route::post('/show_stats', 'GameController@show_stats');
 
@@ -156,6 +157,12 @@ Route::get('spell/edit/{id}', 'SpellController@edit')->where('id', '[0-9]+');
 Route::post('spell/save', 'SpellController@save');
 Route::post('spell/delete', 'SpellController@delete');
 
+Route::get('spell_property/all', 'SpellPropertyController@all');
+Route::get('spell_property/create', 'SpellPropertyController@create');
+Route::get('spell_property/edit/{id}', 'SpellPropertyController@edit')->where('id', '[0-9]+');
+Route::post('spell_property/save', 'SpellPropertyController@save');
+Route::post('spell_property/delete', 'SpellPropertyController@delete');
+
 Route::get('teleport/all', 'TeleportTargetController@all');
 Route::get('teleport/create', 'TeleportTargetController@create');
 Route::get('teleport/edit/{id}', 'TeleportTargetController@edit')->where('id', '[0-9]+');
@@ -176,3 +183,4 @@ Route::get('/zone_area/lookup', 'ZoneAreaController@lookup');
 Route::get('/room_property/lookup', 'RoomPropertyController@lookup');
 Route::get('/character/lookup', 'CharacterController@lookup');
 Route::get('/zone_property/placeholder', 'ZoneController@placeholder');
+Route::get('/spell_property/placeholder', 'SpellController@placeholder');

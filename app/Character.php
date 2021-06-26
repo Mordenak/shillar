@@ -63,6 +63,21 @@ class Character extends Model
 		return $this->hasMany('App\CharacterQuest', 'characters_id')->get();
 		}
 
+	public function buffs()
+		{
+		return $this->hasMany('App\CharacterSpellBuff', 'characters_id')->get();
+		}
+
+	public function active_buffs()
+		{
+		return $this->hasMany('App\CharacterSpellBuff', 'characters_id')->where('expires_on', '>', time())->get();
+		}
+
+	public function has_buffs()
+		{
+		return $this->hasMany('App\CharacterSpellBuff', 'characters_id')->where('expires_on', '>', time())->count() > 0 ? true : false;
+		}
+
 	public function kill_stats()
 		{
 		return $this->hasMany('App\KillCount', 'characters_id');
@@ -71,6 +86,19 @@ class Character extends Model
 	public function spells()
 		{
 		return $this->hasMany('App\CharacterSpell', 'characters_id')->orderBy('spells_id','asc');
+		}
+
+	public function combat_spells()
+		{
+		$spells = [];
+		foreach ($this->spells()->get() as $spell)
+			{
+			if ($spell->spell()->is_combat)
+				{
+				$spells[] = $spell;
+				}
+			}
+		return $spells;
 		}
 
 	public function has_spell($id)
@@ -177,7 +205,8 @@ class Character extends Model
 			'wisdom' => $this->wisdom,
 			'intelligence' => $this->intelligence,
 			'charisma' => $this->charisma,
-			'armor' => 0
+			'armor' => 3, // armor base is 3
+			'avoidance' => 0.0
 			];
 
 		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 2])->first();
@@ -199,6 +228,9 @@ class Character extends Model
 			{
 			$stats['armor'] = floor($stats['armor'] * $armor_modifier->value);
 			}
+
+		// Check buffs!
+
 
 		return $stats;
 		}

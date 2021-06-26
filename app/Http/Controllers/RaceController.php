@@ -137,4 +137,12 @@ class RaceController extends Controller
 		Session::flash('success', 'Race Upodated!');
 		return redirect()->action('RaceController@edit', ['id' => $Race->id]);
 		}
+
+	public function delete(Request $request)
+		{
+		$Race = Race::findOrFail($request->id);
+		$Race->delete();
+		Session::flash('success', 'Race Deleted!');
+		return redirect()->action('RaceController@all');
+		}
 	}

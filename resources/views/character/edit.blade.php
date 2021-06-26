@@ -12,6 +12,13 @@
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Gender:</label>
+			<div class="col-md-3">
+				<input type="text" name="genders_id" value="{{isset($character) ? $character->genders_id : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Race:</label>
 			<div class="col-md-3">
 				<input type="text" name="races_id" value="{{isset($character) ? $character->races_id : ''}}" class="form-control">
@@ -28,7 +35,7 @@
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Last Room:</label>
 			<div class="col-md-3">
-				<input type="text" name="last_rooms_id" value="{{isset($character) ? $character->last_rooms_id : ''}}" class="form-control">
+				<input type="text" name="last_rooms_id" value="{{isset($character) ? $character->last_rooms_id : ''}}" class="form-control auto-lookup room-lookup">
 			</div>
 		</div>
 
