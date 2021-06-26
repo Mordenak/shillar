@@ -1585,7 +1585,7 @@ class GameController extends Controller
 				$CharacterSpell->fill([
 					'characters_id' => $Character->id,
 					'spells_id' => $Spell->id,
-					'level' => 1
+					'level' => $request->train_multi
 					]);
 
 				$CharacterSpell->save();
