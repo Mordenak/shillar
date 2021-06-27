@@ -896,7 +896,17 @@ class GameController extends Controller
 
 					if (rand(0,100) > ($avoidance * 100))
 						{
-						$calc_damage = rand($flat_creature['damage_low'], $flat_creature['damage_high']);
+						// TODO: We *must* have the wrong values for damage lows... For now, let's ignore it and set the low as 50% of the high.  This will make creature's significantly more dangerous.
+						if ($flat_creature['damage_low'] == 1)
+							{
+							$damage_low = $flat_creature['damage_high'] * 0.5;
+							}
+						else
+							{
+							$damage_low = $flat_creature['damage_low'];
+							}
+						$calc_damage = rand($damage_low, $flat_creature['damage_high']);
+						// $calc_damage = rand($flat_creature['damage_low'], $flat_creature['damage_high']);
 						$creature_damage = $calc_damage - $current_armor;
 						if ($creature_damage <= 0)
 							{
