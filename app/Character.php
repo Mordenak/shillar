@@ -230,24 +230,18 @@ class Character extends Model
 			];
 
 		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 2])->first();
-		$race_start = microtime(true);
 		// $racial_modifier = $this->has_modifier('HAS_NIGHTVISION');
 		if ($this->has_modifier('HAS_NIGHTVISION'))
 			{
 			$stats['light_level'] = 1;
 			}
-		$race_finish = round(microtime(true) - $race_start, 3) * 1000;
-		Session::push('perf_log', ['racial_modifier' => $race_finish]);
 
 		// $armor_stats = $this->equipment()->calculate_stats();
-		$stat_start = microtime(true);
 		$armor_stats = $this->equipment()->retrieve_stats();
 		foreach ($armor_stats as $stat => $value)
 			{
 			$stats[$stat] = $stats[$stat] + $value;
 			}
-		$stat_finish = round(microtime(true) - $stat_start, 3) * 1000;
-		Session::push('perf_log', ['stat_retrieval' => $stat_finish]);
 
 		// $armor_modifier = $this->get_modifier('ARMOR_ADJUSTMENT');
 		if ($this->has_modifier('ARMOR_ADJUSTMENT'))
@@ -421,7 +415,7 @@ class Character extends Model
 
 	public function get_max_weight()
 		{
-		$inventory_size = $this->get_stats()['strength'];
+		$inventory_size = $this->stats()['strength'];
 		$racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 1])->first();
 		if ($racial_modifier)
 			{
