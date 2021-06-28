@@ -116,6 +116,9 @@ class Equipment extends Model
 				}
 			}
 
+		// Re-calc max weight?
+		$this->character()->first()->get_max_weight();
+
 		// die(print_r($bonus_stats));
 		Cache::put($this->characters_id . '_stats', $bonus_stats);
 

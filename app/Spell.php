@@ -45,7 +45,7 @@ class Spell extends Model
 		return false;
 		}
 
-	public function has_property(string $property_name )
+	public function has_property(string $property_name)
 		{
 		if ($this->properties()->get())
 			{

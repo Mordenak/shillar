@@ -11,6 +11,23 @@ use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, Sta
 
 class GameController extends Controller
 	{
+
+	public function character_select(Request $request)
+		{
+		if (!auth()->user())
+			{
+			return redirect('/home');
+			}
+
+		$character_id = $request->character_id;
+
+		Session::put('character_id', $character_id);
+		// $request->session()->put('character_id', $character_id);
+		// Session::put('block_spawn', true);
+
+		return redirect('/game');
+		// return $this->index($request);
+		}
 	//
 	public function index(Request $request)
 		{
@@ -25,12 +42,29 @@ class GameController extends Controller
 			return redirect('/home');
 			}
 
-		$Character = Character::findOrFail($request->character_id);
+		$user_id = auth()->user()->id;
+
+		// Rework of the initial game/login pieces.  Now character id is pulled from the session
+		// now instead of POSTed to /game.  This allows /game to be a GET route instead, allowing
+		// refresh to actually work
+		$character_id = Session::get('character_id');
+		// $character_id = $request->session()->get('character_id');
+
+		if (!$character_id)
+			{
+			return redirect('/home');
+			}
+
+		// Make sure the current user matches the expected character.
+		$Character = Character::where('id', $character_id)->where('users_id', $user_id)->first();
+		$request->character_id = $Character->id;
 
 		if (!$Character)
 			{
 			return redirect('/home');
 			}
+
+		// die(print_r($Character->toArray()));
 
 		// TODO: The next 4 lines are a HUGE performance hit:
 		// $Character->calc_quick_stats();
@@ -60,6 +94,7 @@ class GameController extends Controller
 		// Block spawn in certain events:
 		if (Session::has('creature.'.$Room->id))
 			{
+			// die('creature');
 			$Creature = Creature::where(['id' => Session::get('creature.'.$Room->id)])->first();
 			Session::get('creature.'.$Room->id);
 			}
@@ -67,6 +102,7 @@ class GameController extends Controller
 		if ($Creature || Session::has('block_spawn'))
 			{
 			// Clear it:
+			// die('blocking spawns');
 			Session::pull('block_spawn');
 			}
 		else
@@ -667,7 +703,7 @@ class GameController extends Controller
 		$reward_log = [];
 		// $flat_creature = $Creature->toArray();
 		// $Equipment = Equipment::where(['characters_id' => $Character->id])->first();
-		$character_stats = $Character->stats();
+		$character_stats = $Character->get_stats();
 		// die(print_r($Character->stats()));
 		// Calculate attacks:
 		$attack_count = floor(($character_stats['dexterity'] - 10) / 20) + 2;
@@ -679,7 +715,7 @@ class GameController extends Controller
 		$weapon_high = 0;
 
 		$avoidance = 0.0;
-		$current_armor = $Character->armor();
+		$current_armor = $character_stats['armor'];
 
 		$flat_character = $Character->toArray();
 		$fatigue_use = 1;
@@ -704,14 +740,20 @@ class GameController extends Controller
 					}
 				}
 			}
+
 		// $base_dodge = 0.05;
 		// $base_crit = 0.05;
 		// $crit_multipler_low = 2.0;
 		// $crit_multipler_high = 4.0;
-		if ($Character->equipment()->weapon)
+		$flat_equipment = $Character->equipment()->toArray();
+
+		if ($flat_equipment['weapon'] ?? null)
 			{
+			// $flat_weapon = $Character->equipment()->weapon()->toArray();
+			$InventoryItem = InventoryItem::findOrFail($flat_equipment['weapon']);
+			$flat_weapon = ItemWeapon::findOrFail($InventoryItem->items_id)->toArray();
 			// Mana weapon?
-			if ($Character->equipment()->weapon()->weapon_types_id == 7)
+			if ($flat_weapon['weapon_types_id'] == 7)
 				{
 				// re-calc:
 				$grope_low = $Character->charisma() + (rand(1,10));
@@ -721,12 +763,12 @@ class GameController extends Controller
 				}
 			else
 				{
-				$weapon_low = $Character->equipment()->weapon()->damage_low;
-				$weapon_high = $Character->equipment()->weapon()->damage_high;
+				$weapon_low = $flat_weapon['damage_low'];
+				$weapon_high = $flat_weapon['damage_high'];
 				}
-			$attack_text = $Character->equipment()->weapon()->attack_text;
-			$base_accuracy = $Character->equipment()->weapon()->accuracy;
-			$fatigue_use = $Character->equipment()->weapon()->fatigue_use;
+			$attack_text = $flat_weapon['attack_text'];
+			$base_accuracy = $flat_weapon['accuracy'];
+			$fatigue_use = $flat_weapon['fatigue_use'];
 			// So that equipped items count:
 			// TODO: All required_amount values are null at this time.  Uncomment when that's back in.
 			// if (call_user_func_array([$Character,$stat_check], []) < $Character->equipment()->weapon()->required_amount)
@@ -1090,12 +1132,12 @@ class GameController extends Controller
 						// die(print_r($GroundItem));
 						if ($GroundItem)
 							{
-							$GroundItem->fill(['expires_on' => Carbon::now()->addMinutes(5)->timestamp, 'quantity' => $GroundItem->quantity + $quantity]);
+							$GroundItem->fill(['expires_on' => time() + 300, 'quantity' => $GroundItem->quantity + $quantity]);
 							}
 						else
 							{
 							$GroundItem = new GroundItem;
-							$GroundItem->fill(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id, 'expires_on' => Carbon::now()->addMinutes(5)->timestamp, 'quantity' => $quantity]);
+							$GroundItem->fill(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id, 'expires_on' => time() + 300, 'quantity' => $quantity]);
 							}
 						$GroundItem->save();
 						}
@@ -1114,6 +1156,7 @@ class GameController extends Controller
 			}
 
 		$reward_finish = round(microtime(true) - $reward_timer, 3) * 1000;
+		// Session::push('perf_log', ['rewards' => $reward_finish]);
 		// $timers[] = "rewards took:: $reward_finish ms";
 		// Session::push('perf_log', $timers);
 		// Session::push('perf_log', "rewards took:: $reward_finish ms");
@@ -1614,7 +1657,7 @@ class GameController extends Controller
 		{
 		$Character = Character::findOrFail($request->character_id);
 
-		$stats = $Character->stats();
+		$stats = $Character->get_stats();
 		// $Spells = Spell::all();
 		// die(print_r($_REQUEST));
 		$Room = Room::findOrFail($request->rooms_id);

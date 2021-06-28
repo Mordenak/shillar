@@ -18,7 +18,7 @@
 					@if ($characters)
 					<h3>Select a character:</h3>
 					<div style="padding-left: 1rem;">
-						<form method="post" action="/game">
+						<form method="post" action="/character_select">
 							{{csrf_field()}}
 							@foreach ($characters as $character)
 							<input type="submit" id="ch_{{$character->id}}" name="character_id" value="{{$character->id}}" style="display:none;">

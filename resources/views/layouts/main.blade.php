@@ -4,6 +4,9 @@
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
+		<!-- Page/Token refresh -->
+    	<meta http-equiv="refresh" content="{{ config('session.lifetime') * 60 }}">
+
 		<!-- jQuery -->
 		<script src="{{asset('js/jquery-3.4.1.min.js')}}"></script>
 

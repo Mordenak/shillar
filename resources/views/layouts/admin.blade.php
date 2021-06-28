@@ -4,6 +4,9 @@
 
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
+		<!-- Page/Token refresh -->
+    	<meta http-equiv="refresh" content="{{ config('session.lifetime') * 60 }}">
+
 		<!-- Base CSS -->
 		<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 		<!-- jQuery -->

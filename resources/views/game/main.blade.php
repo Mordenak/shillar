@@ -66,8 +66,8 @@
 @endsection
 
 @section('main')
-
-	<div class="main-wrapper" style="background-image: url({{$bg_src ?? ''}});background-color: {{$bg_color ?? ''}};">
+	<!-- background-image: url({{$bg_src ?? ''}}); -->
+	<div class="main-wrapper" style="background-color: {{$bg_color ?? ''}};">
 
 		@if( Session::has("errors") )
 		<p style="color: red;display: inline;">

@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Session;
 
 class Character extends Model
 {
@@ -106,6 +108,15 @@ class Character extends Model
 		return $this->spells()->where(['spells_id' => $id])->first();
 		}
 
+	public function has_modifier(string $modifier_name)
+		{
+		if ($this->race()->modifiers()->get())
+			{
+			return $this->get_modifier($modifier_name) ? true : false;
+			}
+		return false;
+		}
+
 	public function get_modifier(string $modifier_name)
 		{
 		$RacialModifier = RacialModifier::where(['name' => $modifier_name])->first();
@@ -193,6 +204,15 @@ class Character extends Model
 		return true;
 		}
 
+	public function get_stats()
+		{
+		if (!Cache::get($this->id . '_base'))
+			{
+			$this->stats();
+			}
+		return Cache::get($this->id . '_base');
+		}
+
 	// Almost everything in the game will be checking against THESE stats:
 	// Raw stats mostly just for training/wall score.
 	public function stats()
@@ -210,27 +230,33 @@ class Character extends Model
 			];
 
 		// $racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 2])->first();
-		$racial_modifier = $this->get_modifier('HAS_NIGHTVISION');
-		if ($racial_modifier)
+		$race_start = microtime(true);
+		// $racial_modifier = $this->has_modifier('HAS_NIGHTVISION');
+		if ($this->has_modifier('HAS_NIGHTVISION'))
 			{
 			$stats['light_level'] = 1;
 			}
+		$race_finish = round(microtime(true) - $race_start, 3) * 1000;
+		Session::push('perf_log', ['racial_modifier' => $race_finish]);
 
 		// $armor_stats = $this->equipment()->calculate_stats();
+		$stat_start = microtime(true);
 		$armor_stats = $this->equipment()->retrieve_stats();
 		foreach ($armor_stats as $stat => $value)
 			{
 			$stats[$stat] = $stats[$stat] + $value;
 			}
+		$stat_finish = round(microtime(true) - $stat_start, 3) * 1000;
+		Session::push('perf_log', ['stat_retrieval' => $stat_finish]);
 
-		$armor_modifier = $this->get_modifier('ARMOR_ADJUSTMENT');
-		if ($armor_modifier)
+		// $armor_modifier = $this->get_modifier('ARMOR_ADJUSTMENT');
+		if ($this->has_modifier('ARMOR_ADJUSTMENT'))
 			{
-			$stats['armor'] = floor($stats['armor'] * $armor_modifier->value);
+			$stats['armor'] = floor($stats['armor'] * $this->get_modifier('ARMOR_ADJUSTMENT')->value);
 			}
 
 		// Check buffs!
-
+		Cache::put($this->id . '_base', $stats);
 
 		return $stats;
 		}
@@ -382,6 +408,29 @@ class Character extends Model
 		$this->save();
 		$this->refresh_score();
 		return true;
+		}
+
+	public function max_weight()
+		{
+		if (!Cache::get($this->id . '_max_weight'))
+			{
+			$this->get_max_weight();
+			}
+		return Cache::get($this->id . '_max_weight');
+		}
+
+	public function get_max_weight()
+		{
+		$inventory_size = $this->get_stats()['strength'];
+		$racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 1])->first();
+		if ($racial_modifier)
+			{
+			$inventory_size = floor($inventory_size * $racial_modifier->value);
+			}
+
+		Cache::put($this->id . '_max_weight', $inventory_size);
+
+		return $inventory_size;
 		}
 
 	public function get_trader_items()

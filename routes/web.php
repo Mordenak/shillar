@@ -18,9 +18,10 @@ Route::get('/', function () {
 // Route::get('/', 'HomeController@welcome');
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index');
 
-Route::post('/game', 'GameController@index');
+Route::get('/game', 'GameController@index');
+Route::post('/character_select', 'GameController@character_select');
 Route::post('/menu', 'GameController@menu');
 Route::post('/footer', 'GameController@footer');
 

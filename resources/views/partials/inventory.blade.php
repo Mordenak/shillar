@@ -1,6 +1,6 @@
 Inventory:
 <br><br>
-Current weight: {{$character->inventory()->current_weight()}} / {{$character->inventory()->max_weight()}}<br>
+Current weight: {{$character->inventory()->current_weight()}} / {{$character->max_weight()}}<br>
 <br><br>
 @foreach ($character->inventory()->character_items() as $item)
 	@if (isset($is_admin) && $is_admin)

@@ -4,6 +4,7 @@ namespace App;
 
 use Session;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 // use App\InventoryItems;
 
@@ -46,7 +47,7 @@ class Inventory extends Model
 
 	public function remove_item($item_id)
 		{
-		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
+		$has_item = $this->retrieve_items()->where('items_id', $item_id)->first();
 
 		if ($has_item)
 			{
@@ -55,9 +56,11 @@ class Inventory extends Model
 			if ($has_item->quantity <= 0)
 				{
 				$has_item->delete();
+				$this->cache_items();
 				return true;
 				}
 			$has_item->save();
+			$this->cache_items();
 			}
 		else
 			{
@@ -68,24 +71,53 @@ class Inventory extends Model
 		return true;
 		}
 
+	public function retrieve_items()
+		{
+		if (!Cache::get($this->characters_id . '_items'))
+			{
+			$this->cache_items();
+			}
+		return Cache::get($this->characters_id . '_items');
+		}
+
+	public function cache_items()
+		{
+		Cache::put($this->characters_id . '_items', $this->character_items());
+		$this->get_current_weight();
+
+		return true;
+		}
+
 	public function has_item($item_id)
 		{
-		return $this->inventory_items()->where(['items_id' => $item_id])->first() ? true : false;
+		return $this->retrieve_items()->where('items_id', $item_id)->first() ? true : false;
 		}
 
-	public function max_weight()
-		{
-		$inventory_size = $this->character()->first()->stats()['strength'];
-		$racial_modifier = $this->character()->first()->race()->modifiers()->where(['racial_modifiers_id' => 1])->first();
-		if ($racial_modifier)
-			{
-			$inventory_size = floor($inventory_size * $racial_modifier->value);
-			}
+	// public function max_weight()
+	// 	{
+	// 	$inventory_size = $this->character()->first()->stats()['strength'];
+	// 	$racial_modifier = $this->character()->first()->race()->modifiers()->where(['racial_modifiers_id' => 1])->first();
+	// 	if ($racial_modifier)
+	// 		{
+	// 		$inventory_size = floor($inventory_size * $racial_modifier->value);
+	// 		}
 
-		return $inventory_size;
-		}
+	// 	return $inventory_size;
+	// 	}
 
 	public function current_weight()
+		{
+		if (!Cache::get($this->characters_id . '_weight'))
+			{
+			$this->get_current_weight();
+			}
+		return Cache::get($this->characters_id . '_weight');
+		}
+
+	/**
+	 * This function is expensive!
+	 */
+	public function get_current_weight()
 		{
 		$total_weight = 0.0;
 		foreach ($this->character_items() as $inv_item)
@@ -99,6 +131,9 @@ class Inventory extends Model
 				$total_weight += $inv_item->item()->weight;
 				}
 			}
+
+		Cache::put($this->characters_id . '_weight', $total_weight);
+
 		return $total_weight;
 		}
 
@@ -108,12 +143,12 @@ class Inventory extends Model
 		// Add an items_to_inventories record:;
 		$Item = Item::findOrFail($item_id);
 
-		if (($this->current_weight() + $Item->weight) > $this->max_weight())
+		if (($this->current_weight() + $Item->weight) > $this->character_direct()->max_weight())
 			{
 			return false;
 			}
 
-		$has_item = $this->inventory_items()->where(['items_id' => $item_id])->first();
+		$has_item = $this->retrieve_items()->where('items_id', $item_id)->first();
 
 		if ($has_item && $Item->is_stackable)
 			{
@@ -137,6 +172,8 @@ class Inventory extends Model
 
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
 		Session::push('perf_log', ['add_item' => $finish_timer]);
+
+		$this->cache_items();
 
 		return true;
 		}

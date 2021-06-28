@@ -27,9 +27,10 @@ class HomeController extends Controller
 	 *
 	 * @return \Illuminate\Contracts\Support\Renderable
 	 */
-	public function index()
+	public function index(Request $request)
 		{
 		$Characters = Character::where('users_id', auth()->user()->id);
+		$request->session()->forget('character_id');
 		return view('home', ['characters' => $Characters->get(), 'admin_level' => auth()->user()->admin_level]);
 		}
 }
