@@ -47,7 +47,7 @@ class Inventory extends Model
 
 	public function remove_item($item_id)
 		{
-		$has_item = $this->retrieve_items()->where('items_id', $item_id)->first();
+		$has_item = $this->character_items()->where('items_id', $item_id)->first();
 
 		if ($has_item)
 			{

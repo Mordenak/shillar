@@ -1898,6 +1898,7 @@ class GameController extends Controller
 			$Equipment->calculate_stats();
 			$Equipment->refresh_equip();
 			$Character->calc_quick_stats();
+			$Character->get_max_weight();
 			}
 
 		// Find all available item equipment:
