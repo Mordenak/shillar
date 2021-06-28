@@ -116,8 +116,9 @@ class Equipment extends Model
 				}
 			}
 
+		// TODO: This creates a recursive loop.  Figure out a better way to keep these values in sync.
 		// Re-calc max weight?
-		$this->character()->first()->get_max_weight();
+		// $this->character()->first()->get_max_weight();
 
 		// die(print_r($bonus_stats));
 		Cache::put($this->characters_id . '_stats', $bonus_stats);

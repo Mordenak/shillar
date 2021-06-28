@@ -415,7 +415,7 @@ class Character extends Model
 
 	public function get_max_weight()
 		{
-		$inventory_size = $this->stats()['strength'];
+		$inventory_size = $this->get_stats()['strength'];
 		$racial_modifier = $this->race()->modifiers()->where(['racial_modifiers_id' => 1])->first();
 		if ($racial_modifier)
 			{
