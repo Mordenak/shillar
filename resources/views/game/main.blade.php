@@ -67,7 +67,7 @@
 
 @section('main')
 	<!-- background-image: url({{$bg_src ?? ''}}); -->
-	<div class="main-wrapper" style="background-color: {{$bg_color ?? ''}};">
+	<div class="main-wrapper" style="{{$color_scheme}}">
 
 		@if( Session::has("errors") )
 		<p style="color: red;display: inline;">
@@ -259,7 +259,11 @@
 		@endif
 		
 		<p>
+			@if ($room->zone_area())
+			{{$room->zone_area()->travel_text}}
+			@else
 			{{$room->zone()->travel_text}}
+			@endif
 		</p>
 		@endif
 
@@ -366,8 +370,47 @@
 		<div class="admin-display" style="padding-left: 1rem;">
 			-- Admin --<br>
 			Current Zone: <a href="/zone/edit/{{$room->zone()->id}}" target="_blank">{{$room->zone()->name}}</a><br>
-			Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a>
-			n: {{$room->north_rooms_id}}, e: {{$room->east_rooms_id}}, s: {{$room->south_rooms_id}}, w: {{$room->west_rooms_id}}, ne: {{$room->northeast_rooms_id}}, nw: {{$room->northwest_rooms_id}}, se: {{$room->southeast_rooms_id}}, sw: {{$room->southwest_rooms_id}}, u: {{$room->up_rooms_id}}, d: {{$room->down_rooms_id}}<br>
+			Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a><br>
+			@if ($room->north_rooms_id)
+			north: <a href="/room/edit/{{$room->north_rooms_id}}" target="_blank">{{$room->north_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->east_rooms_id)
+			east: <a href="/room/edit/{{$room->east_rooms_id}}" target="_blank">{{$room->east_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->south_rooms_id)
+			south: <a href="/room/edit/{{$room->south_rooms_id}}" target="_blank">{{$room->south_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->west_rooms_id)
+			west: <a href="/room/edit/{{$room->west_rooms_id}}" target="_blank">{{$room->west_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->northeast_rooms_id)
+			northeast: <a href="/room/edit/{{$room->northeast_rooms_id}}" target="_blank">{{$room->northeast_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->northwest_rooms_id)
+			northwest: <a href="/room/edit/{{$room->northwest_rooms_id}}" target="_blank">{{$room->northwest_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->southeast_rooms_id)
+			southeast: <a href="/room/edit/{{$room->southeast_rooms_id}}" target="_blank">{{$room->southeast_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->southwest_rooms_id)
+			southwest: <a href="/room/edit/{{$room->southwest_rooms_id}}" target="_blank">{{$room->southwest_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->up_rooms_id)
+			up: <a href="/room/edit/{{$room->up_rooms_id}}" target="_blank">{{$room->up_rooms_id}}</a><br>
+			@endif
+
+			@if ($room->down_rooms_id)
+			down: <a href="/room/edit/{{$room->down_rooms_id}}" target="_blank">{{$room->down_rooms_id}}</a><br>
+			@endif
+			<br>
 			@if ($creature)
 			Current Creature: <a href="/creature/edit/{{$creature->id}}" target="_blank">{{$creature->name}}</a><br>
 			@endif

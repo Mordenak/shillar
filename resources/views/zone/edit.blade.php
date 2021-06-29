@@ -6,56 +6,56 @@
 	<form action="/zone/save" method="POST" class="form-horizontal main-form">
 		{{ csrf_field() }}
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Name:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Name:</label>
+			<div class="col-md-2">
 				<input type="text" name="name" value="{{isset($zone) ? $zone->name : ''}}" class="form-control" required>
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Travel Text:</label>
-			<div class="col-md-5">
+			<label class="col-md-1 col-form-label text-md-right">Travel Text:</label>
+			<div class="col-md-6">
 				<input type="text" name="travel_text" value="{{isset($zone) ? $zone->travel_text : ''}}" class="form-control" required>
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Image:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Image:</label>
+			<div class="col-md-2">
 				<input type="text" name="img_src" value="{{isset($zone) ? $zone->img_src : ''}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Background Image:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Background Image:</label>
+			<div class="col-md-2">
 				<input type="text" name="bg_img" value="{{isset($zone) ? $zone->bg_img : ''}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Background Color [NYI]:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Background Color:</label>
+			<div class="col-md-1">
 				<input type="text" name="bg_color" value="{{isset($zone) ? $zone->bg_color : ''}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Text Color [NYI]:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Text Color:</label>
+			<div class="col-md-1">
 				<input type="text" name="font_color" value="{{isset($zone) ? $zone->font_color : ''}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Link Color [NYI]:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Link Color [NYI]:</label>
+			<div class="col-md-1">
 				<input type="text" name="label_color" value="{{isset($zone) ? $zone->label_color : ''}}" class="form-control">
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Description:</label>
+			<label class="col-md-1 col-form-label text-md-right">Description:</label>
 			<div class="col-md-6">
 				<textarea class="form-control" name="description">{{isset($zone) ? $zone->description : ''}}</textarea>
 			</div>

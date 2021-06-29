@@ -98,16 +98,20 @@
 
 		<h3>Spawn Rules:</h3>
 		<div class="spawn-rules">
-			<div class="spawn-forms">
+			<div class="spawn-forms" style="margin-left: 2rem;">
 			@if (isset($creature) && $spawn_rules->count() > 0)
 				@foreach ($spawn_rules as $spawn_rule)
 				<input type="hidden" name="spawns[{{$spawn_rule->id}}][id]" value="{{$spawn_rule->id}}">
 				<div class="form-group row">
-					<label class="col-md-1 col-form-label text-md-right">Zone:</label>
+					<label class="col-md-0 col-form-label text-md-right">Zone:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][zone_id]" value="{{$spawn_rule->zones_id}}" class="form-control auto-lookup zone-lookup">
 					</div>
-					<label class="col-md-1 col-form-label text-md-right">Room:</label>
+					<label class="col-md-0 col-form-label text-md-right">Zone Area:</label>
+					<div class="col-md-1">
+						<input type="text" name="spawns[{{$spawn_rule->id}}][zone_areas_id]" value="{{$spawn_rule->zone_areas_id}}" class="form-control auto-lookup zone-area-lookup">
+					</div>
+					<label class="col-md-0 col-form-label text-md-right">Room:</label>
 					<div class="col-md-1">
 						@if ($spawn_rule->room())
 						<input type="text" name="spawns[{{$spawn_rule->id}}][room_id]" value="{{$spawn_rule->rooms_id}}" class="form-control auto-lookup room-lookup">
@@ -115,7 +119,7 @@
 						<input type="text" name="spawns[{{$spawn_rule->id}}][room_id]" class="form-control auto-lookup room-lookup">
 						@endif
 					</div>
-					<label class="col-md-1 col-form-label text-md-right">Chance:</label>
+					<label class="col-md-0 col-form-label text-md-right">Chance:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][chance]" value="{{$spawn_rule->chance}}" class="form-control">
 					</div>
@@ -123,15 +127,19 @@
 				@endforeach
 			@endif
 				<div class="form-group row">
-					<label class="col-md-1 col-form-label text-md-right">Zone:</label>
+					<label class="col-md-0 col-form-label text-md-right">Zone:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][zone_id]" class="form-control auto-lookup zone-lookup">
 					</div>
-					<label class="col-md-1 col-form-label text-md-right">Room:</label>
+					<label class="col-md-0 col-form-label text-md-right">Zone Area:</label>
+					<div class="col-md-1">
+						<input type="text" name="spawns[0][zone_areas_id]" class="form-control auto-lookup zone-area-lookup">
+					</div>
+					<label class="col-md-0 col-form-label text-md-right">Room:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][room_id]" class="form-control auto-lookup room-lookup">
 					</div>
-					<label class="col-md-1 col-form-label text-md-right">Chance:</label>
+					<label class="col-md-0 col-form-label text-md-right">Chance:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][chance]" class="form-control">
 					</div>

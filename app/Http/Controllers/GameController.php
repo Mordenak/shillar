@@ -88,6 +88,12 @@ class GameController extends Controller
 			$request->rooms_id = $Room->id;
 			return $this->death($request);
 			}
+
+		$request_params = ['character' => $Character, 'room' => $Room];
+
+		// Get the current background scheme:
+		$color_scheme = $Room->get_color_scheme();
+		$request_params['color_scheme'] = $color_scheme;
 		
 		// TODO: Spawn code, refactor?
 		$Creature = null;
@@ -160,7 +166,8 @@ class GameController extends Controller
 				}
 			}
 
-		$request_params = ['character' => $Character, 'room' => $Room, 'creature' => $Creature, 'ground_items' => $ground_items];
+		$request_params['creature'] = $Creature;
+		$request_params['ground_items'] = $ground_items;
 
 		if ($Zone->bg_img)
 			{
@@ -395,7 +402,8 @@ class GameController extends Controller
 		$possible_spawns = [];
 		// Get all possible spawns:
 		$SpawnRules = SpawnRule::where(['rooms_id' => $room->id])
-			->orWhere(['zones_id' => $room->zone()->id]);
+			->orWhere(['zones_id' => $room->zone()->id])
+			->where(['zone_areas_id' => $room->zone_areas_id]);
 
 		// $SpawnRules = SpawnRule::where(['zones_id' => $room->zone()->id]);
 
@@ -403,7 +411,8 @@ class GameController extends Controller
 
 		if ($room->zone_area())
 			{
-			$SpawnRules->orWhere(['zone_areas_id' => $room->zone_area()->id]);
+			// die(print_r($room->zone_area()));
+			// $SpawnRules->orWhere(['zone_areas_id' => $room->zone_area()->id]);
 			// ->orderBy('priority', 'desc')->get();
 			}
 

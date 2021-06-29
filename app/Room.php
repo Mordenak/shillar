@@ -93,6 +93,47 @@ class Room extends Model
 		return $arr;
 		}
 
+	public function get_color_scheme()
+		{
+		$scheme = '';
+		if ($this->zone_area())
+			{
+			if ($this->zone_area()->bg_img)
+				{
+				$scheme = 'background-image: url(' . asset('bgs/' . $this->zone_area()->bg_img) . ');';
+				}
+
+			if ($this->zone_area()->bg_color)
+				{
+				$scheme = 'background-color: ' . $this->zone_area()->bg_color . ';';
+				}
+
+			if ($this->zone_area()->font_color)
+				{
+				$scheme = $scheme . 'color: ' . $this->zone_area()->font_color . ';';
+				}
+			}
+		else
+			{
+			if ($this->zone()->bg_img)
+				{
+				$scheme = 'background-image: url(' . asset('bgs/' . $this->zone()->bg_img) . ');';
+				}
+
+			if ($this->zone()->bg_color)
+				{
+				$scheme = 'background-color: ' . $this->zone()->bg_color . ';';
+				}
+
+			if ($this->zone()->font_color)
+				{
+				$scheme = $scheme . 'color: ' . $this->zone()->font_color . ';';
+				}
+			}
+
+		return $scheme;
+		}
+
 	public function generate_directions($Character)
 		{
 		$directions = [];
@@ -154,10 +195,13 @@ class Room extends Model
 				{
 				// TODO: Random chance of treasure actually showing, using Character skill level
 				// Was unique groupings:
-				Session::put('has_treasure', true);
-				$num_dirs = count($directions);
-				$expiresAt = Carbon::now()->addMinutes(5);
-				Cache::put('room-treasure-'.$this->id, $num_dirs, $expiresAt);
+				if (rand(0,100 >= 50))
+					{
+					Session::put('has_treasure', true);
+					$num_dirs = count($directions);
+					$expiresAt = Carbon::now()->addMinutes(5);
+					Cache::put('room-treasure-'.$this->id, $num_dirs, $expiresAt);
+					}
 				}
 			}
 		else

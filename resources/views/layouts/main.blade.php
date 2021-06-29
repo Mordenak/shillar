@@ -85,7 +85,7 @@
 		.game-container .menu
 			{
 			grid-area: menu;
-			min-height: 500px;
+			min-height: 750px;
 			/*text-align: center;*/
 			overflow-x: scroll;
 			padding: .5rem;
@@ -108,6 +108,7 @@
 		.game-container .main
 			{
 			grid-area: main;
+			overflow: hidden;
 			}
 
 		.game-container .main-wrapper

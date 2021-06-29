@@ -119,6 +119,7 @@ class CreatureController extends Controller
 
 			$values = [
 				'zones_id' => $zone,
+				'zone_areas_id' => $spawn['zone_areas_id'],
 				'rooms_id' => $room,
 				'creatures_id' => $Creature->id,
 				'chance' => $spawn['chance'],
