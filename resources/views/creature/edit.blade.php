@@ -111,6 +111,10 @@
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][zone_areas_id]" value="{{$spawn_rule->zone_areas_id}}" class="form-control auto-lookup zone-area-lookup">
 					</div>
+					<label class="col-md-0 col-form-label text-md-right">Zone Level:</label>
+					<div class="col-md-1">
+						<input type="text" name="spawns[{{$spawn_rule->id}}][zone_level]" value="{{$spawn_rule->zone_level}}" class="form-control">
+					</div>
 					<label class="col-md-0 col-form-label text-md-right">Room:</label>
 					<div class="col-md-1">
 						@if ($spawn_rule->room())
@@ -122,6 +126,10 @@
 					<label class="col-md-0 col-form-label text-md-right">Chance:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][chance]" value="{{$spawn_rule->chance}}" class="form-control">
+					</div>
+					<label class="col-md-0 col-form-label text-md-right">Score Req:</label>
+					<div class="col-md-1">
+						<input type="text" name="spawns[{{$spawn_rule->id}}][score_req]" value="{{$spawn_rule->score_req}}" class="form-control">
 					</div>
 				</div>
 				@endforeach
@@ -135,6 +143,10 @@
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][zone_areas_id]" class="form-control auto-lookup zone-area-lookup">
 					</div>
+					<label class="col-md-0 col-form-label text-md-right">Zone Level:</label>
+					<div class="col-md-1">
+						<input type="text" name="spawns[0][zone_level]" class="form-control">
+					</div>
 					<label class="col-md-0 col-form-label text-md-right">Room:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][room_id]" class="form-control auto-lookup room-lookup">
@@ -142,6 +154,10 @@
 					<label class="col-md-0 col-form-label text-md-right">Chance:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][chance]" class="form-control">
+					</div>
+					<label class="col-md-0 col-form-label text-md-right">Score Req:</label>
+					<div class="col-md-1">
+						<input type="text" name="spawns[0][score_req]" class="form-control">
 					</div>
 				</div>
 			
