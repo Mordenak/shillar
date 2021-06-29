@@ -11,7 +11,7 @@ class ZoneAreaController extends Controller
 {
 	public function create()
 		{
-		$zones = Zone::all();
+		$zones = Zone::orderBy('id')->get();
 		return view('zone_area.edit', ['zones' => $zones]);
 		}
 

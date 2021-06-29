@@ -93,6 +93,14 @@
 		document.addEventListener('keydown', function(e) {
 			if (e.altKey)
 				{
+				if (e.key === 'ArrowRight')
+					{
+					$('.next-link')[0].click();
+					}
+				if (e.key === 'ArrowLeft')
+					{
+					$('.prev-link')[0].click();
+					}
 				if (e.key === 's')
 					{
 					$('form.form-horizontal').submit();

@@ -25,5 +25,9 @@
 		</form>
 	</div>
 	@endif
+	@if ($dbid > 1)
+	<a href="/{{ $baseroute }}/edit/{{ $dbid - 1}}" class="prev-link" style="display:none;">Prev</a>
+	@endif
+	<a href="/{{ $baseroute }}/edit/{{ $dbid + 1}}" class="next-link" style="display:none;">Next</a>
 	{{ $slot }}
 </div>
