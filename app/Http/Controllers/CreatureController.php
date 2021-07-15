@@ -93,7 +93,7 @@ class CreatureController extends Controller
 				{
 				$SpawnRule = SpawnRule::findOrFail($spawn['id']);
 
-				if ($spawn['zone_id'] == 'null' && !$spawn['room_id'] && !$spawn['chance'])
+				if ($spawn['zone_id'] == '' && !$spawn['room_id'] && !$spawn['chance'])
 					{
 					$SpawnRule->delete();
 					continue;
@@ -123,6 +123,7 @@ class CreatureController extends Controller
 				'rooms_id' => $room,
 				'creatures_id' => $Creature->id,
 				'chance' => $spawn['chance'],
+				'score_req' => $spawn['score_req']
 				];
 
 			$SpawnRule->fill($values);

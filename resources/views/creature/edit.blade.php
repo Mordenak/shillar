@@ -5,93 +5,93 @@
 	<form action="/creature/save" method="POST" class="form-horizontal">
 		{{ csrf_field() }}
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Name:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Name:</label>
+			<div class="col-md-2">
 				<input type="text" name="name" value="{{isset($creature) ? $creature->name : ''}}" class="form-control">
 			</div>
-			<label class="col-md-2 col-form-label text-md-right">Img Src:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Img Src:</label>
+			<div class="col-md-2">
 				<input type="text" name="img_src" value="{{isset($creature) ? $creature->img_src : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Health:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Health:</label>
+			<div class="col-md-1">
 				<input type="text" name="health" value="{{isset($creature) ? $creature->health : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Attack Text:</label>
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<input type="text" name="attack_text" value="{{isset($creature) ? $creature->attack_text : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Armor:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Armor:</label>
+			<div class="col-md-1">
 				<input type="text" name="armor" value="{{isset($creature) ? $creature->armor : ''}}" class="form-control">
 			</div>
 
 			<label class="col-md-2 col-form-label text-md-right">Award XP:</label>
-			<div class="col-md-3">
+			<div class="col-md-1">
 				<input type="text" name="award_xp" value="{{isset($creature) ? $creature->award_xp : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Damage Min:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Damage Min:</label>
+			<div class="col-md-1">
 				<input type="text" name="damage_low" value="{{isset($creature) ? $creature->damage_low : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">XP Variation:</label>
-			<div class="col-md-3">
+			<div class="col-md-1">
 				<input type="text" name="xp_variation" value="{{isset($creature) ? $creature->xp_variation : '0.1'}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Damage Max:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Damage Max:</label>
+			<div class="col-md-1">
 				<input type="text" name="damage_high" value="{{isset($creature) ? $creature->damage_high : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Award Gold:</label>
-			<div class="col-md-3">
+			<div class="col-md-1">
 				<input type="text" name="award_gold" value="{{isset($creature) ? $creature->award_gold : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Attacks:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Attacks:</label>
+			<div class="col-md-1">
 				<input type="text" name="attacks_per_round" value="{{isset($creature) ? $creature->attacks_per_round : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Gold Variation:</label>
-			<div class="col-md-3">
+			<div class="col-md-1">
 				<input type="text" name="gold_variation" value="{{isset($creature) ? $creature->gold_variation : '0.375'}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Magic Resist:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Magic Resist:</label>
+			<div class="col-md-1">
 				<input type="text" name="magic_resistance" value="{{isset($creature) ? $creature->magic_resistance : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Scroll Resist:</label>
-			<div class="col-md-3">
+			<div class="col-md-1">
 				<input type="text" name="scroll_resistance" value="{{isset($creature) ? $creature->scroll_resistance : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Alignment:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Alignment:</label>
+			<div class="col-md-1">
 				<input type="text" name="alignments_id" value="{{isset($creature) ? $creature->alignments_id : ''}}" class="form-control">
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Alignment Strength:</label>
-			<div class="col-md-3">
+			<div class="col-md-1">
 				<input type="text" name="alignment_strength" value="{{isset($creature) ? $creature->alignment_strength : ''}}" class="form-control">
 			</div>
 		</div>
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Hostile:</label>
-			<div class="col-md-3">
+			<label class="col-md-1 col-form-label text-md-right">Hostile:</label>
+			<div class="col-md-1">
 				<input type="checkbox" name="is_hostile" class="form-control" {{isset($creature) && $creature->is_hostile ? 'checked' : ''}}>
 			</div>
 			<label class="col-md-2 col-form-label text-md-right">Blocks Movement:</label>
-			<div class="col-md-3">
+			<div class="col-md-1">
 				<input type="checkbox" name="is_blocking" class="form-control" {{isset($creature) && $creature->is_blocking ? 'checked' : ''}}>
 			</div>
 		</div>
@@ -103,15 +103,15 @@
 				@foreach ($spawn_rules as $spawn_rule)
 				<input type="hidden" name="spawns[{{$spawn_rule->id}}][id]" value="{{$spawn_rule->id}}">
 				<div class="form-group row">
-					<label class="col-md-0 col-form-label text-md-right">Zone:</label>
+					<label class="col-md-1 col-form-label text-md-right">Zone:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][zone_id]" value="{{$spawn_rule->zones_id}}" class="form-control auto-lookup zone-lookup">
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Zone Area:</label>
+					<label class="col-md-1 col-form-label text-md-right">Zone Area:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][zone_areas_id]" value="{{$spawn_rule->zone_areas_id}}" class="form-control auto-lookup zone-area-lookup">
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Zone Level:</label>
+					<label class="col-md-1 col-form-label text-md-right">Zone Level:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][zone_level]" value="{{$spawn_rule->zone_level}}" class="form-control">
 					</div>
@@ -123,11 +123,13 @@
 						<input type="text" name="spawns[{{$spawn_rule->id}}][room_id]" class="form-control auto-lookup room-lookup">
 						@endif
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Chance:</label>
+				</div>
+				<<div class="form-group row">
+					<label class="col-md-1 col-form-label text-md-right">Chance:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][chance]" value="{{$spawn_rule->chance}}" class="form-control">
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Score Req:</label>
+					<label class="col-md-1 col-form-label text-md-right">Score Req:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[{{$spawn_rule->id}}][score_req]" value="{{$spawn_rule->score_req}}" class="form-control">
 					</div>
@@ -135,15 +137,15 @@
 				@endforeach
 			@endif
 				<div class="form-group row">
-					<label class="col-md-0 col-form-label text-md-right">Zone:</label>
+					<label class="col-md-1 col-form-label text-md-right">Zone:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][zone_id]" class="form-control auto-lookup zone-lookup">
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Zone Area:</label>
+					<label class="col-md-1 col-form-label text-md-right">Zone Area:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][zone_areas_id]" class="form-control auto-lookup zone-area-lookup">
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Zone Level:</label>
+					<label class="col-md-1 col-form-label text-md-right">Zone Level:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][zone_level]" class="form-control">
 					</div>
@@ -151,11 +153,13 @@
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][room_id]" class="form-control auto-lookup room-lookup">
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Chance:</label>
+				</div>
+				<div class="form-group row">
+					<label class="col-md-1 col-form-label text-md-right">Chance:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][chance]" class="form-control">
 					</div>
-					<label class="col-md-0 col-form-label text-md-right">Score Req:</label>
+					<label class="col-md-1 col-form-label text-md-right">Score Req:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][score_req]" class="form-control">
 					</div>

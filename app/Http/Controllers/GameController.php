@@ -33,6 +33,7 @@ class GameController extends Controller
 		{
 		$timers = [];
 		$start_timer = microtime(true);
+		$this->start_timer('index');
 		// Offload to a Worker?
 		World::tick();
 		CharacterSpellBuff::clean_buffs();
@@ -385,7 +386,8 @@ class GameController extends Controller
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
 		// $timers[] = "index took:: $finish_timer ms";
 		// Session::push('perf_log', $timers);
-		Session::push('perf_log', ['index' => $finish_timer]);
+		// Session::push('perf_log', ['index' => $finish_timer]);
+		$this->end_timer('index');
 
 		// $character = array_merge($Character->pluck(), $Characters->pluck());;
 		if ($request->ajax())
@@ -1427,10 +1429,12 @@ class GameController extends Controller
 						}
 					$Character->save();
 					}
+
+				$character_wisdom = $Character->get_stat('wisdom');
 				
 				// cast spell:
 				// Well WTF do we do here!
-				$success = $CharacterSpell->level + $Character->wisdom();
+				$success = $CharacterSpell->level + $character_wisdom;
 				if ($success >= rand(1,100))
 					{
 					// die(print_r($Spell->id));
@@ -1474,7 +1478,7 @@ class GameController extends Controller
 
 							foreach ($spell_data['rooms'] as $target)
 								{
-								if ($Character->wisdom() >= $target['wisdom'] && $CharacterSpell->level >= $target['level'])
+								if ($character_wisdom >= $target['wisdom'] && $CharacterSpell->level >= $target['level'])
 									{
 									$available_rooms[] = ['name' => $target['name'], 'id' => $target['target']];
 									}
@@ -1527,7 +1531,6 @@ class GameController extends Controller
 								// return action('GameController@index');
 								}
 							}
-						
 						}
 
 					if ($Spell->has_property('APPLY_BUFF'))
@@ -1561,39 +1564,6 @@ class GameController extends Controller
 						// die(print_r($params));
 						return ['menu' => view($get_view, ['character' => $Character->fresh(), 'params' => $params])->render()];
 						}
-
-					/**
-					if ($Spell->is_type('TELEPORT_ROOM'))
-						{
-						// TODO: Adjust this later?
-
-						// die(print_r('We town portal?'));
-						$TeleportTargets = TeleportTarget::where(['spells_id' => $Spell->id])->get();
-						// Town Portal
-						if ($TeleportTargets->count() == 1)
-							{
-							if (!$Character->teleport($TeleportTargets->first()->rooms_id))
-								{
-								Session::flash('errors', 'You cannot access that zone currently.');
-								}
-							else
-								{
-								// TODO: flashes don't work here?
-								// Session::flash('messages', 'You have returned to the safety of town.');
-								$request->full_reload = true;
-								return $this->index($request);
-								// return action('GameController@index');
-								}
-							}
-						else
-							{
-							// TODO: Generate a 'teleport token' to verify the action:
-							// Render a new view?
-							return ['menu' => view('character.teleport', ['character' => $Character->fresh()])->render()];
-							}
-						}
-						**/
-
 					}
 				else
 					{
@@ -2712,5 +2682,15 @@ class GameController extends Controller
 			}
 
 		return $condensed;
+		}
+
+	public function start_timer($timer)
+		{
+		$this->timers[$timer] = microtime(true);
+		}
+
+	public function end_timer($timer)
+		{
+		Session::push('perf_log', [$timer => round(microtime(true) - $this->timers[$timer], 3) * 1000]);
 		}
 	}
