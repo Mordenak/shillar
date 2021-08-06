@@ -4,7 +4,10 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Shilla Resurrection - A Shilla recreation</title>
+        <meta name="description" content="An attempt to recreate the early 2000s browser game called Shilla.">
+
+        <script data-ad-client="ca-pub-1551312053760874" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
