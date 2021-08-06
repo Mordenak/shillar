@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Character;
 
 class HomeController extends Controller
-{
+	{
 	/**
 	 * Create a new controller instance.
 	 *
@@ -14,23 +14,12 @@ class HomeController extends Controller
 	 */
 	public function __construct()
 		{
-		$this->middleware('auth');
+		$this->middleware('guest');
 		}
 
 	public function welcome()
 		{
+
 		return view('welcome');
 		}
-
-	/**
-	 * Show the application dashboard.
-	 *
-	 * @return \Illuminate\Contracts\Support\Renderable
-	 */
-	public function index(Request $request)
-		{
-		$Characters = Character::where('users_id', auth()->user()->id);
-		$request->session()->forget('character_id');
-		return view('home', ['characters' => $Characters->get(), 'admin_level' => auth()->user()->admin_level]);
-		}
-}
+	}

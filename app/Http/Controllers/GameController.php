@@ -12,6 +12,18 @@ use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, Sta
 class GameController extends Controller
 	{
 
+	/**
+	 * Show the application dashboard.
+	 *
+	 * @return \Illuminate\Contracts\Support\Renderable
+	 */
+	public function home(Request $request)
+		{
+		$Characters = Character::where('users_id', auth()->user()->id);
+		$request->session()->forget('character_id');
+		return view('home', ['characters' => $Characters->get(), 'admin_level' => auth()->user()->admin_level]);
+		}
+
 	public function character_select(Request $request)
 		{
 		if (!auth()->user())
@@ -28,7 +40,7 @@ class GameController extends Controller
 		return redirect('/game');
 		// return $this->index($request);
 		}
-	//
+
 	public function index(Request $request)
 		{
 		$timers = [];

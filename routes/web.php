@@ -11,14 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-	return view('welcome');
-});
+// Route::get('/', function () {
+// 	return view('welcome');
+// });
 
-// Route::get('/', 'HomeController@welcome');
+
+Route::get('/', 'HomeController@welcome');
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+// Route::get('/', 'HomeController@welcome');
+
+Route::get('/home', 'GameController@home');
 
 Route::get('/game', 'GameController@index');
 Route::post('/character_select', 'GameController@character_select');
