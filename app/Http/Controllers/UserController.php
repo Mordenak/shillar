@@ -22,7 +22,7 @@ class UserController extends Controller
 		// admin command:
 		if (auth()->user()->admin_level != 3)
 			{
-			return redirect()->action('HomeController@index');
+			return redirect()->action('GameController@home');
 			}
 		$Users = User::all();
 
@@ -33,7 +33,7 @@ class UserController extends Controller
 		{
 		if (auth()->user()->admin_level != 3)
 			{
-			return redirect()->action('HomeController@index');
+			return redirect()->action('GameController@home');
 			}
 		return view('user.edit', ['user' => User::findOrFail($id)]);
 		}
@@ -42,7 +42,7 @@ class UserController extends Controller
 		{
 		if (auth()->user()->admin_level != 3)
 			{
-			return redirect()->action('HomeController@index');
+			return redirect()->action('GameController@home');
 			}
 		$User = User::findOrFail($request->id);
 

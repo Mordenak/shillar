@@ -155,7 +155,7 @@ class CharacterController extends Controller
 			$Characters = Character::where('users_id', auth()->user()->id);
 			// die(print_r($Characters->get()));
 			// return view('home', ['characters' => $Characters->get()]);
-			return redirect()->action('HomeController@index');
+			return redirect()->action('GameController@home');
 			}
 		}
 
