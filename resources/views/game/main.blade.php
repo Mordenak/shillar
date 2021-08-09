@@ -369,6 +369,7 @@
 		<br>
 		<div class="admin-display" style="padding-left: 1rem;">
 			-- Admin --<br>
+			Character: <a href="/character/edit/{{$character->id}}" target="_blank">{{$character->name}}</a><br>
 			Current Zone: <a href="/zone/edit/{{$room->zone()->id}}" target="_blank">{{$room->zone()->name}}</a><br>
 			Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a><br>
 			@if ($room->north_rooms_id)

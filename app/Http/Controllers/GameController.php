@@ -929,10 +929,15 @@ class GameController extends Controller
 						{
 						// $calc_damage = rand($low_damage, $high_damage);
 						// Grope damage first:
-						$grope_damage = round(rand($grope_low, $grope_high) * $alignment_strength, 0);
+						$grope_damage = ceil(rand($grope_low, $grope_high));
+						$grope_mod = $Character->get_modifier('GROPE_POWER');
+						if ($grope_mod)
+							{
+							$grope_damage = ceil($grope_damage * $grope_mod->value);
+							}
 						$weapon_damage = rand($weapon_low, $weapon_high);
 
-						$calc_damage = $grope_damage + $weapon_damage;
+						$calc_damage = ceil(($grope_damage + $weapon_damage) * $alignment_strength);
 
 						// Maybe not cast yet???
 						$actual_damage = (int)($calc_damage - $flat_creature['armor']);
@@ -2657,7 +2662,7 @@ class GameController extends Controller
 						{
 						if ($attack > 0)
 							{
-							$condensed[] = '<b>'.$log_entry['attack_text'].", for $attack damage!</b><br>";
+							$condensed[] = '<b value="'.$attack.'">'.$log_entry['attack_text'].", for $attack damage!</b><br>";
 							}
 						else
 							{
