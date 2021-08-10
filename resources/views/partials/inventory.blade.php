@@ -16,7 +16,7 @@ Current weight: {{$character->inventory()->current_weight()}} / {{$character->ma
 	<form method="post" action="/item_drop" class="ajax" style="display: inline;">
 		<label for="{{$item->id}}_drop">Drop</label>
 		<input type="submit" id="{{$item->id}}_drop" style="display: none;">
-		<input type="hidden" name="item_id" value="{{$item->items_id}}">
+		<input type="hidden" name="item_id" value="{{$item->id}}">
 		<input type="hidden" name="character_id" value="{{$character->id}}">
 	</form><br>
 	@endif

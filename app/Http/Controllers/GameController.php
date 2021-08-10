@@ -1316,7 +1316,7 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 
 		// Does character have item?
-		$Character->inventory()->remove_item($request->item_id);
+		$Character->inventory()->remove_inventory_item($request->item_id);
 
 		return $this->index($request);
 		}
@@ -2071,7 +2071,8 @@ class GameController extends Controller
 
 		if ($request->action == 'consume')
 			{
-			$Item = Item::findOrFail($request->item);
+			$InventoryItem = $Character->inventory()->get_inventory_item($request->item);
+			$Item = Item::findOrFail($InventoryItem->items_id);
 			if ($Item->item_types_id != 4)
 				{
 				// error?
@@ -2079,7 +2080,7 @@ class GameController extends Controller
 				}
 			$ItemFood = ItemFood::where(['items_id' => $Item->id])->first();
 			$Character->heal($ItemFood->potency);
-			$Character->inventory()->remove_item($request->item);
+			$Character->inventory()->remove_inventory_item($request->item);
 			// $request->item;
 			// $res = $Character->inventory()->where('items_id' => $request->item);
 			}
@@ -2097,9 +2098,11 @@ class GameController extends Controller
 
 			if ($Item->item_types_id == 4)
 				{
-				$arr = $Item->toArray();
+				// $arr = $Item->toArray();
+				$arr = $inv_item;
 				$ItemFood = ItemFood::where(['items_id' => $Item->id])->first();
-				$arr['quantity'] = $inv_item->quantity;
+				// $arr['quantity'] = $inv_item->quantity;
+				$arr['name'] = $Item->name;
 				$arr['potency'] = $ItemFood->potency;
 				$arr['selected'] = false;
 				if (isset($request->item) && $Item->id == $request->item)
@@ -2218,7 +2221,7 @@ class GameController extends Controller
 			return $this->index($request);
 			}
 		
-		$sold = $Character->inventory()->remove_item($SellItem->item()->id);
+		$sold = $Character->inventory()->remove_inventory_item($SellItem->id);
 		if ($sold)
 			{
 			$Character->gold += $earnings;
@@ -2252,11 +2255,11 @@ class GameController extends Controller
 			Session::flash('forged', 'The combination did not produce any results.');
 			return $this->index($request);
 			}
-		$Character->inventory()->remove_item($request->forge_weapon);
-		$Character->inventory()->remove_item($request->forge_armor);
-		$Character->inventory()->remove_item($request->forge_food);
-		$Character->inventory()->remove_item($request->forge_jewel);
-		$Character->inventory()->remove_item($request->forge_dust);
+		$Character->inventory()->remove_inventory_item($request->forge_weapon);
+		$Character->inventory()->remove_inventory_item($request->forge_armor);
+		$Character->inventory()->remove_inventory_item($request->forge_food);
+		$Character->inventory()->remove_inventory_item($request->forge_jewel);
+		$Character->inventory()->remove_inventory_item($request->forge_dust);
 		$Character->inventory()->add_item($ForgeRecipe->result_items_id);
 		Session::flash('forged', 'You have successfully forged a '.$ForgeRecipe->result_item()->name);
 
@@ -2437,7 +2440,7 @@ class GameController extends Controller
 			}
 
 		// Error on safe side, take item first:
-		$Character->inventory()->remove_item($InventoryItem->item()->id);
+		$Character->inventory()->remove_inventory_item($InventoryItem->id);
 
 		// Else we have a character:
 		$TraderItem = new TraderItem;

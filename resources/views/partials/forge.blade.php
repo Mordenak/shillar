@@ -14,7 +14,7 @@ This is the Town Forge>
 		<option>-- Select --</option>
 	@foreach ($character->inventory()->character_items() as $char_item)
 		@if ($char_item->item()->item_types_id == 1)
-		<option value="{{$char_item->item()->id}}">{{$char_item->item()->name}}</option>
+		<option value="{{$char_item->id}}">{{$char_item->item()->name}}</option>
 		@endif
 	@endforeach
 	</select>
@@ -23,7 +23,7 @@ This is the Town Forge>
 		<option>-- Select --</option>
 	@foreach ($character->inventory()->character_items() as $char_item)
 		@if ($char_item->item()->item_types_id == 2)
-		<option value="{{$char_item->item()->id}}">{{$char_item->item()->name}}</option>
+		<option value="{{$char_item->id}}">{{$char_item->item()->name}}</option>
 		@endif
 	@endforeach
 	</select>
@@ -32,7 +32,7 @@ This is the Town Forge>
 		<option>-- Select --</option>
 	@foreach ($character->inventory()->character_items() as $char_item)
 		@if ($char_item->item()->item_types_id == 4)
-		<option value="{{$char_item->item()->id}}">{{$char_item->item()->name}}</option>
+		<option value="{{$char_item->id}}">{{$char_item->item()->name}}</option>
 		@endif
 	@endforeach
 	</select>
@@ -41,7 +41,7 @@ This is the Town Forge>
 		<option>-- Select --</option>
 	@foreach ($character->inventory()->character_items() as $char_item)
 		@if ($char_item->item()->item_types_id == 5)
-		<option value="{{$char_item->item()->id}}">{{$char_item->item()->name}}</option>
+		<option value="{{$char_item->id}}">{{$char_item->item()->name}}</option>
 		@endif
 	@endforeach
 	</select>
@@ -50,7 +50,7 @@ This is the Town Forge>
 		<option>-- Select --</option>
 	@foreach ($character->inventory()->character_items() as $char_item)
 		@if ($char_item->item()->item_types_id == 6)
-		<option value="{{$char_item->item()->id}}">{{$char_item->item()->name}}</option>
+		<option value="{{$char_item->id}}">{{$char_item->item()->name}}</option>
 		@endif
 	@endforeach
 	</select>

@@ -45,9 +45,35 @@ class Inventory extends Model
 		return true;
 		}
 
+	public function remove_inventory_item($inventory_item_id)
+		{
+		$has_item = $this->get_inventory_item($inventory_item_id);
+
+		if ($has_item)
+			{
+			$has_item->quantity = $has_item->quantity - 1;
+			// todo: if 0?
+			if ($has_item->quantity <= 0)
+				{
+				$has_item->delete();
+				$this->cache_items();
+				return true;
+				}
+			$has_item->save();
+			$this->cache_items();
+			}
+		else
+			{
+			// error, we don't have the item?
+			return false;
+			}
+
+		return true;
+		}
+
 	public function remove_item($item_id)
 		{
-		$has_item = $this->character_items()->where('items_id', $item_id)->first();
+		$has_item = $this->get_item($item_id);
 
 		if ($has_item)
 			{
@@ -88,9 +114,24 @@ class Inventory extends Model
 		return true;
 		}
 
+	public function get_inventory_item($inventory_item_id)
+		{
+		return $this->retrieve_items()->find($inventory_item_id);
+		}
+
+	public function has_inventory_item($inventory_item_id)
+		{
+		return $this->get_inventory_item($inventory_item_id) ? true : false;
+		}
+
+	public function get_item($item_id)
+		{
+		return $this->retrieve_items()->where('items_id', $item_id)->first();
+		}
+
 	public function has_item($item_id)
 		{
-		return $this->retrieve_items()->where('items_id', $item_id)->first() ? true : false;
+		return $this->get_item($item_id) ? true : false;
 		}
 
 	// public function max_weight()
