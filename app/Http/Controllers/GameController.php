@@ -769,6 +769,8 @@ class GameController extends Controller
 				}
 			}
 
+		$grope_mod = $Character->get_modifier('GROPE_POWER');
+
 		// $base_dodge = 0.05;
 		// $base_crit = 0.05;
 		// $crit_multipler_low = 2.0;
@@ -935,7 +937,7 @@ class GameController extends Controller
 						// $calc_damage = rand($low_damage, $high_damage);
 						// Grope damage first:
 						$grope_damage = ceil(rand($grope_low, $grope_high));
-						$grope_mod = $Character->get_modifier('GROPE_POWER');
+
 						if ($grope_mod)
 							{
 							$grope_damage = ceil($grope_damage * $grope_mod->value);
