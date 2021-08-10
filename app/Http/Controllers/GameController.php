@@ -19,6 +19,11 @@ class GameController extends Controller
 	 */
 	public function home(Request $request)
 		{
+		if (!auth()->user())
+			{
+			return redirect('/');
+			}
+
 		$Characters = Character::where('users_id', auth()->user()->id);
 		$request->session()->forget('character_id');
 		return view('home', ['characters' => $Characters->get(), 'admin_level' => auth()->user()->admin_level]);
@@ -28,7 +33,7 @@ class GameController extends Controller
 		{
 		if (!auth()->user())
 			{
-			return redirect('/home');
+			return redirect('/');
 			}
 
 		$character_id = $request->character_id;
