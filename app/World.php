@@ -9,6 +9,27 @@ class World extends Model
 {
 	protected $table = 'world';
 
+	// Use this function to retrieve dates to provide a method to offset times when needed
+	public static function getDateWithOffset()
+		{
+		$current_offset = 0; // pull this from database value
+		$date = new \DateTime();
+
+		$dateinterval = new \DateInterval('PT'.abs($current_offset).'H');
+
+		if ($current_offset < 0)
+			{
+			$dateinterval->invert = 1;
+			}
+
+		return $date->add($dateinterval);
+		}
+
+	public static function getDateStringWithOffset()
+		{
+		return self::getDateWithOffset()->format('Y-m-d H:i:s');
+		}
+
 	public static function tick()
 		{
 		$World = World::all()->first();
@@ -16,15 +37,13 @@ class World extends Model
 		// $current = Carbon::now();
 		$mins = $World->updated_at->diffInMinutes(Carbon::now('UTC'));
 		$add_cycle = floor($mins / 10);
-		if ($World->cycle + $add_cycle > 200)
+		while ($World->cycle + $add_cycle > 200)
 			{
 			$World->cycle = ($World->cycle + $add_cycle) - 200;
 			$World->year += 1;
 			}
-		else
-			{
-			$World->cycle += $add_cycle;
-			}
+
+		$World->cycle += $add_cycle;
 		$World->save();
 		return true;
 		}

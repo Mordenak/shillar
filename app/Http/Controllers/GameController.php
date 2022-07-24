@@ -109,6 +109,8 @@ class GameController extends Controller
 
 		$request_params = ['character' => $Character, 'room' => $Room];
 
+		$request_params['current_time'] = World::getDateStringWithOffset();
+
 		// Get the current background scheme:
 		$color_scheme = $Room->get_color_scheme();
 		$request_params['color_scheme'] = $color_scheme;
@@ -585,6 +587,47 @@ class GameController extends Controller
 				}
 			}
 		// SWIM / FLY Check?
+		if ($NextRoom->zone()->has_property('REQUIRES_FLYING'))
+			{
+			$prop = $NextRoom->zone()->get_property('REQUIRES_FLYING')->decode();
+			// Determine if player can fly?
+			if ($Character->has_modifier('CAN_FLY') || $Character->inventory()->has_item_property('GRANTS_FLYING'))
+				{
+				// Then they can proceed:
+				}
+			else
+				{
+				// if not, determine where to put the player:
+				if ($prop['drop_room'])
+					{
+					// This is single designated room:
+					$Character->last_rooms_id = $prop['drop_room'];
+					$Character->save();
+
+					// Fall damage?
+					$damage = $Character->receive_pure_damage(10);
+
+					// Add message?
+					Session::flash('zone_travel', "You fall through the sky and crash to the ground taking $damage damage.");
+					return $this->index($request);
+					}
+				}
+			}
+
+		if ($NextRoom->zone()->has_property('REQUIRES_SWIMMING'))
+			{
+			$prop = $NextRoom->zone()->get_property('REQUIRES_SWIMMING')->decode();
+			// Determine if player can fly?
+			if ($Character->has_modifier('CAN_SWIM') || $Character->inventory()->has_item_property('GRANTS_SWIMMING'))
+				{
+				// Then they can proceed:
+				}
+			else
+				{
+				Session::flash('zone_travel', 'To go that direction you would need to be able to swim!');
+				return $this->index($request);
+				}
+			}
 
 		// Heat damage?
 		if ($NextRoom->zone()->has_property('HEAT_DAMAGE'))
@@ -602,7 +645,7 @@ class GameController extends Controller
 			else
 				{
 				// Figure out the times:
-				$current_hour = Carbon::now()->format("H");
+				$current_hour = World::getDateWithOffset(7)->format('H');
 				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['end'])
 					{
 					// Take damage:
@@ -631,7 +674,8 @@ class GameController extends Controller
 			else
 				{
 				// Figure out the times:
-				$current_hour = Carbon::now()->format("H");
+				// $current_hour = now()->format("H");
+				$current_hour = World::getDateWithOffset(7)->format('H');
 				if ($current_hour >= $prop['begin'] && $current_hour <= $prop['end'])
 					{
 					// Take damage:
@@ -2511,6 +2555,13 @@ class GameController extends Controller
 				// pass:
 				$pass = true;
 				}
+			}
+
+		// Room redirect:
+		if ($RoomAction->redirect_room)
+			{
+			$Character->last_rooms_id = $RoomAction->redirect_room;
+			$Character->save();
 			}
 
 		if ($pass && $RoomAction->remember)

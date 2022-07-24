@@ -18,6 +18,8 @@ use App\WeaponType;
 use App\ForgeRecipe;
 use App\LootTable;
 use App\ShopItem;
+use App\ItemProperty;
+use App\ItemToItemProperty;
 
 class ItemController extends Controller
 {
@@ -53,8 +55,10 @@ class ItemController extends Controller
 
 		$LootTables = LootTable::where('items_id', $id)->get();
 		$ShopItems = ShopItem::where('items_id', $id)->get();
+
+		$ItemProperties = ItemProperty::all();
 		
-		return view('item.edit', ['item' => Item::findOrFail($id), 'item_types' => $item_types, 'item_fields' => $item_type_fields, 'weapon_types' => $weapon_types, 'forged_by' => $ResultForges, 'forged_with' => $UsedForges, 'dropped_by' => $LootTables, 'sold_by' => $ShopItems]);
+		return view('item.edit', ['item' => Item::findOrFail($id), 'item_types' => $item_types, 'item_fields' => $item_type_fields, 'weapon_types' => $weapon_types, 'forged_by' => $ResultForges, 'forged_with' => $UsedForges, 'dropped_by' => $LootTables, 'sold_by' => $ShopItems, 'item_properties' => $Item->properties()->get(), 'properties' => $ItemProperties]);
 		}
 
 	public function save(Request $request)
@@ -155,6 +159,35 @@ class ItemController extends Controller
 		$ActualItem->fill($item_values);
 		$ActualItem->save();
 
+		foreach ($request->item_properties as $item_property)
+			{
+			$ItemToItemProperty = new ItemToItemProperty;
+
+			if (isset($item_property['id']))
+				{
+				$ItemToItemProperty = ItemToItemProperty::findOrFail($item_property['id']);
+				if ($item_property['item_properties_id'] == 'null' && !$item_property['data'])
+					{
+					$ItemToItemProperty->delete();
+					continue;
+					}
+				}
+
+			if ($item_property['item_properties_id'] == 'null')
+				{
+				continue;
+				}
+
+			$values = [
+				'items_id' => $Item->id,
+				'item_properties_id' => $item_property['item_properties_id'],
+				'data' => $item_property['data'],
+				];
+
+			$ItemToItemProperty->fill($values);
+			$ItemToItemProperty->save();
+			}
+
 		// die(print_r($ActualItem));
 		// TODO: May save all save calls until end?
 
@@ -230,6 +263,22 @@ class ItemController extends Controller
 			return $this->get_item_fields($request->type_id, $request->item_id);
 			}
 		return $this->get_item_fields($request->type_id);
+		}
+
+	public function placeholder(Request $request)
+		{
+		if ($request->id === 'null')
+			{
+			// This is our hacky select value workaround:
+			return '{}';
+			}
+		// Given a property ID:
+		$ItemProperty = ItemProperty::findOrFail($request->id);
+		if ($ItemProperty)
+			{
+			return $ItemProperty->format;
+			}
+		return '{}';
 		}
 
 	public function lookup(Request $request)

@@ -38,6 +38,21 @@ class Inventory extends Model
 		return $this->character_items()->whereNotIn('id', $this->character_direct()->equipment_list());
 		}
 
+	public function has_item_property(string $property_name)
+		{
+		// die('test');
+		foreach ($this->inventory_items()->get() as $inventory_item)
+			{
+			// die(print_r(var_dump($inventory_item)));
+			if ($inventory_item->item()->has_property($property_name))
+				{
+				return true;
+				}
+			}
+
+		return false;
+		}
+
 	public function remove_all()
 		{
 		$this->inventory_items()->delete();

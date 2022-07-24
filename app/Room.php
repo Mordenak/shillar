@@ -137,7 +137,8 @@ class Room extends Model
 	public function generate_directions($Character)
 		{
 		$directions = [];
-		if ($this->zone()->has_property('SCRAMBLE_DIRECTIONS'))
+
+		if ($this->zone()->has_property('SCRAMBLE_DIRECTIONS') && !$Character->inventory()->has_item_property('COMPASS'))
 			{
 			// Get current valid directions:
 			$valid_dirs = [$this->id];

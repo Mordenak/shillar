@@ -322,7 +322,7 @@
 		@endforeach
 		@endif
 
-		@if ($room->zone()->has_property('TREASURE_HUNTING'))
+		@if ($room->zone()->has_property('TREASURE_HUNTING') && !$character->inventory()->has_item_property('COMPASS'))
 		Treasure Active!
 
 		@if (Session::pull('has_treasure'))
@@ -369,6 +369,7 @@
 		<br>
 		<div class="admin-display" style="padding-left: 1rem;">
 			-- Admin --<br>
+			Time: {{ $current_time }}<br>
 			Character: <a href="/character/edit/{{$character->id}}" target="_blank">{{$character->name}}</a><br>
 			Current Zone: <a href="/zone/edit/{{$room->zone()->id}}" target="_blank">{{$room->zone()->name}}</a><br>
 			Current Room: <a href="/room/edit/{{$room->id}}" target="_blank">{{$room->id}}</a><br>

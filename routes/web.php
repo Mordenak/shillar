@@ -188,3 +188,4 @@ Route::get('/room_property/lookup', 'RoomPropertyController@lookup');
 Route::get('/character/lookup', 'CharacterController@lookup');
 Route::get('/zone_property/placeholder', 'ZoneController@placeholder');
 Route::get('/spell_property/placeholder', 'SpellController@placeholder');
+Route::get('/item_property/placeholder', 'ItemController@placeholder');

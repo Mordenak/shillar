@@ -487,6 +487,21 @@ class Character extends Model
 		return true;
 		}
 
+
+	public function receive_damage($damage)
+		{
+		// ?
+		}
+
+	public function receive_pure_damage($damage)
+		{
+		// ?
+		$this->health = $this->health - $damage;
+		$this->save();
+
+		return $damage;
+		}
+
 	public function receive_heat_damage($damage)
 		{
 		// Ok, first find out if we take modified heat damage due to racial:
