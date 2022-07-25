@@ -15,7 +15,7 @@
 		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Score Required:</label>
 			<div class="col-md-3">
-				<input type="text" name="score_req" value="{{isset($chat_room) ? $chat_room->score_req : ''}}" class="form-control item-lookup">
+				<input type="text" name="score_req" value="{{isset($chat_room) ? $chat_room->score_req : ''}}" class="form-control">
 			</div>
 		</div>
 
