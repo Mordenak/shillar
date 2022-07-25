@@ -199,7 +199,9 @@ class GameController extends Controller
 			$request_params['bg_color'] = $Zone->bg_color;
 			}
 
-		$ChatRoom = ChatRoom::findOrFail(1);
+		// TODO: Refactor chat code so it's not required in both this place and the footer
+		$request_params['available_chatrooms'] = $Character->get_available_chat_rooms();
+		$ChatRoom = ChatRoom::findOrFail($Character->settings()->selected_chat_rooms_id);
 		$request_params['chat'] = $ChatRoom;
 
 		// TODO: This could be BAD!
@@ -510,12 +512,30 @@ class GameController extends Controller
 		// return view('game/main', $request_params);
 		}
 
+	public function change_chat_room(Request $request)
+		{
+		$Character = Character::findOrFail($request->characters_id);
+
+		$CharacterSetting = CharacterSetting::findOrFail(['characters_id' => $Character->id])->first();
+
+		$request_params = ['character' => $Character];
+		$ChatRoom = ChatRoom::findOrFail($request->chatroom);
+
+		$CharacterSetting->selected_chat_rooms_id = $ChatRoom->id;
+		$CharacterSetting->save();
+
+		return $this->footer($request);
+		}
+
 	public function footer(Request $request)
 		{
 		$Character = Character::findOrFail($request->characters_id);
 
 		$request_params = ['character' => $Character];
-		$ChatRoom = ChatRoom::findOrFail(1);
+		$ChatRoom = ChatRoom::findOrFail($Character->settings()->selected_chat_rooms_id);
+
+		$request_params['available_chatrooms'] = $Character->get_available_chat_rooms();
+
 		$request_params['chat'] = $ChatRoom;
 
 		// TODO: This could be BAD!
@@ -2642,7 +2662,7 @@ class GameController extends Controller
 			{
 			$request_params['is_admin'] = true;
 			}
-		// return $this->index($request);
+		return $this->footer($request);
 		if ($request->ajax())
 			{
 			// $this->index($request)

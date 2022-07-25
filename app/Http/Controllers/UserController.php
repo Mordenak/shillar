@@ -35,7 +35,9 @@ class UserController extends Controller
 			{
 			return redirect()->action('GameController@home');
 			}
-		return view('user.edit', ['user' => User::findOrFail($id)]);
+
+		$user = User::findOrFail($id);
+		return view('user.edit', ['user' => $user, 'characters' => $user->characters()]);
 		}
 
 	public function save(Request $request)

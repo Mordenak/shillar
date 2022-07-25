@@ -350,6 +350,7 @@
 
 			var footer_inserts = [
 				'/chat/message',
+				'/change_chat_room',
 				'/footer'
 				];
 

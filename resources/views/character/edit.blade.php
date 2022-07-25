@@ -124,6 +124,20 @@
 			</div>
 		</div>
 
+		<div class="usage-display" style="position: absolute;top: 4rem;left: 50%;">
+			@if (isset($character))
+
+			
+			@if (count($character->inventory()->character_items()) > 0)
+			<h4>Inventory [<a href="/inventory/edit/{{$character->inventory()->id}}">Edit</a>]</h4>
+			@foreach ($character->inventory()->character_items() as $item)
+			<a href="/item/edit/{{$item->item()->id}}">{{$item->id}}:{{$item->item()->name}} ({{$item->quantity}})</a><br>
+			@endforeach
+			@endif
+
+			@endif
+		</div>
+
 		@if (isset($character))
 		<input type="hidden" name="id" id="db-id" value="{{$character->id}}">
 		@endif

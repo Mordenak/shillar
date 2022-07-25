@@ -453,7 +453,18 @@
 @section('footer')
 	@if ($chat)
 	<div>
-		<h3 style="display: inline-block;">{{$chat->name}}</h3>
+		<h3 style="display: inline-block;">Select a room: </h3>
+
+		<form method="post" action="/change_chat_room" class="ajax" style="display: inline-block;">
+			<select name="chatroom" onchange="$(this).closest('form').submit();">
+				@foreach ($available_chatrooms as $chatroom)
+				<option value="{{$chatroom->id}}" {{$chatroom->id == $character->settings()->selected_chat_rooms_id ? 'selected' : ''}} >{{$chatroom->name}}</option>
+				@endforeach
+			</select>
+			<input type="hidden" name="characters_id" value="{{$character->id}}">
+			{{csrf_field()}}
+		</form>
+
 		<form method="post" action="/footer" class="ajax" style="display: inline-block;">
 			<label for="refresh-chat" class="fas fa-sync"> Refresh</label>
 			<input type="submit" id="refresh-chat" value="Refresh" style="display:none;">

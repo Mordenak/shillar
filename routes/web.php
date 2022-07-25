@@ -27,6 +27,7 @@ Route::get('/game', 'GameController@index');
 Route::post('/character_select', 'GameController@character_select');
 Route::post('/menu', 'GameController@menu');
 Route::post('/footer', 'GameController@footer');
+Route::post('/change_chat_room', 'GameController@change_chat_room');
 
 Route::post('/move', 'GameController@move');
 
@@ -177,6 +178,14 @@ Route::get('race/all', 'RaceController@all');
 Route::get('race/edit/{id}', 'RaceController@edit')->where('id', '[0-9]+');
 Route::get('race/create', 'RaceController@create');
 Route::post('race/save', 'RaceController@save');
+
+Route::get('chat_room/all', 'ChatRoomController@all');
+Route::get('chat_room/edit/{id}', 'ChatRoomController@edit')->where('id', '[0-9]+');
+Route::get('chat_room/create', 'ChatRoomController@create');
+Route::post('chat_room/save', 'ChatRoomController@save');
+
+Route::get('inventory/edit/{id}', 'InventoryController@edit')->where('id', '[0-9]+');
+Route::post('inventory/save', 'InventoryController@save');
 
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');

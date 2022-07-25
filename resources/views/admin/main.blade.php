@@ -20,6 +20,7 @@
 		<a href="forge/all">All Forge Recipes</a><br>
 		<a href="spell/all">All Spells</a><br>
 		<a href="spell_property/all">All Spell Properties</a><br>
+		<a href="chat_room/all">All Chat Rooms</a><br>
 		<a href="teleport/all" style="text-decoration: line-through;">Teleport Targets</a><br>
 		<a href="room_action/all">All RoomActions</a><br>
 		<a href="admin/knowledge">Knowledge Base [NYI]</a><br>

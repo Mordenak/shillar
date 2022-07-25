@@ -98,7 +98,7 @@
 		</div>
 
 		<br>
-		<a class="fa fa-plus" onclick="addZoneProperty(this);">Add Property</a>
+		<a class="fa fa-plus" onclick="addItemProperty(this);">Add Property</a>
 		<br><br>
 		</div>
 	</form>
@@ -122,7 +122,7 @@ $('.item-properties').on('change', 'select.item-property', function(e) {
 		});
 	});
 
-function addZoneProperty($btn)
+function addItemProperty($btn)
 	{
 	var $tmp = $('.properties-forms > div').last().clone();
 	// console.log($tmp.find('input').first().attr('name'));

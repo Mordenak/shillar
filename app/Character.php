@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use App\ChatRoom;
 use Session;
 
 class Character extends Model
@@ -550,5 +551,22 @@ class Character extends Model
 			}
 		
 		return $damage;
+		}
+
+	public function get_available_chat_rooms()
+		{
+		$ChatRooms = ChatRoom::all();
+
+		$available_rooms = [];
+
+		foreach ($ChatRooms as $ChatRoom)
+			{
+			if ($this->score >= $ChatRoom->score_req)
+				{
+				$available_rooms[] = $ChatRoom;
+				}
+			}
+
+		return $available_rooms;
 		}
 	}
