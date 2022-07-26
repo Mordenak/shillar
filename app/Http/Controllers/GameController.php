@@ -7,7 +7,7 @@ use Session;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\{User, Character, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, CharacterSpellBuff, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, CreatureKill, Graveyard};
+use App\{User, Character, Race, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, CharacterSpellBuff, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, GroundItemToItemProperty, InventoryItemToItemProperty, ItemProperty, CreatureKill, Graveyard};
 
 class GameController extends Controller
 	{
@@ -1229,16 +1229,105 @@ class GameController extends Controller
 							$quantity = Session::get('admin_killsim');
 							}
 						// die(print_r($GroundItem));
-						if ($GroundItem)
+						if ($GroundItem && (!$GroundItem->properties()->get()))
 							{
 							$GroundItem->fill(['expires_on' => time() + 300, 'quantity' => $GroundItem->quantity + $quantity]);
+							// else don't stack
 							}
 						else
 							{
 							$GroundItem = new GroundItem;
 							$GroundItem->fill(['rooms_id' => $request->room_id, 'characters_id' => $Character->id, 'items_id' => $LootTable->items_id, 'expires_on' => time() + 300, 'quantity' => $quantity]);
 							}
+
 						$GroundItem->save();
+
+						if ($GroundItem->item()->has_property('DROP_RANDOM'))
+							{
+							// die('yes');
+							// This item drops with random properties:
+							$random_properties = $GroundItem->item()->get_property('DROP_RANDOM')->decode();
+
+							$new_properties = [];
+
+							// die(print_r($random_properties));
+
+							// end result: Prefixes and Affixes
+							// Surpeme Masculine Human XX XX of Precision
+
+							// stat type is an affix
+							$new_item_name = '';
+
+							// Get a random Stat amount:
+							$stat_bonus = rand(0, (count($random_properties['STAT_BONUS']) - 1));
+
+							if (isset($random_properties['STAT_BONUS'][$stat_bonus]))
+								{
+								$stat_amount = $random_properties['STAT_BONUS'][$stat_bonus]['amount'];
+								$new_properties['TRADER_SCORE_RESTRICTION'] = ["score" => $random_properties['STAT_BONUS'][$stat_bonus]['req']];
+								$new_item_name .= $random_properties['STAT_BONUS'][$stat_bonus]['title'];
+								}
+
+							// Gender:
+							$random_gender = rand(0, (count($random_properties['GENDER']) - 1));
+
+							if (isset($random_properties['GENDER'][$random_gender]))
+								{
+								$new_properties['GENDER_RESTRICTION'] = ["gender" => $random_properties['GENDER'][$random_gender]['gender']];
+								$new_item_name .= ' ' . $random_properties['GENDER'][$random_gender]['title'];
+								}
+
+							// Race:
+							if ($random_properties['RACE'] == 'USE_DATABASE')
+								{
+								// Pick a random race from the Database:
+								$RandomRace = Race::inRandomOrder()->limit(1)->first();
+
+								$new_properties['RACE_RESTRICTION'] = ["race" => $RandomRace->id];
+								$new_item_name .= ' ' . $RandomRace->name;
+								}
+
+							// Get the actual item name:
+							$new_item_name .= ' ' . $GroundItem->item()->name;
+
+							$new_properties['RENAME_ITEM'] = ['name' => $new_item_name];
+
+							// Get a random Stat type:
+							$random_stat = rand(0, (count($random_properties['STAT_TYPE']) - 1));
+
+							if (isset($random_properties['STAT_TYPE'][$random_stat]))
+								{
+								$new_properties['STAT_BONUS'] = [$random_properties['STAT_TYPE'][$random_stat]['stat'] => $stat_amount];
+								$new_item_name .= ' of ' . $random_properties['STAT_TYPE'][$random_stat]['title'];
+								}
+
+
+							// Complete the item:
+
+							// die(print_r($new_properties));
+							foreach ($new_properties as $prop => $data)
+								{
+								$GroundItemToItemProperty = new GroundItemToItemProperty;
+
+								// Find the ItemProperty:
+								$ItemProperty = ItemProperty::where(['name' => $prop])->first();
+
+								// die(print_r($ItemProperty->id));
+
+								$values = [
+									'ground_items_id' => $GroundItem->id,
+									'item_properties_id' => $ItemProperty->id,
+									'data' => json_encode($data)
+									];
+
+								// die(var_dump($values));
+
+								$GroundItemToItemProperty->fill($values);
+								$GroundItemToItemProperty->save();
+								}
+
+							}
+						// End drop random						
 						}
 					}
 				}
@@ -1361,6 +1450,25 @@ class GameController extends Controller
 			else
 				{
 				// TODO: Transfer GroundItem Properties here!
+				if ($GroundItem->properties()->count() > 0)
+					{
+					foreach ($GroundItem->properties()->get() as $GroundItemToItemProperty)
+						{
+						$InventoryItemToItemProperty = new InventoryItemToItemProperty;
+
+						$values = [
+							'inventory_items_id' => $received,
+							'item_properties_id' => $GroundItemToItemProperty->item_properties_id,
+							'data' => $GroundItemToItemProperty->data
+							];
+
+						$InventoryItemToItemProperty->fill($values);
+						$InventoryItemToItemProperty->save();
+						}
+
+					$GroundItem->properties()->delete();
+					}
+
 				$GroundItem->quantity = $GroundItem->quantity - 1;
 				if ($GroundItem->quantity == 0)
 					{
@@ -1941,18 +2049,51 @@ class GameController extends Controller
 		if ($request->action == 'equip')
 			{
 			// We need to ensure the item is actually in our inventory...
+
+			// get a list of all items:
+			$inventory_items = InventoryItem::where(['inventory_id' => $Character->inventory()->id])->pluck('id')->toArray();
+
 			// die('stuff');
 			// die(print_r($request->equipment));
 			// die(print_r($Character->inventory()->inventory_items()->pluck('id')->toArray()));
 			foreach ($request->equipment as $slot => $item)
 				{
-				if ($item != 0 && !in_array($item, $Character->inventory()->inventory_items()->pluck('id')->toArray()))
+				if ($item != 0 && !in_array($item, $inventory_items))
 					{
 					Session::flash('errors', 'You no longer have that item!');
 					break;
 					}
 				if ($item > 0)
 					{
+					// Confirm we can wear this item!?
+					$InventoryItem = InventoryItem::findOrFail($item);
+
+					if ($InventoryItem->has_property('GENDER_RESTRICTION'))
+						{
+						// Compare by ID instead of title...
+						if ($Character->gender()->title == $InventoryItem->get_property('GENDER_RESTRICTION')->decode()['gender'])
+							{
+							// can wear
+							}
+						else
+							{
+							Session::flash('errors', 'That item does not fit your Gender!');
+							break;
+							}
+						}
+					elseif ($InventoryItem->has_property('RACE_RESTRICTION'))
+						{
+						if ($Character->races_id == $InventoryItem->has_property('RACE_RESTRICTION'))
+							{
+							// can wear
+							}
+						else
+							{
+							Session::flash('errors', 'That item does not fit your Race!');
+							break;
+							}
+						}
+
 					$Equipment->$slot = $item;
 					}
 				else
@@ -2000,6 +2141,7 @@ class GameController extends Controller
 				// die(print_r($CharacterItem->item()));
 
 				$dis_val = $CharacterItem->item()->toArray();
+				$dis_val['name'] = $CharacterItem->get_name();
 				$dis_val['id'] = $CharacterItem->id;
 				$dis_val['selected'] = false;
 				// die(print_r($Equipment->weapon.' == '.$CharacterItem->id.'::'));
@@ -2014,6 +2156,7 @@ class GameController extends Controller
 				{
 				// $ItemArmor = ItemArmor::where(['items_id' => $Item->id])->first();
 				$dis_val = $CharacterItem->item()->toArray();
+				$dis_val['name'] = $CharacterItem->get_name();
 				$dis_val['id'] = $CharacterItem->id;
 				$dis_val['selected'] = false;
 

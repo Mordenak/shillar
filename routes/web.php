@@ -24,6 +24,8 @@ Auth::routes();
 Route::get('/home', 'GameController@home');
 
 Route::get('/game', 'GameController@index');
+// Hmm, both POST and GET???
+Route::post('/game', 'GameController@index');
 Route::post('/character_select', 'GameController@character_select');
 Route::post('/menu', 'GameController@menu');
 Route::post('/footer', 'GameController@footer');
@@ -186,6 +188,9 @@ Route::post('chat_room/save', 'ChatRoomController@save');
 
 Route::get('inventory/edit/{id}', 'InventoryController@edit')->where('id', '[0-9]+');
 Route::post('inventory/save', 'InventoryController@save');
+
+Route::get('inventory_item/edit/{id}', 'InventoryItemController@edit')->where('id', '[0-9]+');
+Route::post('inventory_item/save', 'InventoryItemController@save');
 
 // Autocoimplete lookup routes:
 Route::get('/item/lookup', 'ItemController@lookup');

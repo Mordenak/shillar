@@ -13,6 +13,7 @@
 
 			<div class="form-group row">
 				<input type="hidden" name="inventory_items[{{$item->id}}][id]" value="{{$item->id}}">
+				
 				<label class="col-md-1 col-form-label text-md-right">Item:</label>
 				<div class="col-md-1">
 					<input type="text" name="inventory_items[{{$item->id}}][items_id]" value="{{isset($item) ? $item->items_id : ''}}" class="form-control auto-lookup item-lookup">
@@ -20,6 +21,9 @@
 				<label class="col-md-1 col-form-label text-md-right">Quantity:</label>
 				<div class="col-md-1">
 					<input type="text" name="inventory_items[{{$item->id}}][quantity]" value="{{isset($item) ? $item->quantity : ''}}" class="form-control">
+				</div>
+				<div class="col-md-2" style="margin-top: auto; margin-bottom: auto;">
+					<a href="/inventory_item/edit/{{$item->id}}">[{{$item->id}}] Edit inventory item</a>
 				</div>
 			</div>
 

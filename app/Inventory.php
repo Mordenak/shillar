@@ -24,12 +24,12 @@ class Inventory extends Model
 
 	public function inventory_items()
 		{
-		return $this->hasMany('App\InventoryItems');
+		return $this->hasMany('App\InventoryItem');
 		}
 
 	public function character_items()
 		{
-		return $this->hasMany('App\InventoryItems')->orderby('id')->get();
+		return $this->hasMany('App\InventoryItem')->orderby('id')->get();
 		}
 
 	public function unequipped_items()
@@ -213,7 +213,7 @@ class Inventory extends Model
 			}
 		else
 			{
-			$InventoryItems = new InventoryItems;
+			$InventoryItem = new InventoryItem;
 			$values = [
 				'inventory_id' => $this->id,
 				'items_id' => $item_id
@@ -222,8 +222,8 @@ class Inventory extends Model
 				{
 				$values['quantity'] = $quantity;
 				}
-			$InventoryItems->fill($values);
-			$InventoryItems->save();
+			$InventoryItem->fill($values);
+			$InventoryItem->save();
 			}
 
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
@@ -231,6 +231,6 @@ class Inventory extends Model
 
 		$this->cache_items();
 
-		return true;
+		return $InventoryItem->id;
 		}
 	}

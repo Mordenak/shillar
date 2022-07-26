@@ -5,15 +5,15 @@ namespace App;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ItemToItemProperty extends Model
+class InventoryItemToItemProperty extends Model
 {
 	use HasFactory;
 
-	protected $fillable = ['items_id', 'item_properties_id', 'data'];
+	protected $fillable = ['inventory_items_id', 'item_properties_id', 'data'];
 
-	public function item()
+	public function inventory_item()
 		{
-		return $this->belongsTo('App\Item');
+		return $this->belongsTo('App\InventoryItem');
 		}
 
 	public function property()

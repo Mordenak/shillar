@@ -10,6 +10,6 @@ class ChatRoom extends Model
 
 	public function messages()
 		{
-		return $this->hasMany('App\ChatRoomMessage', 'chat_rooms_id')->orderBy('created_at', 'desc')->limit(20)->get();
+		return $this->hasMany('App\ChatRoomMessage', 'chat_rooms_id')->orderBy('created_at', 'desc')->limit(50)->get();
 		}
 }

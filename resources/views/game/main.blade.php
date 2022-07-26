@@ -311,7 +311,7 @@
 			<input type="hidden" name="character_id" value="{{$character->id}}">
 			<input type="hidden" name="ground_item_id" value="{{$ground_item->id}}">
 			<input type="hidden" name="no_spawn" value="true">
-			You notice a <label for="pickup" tabindex="11" value="{{$ground_item->id}}" class="submit-val">{{$ground_item->item()->name}}</label> 
+			You notice a <label for="pickup" tabindex="11" value="{{$ground_item->id}}" class="submit-val">{{$ground_item->get_name()}}</label> 
 			@if ($ground_item->quantity > 1)
 			just dropped (x{{$ground_item->quantity}}).
 			@else

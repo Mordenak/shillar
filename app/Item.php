@@ -96,6 +96,19 @@ class Item extends Model
 				'charisma' => $this->actual_item()->charisma_bonus,
 				'armor' => $this->actual_item()->armor
 				];
+
+			// Now check properties:
+
+			// first BASE properties:
+			if ($this->has_property('STAT_BONUS'))
+				{
+				$base_stats = $this->get_property('STAT_BONUS')->decode();
+
+				foreach ($base_stats as $stat => $value)
+					{
+					$arr[$stat] = $arr[$stat] + $value;
+					}
+				}
 			}
 
 		return $arr;

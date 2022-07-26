@@ -113,6 +113,17 @@ class Equipment extends Model
 						$bonus_stats[$stat] = $bonus_stats[$stat] + $value;
 						}
 					}
+
+				// Then check the InventoryItem:
+				if ($InventoryItem->has_property('STAT_BONUS'))
+					{
+					$extra_bonus = $InventoryItem->get_property('STAT_BONUS')->decode();
+
+					foreach ($extra_bonus as $stat => $value)
+						{
+						$bonus_stats[$stat] = $bonus_stats[$stat] + $value;
+						}
+					}
 				}
 			}
 
