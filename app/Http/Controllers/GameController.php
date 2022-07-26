@@ -175,6 +175,10 @@ class GameController extends Controller
 			{
 			if (time() >= $GroundItem->expires_on)
 				{
+				if ($GroundItem->properties()->count() > 0)
+					{
+					$GroundItem->properties()->delete();
+					}
 				$GroundItem->delete();
 				continue;
 				}
@@ -1290,8 +1294,6 @@ class GameController extends Controller
 							// Get the actual item name:
 							$new_item_name .= ' ' . $GroundItem->item()->name;
 
-							$new_properties['RENAME_ITEM'] = ['name' => $new_item_name];
-
 							// Get a random Stat type:
 							$random_stat = rand(0, (count($random_properties['STAT_TYPE']) - 1));
 
@@ -1300,6 +1302,8 @@ class GameController extends Controller
 								$new_properties['STAT_BONUS'] = [$random_properties['STAT_TYPE'][$random_stat]['stat'] => $stat_amount];
 								$new_item_name .= ' of ' . $random_properties['STAT_TYPE'][$random_stat]['title'];
 								}
+
+							$new_properties['RENAME_ITEM'] = ['name' => $new_item_name];
 
 
 							// Complete the item:
