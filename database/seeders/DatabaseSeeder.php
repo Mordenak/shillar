@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
 			LootData::class,
 			ForgeRecipes::class,
 			QuestData::class,
-			TeleportTargets::class,
 			TestCharacters::class,
 			]);
 		}

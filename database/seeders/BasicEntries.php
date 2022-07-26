@@ -139,25 +139,6 @@ class BasicEntries extends Seeder
 			['name' => 'HAS_INVENTORY', 'custom_view' => 'partials/inventory', 'description' => 'This room has shows the inventory.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			]);
 
-		DB::table('spell_types')->insert([
-			['name' => 'TELEPORT_ROOM', 'description' => 'Used to move a character to another room.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'MAGIC_DAMAGE', 'description' => 'Used to deal basic magic damage to a creature.', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'DAMAGE_ABSORB', 'description' => 'Absorbs damage at the expensive of...', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'AVOIDANCE', 'description' => 'Grants an additional chance to dodge', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'EXTRA_ARMOR', 'description' => 'Grants additional armor', 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'RESTORE_HEALTH', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'RESTORE_FATIGUE', 'description' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			]);
-
-		DB::table('spells')->insert([
-			['name' => 'Teleport', 'spell_types_id' => 1, 'description' => 'Teleport spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Town Portal', 'spell_types_id' => 1, 'description' => 'Town Portal spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Bind Wounds', 'spell_types_id' => 6, 'description' => 'Bind Wounds spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Rejuvinate', 'spell_types_id' => 7, 'description' => 'Rejuvinate spell.', 'formula' => null, 'duration' => null, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Bedazzle', 'spell_types_id' => 4, 'description' => 'Bedazzle spell.', 'formula' => 'level', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			['name' => 'Magic Shield', 'spell_types_id' => 5, 'description' => 'Magic Shield spell.', 'formula' => '[level] * 0.5', 'duration' => 600, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
-			]);
-
 		DB::table('chat_rooms')->insert([
 			['name' => 'Nostalgia Tavern', 'score_req' => 0, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
 			['name' => "Bizarro's Bizarre House", 'score_req' => 20000, 'created_at' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")],
