@@ -1,0 +1,353 @@
+Sotrin's EZmap - 07/25/2002
+It is the 201 cycle in the year of our lord 502
+
+Shilla 2 - The Glacier
+
+You are walking through the cracks of a glacier.
+
+
+
+/---------\  
+|    N    |  u|d = Up/Down 
+|    |    |  eg  = enter gate
+| W -+- E |  sp  = shimmering blue portal
+|    |    |  of  = open fissure  
+|    S    |   
+\---------/
+                                      
+Key:          
+LXX = Link to XX (ex/ XX= LE)
+WXX = Warp to XX (ex/ XX= S1)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Glacier: fastpath directions
+~~~~~~~~~~~~~~
+To Glacier from Great Plains entrance:  
+   go w, w, all n to 6 way spot kill to get rune
+
+Bear tooth bracelet(30dex 30con 40Wis 40Chr):  fight Polar Bear
+   from 6 way go w
+
+frozen ring(60dex):  fight Ice Demon
+   from 6 way go n, n, n, n, n, e, e, ne, ne, n, n, nw, nw, all up
+
+Shaman Talisman amulet(150dex 75con):  fight Neanderthal with Spear
+   from 6 way go n, n, n, n, n, e
+
+Ice Ammy/Race Mythril Armor:  fight Thor(Ammy), Odin(Armor)
+   from 6way go nw, nw, down, nw, nw, n, n, n, n, up, nw, up, nw, nw, up
+
+Ice bracelet(80dex 90con 80wis 90chr) and ring(150dex 300con): fight Loki(bracelet), Baldur(ring)
+   from Ice Ammy spot above go nw, all e, down, e, e, e, e, e, down
+   from 6 way go all n, all down, ne
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Glacier: entrance is on level 0
+~~~~~~~~~~~~~~
+Glacier Key:
+aR  = 'a' group with glacier rune drop
+ *  = group creatures found (see creature info)
+*DX = down........ connects to X 
+*UX = up.......... connects to X 
+*@X = up and down. connects to X  
+   (* is creature group a thru j)
+   (X is connection 1-9,A-T)
+LGE = return Link from Great Plains 
+LGP = Link to Great Plains (see Mountain map)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+level -2:
+~~~~~~~~~~~~~~                           (X col coord)
+    H   I   J   K   L   M   N   O   P   Q   R   S
+
+0J                                 iUN- i - i 
+                                            |
+0I                                          i
+                                            |
+0H                                      i - i - i
+                                        |   |   |
+0G                                      i - i - i
+                                        |   |   |
+0F                                      i - i - i
+                                            |
+0E                                          i
+                                            |
+0D         fUE                     iUL      i
+          /                         |       |
+0C      f                           i       i
+        |                           |       |
+0B      f               i - i - i - i - i - i
+        |             /
+0A      f           i                            
+        |         /                              
+01      f       i      eUR- e - e - e - e - e - e
+        |       |                               |
+02      f       i          eUT                  e
+        |     /               \                 |
+03      f -fUM                  e               e
+      /                       / |               |
+04 fUD                     eUQ  e               e
+                              /   \             |
+05                          e       e           e
+                          /           \         |
+06                     eUA              e       e
+                                          \   /
+07                                          e
+                                            |
+08                                      e - e
+                                      /
+09                     eUB- e - e - e
+(Y row coord)
+    H   I   J   K   L   M   N   O   P   Q   R   S
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+level -1:
+~~~~~~~~~~~~~~                           (X col coord)
+    F   G   H   I   J   K   L   M   N   O   P
+
+0J                         jUO- j - j - j -jDN
+                                    |
+0I                                  j
+                                    |
+0H                              j - j - j
+                                |   |   |
+0G                              j - j - j
+                                |   |   |
+0F                              j - j - j
+                                    |    
+0E                                  j
+                                    |
+0D                 f@E  j - j - j - j      i@L
+                        |
+0C                      j
+                        |
+0B          j - j - j - j
+          /     
+0A      j                       
+      /         
+01 dUK                         e@R
+    |          
+02  d                              e@T
+    |          
+03  d              f@M
+    |         
+04  d      f@D             bU8     bDQ
+    |                         \   /   
+05  d                           b  
+      \                           \
+06      d - d - d - d - d - d -dDA  b
+          \                 |       |
+07         dUC             dU9      b
+                                    |
+08                                  b
+                                    |
+09                             e@B  b
+                                    |
+10 bU1                     bU7      b
+    |                       |       |
+11  b - b - b - b - b - b - b - b - b
+(Y row coord)
+    F   G   H   I   J   K   L   M   N   O   P
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+level 0:
+~~~~~~~~~~~~~~                           (X col coord)
+    E   F   G   H   I   J   K   L   M   N   O   P
+
+0J             fUF- f - f - f -fDO
+                        |
+0I                      f
+                        |
+0H                  f - f - f
+                    |   |   |
+0G                  f - f - f
+                    |   |   |
+0F                  f - f - f
+                        |
+0E                      f      
+                        |
+0D                     fDE                     i@L
+                          
+0C                             cUS- c - c - c - c
+                                  \             |
+0B                                  c          cUP 
+                                      \
+0A dUJ                                  c
+      \                                 |
+01     dDK                         e@R  c
+                                        |
+02                                     cDT
+                                      /
+03                     aDM          c
+                        |         / 
+04             aDD      a - c -cD8                               
+                |       |               
+05              a       a                  
+                |       |                
+06              a       a              
+                |       |              
+07             aDC      a      aD9       
+                  \     |     /          
+08                  a   a   a            
+                      \ | /              
+09      b - b - b - b -aR - a - a -aDB   
+        |               |       |        
+10     bD1              a      aD7       
+                        |                
+11                      a	             
+                        |                
+12                      a
+                        |
+13                      a	
+                        |
+14                      a	
+                        |
+15                      a(LGE)	
+                        |
+16                     LGP	
+(Y row coord)
+    E   F   G   H   I   J   K   L   M   N   O   P
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+level 1:
+~~~~~~~~~~~~~~                           (X col coord)
+    C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q
+        
+0J     gUG- g - g - g -gDF
+                |               
+0I              g           
+                |           
+0H          g - g - g     
+            |   |   |       
+0G          g - g - g     
+            |   |   |       
+0F          g - g - g     
+                |           
+0E              g           
+                |           
+0D              g                  cUI- c - c - c - c -cDL- c
+                |                                           |
+0C dUH          g - g - g - g - g - g -gDS                  c
+      \           \                                         |
+0B      d           g                                  cDP- c
+          \           \
+0A         dDJ          g   
+                          \
+01                          g - g - g - g -gDR
+(Y row coord)
+    C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+level 2:
+~~~~~~~~~~~~~~                           (X col coord)
+    A   B   C   D   E   F   G   H   I   J   K   L 
+
+0J      h - h -hDG
+        |
+0I      h
+        |
+0H  h - h - h
+    |   |   |
+0G  h - h - h
+    |   |   |
+0F  h - h - h
+        |
+0E      h
+        |
+0D      h - h - h - h - h - h - h - h - h -hDI
+          \
+0C         hDH
+(Y row coord)
+    A   B   C   D   E   F   G   H   I   J   K   L 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creature notes:
+   ah = average hit (assumes full black/azure armor)
+   at = # of attacks by creature 
+   GT = greater than
+   K  = thousand (used in point estimates)
+   lp = life points of creature (aka hit points on 
+        Nightblade's site)
+   M  = Million
+   mh = max hit (note: creatures with * are reported 
+        using consider)
+   xp = eXperience points
+   .c = confirmed drop
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Glacier creatures
+~~~~~~~~~~ 
+Group a: level 0 (entrance to Glacier)
+Penguins ~ mh=1800/ ah=?/ lp=100K/ xp=100K/ at=3
+Sea Lion ~ mh=1500/ ah=?/ lp=100K/ xp=100K/ at=3
+
+Group b: levels -1, 0
+Polarbear  ~ mh=1850/ ah=910(red),900(k armor)/ lp=200K/ xp=100K/ at=2/ 
+   Bear tooth bracelet(30dex 30con 40Wis 40Chr).c
+Walrus ~ mh=2245/ ah=?/ lp=200K/ xp=100K/ at=2
+
+Group c: level 0, 1
+Neanderthal with Club ~ mh=2700/ ah=?/ lp=285K/ xp=260K/ at=3
+Neanderthal with Spear ~ mh=2250/ ah=1500(pearl), 1200(red), 600(k armor)/ 
+   lp=275K/ xp=300K/ at=3/ Shaman Talisman amulet(150dex 75con).c
+
+Group d: level -1
+Pirate Crew ~ mh=4125/ ah=?/ lp=430K/ xp=385K/ at=5
+Pirate Captain ~ mh=3300/ ah=?/ lp=430K/ xp=405K/ at=5
+
+Group e: level -1, -2
+Viking Horde ~ mh=4500/ ah=1300(black)/ lp=650K/ xp=700K/ at=6
+Viking Warrior ~ mh=3900/ ah=1300(black)/ lp=650K/ xp=650K/ at=6
+
+Group f: level -1, -2
+Sabertooth Tiger ~ mh=3095/ ah=?/ lp=830K/ xp=860K/ at=2/ 
+   raw imp(heals 2200).c
+Mammoth ~ mh=3600/ ah=?/ lp=830K/ xp=880K/ at=2
+
+Group g: level 1
+Ice Demon ~ mh=5850/ ah=2800(red)/ lp=2.75M/ xp=2.9M/ at=3/ 
+   frozen ring(60dex).c
+Blue Dragon ~ mh=4950/ ah=2950?/ lp=2.75M/ xp=2.9M/ at=3/ 
+   raw imp(heals 2200).c
+
+Group h: level 2
+Thor ~ mh=3750/ ah=2850(k armor)/ lp=4.5M/ xp=4.75M/ at=1/ 
+   Nectar(heals 3300).c, Ice Amulet(200dex 200con).c
+Odin ~ mh=3375/ ah=2900?/ lp=5.5M/ xp=4.8M/ at=1/ 
+   Race Mythril armor(all but helm).c
+   (Races: Human, Orcish, Halfling, Dwarven, Elven, Avian, Reptilian, Minotaur, Arachnid, Giant)
+   (Armor: Neck-Neckbrace, Chest-Ringmail, Legs-Pants, Feet-Boots, Arm-Buckler, Hands-Gloves)
+
+Group i: level 0, -1, -2
+Balder ~ mh=9000/ ah=5800/ lp=3.5M/ xp=4M/ at=2/ 
+   Nectar(heals 3300).c, Ice Ring(150dex 300con).c
+Loki ~ mh=8250/ ah=5800/ lp=3.5M/ xp=4.2M/ at=2/ 
+   Ice Bracelet(80dex 90con 80wis 90chr).c
+
+Group j: level -1
+Winged Ice Serpant ~ mh LT 2800 GT 2792/ ah=?/ lp=1.4M/ xp=1.5M/ at=2/ 
+   raw imp(heals 2200).c
+Yeti ~ mh=3750/ ah=?/ lp=1.4M/ xp=1.4M/ at=2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The Wandering Provisioner 
+"I am a provider of that which shall tantalize thy pallet. Only the finest of sustenance do I parlay to those in need. Of course. I like to haggle. I hope you do to. "
+
+Items sold:
+burnt stuff(heals 450)
+Dragon Ribs(heals 
+Mammouth steak(heals 820)
+red hot chili peppers(heals 650)
+rhino horn(heals 1000)
+shrimp(heals 1420)
+tuna(heals 360)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you wish to contribute, contact me with updates/corrections refering to the 
+EZmap name and X/Y coords at Sotrin_GOTR@hotmail.com
+
+Help with stats from.... GotR members, Stev
+
+Thanks to Betaprobe for help with Glacier mapping.
+Thanks to Bigbob, Ironz, Sir_zane, Zil, Throttle, Potatoes, Cb3, Bod, Grower, Traninn, Kas, Gulimon, and Darksatins for help with Glacier stats.
+
+Thanks, and happy hunting...
+Sotrin, Elder of Philosophy, Guardian of the Realm

@@ -1,0 +1,507 @@
+Sotrin's EZmap - 06/11/2002
+It is the 162 cycle in the year of our lord 502
+
+Shilla 2 - The Mountain, Dark Cave, Great Plains, Lake,
+   Sky Castle, Clouds, and Volcano
+
+Note:  To enter clouds at CL, you need Pegasus wings so 
+you can fly (from Pegasus Scout in mountains). Don't eat 
+your last one or you die.
+
+
+/---------\  
+|    N    |  u|d = Up/Down 
+|    |    |  eg  = enter gate
+| W -+- E |  sp  = shimmering blue portal
+|    |    |  of  = open fissure  
+|    S    |   
+\---------/
+                                      
+Key:          
+LXX = Link to XX (ex/ XX= LE)
+WXX = Warp to XX (ex/ XX= S1)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The Mountain Trail/ Dark Cave/ SkyCastle/ 
+Clouds (submitted by Maw):
+~~~~~~~~~~~~~~
+Mountain Key:
+ GH = Green Hydra (drops green scale armor)
+ LE = Lake Entrance (can also go up here, back thru 
+      the open fissure)
+ M1 = Mountain location #1
+ PR = Park Ranger (entrance to mountain trail, have 
+      to save the king to be allowed to fight)
+ UR = Unidentified Mountains Rune (base cost 20K)
+ VS = Volcano sign (link to Volcano map)
+
+Cave Key:
+ DC = Dark Cave entrance
+LSC = Link to Small crack, entrance to the Great Plains map
+ MR = Mountain repo center 
+ t2 = warp from Town location w2
+
+Sky Castle Key:
+ AA = ArchAngel (drops ruby ring, can't move until you fight) 
+      can only fight first time, then opens 5 Glimmering Portals, 
+      GGD disappears after entering/fighting.
+      1st Glimmering Portal - You are standing before a well guarded 
+                     castle (see Shilla Center map C/01 at LCE).
+      2nd Glimmering Portal - You are standing at the foot of the
+                     mountains at the start of a trail (see this map
+                     A/25 at PR).
+      3rd Glimmering Portal - You have entered into a blackened abyss
+                     (see Shilla Center map D/10 at A).
+      4th Glimmering Portal - You are standing in blue water.  In
+                     the center of the Lake (see this map G/33 at LLE) 
+      5th Glimmering Portal - You are standing on a path to Druid 
+                     Valley (see Shilla Center map E/08 at LDV)
+ AE = AirElemental (after killing see GGD)                
+GGD = Great Golden Doors (available after you fight 
+      the AE)  
+ PG = Sky Castle locations with higher frequency of pearl gauntlets
+      (includes S1 and WS1)
+Nxx = Sky Castle locations with higher frequency of pearl necklace (N and Nt7)
+Nt7 = warp from Town location w7
+ S1 = Sky Castle location 1
+ SH = Great Hall in Sky Castle
+ t5 = warp from Town location w5
+WS1 = Warp to S1 (going S only, probably a flaw)
+
+Cloud Key:
+ AG = Air Guardian (paths don't open until torches are all lit)
+ CT = crystal torch (Light the Torch)
+      NOTE: light all 4 torches to open path to AG, 
+      the spot must be free of creatures to light torch 
+      (kill or keep trying)
+ VD = spot where Valkyrie seems to drop diamonds more often
+                                          
+                                         (X col coord)
+    A   B   C   D   E   F   G   H   I   J   K   L   M  
+
+01                          *
+                          /   \
+02                      *       *
+                      / |       | \
+03                  *   *       *   *
+                  /     |       |     \
+04              * - * - CT      CT- * - *
+              /           \   /           \
+05          *               AG              * 
+              \           /   \           /
+06              * - * - CT      CT- * - *
+                  \     |       |     /
+07                  *   *       *   *
+                      \ |       | /
+08                      *       *
+                          \   /
+09          VD------------- * ------------- *
+            |                               |
+10          |   * - * - * - * - * - * - *   |
+            |   |          u|d          |   |
+11          |   *   * - * - * - * - PG  *   |
+            |   |   |               |   |   |
+12          |   *   *   * - AE- *  WS1  *   |
+            |   |   |   |  GGD  |   |   |   |
+13          *   *   t5  *  FAA  *   S1  *   *
+            |   |   |   |       |   |   |   |
+14          |   *   *  Nt7- * -N*   PG  *   |  
+            |   |   |      u|d      |   |   |
+15          |   *   * - * - * - * - PG  *   | 
+            |   |                       |   |
+16          |   * - * - * - SH- * - * - *   | 
+            |             eg|back out       |
+17          * ------------- CL------------- *  
+                            | 
+18                        sp|jump          LVS 
+                            |             /
+19              * - * - * - GH- * - * -LM1 
+                |   |   |   |   |   |   |  
+20              * - * - * - * - * - * - *  
+               u|d          |open fissure 
+21              *          LLE  
+               u|d             
+22              *              
+               u|d 
+23  * - * - * - * - * - * - DC- * - * - * - * - MR
+   u|d                         u|d
+24  * - * - *               * - t2
+           u|d             u|d
+25  PR- * - UR              * - * - *
+                                   u|d
+26                                  *   
+                                   u|d
+27                                  *   
+                                   u|d
+28                                  *   
+                                   u|d
+29                                  *   
+                                   u|d
+30                                 LSC 
+(Y row coord)                     (Link to Great Plains)
+    A   B   C   D   E   F   G   H   I   J   K   L   M  
+                                         (X col coord)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The Great Plains
+~~~~~~~~~~~~~~
+Great Plains Key:
+LGE = Link to Glacier entrance (see Glacier map)
+LGP = return link from Glacier
+LSC = Link to small crack in Dark Cave
+ SA = location of the Salena, moves every few hours 
+      (drops ornate fascia bracelet +30str +40dex 
+      +50con +50int) see xy map version for help
+ UR = Unidentified Great Plains Rune (base cost 20K)
+ WE = location of well, moves every few hours
+      down 5 spaces to the bottom 
+      (death angel here, drops fire storm scroll)
+  X = places that have surrounding directions that 
+      warp back to same spot
+  # = places that have a X location in the direction
+      of the ^ or v mark (physical map does not 
+      support the room for these spaces)
+
+                                         (X col coord)
+    D   E   F   G   H   I   J   K   L   M   N   O   P
+
+15             LGE  X   X
+                |   |   |    
+16          X -LGP- * - * - X
+                |   |   |    
+17          X - * - * - * - X 
+            v   |   |   |   v 
+18      X - # - * - * - * - # - X 
+            |   |   |   |   |
+19      X - * - * - * - * - * - X 
+        v   |   |   |   |   |   v
+20  X - # - * - * - * - * - * - # - X 
+        |   |   |   |   |   |   |
+21  X - * - * - * - * - * - * - * - X 
+        |   |   |   |   |   |   |
+22  X - * - * - * - * - * - * - * - X 
+        |   |   |   |   |   |   |
+23  X - * - * - * - * - * - * - * - X 
+        |   |   |   |   |   |   |
+24  X - * - * - * - * - * - * - * - X 
+        |   |   |   |   |   |   |
+25  X - # - * - * - * - * - * - # - X 
+        ^   |   |   |   |   |   ^
+26      X - * - * - * - * - * - X 
+            |   |   |   |   |
+27      X - # - * - * - * - # - X 
+            ^   |   |   |   ^
+28          X - * - * - * - X 
+                |   |   |    
+29          X - * - * - UR- X 
+                |   |   |    
+30              X   X  LSC (link to Dark Cave) 
+(Y row coord)
+    D   E   F   G   H   I   J   K   L   M   N   O   P
+                                         (X col coord)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The Lake
+~~~~~~~~~~~~~~
+Lake Key:
+  K = Kraken locations (drops pearl plate mail 
+      need 2000 ws or more to show) 
+ LE = Lake Entrance (can go up here, back to mountain 
+      open fissure)
+ UR = Unidentified Lake Rune (base cost 20K)
+
+
+31                  K - * - * - * - K   
+                    |   |   |   |   | 
+32                  * - * - * - * - *  
+                    |   |   |   |   | 
+33                  UR- * -LLE- * - *   
+                    |   |   |   |   | 
+34                  * - * - * - * - *  
+                    |   |   |   |   | 
+35                  K - * - * - * - K  
+
+    A   B   C   D   E   F   G   H   I   J   K   L   M  
+                                         (X col coord)
+(Y row coord)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Active Volcano - heat saps away your life for 10*crater
+   depth each move (times 1/5 if you wear ruby ring)
+~~~~~~~~~~~~~~
+Note: the Fire Guardian thru the door is on 9th level
+
+To help with volcano mapping and linking 
+(move required in stated direction) ...
+DC# = Down to crater depth # in Volcano
+UC# = Up from crater depth # in Volcano
+
+Volcano Key:
+ C# = Crater depth in Volcano 
+      (marks start point of deeper access)
+  D = Door to FG
+ EV = Edge of Volcano Crater
+ FG = Fire Guardian
+ RG = locations with higher frequency of red gauntlets 
+ RN = locations with higher frequency of red neckpiece 
+ M1 = Mountain location #1 (link to mountain trail)
+ tB = warp from Town location wB (2nd level)
+ tE = warp from Town location wE (5th level)
+ tF = warp from Town location wF (8th level)
+ UR = Unidentified Volcano Rune (base cost 30K)
+ VS = Volcano sign
+
+    K   L   M   N   O   P   Q   R   S   T   U  
+levels 1, 2                              (X col coord)
+~~~~~~~~~~~~~~
+(Y row coord)
+
+15          * - * - * - * - * - * - * 
+            |                       |
+16          UR  * - RN- RN- RN- RN  * 
+            |   |               |   |
+17          *   *   RG- *  UC2-DC2  *
+            |   |   |   |   |       |
+18      VS- ER  *   RG DC3  *  UC1-DC1
+      /     |   |   |   tB  |   |   |
+19 LM1      *   *   * - * - *   *   *
+            |   |               |   |
+20          *   * - * - * - * - RN  *
+            |                       |
+21          * - * - * - * - * - * - * 
+
+                       
+levels 3, 4            
+~~~~~~~~~~~~~~        
+38          * - * -DC4 UC3
+            |       |   |
+39          *  DC5 UC4  *
+            |   |   |   |
+40          *   * - *   *
+            |           |
+41          * - * - * - *
+
+level 5
+~~~~~~~~~~~~~~
+56              * - * - * - *
+                |           |
+57              *   * -DC6  *
+                |   |       |
+58              *   * - * - *
+                |
+59             UC5
+                tE
+level 6, 7
+~~~~~~~~~~~~~~
+66                  * - * - *
+                    |       |
+67                  *  UC6- *
+                    |
+68                  * - * - * - * - * - * - *
+                                            |
+69                             DC7-UC7- *   *
+                                |       |   |
+70                              *  DC8- *   *
+                                |           |
+71                              * - * - * - *
+
+level 8, 9
+~~~~~~~~~~~~~~
+78                          * - * - *
+                            |       |
+79                          *   FG- D
+                            |
+80                          * - * -UC8
+                                    tF 
+    K   L   M   N   O   P   Q   R   S   T   U  
+                                         (X col coord)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creature notes:
+   ah = average hit (assumes gs armor, pearl gaunt and 
+        neck, and efs)
+   at = # of attacks by creature 
+   GT = greater than
+   K  = thousand (used in point estimates)
+   lp = life points of creature (aka hit points on 
+        Nightblade's site)
+   M  = Million
+   mh = max hit (note: creatures with * are reported 
+        using consider)
+   xp = eXperience points
+
+** - max hit reverified with consider on 03 Jul 2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+The Clouds
+~~~~~~~~~~ 
+Air Guardian ~ mh=4000/ ah=1500/ lp=4M/ 
+   xp=1M/ at=2/ air key (requires Earth Obsidian Sword - see Forge)
+Hippogriff ~ mh=3910/ ah=3200/ lp=600K/ xp=375K/ at=4/ 
+   azure diamond leggings, white pixie dust 
+Pegasus ~ mh=3200/ ah=2200/ lp=400K/ xp=320K/ at=2
+Valkyrie ~ mh GT 4710/ ah=4250/ lp=1M/ xp=525K/ at=5/ 
+   azure diamond (sold in small shop)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Dark Cave 
+~~~~~~~~~~ 
+Dumb Ogre ~ mh=200/ lp=20K/ xp=20K/ at=1 
+Dumber Stronger Ogre ~ mh=250/ lp=28K/ xp=28K/ at=1/ 
+   Ogre Club 
+Dumbest Strongest Ogre ~ mh=300/ lp=32K/ xp=32K/ 
+   at=1/ Ogre Club 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Great Plains - 
+**warning testing results are limited at this time**
+~~~~~~~~~~~ 
+Baboon ~ mh LT 1132/ ah=700/ lp=95K/ xp=95K/ at=2
+Cougar ~ mh=1400/ ah=1200/ lp=180K/ xp=190K/ at=1
+Death Angel ~ mh LT 1916/ ah=1600/ lp=245K/ xp=250k/ at=1/
+   fire storm scroll found in the well 
+Great Plains Tiger ~ mh=1300/ ah=?/ lp=120K/ xp=120K/ at=2
+Jaguar ~ mh LT 1692/ ah=1200/ lp=190K/ xp=205K/ at=2
+Killer Wolf ~ mh LT 1244/ ah=900/ lp=110K/ xp=110K/ at=1
+Plains Tiger ~ mh LT 1356/ ah=900/ lp=120K/ xp=120K/ at=2
+Rhino ~ mh LT 1580/ ah=1000/ lp=140K/ xp=140K/ at=3/ 
+   rhino horn (heals 1000)
+Salena ~ mh LT 1804/ ah=1500/ lp=215K/ xp=200K/ at=1/ 
+   ornate fascia bracelet +50str +40dex +50con +50int
+   see xy map version for help
+White Hawk ~ mh=?/ ah=1000/ lp=90K/ xp=90K/ at=1
+Wolf ~ mh LT 821/ ah=?/ lp=75K/ xp=80K/ at=1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+The Lake 
+~~~~~~~~~ 
+Dogfish Child ~ mh=100/ lp=6K/ xp=6K/ at=1 
+Dogfish ~ mh=150/ lp=9K/ xp=9K/ at=1 
+Dogfish Princess ~ mh=150/ lp=12K/ xp=12K/ at=1/ 
+   2 Fishtails 
+Dogfish Queen ~ mh=100/ lp=25K/ xp=25K/ at=1/ 
+   2 Fishtails 
+Kraken ~ mh=1200/ ah=1050/ lp=160K/ xp=160K/ at=4/
+   pearl plate mail (need 2000 ws or more to show)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Mountain Trail 
+~~~~~~~~~~~~~~~ 
+Park Ranger ~ mh=150/ lp=10K/ xp=10K/ at=1 
+Goat ~ mh=200/ lp=8K/ xp=8K/ at=1 
+Bear ~ mh=200/ lp=15K/ xp=15K/ at=1 
+Masked Ranger ~ mh=250/ lp=30K/ xp=30K/ at=1 
+Pegasuse Scout ~ mh=300/ lp=30K/ xp=30K/ at=1/ 
+   Pegasuse Wings 
+Hydra ~ mh=500/ lp=50K/ xp=50K/ at=1/ 
+   Gold Crown, Green Scale: Gauntlets, Boots, 
+   Neckband, Leggings, Mail 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Sky Castle 
+~~~~~~~~~~~ 
+Cherub ~ mh=700/ lp=50K/ xp=30K/ at=3 
+Angel Guard** ~ mh=1525/ ah=650/ lp=110K/ xp=75K/ at=3 
+Holy Knight* ~ mh=1370/ ah=650/ lp=100K/ xp=65K/ at=3/ 
+   Pearl: Gauntlets 2nd Floor, Necklace 3rd Floor 
+Winged Archer* ~ mh=1550/ ah=700/ lp=150K/ xp=100K/ at=3 
+Seraph Angel* ~ mh=1470/ ah=1050/ lp=300K/ xp=160K/ at=3/ 
+   2 Golden Showers 
+Air Elemental* ~ mh=1775/ ah=1400/lp=500K/ xp=250K/ at=3 
+Arch Angel ~ mh=2750/ ah=2400/ lp=450K/ xp=300K/ 
+   at=5/ Ruby Ring and 5 Glimmering Portals
+   You have freed the Sky Castle Gaurdian, The Arch Angel, 
+   from the control of the Warlock. He returns to his home 
+   in the heavens.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Volcano - Warning! Active volcano ahead.
+Note: ah numbers is most likely based on full red ruby armor and diamond leggings
+~~~~~~~~~~~ 
+Edge of Crater:
+Darkrider** ~ mh=1148/ ah=675/ lp=60K/ xp=55K/ at=2
+Orc** ~ mh=325/ ah=150/ lp=25K/ xp=25K/ at=1
+Roc** ~ mh=424/ ah=250/ lp=32K/ xp=32K/ at=1
+ 
+1st Level: standing on a ledge inside the volcano crater
+Giant Fire Ant** ~ mh=1336/ ah=850/ lp=150K/ xp=140K/ at=2
+Fire Lizard Trainer** ~ mh=1206/ ah=850/ lp=140K/ xp=130K/ at=2
+Hatchling Dragon** ~ mh=1417/ ah=975/ lp=160K/ xp=160K/ at=2/
+   red ruby neckpiece
+
+2nd Level: standing on a ledge inside the volcano crater
+Fire Drake** ~ mh=1594/ ah=1300/ lp=180K/ xp=190K/ at=2 found at levels 2, 3
+Fire Wolf** ~ mh=1514/ ah=1150/ lp=160K/ xp=175K/ at=2 found at levels 2, 3, 4
+Young Red Dragon** ~ mh=1893/ ah=1450/ lp=200K/ xp=220K/ at=2/
+   red ruby gauntlets
+
+3rd Level: inside the bowels of the volcano
+Adult Red Dragon** ~ mh=2700/ ah=2100/ lp=425K/ xp=300K/ at=2/
+   red ruby slippers, leggings
+
+4th Level: inside the bowels of the volcano
+Elder Red Dragon* ~ mh=4100/ ah=3350/ lp=750K/ xp=580K/ at=3/
+   red ruby plate mail, studded shield
+Manticore** ~ mh=2200/ ah=1700/ lp=205K/ xp=215K/ at=2 found at levels 4, 5, 6
+   2 red hot chili peppers (heals 650)
+
+5th Level: inside the bowels of the volcano
+Fire Fly Swarm** ~ mh=2610/ ah=2100/ lp=240K/ xp=250K/ at=2
+Fire Golem** ~ mh=2810/ ah=2300/ lp=260K/ xp=280K/ at=2 found at levels 5, 6
+
+6th Level: inside the bowels of the volcano
+Fire Elemental** ~ mh=3010/ ah=2500/ lp=280K/ xp=300K/ at=2 found at levels 6, 7
+
+7th Level: inside the bowels of the volcano
+Demon Guard* ~ mh=3400/ ah=3050/ lp=323K/ xp=330K/ at=2/
+   red ruby studded helm
+Magma Beast** ~ mh=3220/ ah=2850/ lp=300K/ xp=300K/ at=2 found at levels 7, 8
+
+8th Level: inside the bowels of the volcano
+Lava Worm* ~ mh=3600/ ah=3100/ lp=340K/ xp=350K/ at=2/
+   red ruby (sold in small shop)
+Phoenix* ~ mh=3600/ ah=3240/ lp=400K/ xp=400K/ at=2/
+   red pixie dust
+
+9th Level: inside the heart of the volcano
+Fire Guardian* ~ mh=4000/ ah=1500/ lp=4M/ 
+   xp=1M/ at=2/ fire key (requires Aqua Sapphire Sword - see Forge)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you wish to contribute, contact me with updates/corrections refering to the 
+EZmap name and X/Y coords at Sotrin_GOTR@hotmail.com
+
+Thanks to Nightblade for initial creature source stats.
+
+Help with stats from Billybbad, Kraal, Gargoyle, 
+Demigod, Valarhotha, Fiendexcel, Magicast, Dragons, 
+Guardian106, Burner, Mjasghar, Potatoes, Darthboy,
+Tha-hammer, Zil, Cb3
+
+Thanks to Timecatand Elendril for help with Great Plains mapping.
+Thanks to Karouck for initial stats for the Great Plains.
+
+Thanks, and happy hunting...
+Sotrin, Elder of Philosophy, Guardian of the Realm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
