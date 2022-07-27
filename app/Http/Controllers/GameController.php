@@ -1232,8 +1232,8 @@ class GameController extends Controller
 							{
 							$quantity = Session::get('admin_killsim');
 							}
-						// die(print_r($GroundItem));
-						if ($GroundItem && (!$GroundItem->properties()->get()))
+						// die(print_r($GroundItem->properties()->get()->count()));
+						if ($GroundItem && $GroundItem->properties()->get()->count() == 0)
 							{
 							$GroundItem->fill(['expires_on' => time() + 300, 'quantity' => $GroundItem->quantity + $quantity]);
 							// else don't stack

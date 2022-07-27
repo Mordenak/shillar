@@ -204,16 +204,17 @@ class Inventory extends Model
 			return false;
 			}
 
+		$InventoryItem = new InventoryItem;
 		$has_item = $this->retrieve_items()->where('items_id', $item_id)->first();
 
 		if ($has_item && $Item->is_stackable)
 			{
+			$InventoryItem = $has_item;
 			$has_item->quantity = $has_item->quantity + $quantity;
 			$has_item->save();
 			}
 		else
 			{
-			$InventoryItem = new InventoryItem;
 			$values = [
 				'inventory_id' => $this->id,
 				'items_id' => $item_id
