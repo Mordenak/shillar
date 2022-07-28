@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RoomAction extends Model
 {
-	protected $fillable = ['uid', 'rooms_id', 'redirect_room', 'description', 'action', 'success_action', 'failed_action', 'display', 'directions_blocked', 'remember', 'has_item', 'completed_quest', 'completed_quest_task', 'strength_req', 'dexterity_req', 'constitution_req', 'wisdom_req', 'intelligence_req', 'charisma_req', 'score_req'];
+	protected $fillable = ['uid', 'rooms_id', 'redirect_room', 'description', 'action', 'success_action', 'failed_action', 'display', 'linked_img', 'directions_blocked', 'remember', 'has_item', 'completed_quest', 'completed_quest_task', 'strength_req', 'dexterity_req', 'constitution_req', 'wisdom_req', 'intelligence_req', 'charisma_req', 'score_req'];
 
 	public function room()
 		{

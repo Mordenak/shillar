@@ -248,6 +248,9 @@
 		<p style="color:#55ff8b;">{{ Session::pull("action_success") }}</p>
 		@endif
 		@if (isset($special_actions))
+		@if ($special_actions->linked_img)
+		<img src="{{asset('img/'.$special_actions->linked_img)}}">
+		@endif
 		<form method="post" action="/room_action/attempt" class="ajax">
 			{{csrf_field()}}
 			<input type="hidden" name="room_id" value="{{$room->id}}">

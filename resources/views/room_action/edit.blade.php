@@ -68,6 +68,13 @@ Creating a Room Action:
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Linked Img:</label>
+			<div class="col-md-3">
+				<input type="text" name="linked_img" value="{{isset($room_action) ? $room_action->linked_img : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Direction to Block ([0,1,2,3...]):</label>
 			<div class="col-md-3">
 				<input type="text" name="directions_blocked" value="{{isset($room_action) ? $room_action->directions_blocked : ''}}" class="form-control">
