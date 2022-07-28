@@ -47,6 +47,13 @@ Creating a Room Action:
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Success Action:</label>
+			<div class="col-md-3">
+				<input type="text" name="success_action" value="{{isset($room_action) ? $room_action->success_action : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Failed Action:</label>
 			<div class="col-md-3">
 				<input type="text" name="failed_action" value="{{isset($room_action) ? $room_action->failed_action : ''}}" class="form-control">

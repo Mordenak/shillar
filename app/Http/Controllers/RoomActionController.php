@@ -49,6 +49,7 @@ class RoomActionController extends Controller
 			'redirect_room' => $request->redirect_room,
 			'description' => $request->description,
 			'action' => $request->action,
+			'success_action' => $request->success_action,
 			'failed_action' => $request->failed_action,
 			'display' => $request->display,
 			'directions_blocked' => $request->directions_blocked,

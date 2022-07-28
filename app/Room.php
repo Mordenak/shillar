@@ -134,7 +134,7 @@ class Room extends Model
 		return $scheme;
 		}
 
-	public function generate_directions($Character)
+	public function generate_directions($Character, $request)
 		{
 		$directions = [];
 
@@ -213,7 +213,7 @@ class Room extends Model
 					{
 					if ($this->room_actions())
 						{
-						if (in_array($col, array_keys($this->room_actions()->blocked_dirs())))
+						if (!$request->unlock_direction && in_array($col, array_keys($this->room_actions()->blocked_dirs())))
 							{
 							// better have character record:
 							$CharacterRoomAction = CharacterRoomAction::where(['characters_id' => $Character->id, 'room_actions_id' => $this->room_actions()->id])->first();

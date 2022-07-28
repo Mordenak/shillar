@@ -170,7 +170,7 @@ class GameController extends Controller
 			}
 
 		$ground_items = [];
-		$GroundItems = GroundItem::where(['rooms_id' => $Room->id])->orderby('id')->get();
+		$GroundItems = GroundItem::where(['rooms_id' => $Room->id, 'characters_id' => $Character->id])->orderby('id')->get();
 		foreach ($GroundItems as $GroundItem)
 			{
 			if (time() >= $GroundItem->expires_on)
@@ -302,7 +302,7 @@ class GameController extends Controller
 
 		// And now the extra special stuff -- there could be multiples:
 		$RoomAction = RoomAction::where(['rooms_id' => $Room->id])->first();
-		if ($RoomAction)
+		if ($RoomAction && !$request->action_processed)
 			{
 			if ($RoomAction->remember)
 				{
@@ -405,7 +405,7 @@ class GameController extends Controller
 		// Directions:
 		if ($Room)
 			{
-			$request_params['directions'] = $Room->generate_directions($Character);
+			$request_params['directions'] = $Room->generate_directions($Character, $request);
 			}
 
 		$finish_timer = round(microtime(true) - $start_timer, 3) * 1000;
@@ -2714,6 +2714,22 @@ class GameController extends Controller
 
 		$pass = false;
 
+		// Unless there are no requirements...
+		if (!$RoomAction->strength_req &&
+			!$RoomAction->dexterity_req &&
+			!$RoomAction->constitution_req &&
+			!$RoomAction->wisdom_req &&
+			!$RoomAction->intelligence_req &&
+			!$RoomAction->charisma_req &&
+			!$RoomAction->score_req &&
+			!$RoomAction->has_item &&
+			!$RoomAction->completed_quest &&
+			!$RoomAction->completed_quest_task
+			)
+			{
+			$pass = true;
+			}
+
 		// Verify requirements:
 		if ($RoomAction->strength_req)
 			{
@@ -2731,18 +2747,27 @@ class GameController extends Controller
 			$Character->save();
 			}
 
+		if ($pass && $RoomAction->directions_blocked)
+			{
+			$request->unlock_direction = true;
+			}
+
 		if ($pass && $RoomAction->remember)
 			{
 			$CharacterRoomAction = new CharacterRoomAction;
 			$CharacterRoomAction->characters_id = $Character->id;
 			$CharacterRoomAction->room_actions_id = $RoomAction->id;
 			$CharacterRoomAction->save();
-			Session::flash('action_success', $RoomAction->success_action);
 			}
 
 		if (!$pass)
 			{
 			Session::flash('action_failed', $RoomAction->failed_action);
+			}
+		else
+			{
+			$request->action_processed = true;
+			Session::flash('action_success', $RoomAction->success_action);
 			}
 
 		return $this->index($request);
