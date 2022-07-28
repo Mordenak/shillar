@@ -758,6 +758,7 @@ function process_rooms(room_list)
 var BASE_OBJECT = {
 	'id': null,
 	'zones_id': null,
+	'zone_areas_id': null,
 	'zone_level': null,
 	'uid': null,
 	'title': null,
@@ -950,7 +951,7 @@ function show_room($td)
 
 	if ($('input#hidden_'+$td.attr('id')).length > 0)
 		{
-		$insert.append($('<label/>').append('Room '+$td.attr('id')));
+		$insert.append($('<label/>').append('Room <a href="/room/edit/'+$td.attr('id')+'" target="new">'+$td.attr('id')+'</a>'));
 		$insert.append('<br>');
 		Object.keys(BASE_OBJECT).forEach(function(key) {
 			if (key != 'id' && key != 'zones_id')
