@@ -10,9 +10,12 @@ class World extends Model
 	protected $table = 'world';
 
 	// Use this function to retrieve dates to provide a method to offset times when needed
-	public static function getDateWithOffset()
+	public static function getDateWithOffset($additional_offset = 0)
 		{
 		$current_offset = 0; // pull this from database value
+
+		$current_offset += $additional_offset;
+
 		$date = new \DateTime();
 
 		$dateinterval = new \DateInterval('PT'.abs($current_offset).'H');

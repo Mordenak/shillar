@@ -23,6 +23,34 @@ class CreatureGroup extends Model
 		return $this->linked_creatures()->sum('weight');
 		}
 
+	/**
+	 * Example:
+	 * 
+	 * Creature 1:  50
+	 * Creature 2:  50
+	 * Creature 3:  100
+	 * 
+	 * $spawn_marker becomes: rand(0, 200)
+	 * 
+	 * Say it randoms 167
+	 * 
+	 * First creature:
+	 * $n = 50
+	 * 
+	 * 50 >= 167 == FALSE
+	 * 
+	 * Keep going
+	 * Second creature:
+	 * $n = 100
+	 * 
+	 * 100 >= 167 == FALSE
+	 * 
+	 * Third creature:
+	 * $n = 200
+	 * 
+	 * 200 >= 167 == TRUE
+	 * 
+	 */
 	public function generate_creature()
 		{
 		// .25 .30 .30 .15

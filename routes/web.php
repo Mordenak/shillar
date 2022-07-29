@@ -170,12 +170,6 @@ Route::get('spell_property/edit/{id}', 'SpellPropertyController@edit')->where('i
 Route::post('spell_property/save', 'SpellPropertyController@save');
 Route::post('spell_property/delete', 'SpellPropertyController@delete');
 
-Route::get('teleport/all', 'TeleportTargetController@all');
-Route::get('teleport/create', 'TeleportTargetController@create');
-Route::get('teleport/edit/{id}', 'TeleportTargetController@edit')->where('id', '[0-9]+');
-Route::post('teleport/save', 'TeleportTargetController@save');
-Route::post('teleport/delete', 'TeleportTargetController@delete');
-
 Route::get('race/all', 'RaceController@all');
 Route::get('race/edit/{id}', 'RaceController@edit')->where('id', '[0-9]+');
 Route::get('race/create', 'RaceController@create');
@@ -185,6 +179,11 @@ Route::get('chat_room/all', 'ChatRoomController@all');
 Route::get('chat_room/edit/{id}', 'ChatRoomController@edit')->where('id', '[0-9]+');
 Route::get('chat_room/create', 'ChatRoomController@create');
 Route::post('chat_room/save', 'ChatRoomController@save');
+
+Route::get('randomizer/all', 'RandomizerController@all');
+Route::get('randomizer/edit/{id}', 'RandomizerController@edit')->where('id', '[0-9]+');
+Route::get('randomizer/create', 'RandomizerController@create');
+Route::post('randomizer/save', 'RandomizerController@save');
 
 Route::get('inventory/edit/{id}', 'InventoryController@edit')->where('id', '[0-9]+');
 Route::post('inventory/save', 'InventoryController@save');

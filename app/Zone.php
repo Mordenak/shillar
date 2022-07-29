@@ -35,6 +35,11 @@ class Zone extends Model
 		return 0;
 		}
 
+	public function get_random_room()
+		{
+		return $this->rooms_q()->inRandomOrder()->first();
+		}
+
 	public function get_property(string $property_name = null)
 		{
 		$ZoneProperty = ZoneProperty::where(['name' => $property_name])->first();

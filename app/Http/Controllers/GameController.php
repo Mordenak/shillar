@@ -7,7 +7,7 @@ use Session;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\{User, Character, Race, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, CharacterSpellBuff, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, GroundItemToItemProperty, InventoryItemToItemProperty, ItemProperty, CreatureKill, Graveyard};
+use App\{User, Character, Race, Room, Creature, SpawnRule, RewardTable, LootTable, StatCost, RaceStatAffinity, Equipment, Item, ItemWeapon, ItemArmor, ItemAccessory, ItemFood, CharacterSetting, CombatLog, KillCount,InventoryItem, Shop, ShopItem, ForgeRecipe, TraderItem, CharacterSpell, CharacterSpellBuff, Spell, Quest, QuestTask, QuestCriteria, QuestReward, CharacterQuest, CharacterQuestCriteria, RoomAction, CharacterRoomAction, ChatRoom, ChatRoomMessage, Alignment, World, TeleportTarget, GroundItem, GroundItemToItemProperty, InventoryItemToItemProperty, ItemProperty, CreatureKill, Graveyard, Randomizer, ActiveRandomizer};
 
 class GameController extends Controller
 	{
@@ -53,6 +53,7 @@ class GameController extends Controller
 		$this->start_timer('index');
 		// Offload to a Worker?
 		World::tick();
+		$this->generate_randomizers();
 		CharacterSpellBuff::clean_buffs();
 		// TODO: This should be unreachable?
 		if (!auth()->user())
@@ -424,6 +425,51 @@ class GameController extends Controller
 		return view('game/main', $request_params);
 		}
 
+	public function generate_randomizers()
+		{
+		$current_hour = World::getDateWithOffset()->format('H');
+		if (!Cache::get('cached_hour'))
+			{
+			Cache::put('cached_hour', $current_hour);
+			}
+		else
+			{
+			if (Cache::get('cached_hour') == $current_hour)
+				{
+				// Do nothing... For now:
+				// TODO: Remove this to support sub 1 hour randomizers
+				return true;
+				}
+			}
+
+		$Randomizers = Randomizer::all();
+
+		foreach ($Randomizers as $Randomizer)
+			{
+			// Check if there's an active already:
+			$ActiveRandomizer = ActiveRandomizer::where(['randomizers_id' => $Randomizer->id])->first();
+
+			if ($ActiveRandomizer)
+				{
+				// Check expiration:
+				if ($ActiveRandomizer->expires_on <= $current_hour)
+					{
+					// Re-create:
+					$ActiveRandomizer->delete();
+					$Randomizer->create_active();
+					}
+				}
+			else
+				{
+				$Randomizer->create_active();
+				}
+			}
+
+		Cache::put('cached_hour', $current_hour);
+
+		return true;
+		}
+
 	public function spawn_creature($room, $character)
 		{
 		$possible_spawns = [];
@@ -447,6 +493,15 @@ class GameController extends Controller
 			->orderBy('rooms_id', 'asc')
 			->orderBy('zone_areas_id', 'asc')
 			->orderBy('zones_id', 'asc');
+
+
+		// This room has a randomizer active?
+		$ActiveRandomizer = ActiveRandomizer::where(['rooms_id' => $room->id])->first();
+
+		if ($ActiveRandomizer)
+			{
+			// die('heyo');
+			}
 
 		// die(print_r($SpawnRules->get()));
 
@@ -474,15 +529,62 @@ class GameController extends Controller
 					{
 					if ($SpawnRule->zone_level == $room->zone_level)
 						{
-						return $SpawnRule->creature_group()->generate_creature();
+						if ($ActiveRandomizer && $ActiveRandomizer->creature_groups_id)
+							{
+							$creature_list = $SpawnRule->creature_group()->linked_creatures()->get()->merge($ActiveRandomizer->creature_group()->linked_creatures()->get());
+
+							// Repeat generate code:
+							$total = $creature_list->sum('weight');
+							$spawn_marker = rand(0, $total);
+							$n = 0;
+							
+							foreach ($creature_list as $creature)
+								{
+								$n += $creature->weight;
+								if ($n >= $spawn_marker)
+									{
+									return $creature->creature();
+									}
+								}
+							}
+						else
+							{
+							return $SpawnRule->creature_group()->generate_creature();
+							}
 						}
 					}
 				else
 					{
-					return $SpawnRule->creature_group()->generate_creature();
+					if ($ActiveRandomizer && $ActiveRandomizer->creature_groups_id)
+						{
+						$creature_list = $SpawnRule->creature_group()->linked_creatures()->get()->merge($ActiveRandomizer->creature_group()->linked_creatures()->get());
+
+						// Repeat generate code:
+						$total = $creature_list->sum('weight');
+						$spawn_marker = rand(0, $total);
+						$n = 0;
+						
+						foreach ($creature_list as $creature)
+							{
+							$n += $creature->weight;
+							if ($n >= $spawn_marker)
+								{
+								return $creature->creature();
+								}
+							}
+						}
+					else
+						{
+						return $SpawnRule->creature_group()->generate_creature();
+						}
 					}
 				}
 			}
+		}
+
+	public function populate_randomizers()
+		{
+		// Find randomizers:
 		}
 
 	public function menu(Request $request)
