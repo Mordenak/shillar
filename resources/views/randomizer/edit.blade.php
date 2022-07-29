@@ -54,6 +54,20 @@
 			</div>
 		</div>
 
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Spawn Chance:</label>
+			<div class="col-md-3">
+				<input type="text" name="spawn_chance" value="{{isset($randomizer) ? $randomizer->spawn_chance : ''}}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Block Other Spawns?:</label>
+			<div class="col-md-3">
+				<input type="checkbox" name="block_other_spawns" class="form-control" {{isset($randomizer) && $randomizer->block_other_spawns ? 'checked' : ''}}>
+			</div>
+		</div>
+
 
 		@if (isset($randomizer))
 		<input type="hidden" name="id" id="db-id" value="{{$randomizer->id}}">

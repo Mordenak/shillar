@@ -43,6 +43,8 @@ class RandomizerController extends Controller
 			'creatures_id' => $request->creatures_id,
 			'creature_groups_id' => $request->creature_groups_id,
 			'rotation_hours' => $request->rotation_hours,
+			'spawn_chance' => $request->spawn_chance,
+			'block_other_spawns' => $request->block_other_spawns
 			];
 
 		$Randomizer->fill($values);

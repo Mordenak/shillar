@@ -106,6 +106,12 @@ Route::get('zone_area/edit/{id}', 'ZoneAreaController@edit')->where('id', '[0-9]
 Route::post('zone_area/save', 'ZoneAreaController@save');
 Route::post('zone_area/delete', 'ZoneAreaController@delete');
 
+Route::get('zone_property/all', 'ZonePropertyController@all');
+Route::get('zone_property/create', 'ZonePropertyController@create');
+Route::get('zone_property/edit/{id}', 'ZonePropertyController@edit')->where('id', '[0-9]+');
+Route::post('zone_property/save', 'ZonePropertyController@save');
+Route::post('zone_property/delete', 'ZonePropertyController@delete');
+
 Route::get('item/all', 'ItemController@all');
 Route::get('item/create', 'ItemController@create');
 Route::get('item/edit/{id}', 'ItemController@edit')->where('id', '[0-9]+');

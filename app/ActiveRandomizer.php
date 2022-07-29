@@ -9,7 +9,7 @@ class ActiveRandomizer extends Model
 	{
 	use HasFactory;
 
-	protected $fillable = ['randomizers_id', 'rooms_id', 'creatures_id', 'creature_groups_id', 'expires_on'];
+	protected $fillable = ['randomizers_id', 'rooms_id', 'creatures_id', 'creature_groups_id', 'expires_on', 'spawn_chance', 'block_other_spawns'];
 
 	public function randomizer()
 		{

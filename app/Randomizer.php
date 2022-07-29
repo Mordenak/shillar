@@ -10,7 +10,7 @@ class Randomizer extends Model
 	{
 	use HasFactory;
 
-	protected $fillable = ['uid', 'rooms_id', 'zones_id', 'zone_areas_id', 'creatures_id', 'creature_groups_id', 'rotation_hours'];
+	protected $fillable = ['uid', 'rooms_id', 'zones_id', 'zone_areas_id', 'creatures_id', 'creature_groups_id', 'rotation_hours', 'spawn_chance', 'block_other_spawns'];
 
 	public function room()
 		{
@@ -52,7 +52,9 @@ class Randomizer extends Model
 		// Creature group is the group of creatures to add to the spawn rules
 
 		$values = [
-			'randomizers_id' => $this->id
+			'randomizers_id' => $this->id,
+			'spawn_chance' => $this->spawn_chance,
+			'block_other_spawns' => $this->block_other_spawns
 			];
 
 		if ($this->room())

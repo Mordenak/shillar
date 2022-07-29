@@ -13,16 +13,23 @@
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Display Text:</label>
+			<label class="col-md-2 col-form-label text-md-right">Description:</label>
+			<div class="col-md-3">
+				<input type="text" name="description" value="{{isset($spell_property) ? $spell_property->description : ''}}" class="form-control" required>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Format:</label>
 			<div class="col-md-3">
 				<input type="text" name="format" value="{{isset($spell_property) ? $spell_property->format : ''}}" class="form-control" required>
 			</div>
 		</div>
 
 		<div class="form-group row">
-			<label class="col-md-2 col-form-label text-md-right">Format:</label>
-			<div class="col-md-6">
-				<textarea class="form-control" name="description">{{isset($spell_property) ? $spell_property->description : ''}}</textarea>
+			<label class="col-md-2 col-form-label text-md-right">Custom View:</label>
+			<div class="col-md-3">
+				<input type="text" name="custom_view" value="{{isset($spell_property) ? $spell_property->custom_view : ''}}" class="form-control" required>
 			</div>
 		</div>
 

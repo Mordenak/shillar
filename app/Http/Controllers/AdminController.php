@@ -137,7 +137,7 @@ class AdminController extends Controller
 				}
 			}
 
-		Session::put('success', 'Randomizers rebuilt!');
+		Session::flash('success', 'Randomizers rebuilt!');
 		return $this->index();
 		}
 
@@ -176,6 +176,16 @@ class AdminController extends Controller
 			// error
 			return view('home');
 			}
+
+		if ($request->target_rooms_id)
+			{
+			$Character = Character::findOrFail($request->character_id);
+			$Character->last_rooms_id = $request->target_rooms_id;
+			$Character->save();
+
+			return redirect('/game');
+			}
+
 		Session::put('admin_killsim', $request->admin_killsim);
 		// die(print_r($request->admin_killsim));
 		}

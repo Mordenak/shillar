@@ -9,6 +9,7 @@
 		<br>
 		<a href="zone/all">All Zones</a><br>
 		<a href="zone_area/all">All Zone Areas</a><br>
+		<a href="zone_property/all">All Zone Properties</a><br>
 		<a href="room/all">All Rooms</a><br>
 		<a href="item/all">All Items</a><br>
 		<a href="creature/all">All Creatures</a><br>

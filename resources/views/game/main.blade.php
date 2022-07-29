@@ -288,7 +288,7 @@
 		@endforeach
 		@endif
 
-		@if ($creature && $creature->is_blocking)
+		@if (isset($is_movement_blocked) && $is_movement_blocked)
 		<p style="color:orange;">You must fight your way through this enemy to move again!</p>
 		@else
 		<p>
@@ -370,7 +370,7 @@
 		<!-- Debug -->
 		@if (isset($is_admin) && $is_admin)
 		<br>
-		<div class="admin-display" style="padding-left: 1rem;">
+		<div class="admin-display" style="padding-left: 1rem;background-color: #000;color:#FFF">
 			-- Admin --<br>
 			Time: {{ $current_time }}<br>
 			Character: <a href="/character/edit/{{$character->id}}" target="_blank">{{$character->name}}</a><br>
@@ -424,6 +424,14 @@
 			Kill Sim:
 			<form method="post" action="/tester_options" class="tester-options">
 				<input type="text" name="admin_killsim" class="admin_killsim" onblur="$(this).closest('form').submit();" size="4" value="{{isset($killsim_setting) ? $killsim_setting : ''}}">
+			</form>
+
+			Teleport:
+			<form method="post" action="/tester_options">
+				{{csrf_field()}}
+				<input type="hidden" name="character_id" value="{{$character->id}}">
+				<input type="text" name="target_rooms_id"  size="5">
+				<input type="submit" value="Go To">
 			</form>
 			
 			<br>

@@ -48,6 +48,7 @@ class GameController extends Controller
 
 	public function index(Request $request)
 		{
+		// die(print_r($request));
 		$timers = [];
 		$start_timer = microtime(true);
 		$this->start_timer('index');
@@ -109,6 +110,8 @@ class GameController extends Controller
 			}
 
 		$request_params = ['character' => $Character, 'room' => $Room];
+
+		// die(print_r($request_params));
 
 		$request_params['current_time'] = World::getDateStringWithOffset();
 
@@ -403,6 +406,12 @@ class GameController extends Controller
 			// die('turn in?');
 			}
 
+		// Check for movement blocks:
+		if ($Creature && ($Creature->is_blocking || $Zone->has_property('MOVEMENT_BLOCKED')))
+			{
+			$request_params['is_movement_blocked'] = true;
+			}
+
 		// Directions:
 		if ($Room)
 			{
@@ -422,6 +431,7 @@ class GameController extends Controller
 			$sections = $view->renderSections();
 			return $sections;
 			}
+
 		return view('game/main', $request_params);
 		}
 
@@ -498,15 +508,13 @@ class GameController extends Controller
 		// This room has a randomizer active?
 		$ActiveRandomizer = ActiveRandomizer::where(['rooms_id' => $room->id])->first();
 
-		if ($ActiveRandomizer)
-			{
-			// die('heyo');
-			}
+		// die(print_r($ActiveRandomizer));
 
 		// die(print_r($SpawnRules->get()));
 
 		foreach ($SpawnRules->get() as $SpawnRule)
 			{
+			// TODO: Single creature spawns are almost deprecated?  Used for special creatures:
 			if ($SpawnRule->creatures_id)
 				{
 				if ($character->score >= $SpawnRule->score_req)
@@ -529,6 +537,27 @@ class GameController extends Controller
 					{
 					if ($SpawnRule->zone_level == $room->zone_level)
 						{
+						// If the randomizer is for a single creature:
+						if ($ActiveRandomizer && $ActiveRandomizer->creatures_id)
+							{
+							$prob = rand() / getrandmax();
+							if ($prob <= $ActiveRandomizer->spawn_chance)
+								{
+								return $ActiveRandomizer->creature();
+								}
+							else
+								{
+								if ($ActiveRandomizer->block_other_spawns)
+									{
+									return true;
+									}
+								}
+							}
+						else
+							{
+							// No randomizer, just ignore?
+							}
+
 						if ($ActiveRandomizer && $ActiveRandomizer->creature_groups_id)
 							{
 							$creature_list = $SpawnRule->creature_group()->linked_creatures()->get()->merge($ActiveRandomizer->creature_group()->linked_creatures()->get());
@@ -555,6 +584,27 @@ class GameController extends Controller
 					}
 				else
 					{
+					// If the randomizer is for a single creature:
+					if ($ActiveRandomizer && $ActiveRandomizer->creatures_id)
+						{
+						$prob = rand() / getrandmax();
+						if ($prob <= $ActiveRandomizer->spawn_chance)
+							{
+							return $ActiveRandomizer->creature();
+							}
+						else
+							{
+							if ($ActiveRandomizer->block_other_spawns)
+								{
+								return null;
+								}
+							}
+						}
+					else
+						{
+						// No randomizer, just ignore?
+						}
+
 					if ($ActiveRandomizer && $ActiveRandomizer->creature_groups_id)
 						{
 						$creature_list = $SpawnRule->creature_group()->linked_creatures()->get()->merge($ActiveRandomizer->creature_group()->linked_creatures()->get());
@@ -860,6 +910,15 @@ class GameController extends Controller
 			{
 			$request->creature_kill = $Creature->id;
 			return $this->death($request);
+			}
+
+		// TODO: This may be harsh and not original behavior, as it's punishing to characters
+		// that fight combat w/ spells.  Also review how this affects scrolls
+		// Attempting to cast a spell in a zone that can't:
+		if ($request->character_spell_id && $Room->zone()->has_property('PREVENT_SPELLS'))
+			{
+			Session::flash('errors', 'You cannot cast spells here!');
+			return $this->index($request);
 			}
 
 		$flat_creature = null;
@@ -1684,6 +1743,12 @@ class GameController extends Controller
 		
 		if ($request->action == 'cast')
 			{
+			// Does the zone the character is in prevent spells?
+			if ($Character->room()->zone()->has_property('PREVENT_SPELLS'))
+				{
+				Session::flash('errors', 'You cannot cast spells here!');
+				return ['menu' => view('character.spells', ['character' => $Character->fresh()])->render()];
+				}
 			// die('casting');
 			$Spell = Spell::findOrFail($request->spell_id);
 			// Make sure the Character has the spell:

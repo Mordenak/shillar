@@ -96,6 +96,22 @@ class Room extends Model
 	public function get_color_scheme()
 		{
 		$scheme = '';
+
+		if ($this->zone()->bg_img)
+			{
+			$scheme = 'background-image: url(' . asset('bgs/' . $this->zone()->bg_img) . ');';
+			}
+
+		if ($this->zone()->bg_color)
+			{
+			$scheme = 'background-color: ' . $this->zone()->bg_color . ';';
+			}
+
+		if ($this->zone()->font_color)
+			{
+			$scheme = $scheme . 'color: ' . $this->zone()->font_color . ';';
+			}
+
 		if ($this->zone_area())
 			{
 			if ($this->zone_area()->bg_img)
@@ -111,23 +127,6 @@ class Room extends Model
 			if ($this->zone_area()->font_color)
 				{
 				$scheme = $scheme . 'color: ' . $this->zone_area()->font_color . ';';
-				}
-			}
-		else
-			{
-			if ($this->zone()->bg_img)
-				{
-				$scheme = 'background-image: url(' . asset('bgs/' . $this->zone()->bg_img) . ');';
-				}
-
-			if ($this->zone()->bg_color)
-				{
-				$scheme = 'background-color: ' . $this->zone()->bg_color . ';';
-				}
-
-			if ($this->zone()->font_color)
-				{
-				$scheme = $scheme . 'color: ' . $this->zone()->font_color . ';';
 				}
 			}
 

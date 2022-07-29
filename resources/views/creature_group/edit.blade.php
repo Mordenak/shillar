@@ -80,14 +80,6 @@
 						<input type="text" name="spawns[{{$spawn_rule->id}}][rooms_id]" class="form-control auto-lookup room-lookup">
 						@endif
 					</div>
-					<label class="col-md-1 col-form-label text-md-right">Spawn Hour:</label>
-					<div class="col-md-1">
-						<input type="text" name="spawns[0][spawn_hour]" class="form-control">
-					</div>
-					<label class="col-md-1 col-form-label text-md-right">Random Hour?</label>
-					<div class="col-md-1">
-						<input type="checkbox" name="spawns[0][random_hour]" class="form-control">
-					</div>
 					<label class="col-md-1 col-form-label text-md-right">Priority:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][spawn_hour]" class="form-control">
@@ -119,14 +111,6 @@
 					<label class="col-md-1 col-form-label text-md-right">Room:</label>
 					<div class="col-md-1">
 						<input type="text" name="spawns[0][rooms_id]" class="form-control auto-lookup room-lookup">
-					</div>
-					<label class="col-md-1 col-form-label text-md-right">Spawn Hour:</label>
-					<div class="col-md-1">
-						<input type="text" name="spawns[0][spawn_hour]" class="form-control">
-					</div>
-					<label class="col-md-1 col-form-label text-md-right">Random Hour?</label>
-					<div class="col-md-1">
-						<input type="checkbox" name="spawns[0][random_hour]" class="form-control">
 					</div>
 					<label class="col-md-1 col-form-label text-md-right">Priority:</label>
 					<div class="col-md-1">
