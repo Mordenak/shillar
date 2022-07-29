@@ -10,7 +10,7 @@
 	<form method="get" action="/randomizer/create">
 		<div class="form-group row">
 			<div class="col-md-3">
-				<input type="submit" value="Add Chat Room" class="btn btn-success">
+				<input type="submit" value="Add Randomizer" class="btn btn-success">
 			</div>
 		</div>
 	</form>

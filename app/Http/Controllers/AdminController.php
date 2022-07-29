@@ -9,6 +9,8 @@ use App\Item;
 use App\Zone;
 use App\ZoneLevel;
 use App\Room;
+use App\Randomizer;
+use App\ActiveRandomizer;
 
 class AdminController extends Controller
 {
@@ -114,6 +116,29 @@ class AdminController extends Controller
 			return view($request->create.'/delete');
 			}
 		return true;
+		}
+
+	public function rebuild_randomizers()
+		{
+		$Randomizers = Randomizer::all();
+
+		foreach ($Randomizers as $Randomizer)
+			{
+			$ActiveRandomizer = ActiveRandomizer::where(['randomizers_id' => $Randomizer->id])->first();
+
+			if ($ActiveRandomizer)
+				{
+				$ActiveRandomizer->delete();
+				$Randomizer->create_active();
+				}
+			else
+				{
+				$Randomizer->create_active();
+				}
+			}
+
+		Session::put('success', 'Randomizers rebuilt!');
+		return $this->index();
 		}
 
 	public function give_item(Request $request)
