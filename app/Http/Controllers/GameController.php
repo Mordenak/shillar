@@ -385,25 +385,28 @@ class GameController extends Controller
 				}
 			}
 
-		$TurninQuest = Quest::where(['turnin_rooms_id' => $Room->id])->first();
-		if ($TurninQuest)
+		$TurninQuests = Quest::where(['turnin_rooms_id' => $Room->id])->get();
+		if ($TurninQuests->count() > 0)
 			{
-			$CharacterQuest = CharacterQuest::where(['characters_id' => $Character->id, 'quests_id' => $TurninQuest->id])->first();
-
-			if ($CharacterQuest)
+			foreach ($TurninQuests as $TurninQuest)
 				{
-				// Just a quick refresh
-				$CharacterQuest->check_completes();
-				// die(print_r($CharacterQuest));
-				if ($CharacterQuest->complete && !$CharacterQuest->rewarded)
+				$CharacterQuest = CharacterQuest::where(['characters_id' => $Character->id, 'quests_id' => $TurninQuest->id])->first();
+
+				if ($CharacterQuest)
 					{
-					$this->reward_character($CharacterQuest, $Character);
-					// $request_params['quest_text'] = $TurninQuest->completion_message;
-					// Hand out reward... *IF* we haven't already!
+					// Just a quick refresh
+					$CharacterQuest->check_completes();
+					// die(print_r($CharacterQuest));
+					if ($CharacterQuest->complete && !$CharacterQuest->rewarded)
+						{
+						$this->reward_character($CharacterQuest, $Character);
+						// $request_params['quest_text'] = $TurninQuest->completion_message;
+						// Hand out reward... *IF* we haven't already!
+						}
 					}
+				// Something is turned in at this room:
+				// die('turn in?');
 				}
-			// Something is turned in at this room:
-			// die('turn in?');
 			}
 
 		// Check for movement blocks:
@@ -1362,6 +1365,27 @@ class GameController extends Controller
 				}
 
 			$KillCount->save();
+
+			// Creature linked to quest?
+			// TODO: Could be multiple quests???
+			$QuestCriterias = QuestCriteria::where(['creature_target' => $Creature->id])->get();
+			if ($QuestCriterias->count() > 0)
+				{
+				foreach ($QuestCriterias as $QuestCriteria)
+					{
+					// This creature is used for a task... Does the character have it?
+					$CharacterQuestCriteria = CharacterQuestCriteria::where(['characters_id' => $Character->id, 'quest_criterias_id' => $QuestCriteria->id, 'complete' => false])->first();
+					if ($CharacterQuestCriteria)
+						{
+						$CharacterQuestCriteria->progress += $CharacterQuestCriteria->progress + (1 * $cheat_bit);
+						// Let's complete it!
+						if ($CharacterQuestCriteria->progress == $QuestCriteria->creature_amount)
+							{
+							$CharacterQuestCriteria->complete();
+							}
+						}
+					}
+				}
 
 			$actual_xp = (int)($Creature->award_xp * (1.0 + $xp_variation)) * $cheat_bit;
 

@@ -76,12 +76,12 @@
 		</div>
 
 		<h3>Quest Tasks:</h3>
-		<div class="quest-tasks">
+		<div class="quest-tasks" style="padding-left: 3rem;">
 			<div class="task-forms">
 
 			@if (isset($quest) && $quest->tasks()->count() > 0)
 				@foreach ($quest->tasks() as $quest_task)
-				<div class="form-group row">
+				<div class="form-group">
 					<h5>Task</h5>
 					<div class="form-group row">
 						<input type="hidden" name="tasks[{{$quest_task->id}}][id]" value="{{$quest_task->id}}">
@@ -97,6 +97,8 @@
 						<div class="col-md-2">
 							<input type="text" name="tasks[{{$quest_task->id}}][log_entry]" value="{{$quest_task->log_entry}}" class="form-control">
 						</div>
+					</div>
+					<div class="form-group row">
 						<label class="col-md-1 col-form-label text-md-right">Pickup Message:</label>
 						<div class="col-md-2">
 							<input type="text" name="tasks[{{$quest_task->id}}][pickup_message]" value="{{$quest_task->pickup_message}}" class="form-control">
@@ -106,51 +108,56 @@
 							<input type="text" name="tasks[{{$quest_task->id}}][completion_message]" value="{{$quest_task->completion_message}}" class="form-control">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Seq:</label>
-						<div class="col-md-2">
+						<div class="col-md-1">
 							<input type="text" name="tasks[{{$quest_task->id}}][seq]" value="{{$quest_task->seq}}" class="form-control">
 						</div>
 					</div>
 					<h5>Criteria</h5>
-					<div class="form-group row" style="padding-left: 3rem;">
+					<div class="form-group row">
 						<input type="hidden" name="tasks[{{$quest_task->criteria()->id}}][criteria_id]" value="{{$quest_task->criteria()->id}}">
 						<label class="col-md-1 col-form-label text-md-right">Zone:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][zone_target]" value="{{$quest_task->criteria()->zone_target}}" class="form-control zone-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][zone_target]" value="{{$quest_task->criteria()->zone_target}}" class="form-control auto-lookup zone-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Room:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][room_target]" value="{{$quest_task->criteria()->room_target}}" class="form-control room-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][room_target]" value="{{$quest_task->criteria()->room_target}}" class="form-control auto-lookup room-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Room Action:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][room_action_target]" value="{{$quest_task->criteria()->room_action_target}}" class="form-control room-action-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][room_action_target]" value="{{$quest_task->criteria()->room_action_target}}" class="form-control auto-lookup room-action-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Item:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][item_target]" value="{{$quest_task->criteria()->item_target}}" class="form-control item-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][item_target]" value="{{$quest_task->criteria()->item_target}}" class="form-control auto-lookup item-lookup">
 						</div>
+					</div>
+					<div class="form-group row">
 						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->id}}][creature_target]" value="{{$quest_task->criteria()->creature_target}}" class="form-control creature-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[{{$quest_task->id}}][creature_target]" value="{{$quest_task->criteria()->creature_target}}" class="form-control auto-lookup creature-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Of Alignment:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][alignment_target]" value="{{$quest_task->criteria()->alignment_target}}" class="form-control alignment-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][alignment_target]" value="{{$quest_task->criteria()->alignment_target}}" class="form-control auto-lookup alignment-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">In Room:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[{{$quest_task->id}}][creature_room_target]" value="{{$quest_task->criteria()->creature_room_target}}" class="form-control room-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[{{$quest_task->id}}][creature_room_target]" value="{{$quest_task->criteria()->creature_room_target}}" class="form-control auto-lookup room-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Amount:</label>
-						<div class="col-md-2">
+						<div class="col-md-1">
 							<input type="text" name="tasks[{{$quest_task->criteria()->id}}][creature_amount]" value="{{$quest_task->criteria()->creature_amount}}" class="form-control">
 						</div>
 					</div>
 
 				</div>
+				<div style="width:80%;border:1px solid white;">
+					
+				</div>
 				@endforeach
 			@endif
-				<div class="form-group row">
+				<div class="form-group">
 					<h5>Task</h5>
 					<div class="form-group row">
 						<label class="col-md-1 col-form-label text-md-right">Uid:</label>
@@ -165,6 +172,8 @@
 						<div class="col-md-2">
 							<input type="text" name="tasks[0][log_entry]" class="form-control">
 						</div>
+					</div>
+					<div class="form-group row">
 						<label class="col-md-1 col-form-label text-md-right">Pickup Message:</label>
 						<div class="col-md-2">
 							<input type="text" name="tasks[0][pickup_message]" class="form-control">
@@ -174,43 +183,45 @@
 							<input type="text" name="tasks[0][completion_message]" class="form-control">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Seq:</label>
-						<div class="col-md-2">
+						<div class="col-md-1">
 							<input type="text" name="tasks[0][seq]" class="form-control">
 						</div>
 					</div>
 
 					<h5>Criteria</h5>
-					<div class="form-group row" style="padding-left: 3rem;">
+					<div class="form-group row">
 						<label class="col-md-1 col-form-label text-md-right">Zone:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[0][zone_target]" class="form-control zone-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[0][zone_target]" class="form-control auto-lookup zone-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Room:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[0][room_target]" class="form-control room-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[0][room_target]" class="form-control auto-lookup room-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Room Action:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[0][room_action_target]" class="form-control room-action-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[0][room_action_target]" class="form-control auto-lookup room-action-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Item:</label>
-						<div class="col-md-2">
+						<div class="col-md-1">
 							<input type="text" name="tasks[0][item_target]" class="form-control item-lookup">
 						</div>
+					</div>
+					<div class="form-group row">
 						<label class="col-md-1 col-form-label text-md-right">Creature:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[0][creature_target]" class="form-control creature-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[0][creature_target]" class="form-control auto-lookup creature-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Of Alignment:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[0][alignment_target]" class="form-control alignment-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[0][alignment_target]" class="form-control auto-lookup alignment-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">In Room:</label>
-						<div class="col-md-2">
-							<input type="text" name="tasks[0][creature_room_target]" class="form-control room-lookup">
+						<div class="col-md-1">
+							<input type="text" name="tasks[0][creature_room_target]" class="form-control auto-lookup room-lookup">
 						</div>
 						<label class="col-md-1 col-form-label text-md-right">Amount:</label>
-						<div class="col-md-2">
+						<div class="col-md-1">
 							<input type="text" name="tasks[0][creature_amount]" class="form-control">
 						</div>
 					</div>
