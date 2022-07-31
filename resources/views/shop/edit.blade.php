@@ -20,6 +20,13 @@
 		</div>
 
 		<div class="form-group row">
+			<label class="col-md-2 col-form-label text-md-right">Show Quantity Buy?:</label>
+			<div class="col-md-3">
+				<input type="checkbox" name="show_quantity_buy" class="form-control" {{isset($shop) && $shop->show_quantity_buy ? 'checked' : ''}}>
+			</div>
+		</div>
+
+		<div class="form-group row">
 			<label class="col-md-2 col-form-label text-md-right">Room:</label>
 			<div class="col-md-2">
 				<input type="text" name="rooms_id" class="form-control room-lookup" placeholder="Lookup a room:" value="{{isset($shop) ? $shop->rooms_id : ''}}">

@@ -2514,7 +2514,7 @@ class GameController extends Controller
 				$arr['name'] = $Item->name;
 				$arr['potency'] = $ItemFood->potency;
 				$arr['selected'] = false;
-				if (isset($request->item) && $Item->id == $request->item)
+				if (isset($request->item) && $inv_item->id == $request->item)
 					{
 					$arr['selected'] = true;
 					}
@@ -2585,18 +2585,33 @@ class GameController extends Controller
 		$PurchaseItem = ShopItem::where(['id' => $request->item_purchase, 'shops_id' => $Shop->id])->first();
 		$price = $PurchaseItem->get_cost($Character->charisma);
 
+		$quantity = 1;
+
+		if ($request->quantity)
+			{
+			$price = $price * $request->quantity;
+			$quantity = $request->quantity;
+			}
+
 		if ($Character->gold < $price)
 			{
 			Session::flash('purchase', 'You cannot afford that!');
 			return $this->index($request);
 			}
 
-		$received = $Character->inventory()->add_item($PurchaseItem->item()->id);
+		$received = $Character->inventory()->add_item($PurchaseItem->item()->id, $quantity);
 		if ($received)
 			{
 			$Character->gold = $Character->gold - $price;
 			$Character->save();
-			Session::flash('purchase', "You purchased a ".$PurchaseItem->item()->name);
+			if ($quantity > 1)
+				{
+				Session::flash('purchase', "You purchased $quantity ".$PurchaseItem->item()->name);
+				}
+			else
+				{
+				Session::flash('purchase', "You purchased a ".$PurchaseItem->item()->name);
+				}
 			}
 		else
 			{

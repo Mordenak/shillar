@@ -199,7 +199,7 @@ class Inventory extends Model
 		// Add an items_to_inventories record:;
 		$Item = Item::findOrFail($item_id);
 
-		if (($this->current_weight() + $Item->weight) > $this->character_direct()->max_weight())
+		if (($this->current_weight() + ($Item->weight * $quantity)) > $this->character_direct()->max_weight())
 			{
 			return false;
 			}

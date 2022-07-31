@@ -78,6 +78,7 @@ class ShopController extends Controller
 			'buys_jewels' => $request->buys_others ? true : false,
 			'buys_dusts' => $request->buys_others ? true : false,
 			'buys_others' => $request->buys_others ? true : false,
+			'show_quantity_buy' => $request->show_quantity_buy ? true : false
 			];
 
 		$Shop->fill($values);

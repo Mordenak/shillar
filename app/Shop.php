@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shop extends Model
 {
-	protected $fillable = ['rooms_id', 'name', 'description', 'buys_weapons', 'buys_armors', 'buys_accessories', 'buys_jewels', 'buys_dusts', 'buys_consumables', 'buys_others'];
+	protected $fillable = ['rooms_id', 'name', 'description', 'buys_weapons', 'buys_armors', 'buys_accessories', 'buys_jewels', 'buys_dusts', 'buys_consumables', 'buys_others', 'show_quantity_buy'];
 
 	public function room()
 		{

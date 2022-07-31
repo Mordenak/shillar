@@ -71,6 +71,8 @@ class InventoryController extends Controller
 				$InventoryItem->save();
 				}
 
+			$Inventory->cache_items();
+
 			Session::flash('success', 'Inventory Updated!');
 			return $this->edit($Inventory->id);
 			}
