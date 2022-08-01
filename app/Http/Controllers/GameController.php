@@ -2665,11 +2665,11 @@ class GameController extends Controller
 		$Character = Character::findOrFail($request->character_id);
 		// Find a forge recipe based on submitted items:
 		$query = [
-			'item_weapons_id' => $request->forge_weapon,
-			'item_armors_id' => $request->forge_armor,
-			'item_foods_id' => $request->forge_food,
-			'item_jewels_id' => $request->forge_jewel,
-			'item_dusts_id' => $request->forge_dust,
+			'item_weapons_id' => InventoryItem::findOrFail($request->forge_weapon)->item()->id,
+			'item_armors_id' => InventoryItem::findOrFail($request->forge_armor)->item()->id,
+			'item_foods_id' => InventoryItem::findOrFail($request->forge_food)->item()->id,
+			'item_jewels_id' => InventoryItem::findOrFail($request->forge_jewel)->item()->id,
+			'item_dusts_id' => InventoryItem::findOrFail($request->forge_dust)->item()->id
 			];
 
 		$ForgeRecipe = ForgeRecipe::where($query)->first();
