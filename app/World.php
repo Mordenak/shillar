@@ -39,14 +39,17 @@ class World extends Model
 		// $last_update = Carbon::createFromTimestamp($World->updated_at);
 		// $current = Carbon::now();
 		$mins = $World->updated_at->diffInMinutes(Carbon::now('UTC'));
-		$add_cycle = floor($mins / 10);
-		while ($World->cycle + $add_cycle > 200)
+		$new_cycles = floor($mins / 10);
+
+		if ($World->cycle + $new_cycles > 200)
 			{
-			$World->cycle = ($World->cycle + $add_cycle) - 200;
-			$World->year += 1;
+			$new_years = floor(($World->cycle + $new_cycles) / 200);
+
+			$World->cycle = ($World->cycle + $new_cycles) - ($new_years * 200);
+			$World->year += $new_years;
 			}
 
-		$World->cycle += $add_cycle;
+		// $World->cycle += $add_cycle;
 		$World->save();
 		return true;
 		}
