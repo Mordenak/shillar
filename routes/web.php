@@ -15,6 +15,11 @@
 // 	return view('welcome');
 // });
 
+// Basic routes:
+Route::get('news', function() {return view('news');});
+Route::get('info', function() {return view('info');});
+Route::get('about', function() {return view('about');});
+Route::get('contact', function() {return view('contact');});
 
 Route::get('/', 'HomeController@welcome');
 Auth::routes();

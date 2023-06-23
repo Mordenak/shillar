@@ -88,30 +88,18 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Shilla Resurrection
+                    Contact
                 </div>
                 <div>
-                    Welcome to my attempt to recreate Shilla as it was prior to it's transition to The Dark Traveler code.
+                    Don't.
                 </div>
 
                 <div style="margin-top: 4rem;display:grid;grid-template-columns: 1fr 3fr 1fr;">
-                    <div></div>
-                    <div>
 
-                        <div style="margin-top: 10rem;">
-                            Want to learn more?  Join the Discord on the right!<br><br>
-
-                            Special thanks to the guys who keep <a href="http://www.shillatime.org/shillatime.html">http://shillatime.org/</a> running, that was an invaluable resource in this effort.
-                        </div>
-                    </div>
-
-                    <div>
-                        <iframe src="https://discord.com/widget?id=763287514701758514&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
-                    </div>
                 </div>
 
                 <div>
-                    <a href="{{ url('news') }}">News</a> | <a href="{{ url('info') }}">Info</a> | <a href="{{ url('about') }}">About</a> | <a href="{{ url('contact') }}">Contact</a>
+                    <a href="{{ url('news') }}">News</a> | <a href="{{ url('info') }}">Info</a> | <a href="{{ url('about') }}">About</a> | <a href="{{ url('/') }}">Home</a>
                 </div>
 
             </div>
