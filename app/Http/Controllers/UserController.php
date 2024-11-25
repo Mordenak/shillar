@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Session;
 
 class UserController extends Controller
 {
@@ -53,5 +54,21 @@ class UserController extends Controller
 		$User->save();
 
 		return redirect()->action('UserController@edit', ['id' => $User->id]);
+		}
+
+	public function delete(Request $request)
+		{
+		if (auth()->user()->admin_level != 3)
+			{
+			return redirect()->action('GameController@home');
+			}
+
+		$User = User::findOrFail($request->id);
+
+		$User->delete();
+
+		Session::flash('success', 'User Deleted!');
+
+		return redirect()->action('UserController@all');
 		}
 }

@@ -11,6 +11,8 @@ use App\Equipment;
 use App\Inventory;
 use App\StartingStat;
 use App\Gender;
+use App\Graveyard;
+use App\KillCount;
 use Session;
 
 class CharacterController extends Controller
@@ -255,5 +257,52 @@ class CharacterController extends Controller
 
 		echo (json_encode($arr));;
 		header('Content-type: application/json');
+		}
+
+	public function delete(Request $request)
+		{
+		if (auth()->user()->admin_level != 3)
+			{
+			return redirect()->action('GameController@home');
+			}
+
+		$Character = Character::findOrFail($request->id);
+
+		// Lots of references:
+		$CharacterSetting = CharacterSetting::where(['characters_id' => $Character->id])->first();
+		if ($CharacterSetting)
+			{
+			$CharacterSetting->delete();
+			}
+
+		$Equipment = Equipment::where(['characters_id' => $Character->id])->first();
+		if ($Equipment)
+			{
+			$Equipment->delete();
+			}
+
+		$Inventory = Inventory::where(['characters_id' => $Character->id])->first();
+		if ($Inventory)
+			{
+			$Inventory->delete();
+			}
+
+		$Graveyard = Graveyard::where(['characters_id' => $Character->id])->first();
+		if ($Graveyard)
+			{
+			$Graveyard->delete();
+			}
+
+		$KillCount = KillCount::where(['characters_id' => $Character->id])->first();
+		if ($KillCount)
+			{
+			$KillCount->delete();
+			}
+
+		$Character->delete();
+
+		Session::flash('success', 'Character Deleted!');
+
+		return redirect()->action('CharacterController@all');
 		}
 	}

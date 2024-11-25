@@ -139,12 +139,13 @@ Route::get('character/all', 'CharacterController@all');
 Route::get('character/edit/{id}', 'CharacterController@edit')->where('id', '[0-9]+');
 Route::get('character/create', 'CharacterController@create');
 Route::post('character/save', 'CharacterController@save');
-// Route::post('character/save', 'ZoneController@save');
+Route::post('character/delete', 'CharacterController@delete');
 
 Route::get('user/all', 'UserController@all');
 Route::get('user/edit/{id}', 'UserController@edit')->where('id', '[0-9]+');
 Route::get('user/create', 'UserController@create');
 Route::post('user/save', 'UserController@save');
+Route::post('user/delete', 'UserController@delete');
 
 Route::get('shop/all', 'ShopController@all');
 Route::get('shop/create', 'ShopController@create');
